@@ -18,8 +18,11 @@
 #define INGEN_URIMAP_HPP
 
 #include <cstdint>
+#include <mutex>
 #include <string>
+#include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/ingen.h"
@@ -65,7 +68,7 @@ public:
 	struct URIDMapFeature : public Feature {
 		URIDMapFeature(URIMap* map, LV2_URID_Map* impl, Log& log);
 		LV2_URID        map(const char* uri);
-		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* uri);
+		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* c_uri);
 		LV2_URID_Map urid_map;
 		Log&         log;
 	};
@@ -81,8 +84,15 @@ public:
 	SPtr<URIDUnmapFeature> urid_unmap_feature() { return _urid_unmap_feature; }
 
 private:
+	friend class URIDMapFeature;
+	friend class URIDUnMapFeature;
+
 	SPtr<URIDMapFeature>   _urid_map_feature;
 	SPtr<URIDUnmapFeature> _urid_unmap_feature;
+
+	std::mutex                                _mutex;
+	std::unordered_map<std::string, LV2_URID> _map;
+	std::vector<std::string>                  _unmap;
 };
 
 } // namespace Ingen

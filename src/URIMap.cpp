@@ -16,8 +16,6 @@
 
 #include <cstdint>
 
-#include <glib.h>
-
 #include "ingen/Log.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
@@ -40,15 +38,26 @@ URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
 		urid_map = *impl;
 	} else {
 		urid_map.map    = default_map;
-		urid_map.handle = nullptr;
+		urid_map.handle = map;
 	}
 }
 
 LV2_URID
 URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle h,
-                                    const char*         uri)
+                                    const char*         c_uri)
 {
-	return static_cast<LV2_URID>(g_quark_from_string(uri));
+	URIMap* const               map((URIMap*)h);
+	std::string                 uri(c_uri);
+	std::lock_guard<std::mutex> lock(map->_mutex);
+
+	auto       record = map->_map.emplace(uri, map->_map.size() + 1);
+	const auto id     = record.first->second;
+	if (record.second) {
+		assert(id == map->_map.size());
+		assert(id == map->_unmap.size() + 1);
+		map->_unmap.emplace_back(std::move(uri));
+	}
+	return id;
 }
 
 LV2_URID
@@ -69,7 +78,7 @@ URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*         map,
 		urid_unmap = *impl;
 	} else {
 		urid_unmap.unmap  = default_unmap;
-		urid_unmap.handle = nullptr;
+		urid_unmap.handle = map;
 	}
 }
 
@@ -77,7 +86,12 @@ const char*
 URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle h,
                                         LV2_URID              urid)
 {
-	return g_quark_to_string(urid);
+	URIMap* const               map((URIMap*)h);
+	std::lock_guard<std::mutex> lock(map->_mutex);
+
+	return (urid > 0 && urid <= map->_unmap.size()
+	        ? map->_unmap[urid - 1].c_str()
+	        : NULL);
 }
 
 const char*
