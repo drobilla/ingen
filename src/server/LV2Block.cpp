@@ -14,10 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
-
 #include <cassert>
 #include <cmath>
+#include <cstdint>
 
 #include <glibmm/miscutils.h>
 #include <glibmm/convert.h>

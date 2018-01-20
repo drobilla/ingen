@@ -17,8 +17,7 @@
 #ifndef INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 #define INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <string>
 
 #include "raul/Path.hpp"

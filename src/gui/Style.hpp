@@ -17,8 +17,7 @@
 #ifndef INGEN_GUI_STYLE_HPP
 #define INGEN_GUI_STYLE_HPP
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <string>
 
 namespace Ingen { namespace Client { class PortModel; } }

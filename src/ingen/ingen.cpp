@@ -15,8 +15,8 @@
 */
 
 #include <signal.h>
-#include <stdlib.h>
 
+#include <cstdlib>
 #include <chrono>
 #include <iostream>
 #include <memory>

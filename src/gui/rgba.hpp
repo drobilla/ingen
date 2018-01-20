@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_RGBA_HPP
 #define INGEN_GUI_RGBA_HPP
 
-#include <math.h>
+#include <cmath>
 
 namespace Ingen {
 namespace GUI {

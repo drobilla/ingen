@@ -21,8 +21,9 @@
 
 #include <atomic>
 #include <memory>
-#include <portaudio.h>
 #include <string>
+
+#include <portaudio.h>
 
 #include "raul/Semaphore.hpp"
 

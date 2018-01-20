@@ -17,8 +17,7 @@
 #ifndef INGEN_ENGINE_TYPES_HPP
 #define INGEN_ENGINE_TYPES_HPP
 
-#include <stdint.h>
-#include <cstddef>
+#include <cstdint>
 
 typedef float    Sample;
 typedef uint32_t SampleCount;

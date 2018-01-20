@@ -14,10 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <climits>
+#include <cstdlib>
 #include <string>
-
-#include <limits.h>
-#include <stdlib.h>
 
 #include <dlfcn.h>
 

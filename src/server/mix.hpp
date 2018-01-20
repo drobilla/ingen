@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_MIX_HPP
 #define INGEN_ENGINE_MIX_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace Ingen {
 

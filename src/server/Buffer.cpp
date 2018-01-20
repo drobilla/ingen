@@ -16,10 +16,10 @@
 
 #define __STDC_LIMIT_MACROS 1
 
-#include <math.h>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
 #include <new>
-#include <stdint.h>
-#include <string.h>
 
 #ifdef __SSE__
 #    include <xmmintrin.h>

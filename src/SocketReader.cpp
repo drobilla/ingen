@@ -14,7 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <errno.h>
+#include <cerrno>
+
 #include <poll.h>
 
 #include "ingen/AtomForgeSink.hpp"

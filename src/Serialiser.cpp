@@ -14,11 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <errno.h>
-#include <string.h>
-
 #include <cassert>
+#include <cerrno>
 #include <cstdlib>
+#include <cstring>
 #include <set>
 #include <string>
 #include <utility>

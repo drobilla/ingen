@@ -17,7 +17,6 @@
 #ifndef INGEN_ENGINE_EVENTWRITER_HPP
 #define INGEN_ENGINE_EVENTWRITER_HPP
 
-#include <inttypes.h>
 #include <memory>
 #include <string>
 

@@ -18,10 +18,11 @@
 #define INGEN_ENGINE_CONTROLBINDINGS_HPP
 
 #include <atomic>
+#include <cstdint>
+#include <vector>
+
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/set.hpp>
-#include <stdint.h>
-#include <vector>
 
 #include "ingen/Atom.hpp"
 #include "ingen/types.hpp"

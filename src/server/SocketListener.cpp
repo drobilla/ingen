@@ -14,12 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <errno.h>
 #include <poll.h>
 #include <signal.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <cerrno>
 #include <sstream>
 #include <string>
 #include <thread>

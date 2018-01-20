@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "ingen/Log.hpp"
 #include "ingen/Node.hpp"
