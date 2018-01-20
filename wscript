@@ -77,10 +77,6 @@ def configure(conf):
 
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
                       atleast_version='1.15.3', mandatory=True)
-    autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
-                      atleast_version='2.14.0', mandatory=True)
-    autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
-                      atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
                       atleast_version='0.21.5', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',

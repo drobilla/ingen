@@ -63,7 +63,7 @@ def build(bld):
               use             = 'libingen libingen_socket',
               cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
               linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
-    core_libs = 'GLIBMM LV2 LILV RAUL SERD SORD'
+    core_libs = 'LV2 LILV RAUL SERD SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
     if bld.env.HAVE_JACK:

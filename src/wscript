@@ -43,4 +43,4 @@ def build(bld):
               lib             = lib,
               cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
               linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
+    autowaf.use_lib(bld, obj, 'LV2 LILV RAUL SERD SORD SRATOM')

@@ -22,8 +22,6 @@
 #include <memory>
 #include <string>
 
-#include <glibmm/thread.h>
-
 #include "raul/Path.hpp"
 
 #include "ingen_config.h"
@@ -34,7 +32,6 @@
 #include "ingen/Log.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/World.hpp"
-#include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/paths.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
@@ -44,6 +41,12 @@
 
 using namespace std;
 using namespace Ingen;
+
+class DummyInterface : public Interface
+{
+	URI  uri() const override { return URI("ingen:dummy"); }
+	void message(const Message& msg) override {}
+};
 
 unique_ptr<Ingen::World> world;
 
@@ -111,7 +114,6 @@ main(int argc, char** argv)
 	}
 
 	// Run engine
-	SPtr<Interface> engine_interface;
 	if (conf.option("engine").get<int32_t>()) {
 		if (world->conf().option("threads").get<int32_t>() < 1) {
 			cerr << "ingen: error: threads must be > 0" << endl;
@@ -122,33 +124,33 @@ main(int argc, char** argv)
 
 		ingen_try(bool(world->engine()), "Unable to create engine");
 		world->engine()->listen();
-
-		engine_interface = world->interface();
 	}
 
-	// If we don't have a local engine interface (for GUI), use network
-	if (!engine_interface) {
-		ingen_try(world->load_module("client"), "Failed to load client module");
 #ifdef HAVE_SOCKET
-		Client::SocketClient::register_factories(world.get());
+	Client::SocketClient::register_factories(world.get());
 #endif
+
+	// Load GUI if requested
+	if (conf.option("gui").get<int32_t>()) {
+		ingen_try(world->load_module("client"), "Failed to load client module");
+		ingen_try(world->load_module("gui"), "Failed to load GUI module");
+	}
+
+	// If we don't have a local engine interface (from the GUI), use network
+	SPtr<Interface> engine_interface(world->interface());
+	SPtr<Interface> dummy_client(new DummyInterface());
+	if (!engine_interface) {
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(URI::is_valid(uri),
 		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
-		SPtr<Interface> client(new Client::ThreadedSigClientInterface());
-		engine_interface = world->new_interface(URI(uri), client);
+		engine_interface = world->new_interface(URI(uri), dummy_client);
 
 		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
 			cerr << (fmt("ingen: error: Failed to connect to `%1%'\n") % uri);
 			return EXIT_FAILURE;
 		}
-	}
 
-	world->set_interface(engine_interface);
-
-	// Load GUI if requested
-	if (conf.option("gui").get<int32_t>()) {
-		ingen_try(world->load_module("gui"), "Failed to load GUI module");
+		world->set_interface(engine_interface);
 	}
 
 	// Activate the engine, if we have one
