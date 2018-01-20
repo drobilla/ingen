@@ -309,7 +309,7 @@ LoadPluginWindow::add_plugin(SPtr<const PluginModel> plugin)
 
 	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 	Gtk::TreeModel::Row      row  = *iter;
-	_rows.insert(make_pair(plugin->uri(), iter));
+	_rows.emplace(plugin->uri(), iter);
 
 	set_row(row, plugin);
 
@@ -398,12 +398,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	} else {
 		Raul::Path path  = _graph->path().child(Raul::Symbol::symbolify(name));
 		Properties props = _initial_data;
-		props.insert(make_pair(uris.rdf_type,
-		                       Property(uris.ingen_Block)));
-		props.insert(make_pair(uris.lv2_prototype,
-		                       _app->forge().make_urid(plugin->uri())));
-		props.insert(make_pair(uris.ingen_polyphonic,
-		                       _app->forge().make(polyphonic)));
+		props.emplace(uris.rdf_type, Property(uris.ingen_Block));
+		props.emplace(uris.lv2_prototype, _app->forge().make_urid(plugin->uri()));
+		props.emplace(uris.ingen_polyphonic, _app->forge().make(polyphonic));
 		_app->interface()->put(path_to_uri(path), props);
 
 		if (_selection->get_selected_rows().size() == 1) {

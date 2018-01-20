@@ -67,13 +67,13 @@ public:
 	void put(const Raul::URI& key,
 	         const Atom&      value,
 	         Graph            ctx = Graph::DEFAULT) {
-		insert(std::make_pair(key, Property(value, ctx)));
+		emplace(key, Property(value, ctx));
 	}
 
 	void put(const Raul::URI&   key,
 	         const URIs::Quark& value,
 	         Graph              ctx = Graph::DEFAULT) {
-		insert(std::make_pair(key, Property(value, ctx)));
+		emplace(key, Property(value, ctx));
 	}
 
 	bool contains(const Raul::URI& key, const Atom& value) {

@@ -94,16 +94,15 @@ NewSubgraphWindow::ok_clicked()
 
 	// Create graph
 	Properties props;
-	props.insert(make_pair(_app->uris().rdf_type,        Property(_app->uris().ingen_Graph)));
-	props.insert(make_pair(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly))));
-	props.insert(make_pair(_app->uris().ingen_enabled,   _app->forge().make(bool(true))));
+	props.emplace(_app->uris().rdf_type,        Property(_app->uris().ingen_Graph));
+	props.emplace(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly)));
+	props.emplace(_app->uris().ingen_enabled,   _app->forge().make(bool(true)));
 	_app->interface()->put(
 		path_to_uri(path), props, Resource::Graph::INTERNAL);
 
 	// Set external (block perspective) properties
 	props = _initial_data;
-	props.insert(make_pair(_app->uris().rdf_type,
-	                       Property(_app->uris().ingen_Graph)));
+	props.emplace(_app->uris().rdf_type, Property(_app->uris().ingen_Graph));
 	_app->interface()->put(
 		path_to_uri(path), _initial_data, Resource::Graph::EXTERNAL);
 

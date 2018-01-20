@@ -172,7 +172,7 @@ PluginModel::set(SPtr<PluginModel> p)
 void
 PluginModel::add_preset(const Raul::URI& uri, const std::string& label)
 {
-	_presets.insert(std::make_pair(uri, label));
+	_presets.emplace(uri, label);
 	_signal_preset.emit(uri, label);
 }
 

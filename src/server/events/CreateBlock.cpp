@@ -71,7 +71,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 		const auto value = i->second;
 		auto       next  = i;
 		next = _properties.erase(i);
-		_properties.insert(std::make_pair(uris.lv2_prototype, value));
+		_properties.emplace(uris.lv2_prototype, value);
 		i = next;
 	}
 
@@ -106,8 +106,8 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 		   but the client expects an actual LV2 plugin as prototype. */
 		_properties.erase(uris.ingen_prototype);
 		_properties.erase(uris.lv2_prototype);
-		_properties.insert(std::make_pair(uris.lv2_prototype,
-		                                  uris.forge.make_urid(ancestor->plugin()->uri())));
+		_properties.emplace(uris.lv2_prototype,
+		                    uris.forge.make_urid(ancestor->plugin()->uri()));
 	} else {
 		// Prototype is a plugin
 		PluginImpl* const plugin = _engine.block_factory()->plugin(prototype);

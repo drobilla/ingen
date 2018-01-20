@@ -189,7 +189,7 @@ ClientStore::add_plugin(SPtr<PluginModel> pm)
 	if (existing) {
 		existing->set(pm);
 	} else {
-		_plugins->insert(make_pair(pm->uri(), pm));
+		_plugins->emplace(pm->uri(), pm);
 		_signal_new_plugin.emit(pm);
 	}
 }

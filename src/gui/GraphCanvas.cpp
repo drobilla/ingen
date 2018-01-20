@@ -338,7 +338,7 @@ GraphCanvas::add_block(SPtr<const BlockModel> bm)
 	}
 
 	module->show();
-	_views.insert(std::make_pair(bm, module));
+	_views.emplace(bm, module);
 	if (_pastees.find(bm->path()) != _pastees.end()) {
 		module->set_selected(true);
 	}
@@ -363,7 +363,7 @@ void
 GraphCanvas::add_port(SPtr<const PortModel> pm)
 {
 	GraphPortModule* view = GraphPortModule::create(*this, pm);
-	_views.insert(std::make_pair(pm, view));
+	_views.emplace(pm, view);
 	view->show();
 }
 
@@ -803,19 +803,16 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	const URIs& uris = _app.uris();
 
 	Properties props = get_initial_data(Resource::Graph::INTERNAL);
-	props.insert(make_pair(uris.rdf_type, _app.forge().make_urid(type)));
+	props.emplace(uris.rdf_type, _app.forge().make_urid(type));
 	if (type == uris.atom_AtomPort) {
-		props.insert(make_pair(uris.atom_bufferType,
-		                       Property(uris.atom_Sequence)));
+		props.emplace(uris.atom_bufferType, Property(uris.atom_Sequence));
 	}
-	props.insert(make_pair(uris.rdf_type,
-	                       Property(is_output
-	                                ? uris.lv2_OutputPort
-	                                : uris.lv2_InputPort)));
-	props.insert(make_pair(uris.lv2_index,
-	                       _app.forge().make(int32_t(_graph->num_ports()))));
-	props.insert(make_pair(uris.lv2_name,
-	                       _app.forge().alloc(name.c_str())));
+	props.emplace(
+		uris.rdf_type,
+		Property(is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
+	props.emplace(uris.lv2_index,
+	              _app.forge().make(int32_t(_graph->num_ports())));
+	props.emplace(uris.lv2_name, _app.forge().alloc(name.c_str()));
 	_app.interface()->put(path_to_uri(path), props);
 }
 
@@ -840,10 +837,8 @@ GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 
 	// FIXME: polyphony?
 	Properties props = get_initial_data();
-	props.insert(make_pair(uris.rdf_type,
-	                       Property(uris.ingen_Block)));
-	props.insert(make_pair(uris.lv2_prototype,
-	                       uris.forge.make_urid(plugin->uri())));
+	props.emplace(uris.rdf_type, Property(uris.ingen_Block));
+	props.emplace(uris.lv2_prototype, uris.forge.make_urid(plugin->uri()));
 	_app.interface()->put(path_to_uri(path), props);
 }
 
@@ -864,14 +859,10 @@ GraphCanvas::get_initial_data(Resource::Graph ctx)
 {
 	Properties result;
 	const URIs& uris = _app.uris();
-	result.insert(
-		make_pair(uris.ingen_canvasX,
-		          Property(_app.forge().make((float)_menu_x),
-		                   ctx)));
-	result.insert(
-		make_pair(uris.ingen_canvasY,
-		          Property(_app.forge().make((float)_menu_y),
-		                   ctx)));
+	result.emplace(uris.ingen_canvasX,
+	               Property(_app.forge().make((float)_menu_x), ctx));
+	result.emplace(uris.ingen_canvasY,
+	               Property(_app.forge().make((float)_menu_y), ctx));
 	return result;
 }
 

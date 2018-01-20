@@ -28,7 +28,7 @@ Store::add(Node* o)
 		return;
 	}
 
-	insert(make_pair(o->path(), SPtr<Node>(o)));
+	emplace(o->path(), SPtr<Node>(o));
 
 	for (uint32_t i = 0; i < o->num_ports(); ++i) {
 		add(o->port(i));
@@ -110,7 +110,7 @@ Store::rename(const iterator top, const Raul::Path& new_path)
 
 		i->second->set_path(path);
 		assert(find(path) == end());  // Shouldn't be dropping objects!
-		insert(make_pair(path, i->second));
+		emplace(path, i->second);
 	}
 }
 

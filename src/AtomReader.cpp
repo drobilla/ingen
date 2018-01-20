@@ -59,12 +59,12 @@ AtomReader::get_props(const LV2_Atom_Object* obj,
 {
 	if (obj->body.otype) {
 		const Atom type(sizeof(int32_t), _uris.atom_URID, &obj->body.otype);
-		props.insert(std::make_pair(_uris.rdf_type, type));
+		props.emplace(_uris.rdf_type, type);
 	}
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Atom val;
 		get_atom(&p->value, val);
-		props.insert(std::make_pair(Raul::URI(_map.unmap_uri(p->key)), val));
+		props.emplace(Raul::URI(_map.unmap_uri(p->key)), val);
 	}
 }
 

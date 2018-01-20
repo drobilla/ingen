@@ -889,8 +889,8 @@ GraphBox::event_sprung_layout_toggled()
 	_view->canvas()->set_sprung_layout(sprung);
 
 	Properties properties;
-	properties.insert(make_pair(_app->uris().ingen_sprungLayout,
-	                            _app->forge().make(sprung)));
+	properties.emplace(_app->uris().ingen_sprungLayout,
+	                   _app->forge().make(sprung));
 	_app->interface()->put(_graph->uri(), properties);
 }
 

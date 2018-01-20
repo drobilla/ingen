@@ -147,8 +147,8 @@ get_properties(Ingen::World*     world,
 			Atom            atomm;
 			atomm = world->forge().alloc(
 				atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
-			props.insert(make_pair(Raul::URI(i.get_predicate().to_string()),
-			                       Property(atomm, ctx)));
+			props.emplace(Raul::URI(i.get_predicate().to_string()),
+			              Property(atomm, ctx));
 		}
 	}
 
@@ -331,8 +331,7 @@ parse_block(Ingen::World*               world,
 		// Prototype is non-file URI, plugin
 		Properties props = get_properties(
 			world, model, subject, Resource::Graph::DEFAULT);
-		props.insert(make_pair(uris.rdf_type,
-		                       uris.forge.make_urid(uris.ingen_Block)));
+		props.emplace(uris.rdf_type, uris.forge.make_urid(uris.ingen_Block));
 		target->put(path_to_uri(path), props);
 	}
 	return path;
@@ -592,7 +591,7 @@ parse(Ingen::World*                 world,
 		if (s == subjects.end()) {
 			std::set<Sord::Node> types;
 			types.insert(rdf_class);
-			subjects.insert(make_pair(subject, types));
+			subjects.emplace(subject, types);
 		} else {
 			s->second.insert(rdf_class);
 		}

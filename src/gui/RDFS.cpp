@@ -210,9 +210,7 @@ instances(World* world, const URISet& types)
 				continue;
 			}
 			const std::string label = RDFS::label(world, object);
-			result.insert(
-				std::make_pair(label,
-				               Raul::URI(lilv_node_as_string(object))));
+			result.emplace(label, Raul::URI(lilv_node_as_string(object)));
 		}
 		lilv_node_free(type);
 	}

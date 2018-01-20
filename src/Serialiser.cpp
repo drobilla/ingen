@@ -499,7 +499,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 		const Atom& val = port->get_property(uris.ingen_value);
 		if (val.is_valid()) {
 			props.erase(uris.lv2_default);
-			props.insert(make_pair(uris.lv2_default, val));
+			props.emplace(uris.lv2_default, val);
 		} else {
 			_world.log().warn("Control input has no value, lv2:default omitted.\n");
 		}

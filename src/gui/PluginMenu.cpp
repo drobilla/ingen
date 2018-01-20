@@ -48,7 +48,7 @@ PluginMenu::clear()
 		if (!p) {
 			p = lilv_plugin_class_get_uri(lv2_plugin);
 		}
-		children.insert(std::make_pair(lilv_node_as_string(p), c));
+		children.emplace(lilv_node_as_string(p), c);
 	}
 
 	std::set<const char*> ancestors;
@@ -128,7 +128,7 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 		size_t num_child_items = build_plugin_class_menu(
 			submenu, c, classes, children, ancestors);
 
-		_class_menus.insert(std::make_pair(sub_uri_str, MenuRecord(menu_item, submenu)));
+		_class_menus.emplace(sub_uri_str, MenuRecord(menu_item, submenu));
 		if (num_child_items == 0) {
 			menu_item->hide();
 		}

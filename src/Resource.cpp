@@ -40,7 +40,7 @@ Resource::add_property(const Raul::URI& uri,
 
 	if (uri != _uris.ingen_activity) {
 		// Insert new property
-		const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+		const Atom& v = _properties.emplace(uri, Property(value, ctx))->second;
 		on_property(uri, v);
 	} else {
 		// Announce ephemeral activity, but do not store
@@ -70,7 +70,7 @@ Resource::set_property(const Raul::URI& uri,
 
 	if (uri != _uris.ingen_activity) {
 		// Insert new property
-		const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+		const Atom& v = _properties.emplace(uri, Property(value, ctx))->second;
 		on_property(uri, v);
 		return v;
 	} else {
@@ -228,7 +228,7 @@ Resource::properties(Resource::Graph ctx) const
 	Properties props;
 	for (const auto& p : _properties) {
 		if (p.second.context() == ctx) {
-			props.insert(make_pair(p.first, p.second));
+			props.emplace(p.first, p.second);
 		}
 	}
 

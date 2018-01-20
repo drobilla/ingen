@@ -102,9 +102,8 @@ void
 ObjectMenu::on_menu_unlearn()
 {
 	Properties remove;
-	remove.insert(std::make_pair(
-		              _app->uris().midi_binding,
-		              Property(_app->uris().patch_wildcard)));
+	remove.emplace(_app->uris().midi_binding,
+	               Property(_app->uris().patch_wildcard));
 	_app->interface()->delta(_object->uri(), remove, Properties());
 }
 

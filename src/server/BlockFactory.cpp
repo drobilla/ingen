@@ -111,19 +111,19 @@ BlockFactory::load_internal_plugins()
 {
 	Ingen::URIs& uris = _world->uris();
 	InternalPlugin* block_delay_plug = BlockDelayNode::internal_plugin(uris);
-	_plugins.insert(make_pair(block_delay_plug->uri(), block_delay_plug));
+	_plugins.emplace(block_delay_plug->uri(), block_delay_plug);
 
 	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
-	_plugins.insert(make_pair(controller_plug->uri(), controller_plug));
+	_plugins.emplace(controller_plug->uri(), controller_plug);
 
 	InternalPlugin* note_plug = NoteNode::internal_plugin(uris);
-	_plugins.insert(make_pair(note_plug->uri(), note_plug));
+	_plugins.emplace(note_plug->uri(), note_plug);
 
 	InternalPlugin* time_plug = TimeNode::internal_plugin(uris);
-	_plugins.insert(make_pair(time_plug->uri(), time_plug));
+	_plugins.emplace(time_plug->uri(), time_plug);
 
 	InternalPlugin* trigger_plug = TriggerNode::internal_plugin(uris);
-	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));
+	_plugins.emplace(trigger_plug->uri(), trigger_plug);
 }
 
 void
@@ -138,7 +138,7 @@ BlockFactory::load_plugin(const Raul::URI& uri)
 	const LilvPlugin*  plug  = lilv_plugins_get_by_uri(plugs, node);
 	if (plug) {
 		LV2Plugin* const ingen_plugin = new LV2Plugin(_world, plug);
-		_plugins.insert(make_pair(uri, ingen_plugin));
+		_plugins.emplace(uri, ingen_plugin);
 	}
 	lilv_node_free(node);
 }
@@ -216,7 +216,7 @@ BlockFactory::load_lv2_plugins()
 		auto p = _plugins.find(uri);
 		if (p == _plugins.end()) {
 			LV2Plugin* const plugin = new LV2Plugin(_world, lv2_plug);
-			_plugins.insert(make_pair(uri, plugin));
+			_plugins.emplace(uri, plugin);
 		} else if (lilv_plugin_verify(lv2_plug)) {
 			p->second->set_is_zombie(false);
 		}

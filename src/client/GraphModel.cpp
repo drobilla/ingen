@@ -134,8 +134,7 @@ GraphModel::add_arc(SPtr<ArcModel> arc)
 		assert(arc->tail() == existing->tail());
 		assert(arc->head() == existing->head());
 	} else {
-		_arcs.emplace(std::make_pair(arc->tail().get(),
-		                             arc->head().get()),
+		_arcs.emplace(std::make_pair(arc->tail().get(), arc->head().get()),
 		              arc);
 		_signal_new_arc.emit(arc);
 	}

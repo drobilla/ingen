@@ -156,9 +156,9 @@ LoadGraphWindow::ok_clicked()
 	const URIs& uris = _app->uris();
 
 	if (_poly_voices_radio->get_active()) {
-		_initial_data.insert(
-			make_pair(uris.ingen_polyphony,
-			          _app->forge().make(_poly_spinbutton->get_value_as_int())));
+		_initial_data.emplace(
+			uris.ingen_polyphony,
+			_app->forge().make(_poly_spinbutton->get_value_as_int()));
 	}
 
 	if (get_uri() == "") {

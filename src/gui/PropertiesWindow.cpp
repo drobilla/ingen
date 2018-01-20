@@ -136,7 +136,7 @@ PropertiesWindow::add_property(const Raul::URI& key, const Atom& value)
 	               Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
 	_table->attach(*present, 2, 3, n_rows, n_rows + 1,
 	               Gtk::FILL, Gtk::SHRINK);
-	_records.insert(make_pair(key, Record(value, align, n_rows, present)));
+	_records.emplace(key, Record(value, align, n_rows, present));
 	_table->show_all();
 
 	lilv_node_free(prop);
@@ -230,12 +230,12 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 			RDFS::datatypes(_app->world(), ranges, false);
 			Raul::URI widget_type("urn:nothing");
 			if (datatype_supported(ranges, &widget_type)) {
-				entries.insert(std::make_pair(label, p));
+				entries.emplace(label, p);
 			}
 		} else {
 			// Range is presumably a class, show if any instances are known
 			if (class_supported(ranges)) {
-				entries.insert(std::make_pair(label, p));
+				entries.emplace(label, p);
 			}
 		}
 	}
@@ -542,8 +542,7 @@ PropertiesWindow::add_clicked()
 	if (value.is_valid()) {
 		// Send property to engine
 		Properties properties;
-		properties.insert(make_pair(Raul::URI(key_uri.c_str()),
-		                            Property(value)));
+		properties.emplace(Raul::URI(key_uri.c_str()), Property(value));
 		_app->interface()->put(_model->uri(), properties);
 	}
 }
@@ -565,10 +564,10 @@ PropertiesWindow::apply_clicked()
 		const Record&    record = r.second;
 		if (record.present_button->get_active()) {
 			if (!_model->has_property(uri, record.value)) {
-				add.insert(make_pair(uri, record.value));
+				add.emplace(uri, record.value);
 			}
 		} else {
-			remove.insert(make_pair(uri, record.value));
+			remove.emplace(uri, record.value);
 		}
 	}
 

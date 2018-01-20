@@ -42,7 +42,7 @@ ClientUpdate::put_port(const PortImpl* port)
 	if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 		Properties props = port->properties();
 		props.erase(uris.ingen_value);
-		props.insert(std::make_pair(uris.ingen_value, port->value()));
+		props.emplace(uris.ingen_value, port->value());
 		put(port->uri(), props);
 	} else {
 		put(port->uri(), port->properties());

@@ -286,7 +286,7 @@ World::load_module(const char* name)
 		if (module) {
 			module->library = lib;
 			module->load(this);
-			_impl->modules.insert(make_pair(string(name), module));
+			_impl->modules.emplace(string(name), module);
 			return true;
 		}
 	}
@@ -340,7 +340,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 void
 World::add_interface_factory(const std::string& scheme, InterfaceFactory factory)
 {
-	_impl->interface_factories.insert(make_pair(scheme, factory));
+	_impl->interface_factories.emplace(scheme, factory);
 }
 
 void

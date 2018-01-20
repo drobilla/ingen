@@ -120,11 +120,11 @@ URIEntry::build_subclass_menu(const LilvNode* klass)
 	std::map<std::string, const LilvNode*> entries;
 	LILV_FOREACH(nodes, s, subclasses) {
 		const LilvNode* node = lilv_nodes_get(subclasses, s);
-		entries.insert(std::make_pair(RDFS::label(world, node), node));
+		entries.emplace(RDFS::label(world, node), node);
 	}
 	LILV_FOREACH(nodes, s, subtypes) {
 		const LilvNode* node = lilv_nodes_get(subtypes, s);
-		entries.insert(std::make_pair(RDFS::label(world, node), node));
+		entries.emplace(RDFS::label(world, node), node);
 	}
 
 	// Add an item (possibly with a submenu) for each subclass/type

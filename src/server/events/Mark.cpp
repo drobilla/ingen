@@ -60,7 +60,7 @@ Mark::pre_process(PreProcessContext& ctx)
 			for (GraphImpl* g : ctx.dirty_graphs()) {
 				MPtr<CompiledGraph> cg = compile(*_engine.maid(), *g);
 				if (cg) {
-					_compiled_graphs.insert(std::make_pair(g, std::move(cg)));
+					_compiled_graphs.emplace(g, std::move(cg));
 				}
 			}
 			ctx.dirty_graphs().clear();

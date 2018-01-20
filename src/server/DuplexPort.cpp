@@ -102,13 +102,13 @@ DuplexPort::inherit_neighbour(const PortImpl* port,
 	if (_type == PortType::CONTROL || _type == PortType::CV) {
 		if (port->minimum().get<float>() < _min.get<float>()) {
 			_min = port->minimum();
-			remove.insert(std::make_pair(uris.lv2_minimum, uris.patch_wildcard));
-			add.insert(std::make_pair(uris.lv2_minimum, port->minimum()));
+			remove.emplace(uris.lv2_minimum, uris.patch_wildcard);
+			add.emplace(uris.lv2_minimum, port->minimum());
 		}
 		if (port->maximum().get<float>() > _max.get<float>()) {
 			_max = port->maximum();
-			remove.insert(std::make_pair(uris.lv2_maximum, uris.patch_wildcard));
-			add.insert(std::make_pair(uris.lv2_maximum, port->maximum()));
+			remove.emplace(uris.lv2_maximum, uris.patch_wildcard);
+			add.emplace(uris.lv2_maximum, port->maximum());
 		}
 	} else if (_type == PortType::ATOM) {
 		for (auto i = port->properties().find(uris.atom_supports);

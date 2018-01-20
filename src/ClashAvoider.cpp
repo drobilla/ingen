@@ -72,7 +72,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 			if (p != _symbol_map.end()) {
 				const Raul::Path mapped = Raul::Path(
 					p->second.base() + in.substr(parent.base().length()));
-				InsertRecord i = _symbol_map.insert(make_pair(in, mapped));
+				InsertRecord i = _symbol_map.emplace(in, mapped);
 				return i.first->second;
 			}
 			parent = parent.parent();
@@ -80,7 +80,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 		if (!exists(in) && _symbol_map.find(in) == _symbol_map.end()) {
 			// No clash, use symbol unmodified
-			InsertRecord i = _symbol_map.insert(make_pair(in, in));
+			InsertRecord i = _symbol_map.emplace(in, in);
 			assert(i.second);
 			return i.first->second;
 
@@ -111,10 +111,9 @@ ClashAvoider::map_path(const Raul::Path& in)
 					}
 					Raul::Symbol sym(name);
 					std::string str = ss.str();
-					InsertRecord i = _symbol_map.insert(
-						make_pair(in, Raul::Path(str)));
+					InsertRecord i = _symbol_map.emplace(in, Raul::Path(str));
 					offset = _store.child_name_offset(in.parent(), sym, false);
-					_offsets.insert(make_pair(base_path, offset));
+					_offsets.emplace(base_path, offset);
 					return i.first->second;
 				} else {
 					if (o != _offsets.end()) {
