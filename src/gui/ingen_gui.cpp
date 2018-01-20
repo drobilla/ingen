@@ -39,6 +39,7 @@ extern "C" {
 Ingen::Module*
 ingen_module_load()
 {
+	Glib::thread_init();
 	return new Ingen::GUI::GUIModule();
 }
 
