@@ -28,6 +28,7 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/QueuedInterface.hpp"
 #include "ingen/StreamWriter.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
@@ -157,7 +158,7 @@ App::run()
 }
 
 void
-App::attach(SPtr<SigClientInterface> client)
+App::attach(SPtr<Ingen::Interface> client)
 {
 	assert(!_client);
 	assert(!_store);
@@ -168,7 +169,7 @@ App::attach(SPtr<SigClientInterface> client)
 	}
 
 	_client = client;
-	_store  = SPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), client));
+	_store  = SPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), sig_client()));
 	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 	if (!_world->store()) {
 		_world->set_store(_store);
@@ -181,12 +182,12 @@ App::attach(SPtr<SigClientInterface> client)
 		                                              stderr,
 		                                              ColorContext::Color::CYAN));
 
-		client->signal_message().connect(
+		sig_client()->signal_message().connect(
 			sigc::mem_fun(*_dumper.get(), &StreamWriter::message));
 	}
 
 	_graph_tree_window->init(*this, *_store);
-	_client->signal_message().connect(sigc::mem_fun(this, &App::message));
+	sig_client()->signal_message().connect(sigc::mem_fun(this, &App::message));
 }
 
 void
@@ -210,6 +211,16 @@ App::request_plugins_if_necessary()
 		_world->interface()->get(URI("ingen:/plugins"));
 		_requested_plugins = true;
 	}
+}
+
+SPtr<SigClientInterface>
+App::sig_client()
+{
+	SPtr<QueuedInterface> qi = dynamic_ptr_cast<QueuedInterface>(_client);
+	if (qi) {
+		return dynamic_ptr_cast<SigClientInterface>(qi->sink());
+	}
+	return dynamic_ptr_cast<SigClientInterface>(_client);
 }
 
 SPtr<Serialiser>
@@ -264,7 +275,7 @@ App::set_property(const URI&      subject,
 	   went as planned here and fire the signal ourselves as if the server
 	   feedback came back immediately. */
 	if (key != uris().ingen_activity) {
-		_client->signal_message().emit(SetProperty{0, subject, key, value, ctx});
+		sig_client()->signal_message().emit(SetProperty{0, subject, key, value, ctx});
 	}
 }
 
@@ -365,8 +376,6 @@ App::activity_port_destroyed(Port* port)
 	if (i != _activity_ports.end()) {
 		_activity_ports.erase(i);
 	}
-
-	return;
 }
 
 bool
@@ -412,16 +421,16 @@ App::gtk_main_iteration()
 		_messages_window->flush();
 	}
 
+	_enable_signal = false;
 	if (_world->engine()) {
 		if (!_world->engine()->main_iteration()) {
 			Gtk::Main::quit();
 			return false;
 		}
 	} else {
-		_enable_signal = false;
-		_client->emit_signals();
-		_enable_signal = true;
+		dynamic_ptr_cast<QueuedInterface>(_client)->emit();
 	}
+	_enable_signal = true;
 
 	return true;
 }

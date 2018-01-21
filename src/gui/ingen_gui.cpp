@@ -16,7 +16,8 @@
 
 #include "ingen/Configuration.hpp"
 #include "ingen/Module.hpp"
-#include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/QueuedInterface.hpp"
+#include "ingen/client/SigClientInterface.hpp"
 
 #include "App.hpp"
 
@@ -24,18 +25,16 @@ namespace Ingen {
 namespace GUI {
 
 struct GUIModule : public Module {
-	void load(World* world) {
-		using Client::SigClientInterface;
-		using Client::ThreadedSigClientInterface;
+	using SigClientInterface = Client::SigClientInterface;
 
-		std::string uri = world->conf().option("connect").ptr<char>();
+	void load(World* world) {
+		URI uri(world->conf().option("connect").ptr<char>());
 		if (!world->interface()) {
-			SPtr<SigClientInterface> client(new ThreadedSigClientInterface());
-			world->set_interface(world->new_interface(URI(uri), client));
-		} else if (!dynamic_ptr_cast<Client::SigClientInterface>(
+			world->set_interface(
+				world->new_interface(URI(uri), make_client(world)));
+		} else if (!dynamic_ptr_cast<SigClientInterface>(
 			           world->interface()->respondee())) {
-			SPtr<SigClientInterface> client(new ThreadedSigClientInterface());
-			world->interface()->set_respondee(client);
+			world->interface()->set_respondee(make_client(world));
 		}
 
 		app = GUI::App::create(world);
@@ -43,6 +42,11 @@ struct GUIModule : public Module {
 
 	void run(World* world) {
 		app->run();
+	}
+
+	SPtr<Interface> make_client(World* const world) {
+		SPtr<SigClientInterface> sci(new SigClientInterface());
+		return world->engine() ? sci : SPtr<Interface>(new QueuedInterface(sci));
 	}
 
 	SPtr<GUI::App> app;

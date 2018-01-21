@@ -42,7 +42,6 @@
 #include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
-#include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/filesystem.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"

@@ -35,7 +35,7 @@ BreadCrumbs::BreadCrumbs(App& app)
 	, _full_path("/")
 	, _enable_signal(true)
 {
-	app.client()->signal_message().connect(
+	app.sig_client()->signal_message().connect(
 		sigc::mem_fun(this, &BreadCrumbs::message));
 
 	set_can_focus(false);

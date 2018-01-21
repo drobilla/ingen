@@ -29,11 +29,12 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
+#include "ingen/QueuedInterface.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/SigClientInterface.hpp"
 #include "ingen/client/SocketClient.hpp"
-#include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen_config.h"
 
 #include "App.hpp"
@@ -194,13 +195,13 @@ ConnectWindow::connect_remote(const URI& uri)
 {
 	Ingen::World* world = _app->world();
 
-	SPtr<ThreadedSigClientInterface> tsci(
-		new Client::ThreadedSigClientInterface());
+	SPtr<SigClientInterface> sci(new SigClientInterface());
+	SPtr<QueuedInterface>    qi(new QueuedInterface(sci));
 
-	SPtr<Ingen::Interface> iface(world->new_interface(uri, tsci));
+	SPtr<Ingen::Interface> iface(world->new_interface(uri, qi));
 	if (iface) {
 		world->set_interface(iface);
-		_app->attach(tsci);
+		_app->attach(qi);
 		_app->register_callbacks();
 		return true;
 	}
@@ -231,7 +232,7 @@ ConnectWindow::connect(bool existing)
 			_connect_stage = 1;
 			SPtr<Client::SocketClient> client = dynamic_ptr_cast<Client::SocketClient>(world->interface());
 			if (client) {
-				_app->attach(dynamic_ptr_cast<Client::SigClientInterface>(client->respondee()));
+				_app->attach(client->respondee());
 				_app->register_callbacks();
 			} else {
 				error("Connected with invalid client interface type");

@@ -75,7 +75,7 @@ public:
 
 	void error_message(const std::string& str);
 
-	void attach(SPtr<Client::SigClientInterface> client);
+	void attach(SPtr<Ingen::Interface> client);
 
 	void detach();
 
@@ -118,11 +118,13 @@ public:
 	Style*           style()           const { return _style; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
-	Ingen::Forge&                    forge()     const { return _world->forge(); }
-	SPtr<Ingen::Interface>           interface() const { return _world->interface(); }
-	SPtr<Client::SigClientInterface> client()    const { return _client; }
-	SPtr<Client::ClientStore>        store()     const { return _store; }
-	SPtr<ThreadedLoader>             loader()    const { return _loader; }
+	Ingen::Forge&             forge()     const { return _world->forge(); }
+	SPtr<Ingen::Interface>    interface() const { return _world->interface(); }
+	SPtr<Ingen::Interface>    client()    const { return _client; }
+	SPtr<Client::ClientStore> store()     const { return _store; }
+	SPtr<ThreadedLoader>      loader()    const { return _loader; }
+
+	SPtr<Client::SigClientInterface> sig_client();
 
 	SPtr<Serialiser> serialiser();
 
@@ -157,10 +159,10 @@ protected:
 
 	static Gtk::Main* _main;
 
-	SPtr<Client::SigClientInterface> _client;
-	SPtr<Client::ClientStore>        _store;
-	SPtr<ThreadedLoader>             _loader;
-	SPtr<StreamWriter>               _dumper;
+	SPtr<Ingen::Interface>    _client;
+	SPtr<Client::ClientStore> _store;
+	SPtr<ThreadedLoader>      _loader;
+	SPtr<StreamWriter>        _dumper;
 
 	Style* _style;
 
