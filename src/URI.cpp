@@ -42,10 +42,22 @@ URI::URI(const std::string& str, const URI& base)
                                           &_uri))
 {}
 
-URI::URI(const Sord::Node& node)
-    : _node(serd_node_new_uri_from_node(node.to_serd_node(), NULL, &_uri))
+URI::URI(SerdNode node)
+    : _node(serd_node_new_uri_from_node(&node, NULL, &_uri))
 {
-	assert(node.type() == Sord::Node::URI);
+	assert(node.type == SERD_URI);
+}
+
+URI::URI(SerdNode node, SerdURI uri)
+	: _node(node)
+	, _uri(uri)
+{
+	assert(node.type == SERD_URI);
+}
+
+URI::URI(const Sord::Node& node)
+	: URI(*node.to_serd_node())
+{
 }
 
 URI::URI(const FilePath& path)
@@ -88,6 +100,14 @@ URI::operator=(URI&& uri)
 URI::~URI()
 {
 	serd_node_free(&_node);
+}
+
+URI
+URI::make_relative(const URI& base) const
+{
+	SerdURI  uri;
+	SerdNode node = serd_node_new_relative_uri(&_uri, &base._uri, NULL, &uri);
+	return URI(node, uri);
 }
 
 }  // namespace Ingen

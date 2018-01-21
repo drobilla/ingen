@@ -36,7 +36,6 @@ namespace Ingen {
 
 class Interface;
 class World;
-class URI;
 
 /**
    Parser for reading graphs from Turtle files or strings.

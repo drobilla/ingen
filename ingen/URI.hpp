@@ -38,7 +38,8 @@ public:
 	explicit URI(const std::string& str);
 	explicit URI(const char* str);
 	URI(const std::string& str, const URI& base);
-	explicit URI(const Sord::Node& node);
+	URI(const Sord::Node& node);
+	URI(SerdNode node);
 	explicit URI(const FilePath& path);
 
 	URI(const URI& uri);
@@ -48,6 +49,8 @@ public:
 	URI& operator=(URI&& uri);
 
 	~URI();
+
+	URI make_relative(const URI& base) const;
 
 	bool empty() const { return !_node.buf; }
 
@@ -80,6 +83,8 @@ public:
 	}
 
 private:
+	URI(SerdNode node, SerdURI uri);
+
 	static Chunk make_chunk(const SerdChunk& chunk) {
 		return Chunk((const char*)chunk.buf, chunk.len);
 	}
