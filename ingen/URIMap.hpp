@@ -84,8 +84,8 @@ public:
 	SPtr<URIDUnmapFeature> urid_unmap_feature() { return _urid_unmap_feature; }
 
 private:
-	friend class URIDMapFeature;
-	friend class URIDUnMapFeature;
+	friend struct URIDMapFeature;
+	friend struct URIDUnMapFeature;
 
 	SPtr<URIDMapFeature>   _urid_map_feature;
 	SPtr<URIDUnmapFeature> _urid_unmap_feature;
