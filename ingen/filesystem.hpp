@@ -73,7 +73,9 @@ inline bool create_directories(const FilePath& path)
 
 inline FilePath current_path()
 {
-	std::unique_ptr<char> cpath(realpath(".", NULL));
+	struct Freer { void operator()(char* const ptr) { free(ptr); } };
+
+	std::unique_ptr<char, Freer> cpath(realpath(".", NULL));
 	const FilePath path(cpath.get());
 	return path;
 }
