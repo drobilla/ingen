@@ -125,6 +125,10 @@ JackDriver::attach(const std::string& server_name,
 	_block_length = jack_get_buffer_size(_client);
 	_seq_size     = jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE);
 
+	_fallback_buffer = AudioBufPtr(
+		static_cast<float*>(
+			Buffer::aligned_alloc(sizeof(float) * _block_length)));
+
 	jack_on_shutdown(_client, shutdown_cb, this);
 
 	jack_set_thread_init_callback(_client, thread_init_cb, this);
@@ -217,7 +221,12 @@ JackDriver::add_port(RunContext& context, EnginePort* port)
 		const SampleCount nframes = context.nframes();
 		jack_port_t*      jport   = (jack_port_t*)port->handle();
 		void*             jbuf    = jack_port_get_buffer(jport, nframes);
-		graph_port->set_driver_buffer(jbuf, nframes * sizeof(float));
+
+		/* Jack fails to return a buffer if this is too soon after registering
+		   the port, so use a silent fallback buffer if necessary. */
+		graph_port->set_driver_buffer(
+			jbuf ? jbuf : _fallback_buffer.get(),
+			nframes * sizeof(float));
 	}
 }
 

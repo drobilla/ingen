@@ -29,9 +29,9 @@
 #include <jack/session.h>
 #endif
 
-#include "raul/Semaphore.hpp"
-
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "raul/Semaphore.hpp"
 
 #include "Driver.hpp"
 #include "EnginePort.hpp"
@@ -142,8 +142,11 @@ protected:
 	                                boost::intrusive::cache_last<true>
 	                                > Ports;
 
+	using AudioBufPtr = UPtr<float, FreeDeleter<float>>;
+
 	Engine&                _engine;
 	Ports                  _ports;
+	AudioBufPtr            _fallback_buffer;
 	LV2_Atom_Forge         _forge;
 	Raul::Semaphore        _sem;
 	std::atomic<bool>      _flag;
