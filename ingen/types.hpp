@@ -17,6 +17,7 @@
 #ifndef INGEN_TYPES_HPP
 #define INGEN_TYPES_HPP
 
+#include <cstdlib>
 #include <memory>
 
 #include "raul/Maid.hpp"
@@ -24,7 +25,13 @@
 namespace Ingen {
 
 template <class T>
-using UPtr = std::unique_ptr<T>;
+void NullDeleter(T* ptr) {}
+
+template <class T>
+struct FreeDeleter { void operator()(T* const ptr) { free(ptr); } };
+
+template <class T, class Deleter = std::default_delete<T>>
+using UPtr = std::unique_ptr<T, Deleter>;
 
 template <class T>
 using SPtr = std::shared_ptr<T>;
@@ -34,9 +41,6 @@ using WPtr = std::weak_ptr<T>;
 
 template <class T>
 using MPtr = Raul::managed_ptr<T>;
-
-template <class T>
-void NullDeleter(T* ptr) {}
 
 template<class T, class U>
 SPtr<T> static_ptr_cast(const SPtr<U>& r) {
