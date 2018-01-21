@@ -467,32 +467,32 @@ parse_arc(Ingen::World*      world,
 	Sord::Iter h = model.find(subject, ingen_head, nil);
 
 	if (t.end()) {
-		world->log().error("Arc has no tail");
+		world->log().error("Arc has no tail\n");
 		return false;
 	} else if (h.end()) {
-		world->log().error("Arc has no head");
+		world->log().error("Arc has no head\n");
 		return false;
 	}
 
 	const std::string tail_str = relative_uri(
 		base_uri, t.get_object().to_string(), true);
 	if (!Raul::Path::is_valid(tail_str)) {
-		world->log().error("Arc tail has invalid URI");
+		world->log().error("Arc tail has invalid URI\n");
 		return false;
 	}
 
 	const std::string head_str = relative_uri(
 		base_uri, h.get_object().to_string(), true);
 	if (!Raul::Path::is_valid(head_str)) {
-		world->log().error("Arc head has invalid URI");
+		world->log().error("Arc head has invalid URI\n");
 		return false;
 	}
 
 	if (!(++t).end()) {
-		world->log().error("Arc has multiple tails");
+		world->log().error("Arc has multiple tails\n");
 		return false;
 	} else if (!(++h).end()) {
-		world->log().error("Arc has multiple heads");
+		world->log().error("Arc has multiple heads\n");
 		return false;
 	}
 
