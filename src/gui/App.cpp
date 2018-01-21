@@ -404,10 +404,7 @@ void
 App::register_callbacks()
 {
 	Glib::signal_timeout().connect(
-		sigc::mem_fun(*this, &App::gtk_main_iteration), 25, G_PRIORITY_DEFAULT);
-
-	Glib::signal_timeout().connect(
-		sigc::mem_fun(*this, &App::animate), 50, G_PRIORITY_DEFAULT);
+		sigc::mem_fun(*this, &App::gtk_main_iteration), 33, G_PRIORITY_DEFAULT);
 }
 
 bool
@@ -416,6 +413,8 @@ App::gtk_main_iteration()
 	if (!_client) {
 		return false;
 	}
+
+	animate();
 
 	if (_messages_window) {
 		_messages_window->flush();

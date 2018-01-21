@@ -495,7 +495,7 @@ ConnectWindow::gtk_callback()
 		}
 	} else if (_connect_stage == 1) {
 		_attached = false;
-		_app->client()->signal_message().connect(
+		_app->sig_client()->signal_message().connect(
 			sigc::mem_fun(this, &ConnectWindow::message));
 
 		_ping_id = g_random_int_range(1, std::numeric_limits<int32_t>::max());

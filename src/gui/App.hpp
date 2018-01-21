@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_APP_HPP
 #define INGEN_GUI_APP_HPP
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include <gtkmm/aboutdialog.h>
@@ -182,7 +182,7 @@ protected:
 	float       _max_run_load;
 	std::string _status_text;
 
-	typedef std::map<Port*, bool> ActivityPorts;
+	typedef std::unordered_map<Port*, bool> ActivityPorts;
 	ActivityPorts _activity_ports;
 
 	bool _enable_signal;
