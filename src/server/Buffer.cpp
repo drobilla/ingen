@@ -47,30 +47,18 @@ Buffer::Buffer(BufferFactory& bufs,
                bool           external,
                void*          buf)
 	: _factory(bufs)
-	, _buf(nullptr)
+	, _next(nullptr)
+	, _buf(external ? nullptr : aligned_alloc(capacity))
+	, _latest_event(0)
 	, _type(type)
 	, _value_type(value_type)
 	, _capacity(capacity)
-	, _latest_event(0)
-	, _next(nullptr)
 	, _refs(0)
 	, _external(external)
 {
-	if (!external) {
-#ifdef HAVE_POSIX_MEMALIGN
-		int ret = posix_memalign((void**)&_buf, 16, capacity);
-		if (!ret) {
-			memset(_buf, 0, capacity);
-		}
-#else
-		_buf = (LV2_buf*)calloc(1, capacity);
-		int ret = (_buf != NULL) ? 0 : -1;
-#endif
-
-		if (ret) {
-			bufs.engine().log().rt_error("Failed to allocate event buffer\n");
-			throw std::bad_alloc();
-		}
+	if (!external && !_buf) {
+		bufs.engine().log().rt_error("Failed to allocate buffer\n");
+		throw std::bad_alloc();
 	}
 
 	if (type != bufs.uris().atom_Sound) {
@@ -449,6 +437,20 @@ Buffer::dump_cv(const RunContext& context) const
 	fprintf(stderr, "}\n");
 }
 #endif
+
+void* Buffer::aligned_alloc(size_t size)
+{
+#ifdef HAVE_POSIX_MEMALIGN
+	void* buf;
+	if (!posix_memalign((void**)&buf, 16, size)) {
+		memset(buf, 0, size);
+		return buf;
+	}
+#else
+	return (LV2_buf*)calloc(1, size);
+#endif
+	return nullptr;
+}
 
 void
 intrusive_ptr_add_ref(Buffer* b)

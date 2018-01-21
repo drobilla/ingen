@@ -47,6 +47,9 @@ public:
 	       bool           external = false,
 	       void*          buf = nullptr);
 
+	Buffer(const Buffer&) = delete;
+	Buffer& operator=(const Buffer&) = delete;
+
 	void clear();
 	void resize(uint32_t capacity);
 	void copy(const RunContext& context, const Buffer* src);
@@ -204,6 +207,8 @@ public:
 
 	void set_buffer(void* buf) { assert(_external); _buf = buf; }
 
+	static void* aligned_alloc(size_t size);
+
 	template<typename T> const T* get() const { return reinterpret_cast<const T*>(_buf); }
 	template<typename T> T*       get()       { return reinterpret_cast<T*>(_buf); }
 
@@ -215,28 +220,22 @@ public:
 		}
 	}
 
-protected:
-	BufferFactory& _factory;
-	void*          _buf;
-	LV2_URID       _type;
-	LV2_URID       _value_type;
-	uint32_t       _capacity;
-	int64_t        _latest_event;
-
-	BufferRef _value_buffer;  ///< Value buffer for numeric sequences
-
+private:
 	friend class BufferFactory;
 	~Buffer();
 
-private:
-	Buffer(const Buffer&) = delete;
-	Buffer& operator=(const Buffer&) = delete;
-
 	void recycle();
 
-	Buffer*               _next;      ///< Intrusive linked list for BufferFactory
-	std::atomic<unsigned> _refs;      ///< Intrusive reference count
-	bool                  _external;  ///< Buffer is externally allocated
+	BufferFactory&        _factory;
+	Buffer*               _next; ///< Intrusive linked list for BufferFactory
+	void*                 _buf; ///< Actual buffer memory
+	BufferRef             _value_buffer; ///< Value buffer for numeric sequences
+	int64_t               _latest_event;
+	LV2_URID              _type;
+	LV2_URID              _value_type;
+	uint32_t              _capacity;
+	std::atomic<unsigned> _refs; ///< Intrusive reference count
+	bool                  _external; ///< Buffer is externally allocated
 };
 
 } // namespace Server
