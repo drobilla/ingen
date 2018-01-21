@@ -141,7 +141,7 @@ get_port(Ingen::World*     world,
 	Properties props = get_properties(world, model, subject, ctx);
 
 	// Get index if requested (for Graphs)
-	if (index && ctx == Resource::Graph::INTERNAL) {
+	if (index) {
 		Properties::const_iterator i = props.find(uris.lv2_index);
 		if (i == props.end()
 		    || i->second.type() != world->forge().Int
