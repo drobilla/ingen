@@ -68,7 +68,7 @@ main(int, char**)
 
 	FilePath path("/x");
 	EXPECT_EQ(path, "/x");
-	path = std::move(std::string("/a"));
+	path = std::string("/a");
 	EXPECT_EQ(path, "/a");
 
 	path /= FilePath("b");
