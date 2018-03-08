@@ -565,16 +565,18 @@ parse(Ingen::World*                 world,
 		const Sord::Node&           s     = i.first;
 		const std::set<Sord::Node>& types = i.second;
 		boost::optional<Raul::Path> ret;
-		const Raul::Path rel_path(*get_path(base_uri, s));
-		const Raul::Path path = parent ? parent->child(rel_path) : rel_path;
 		if (types.find(graph_class) != types.end()) {
 			ret = parse_graph(world, target, model, base_uri,
 			                  s, Resource::Graph::INTERNAL,
 			                  parent, symbol, data);
 		} else if (types.find(block_class) != types.end()) {
+			const Raul::Path rel_path(*get_path(base_uri, s));
+			const Raul::Path path = parent ? parent->child(rel_path) : rel_path;
 			ret = parse_block(world, target, model, base_uri, s, path, data);
 		} else if (types.find(in_port_class) != types.end() ||
 		           types.find(out_port_class) != types.end()) {
+			const Raul::Path rel_path(*get_path(base_uri, s));
+			const Raul::Path path = parent ? parent->child(rel_path) : rel_path;
 			parse_properties(world, target, model,
 			                 s, Resource::Graph::DEFAULT,
 			                 path_to_uri(path), data);
