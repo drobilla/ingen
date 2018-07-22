@@ -86,7 +86,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
                       atleast_version='0.8.10', mandatory=True)
     autowaf.check_pkg(conf, 'serd-0', uselib_store='SERD',
-                      atleast_version='0.18.0', mandatory=False)
+                      atleast_version='0.30.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
                       atleast_version='0.12.0', mandatory=False)
     autowaf.check_pkg(conf, 'portaudio-2.0', uselib_store='PORTAUDIO',

@@ -65,7 +65,7 @@ Parser::find_resources(Sord::World& world,
 		if (!f.end()) {
 			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), nullptr);
 			file_path = (const char*)p;
-			free(p);
+			serd_free(p);
 		}
 		resources.insert(ResourceRecord(resource, file_path));
 	}
