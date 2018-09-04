@@ -223,7 +223,7 @@ float
 Buffer::peak(const RunContext& context) const
 {
 #ifdef __SSE__
-	const __m128* const vbuf    = (const __m128* const)samples();
+	const __m128* const vbuf    = (const __m128*)samples();
 	__m128              vpeak   = mm_abs_ps(vbuf[0]);
 	const SampleCount   nblocks = context.nframes() / 4;
 
