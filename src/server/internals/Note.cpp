@@ -195,6 +195,7 @@ NoteNode::run(RunContext& context)
 					}
 					break;
 				}
+				break;
 			case LV2_MIDI_MSG_BENDER:
 				bend(context, time, (((((uint16_t)buf[2] << 7) | buf[1]) - 8192.0f)
 				                     / 8192.0f));
