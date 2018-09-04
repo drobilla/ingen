@@ -64,7 +64,7 @@ CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 {
 	try {
 		return maid.make_managed<CompiledGraph>(&graph);
-	} catch (FeedbackException e) {
+	} catch (const FeedbackException& e) {
 		Log& log = graph.engine().log();
 		if (e.node && e.root) {
 			log.error(fmt("Feedback compiling %1% from %2%\n")
