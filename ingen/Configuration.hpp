@@ -79,7 +79,11 @@ public:
 		explicit FileError(const std::string& m) : Exception(m) {}
 	};
 
-	void parse(int argc, char** argv) throw (OptionError);
+	/** Parse a command line.
+	 *
+	 * @throw OptionError
+	 */
+	void parse(int argc, char **argv);
 
 	/** Load a specific file. */
 	bool load(const FilePath& path);
@@ -102,7 +106,7 @@ public:
 	FilePath save(URIMap&            uri_map,
 	              const std::string& app,
 	              const FilePath&    filename,
-	              unsigned           scopes) throw (FileError);
+	              unsigned           scopes);
 
 	/** Load files from the standard configuration directories for the app.
 	 *
@@ -140,8 +144,7 @@ private:
 	std::string variable_string(LV2_URID type) const;
 
 	int set_value_from_string(Configuration::Option& option,
-	                          const std::string&     value)
-			throw (Configuration::OptionError);
+	                          const std::string&     value);
 
 	Forge&            _forge;
 	const std::string _shortdesc;

@@ -133,7 +133,6 @@ Configuration::print_usage(const std::string& program, std::ostream& os)
 int
 Configuration::set_value_from_string(Configuration::Option& option,
                                      const std::string&     value)
-		throw (Configuration::OptionError)
 {
 	if (option.type == _forge.Int) {
 		char* endptr = nullptr;
@@ -160,7 +159,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 
 /** Parse command line arguments. */
 void
-Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
+Configuration::parse(int argc, char** argv)
 {
 	for (int i = 1; i < argc; ++i) {
 		if (argv[i][0] != '-' || !strcmp(argv[i], "-")) {
@@ -265,7 +264,6 @@ Configuration::save(URIMap&            uri_map,
                     const std::string& app,
                     const FilePath&    filename,
                     unsigned           scopes)
-		throw (FileError)
 {
 	// Save to file if it is absolute, otherwise save to user config dir
 	FilePath path = filename;

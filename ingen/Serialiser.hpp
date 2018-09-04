@@ -71,14 +71,18 @@ public:
 	virtual void start_to_file(const Raul::Path&  root,
 	                           const std::string& filename);
 
-	/** Serialize an object (graph, block, or port). */
-	virtual void serialise(SPtr<const Node> object)
-			throw (std::logic_error);
+	/** Serialize an object (graph, block, or port).
+	 *
+	 * @throw std::logic_error
+	 */
+	virtual void serialise(SPtr<const Node> object);
 
-	/** Serialize an arc. */
+	/** Serialize an arc.
+	 *
+	 * @throw std::logic_error
+	 */
 	virtual void serialise_arc(const Sord::Node& parent,
-	                           SPtr<const Arc>   arc)
-			throw (std::logic_error);
+	                           SPtr<const Arc>   arc);
 
 	/** Finish serialization.
 	 *

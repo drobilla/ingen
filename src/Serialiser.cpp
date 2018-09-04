@@ -87,8 +87,7 @@ struct Serialiser::Impl {
 	                   const std::set<const Resource*> plugins);
 
 	void serialise_arc(const Sord::Node& parent,
-	                   SPtr<const Arc>   arc)
-			throw (std::logic_error);
+	                   SPtr<const Arc>   arc);
 
 	std::string finish();
 
@@ -278,7 +277,7 @@ Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 }
 
 void
-Serialiser::serialise(SPtr<const Node> object) throw (std::logic_error)
+Serialiser::serialise(SPtr<const Node> object)
 {
 	if (!me->_model) {
 		throw std::logic_error("serialise called without serialisation in progress");
@@ -493,7 +492,6 @@ Serialiser::Impl::serialise_port(const Node*       port,
 void
 Serialiser::serialise_arc(const Sord::Node& parent,
                           SPtr<const Arc>   arc)
-		throw (std::logic_error)
 {
 	return me->serialise_arc(parent, arc);
 }
@@ -501,7 +499,6 @@ Serialiser::serialise_arc(const Sord::Node& parent,
 void
 Serialiser::Impl::serialise_arc(const Sord::Node& parent,
                                 SPtr<const Arc>   arc)
-		throw (std::logic_error)
 {
 	if (!_model) {
 		throw std::logic_error(
