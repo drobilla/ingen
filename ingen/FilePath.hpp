@@ -48,14 +48,9 @@ public:
 
 	typedef std::basic_string<value_type> string_type;
 
-	FilePath() noexcept       = default;
+	FilePath()                = default;
 	FilePath(const FilePath&) = default;
-
-	FilePath(FilePath&& path) noexcept
-		: _str(std::move(path._str))
-	{
-		path.clear();
-	}
+	FilePath(FilePath&&)      = default;
 
 	FilePath(string_type&& str) : _str(std::move(str)) {}
 	FilePath(const string_type& str) : _str(str) {}
