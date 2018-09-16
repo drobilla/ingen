@@ -1,10 +1,10 @@
 #!/usr/bin/env python
+
 import os
 import subprocess
-import waflib.Logs as Logs
-import waflib.Options as Options
-import waflib.Utils as Utils
-import waflib.extras.autowaf as autowaf
+
+from waflib import Logs, Options, Utils
+from waflib.extras import autowaf
 
 # Package version
 INGEN_VERSION = '0.5.1'
@@ -22,32 +22,24 @@ def options(ctx):
     ctx.recurse('src/gui')
     autowaf.set_options(ctx, test=True)
     opt = ctx.get_option_group('Configuration options')
+
     opt.add_option('--data-dir', type='string', dest='datadir',
-                   help='ingen data install directory [Default: PREFIX/share/ingen]')
+                   help='ingen data install directory [default: PREFIX/share/ingen]')
     opt.add_option('--module-dir', type='string', dest='moduledir',
-                   help='ingen module install directory [Default: PREFIX/lib/ingen]')
-    opt.add_option('--no-gui', action='store_true', dest='no_gui',
-                   help='do not build GUI')
-    opt.add_option('--no-client', action='store_true', dest='no_client',
-                   help='do not build client library (or GUI)')
-    opt.add_option('--no-jack', action='store_true', dest='no_jack',
-                   help='do not build jack backend (for ingen.lv2 only)')
-    opt.add_option('--no-plugin', action='store_true', dest='no_plugin',
-                   help='do not build ingen.lv2 plugin')
-    opt.add_option('--no-python', action='store_true', dest='no_python',
-                   help='do not install Python bindings')
-    opt.add_option('--no-webkit', action='store_true', dest='no_webkit',
-                   help='do not use webkit to display plugin documentation')
-    opt.add_option('--no-jack-session', action='store_true', default=False,
-                   dest='no_jack_session',
-                   help='do not build JACK session support')
-    opt.add_option('--no-socket', action='store_true', dest='no_socket',
-                   help='do not build Socket interface')
-    opt.add_option('--debug-urids', action='store_true', dest='debug_urids',
-                   help='print a trace of URI mapping')
-    opt.add_option('--portaudio', action='store_true', default=False,
-                   dest='portaudio',
-                   help='build PortAudio backend')
+                   help='ingen module install directory [default: PREFIX/lib/ingen]')
+
+    autowaf.add_flags(
+        opt,
+        {'no-gui':          'do not build GUI',
+         'no-client':       'do not build client library (or GUI)',
+         'no-jack':         'do not build jack backend (for ingen.lv2 only)',
+         'no-plugin':       'do not build ingen.lv2 plugin',
+         'no-python':       'do not install Python bindings',
+         'no-webkit':       'do not use webkit to display plugin documentation',
+         'no-jack-session': 'do not build JACK session support',
+         'no-socket':       'do not build Socket interface',
+         'debug-urids':     'print a trace of URI mapping',
+         'portaudio':       'build PortAudio backend'})
 
 def configure(conf):
     autowaf.display_header('Ingen Configuration')
@@ -162,8 +154,8 @@ def configure(conf):
     if conf.check(linkflags=['-lpthread'], mandatory=False):
         conf.env.PTHREAD_LINKFLAGS += ['-lpthread']
 
-    autowaf.define(conf, 'INGEN_SHARED', 1);
-    autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
+    conf.define('INGEN_SHARED', 1);
+    conf.define('INGEN_VERSION', INGEN_VERSION)
 
     if not Options.options.no_client:
         autowaf.define(conf, 'INGEN_BUILD_CLIENT', 1)
@@ -185,21 +177,18 @@ def configure(conf):
 
     conf.write_config_header('ingen_config.h', remove=False)
 
-    autowaf.display_summary(conf)
-    autowaf.display_msg(conf, "GUI", bool(conf.env.INGEN_BUILD_GUI))
-    autowaf.display_msg(conf, "HTML plugin documentation support",
-                        bool(conf.env.HAVE_WEBKIT))
-    autowaf.display_msg(conf, "PortAudio driver", bool(conf.env.HAVE_PORTAUDIO))
-    autowaf.display_msg(conf, "Jack driver", bool(conf.env.HAVE_JACK))
-    autowaf.display_msg(conf, "Jack session support",
-                        bool(conf.env.INGEN_JACK_SESSION))
-    autowaf.display_msg(conf, "Jack metadata support",
-                        conf.is_defined('HAVE_JACK_METADATA'))
-    autowaf.display_msg(conf, "LV2 plugin driver", bool(conf.env.INGEN_BUILD_LV2))
-    autowaf.display_msg(conf, "LV2 bundle", conf.env.INGEN_BUNDLE_DIR)
-    autowaf.display_msg(conf, "LV2 plugin support", bool(conf.env.HAVE_LILV))
-    autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
-    print('')
+    autowaf.display_summary(
+        conf,
+        {'GUI':                     bool(conf.env.INGEN_BUILD_GUI),
+         'HTML plugin doc support': bool(conf.env.HAVE_WEBKIT),
+         'PortAudio driver':        bool(conf.env.HAVE_PORTAUDIO),
+         'Jack driver':             bool(conf.env.HAVE_JACK),
+         'Jack session support':    bool(conf.env.INGEN_JACK_SESSION),
+         'Jack metadata support':   conf.is_defined('HAVE_JACK_METADATA'),
+         'LV2 plugin driver':       bool(conf.env.INGEN_BUILD_LV2),
+         'LV2 bundle':              conf.env.INGEN_BUNDLE_DIR,
+         'LV2 plugin support':      bool(conf.env.HAVE_LILV),
+         'Socket interface':        conf.is_defined('HAVE_SOCKET')})
 
 unit_tests = ['tst_FilePath']
 
