@@ -539,6 +539,7 @@ GraphCanvas::on_event(GdkEvent* event)
 			show_menu(true, 3, event->key.time);
 		default: break;
 		}
+		break;
 
 	case GDK_MOTION_NOTIFY:
 		_paste_count = 0;
