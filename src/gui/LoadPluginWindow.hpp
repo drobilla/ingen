@@ -107,9 +107,7 @@ private:
 	void filter_changed();
 	void clear_clicked();
 	void name_changed();
-#ifdef HAVE_NEW_GTKMM
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
-#endif
 
 	void set_row(Gtk::TreeModel::Row&            row,
 	             SPtr<const Client::PluginModel> plugin);
