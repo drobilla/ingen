@@ -20,8 +20,8 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+#include "lv2/atom/atom.h"
+#include "lv2/ui/ui.h"
 
 namespace Ingen {
 namespace Client {

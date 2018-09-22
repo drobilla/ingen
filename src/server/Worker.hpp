@@ -20,7 +20,7 @@
 #include <thread>
 
 #include "ingen/LV2Features.hpp"
-#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
+#include "lv2/worker/worker.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
 

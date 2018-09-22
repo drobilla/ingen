@@ -36,7 +36,7 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/atom/atom.h"
 
 #include "App.hpp"
 #include "Arc.hpp"

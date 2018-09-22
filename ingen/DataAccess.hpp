@@ -27,8 +27,8 @@
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 
-#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
-#include "lv2/lv2plug.in/ns/ext/data-access/data-access.h"
+#include "lv2/core/lv2.h"
+#include "lv2/data-access/data-access.h"
 
 namespace Ingen {
 

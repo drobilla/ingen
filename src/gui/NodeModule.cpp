@@ -19,7 +19,7 @@
 
 #include <gtkmm/eventbox.h>
 
-#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/atom/util.h"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"

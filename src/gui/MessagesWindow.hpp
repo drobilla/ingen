@@ -24,7 +24,7 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/textview.h>
-#include "lv2/lv2plug.in/ns/ext/log/log.h"
+#include "lv2/log/log.h"
 
 #include "Window.hpp"
 

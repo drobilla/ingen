@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/atom/util.h"
 
 #include "Buffer.hpp"
 #include "RunContext.hpp"

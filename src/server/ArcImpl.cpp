@@ -15,7 +15,7 @@
 */
 
 #include "ingen/URIs.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/atom/util.h"
 
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"

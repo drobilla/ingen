@@ -18,11 +18,11 @@
 #include <cmath>
 #include <cstdint>
 
-#include "lv2/lv2plug.in/ns/ext/morph/morph.h"
-#include "lv2/lv2plug.in/ns/ext/presets/presets.h"
-#include "lv2/lv2plug.in/ns/ext/options/options.h"
-#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
-#include "lv2/lv2plug.in/ns/ext/state/state.h"
+#include "lv2/morph/morph.h"
+#include "lv2/presets/presets.h"
+#include "lv2/options/options.h"
+#include "lv2/resize-port/resize-port.h"
+#include "lv2/state/state.h"
 
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"

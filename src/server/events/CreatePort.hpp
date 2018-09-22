@@ -20,7 +20,7 @@
 #include <boost/optional.hpp>
 
 #include "ingen/Resource.hpp"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
 #include "raul/Path.hpp"
 

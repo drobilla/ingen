@@ -22,7 +22,7 @@
 
 #include "ingen/AtomSink.hpp"
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/atom/atom.h"
 #include "serd/serd.h"
 #include "sratom/sratom.h"
 

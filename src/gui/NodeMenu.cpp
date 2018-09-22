@@ -26,7 +26,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
-#include "lv2/lv2plug.in/ns/ext/presets/presets.h"
+#include "lv2/presets/presets.h"
 
 #include "App.hpp"
 #include "NodeMenu.hpp"

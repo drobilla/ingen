@@ -25,8 +25,8 @@
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/atom/forge.h"
+#include "lv2/urid/urid.h"
 
 namespace Raul { class Path; }
 

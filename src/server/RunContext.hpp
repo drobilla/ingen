@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <thread>
 
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/urid/urid.h"
 #include "raul/RingBuffer.hpp"
 
 #include "types.hpp"

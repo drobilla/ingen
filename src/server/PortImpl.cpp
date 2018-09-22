@@ -16,7 +16,7 @@
 
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/atom/util.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 

@@ -23,7 +23,7 @@
 
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
-#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/core/lv2.h"
 #include "raul/Noncopyable.hpp"
 
 namespace Ingen {

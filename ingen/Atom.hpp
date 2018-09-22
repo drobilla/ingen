@@ -24,8 +24,8 @@
 #include <cstring>
 
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/atom/atom.h"
+#include "lv2/urid/urid.h"
 
 namespace Ingen {
 

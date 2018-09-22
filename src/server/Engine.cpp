@@ -21,8 +21,8 @@
 #include <limits>
 #include <thread>
 
-#include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
-#include "lv2/lv2plug.in/ns/ext/state/state.h"
+#include "lv2/buf-size/buf-size.h"
+#include "lv2/state/state.h"
 
 #include "events/CreateGraph.hpp"
 #include "ingen/AtomReader.hpp"

@@ -19,7 +19,7 @@
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/URIs.hpp"
-#include "lv2/lv2plug.in/ns/ext/options/options.h"
+#include "lv2/options/options.h"
 
 namespace Ingen {
 namespace Server {

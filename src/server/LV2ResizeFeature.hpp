@@ -18,7 +18,7 @@
 #define INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 
 #include "ingen/LV2Features.hpp"
-#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/resize-port/resize-port.h"
 
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"

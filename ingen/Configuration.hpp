@@ -25,7 +25,7 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/urid/urid.h"
 #include "raul/Exception.hpp"
 
 namespace Ingen {

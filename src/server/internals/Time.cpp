@@ -15,8 +15,8 @@
 */
 
 #include "ingen/URIs.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/util.h"
-#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
+#include "lv2/atom/util.h"
+#include "lv2/midi/midi.h"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"

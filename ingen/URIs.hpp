@@ -21,7 +21,7 @@
 #include "ingen/URI.hpp"
 #include "ingen/ingen.h"
 #include "lilv/lilv.h"
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 
 namespace Ingen {

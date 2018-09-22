@@ -23,7 +23,7 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "lv2/atom/forge.h"
 
 namespace Ingen {
 

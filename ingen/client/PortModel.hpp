@@ -23,8 +23,8 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
-#include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
-#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/core/lv2.h"
+#include "lv2/port-props/port-props.h"
 
 namespace Raul { class Path; }
 

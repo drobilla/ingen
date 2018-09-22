@@ -31,7 +31,7 @@
 #include "ingen/World.hpp"
 #include "ingen/filesystem.hpp"
 #include "ingen/paths.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/atom/atom.h"
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"

@@ -24,7 +24,7 @@
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+#include "lv2/ui/ui.h"
 
 #include "App.hpp"
 #include "GraphBox.hpp"

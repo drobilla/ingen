@@ -30,7 +30,7 @@
 #endif
 
 #include "ingen/types.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "lv2/atom/forge.h"
 #include "raul/Semaphore.hpp"
 
 #include "Driver.hpp"

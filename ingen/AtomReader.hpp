@@ -24,7 +24,7 @@
 #include "ingen/AtomSink.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/atom/atom.h"
 
 namespace Raul {
 class Path;

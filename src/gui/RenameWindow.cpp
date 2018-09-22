@@ -21,7 +21,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/core/lv2.h"
 
 #include "App.hpp"
 #include "RenameWindow.hpp"
