@@ -115,7 +115,7 @@ InputPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
 	if (_arcs.size() == 1 && !is_a(PortType::ATOM) && !_arcs.front().must_mix()) {
 		// Single non-mixing connection, use buffers directly
 		for (uint32_t v = 0; v < poly; ++v) {
-			_voices->at(v).buffer = _arcs.front().buffer(v);
+			_voices->at(v).buffer = _arcs.front().buffer(ctx, v);
 		}
 		return false;
 	}
@@ -158,7 +158,7 @@ InputPort::pre_process(RunContext& context)
 	} else if (direct_connect()) {
 		// Directly connected, use source's buffer directly
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_voices->at(v).buffer = _arcs.front().buffer(v);
+			_voices->at(v).buffer = _arcs.front().buffer(context, v);
 		}
 	} else {
 		// Mix down to local buffers in pre_run()
@@ -194,13 +194,13 @@ InputPort::pre_run(RunContext& context)
 					// P -> 1 or 1 -> 1: all tail voices => each head voice
 					for (uint32_t w = 0; w < arc.tail()->poly(); ++w) {
 						assert(n_srcs < max_n_srcs);
-						srcs[n_srcs++] = arc.buffer(w, context.offset()).get();
+						srcs[n_srcs++] = arc.buffer(context, w).get();
 						assert(srcs[n_srcs - 1]);
 					}
 				} else {
 					// P -> P or 1 -> P: tail voice => corresponding head voice
 					assert(n_srcs < max_n_srcs);
-					srcs[n_srcs++] = arc.buffer(v, context.offset()).get();
+					srcs[n_srcs++] = arc.buffer(context, v).get();
 					assert(srcs[n_srcs - 1]);
 				}
 			}

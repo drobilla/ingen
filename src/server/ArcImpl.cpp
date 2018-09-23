@@ -65,7 +65,7 @@ ArcImpl::head_path() const
 }
 
 BufferRef
-ArcImpl::buffer(uint32_t voice, SampleCount offset) const
+ArcImpl::buffer(const RunContext&, uint32_t voice) const
 {
 	return _tail->buffer(std::min(voice, _tail->poly() - 1));
 }
