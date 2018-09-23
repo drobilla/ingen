@@ -49,10 +49,10 @@ public:
 	        SampleCount           timestamp,
 	        const ingen::Connect& msg);
 
-	bool pre_process(PreProcessContext& ctx);
-	void execute(RunContext& context);
-	void post_process();
-	void undo(Interface& target);
+	bool pre_process(PreProcessContext& ctx) override;
+	void execute(RunContext& context) override;
+	void post_process() override;
+	void undo(Interface& target) override;
 
 private:
 	const ingen::Connect   _msg;

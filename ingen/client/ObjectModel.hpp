@@ -57,17 +57,18 @@ class INGEN_API ObjectModel : public Node
 public:
 	bool is_a(const URIs::Quark& type) const;
 
-	const Atom& get_property(const URI& key) const;
+	const Atom& get_property(const URI& key) const override;
 
-	void on_property(const URI& uri, const Atom& value);
-	void on_property_removed(const URI& uri, const Atom& value);
+	void on_property(const URI& uri, const Atom& value) override;
+	void on_property_removed(const URI& uri, const Atom& value) override;
 
-	const Raul::Path&   path()       const { return _path; }
-	const Raul::Symbol& symbol()     const { return _symbol; }
-	SPtr<ObjectModel>   parent()     const { return _parent; }
-	bool                polyphonic() const;
+	const Raul::Path&   path()   const override { return _path; }
+	const Raul::Symbol& symbol() const override { return _symbol; }
 
-	Node* graph_parent() const { return _parent.get(); }
+	SPtr<ObjectModel> parent()     const { return _parent; }
+	bool              polyphonic() const;
+
+	Node* graph_parent() const override { return _parent.get(); }
 
 	// Signals
 	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>);
@@ -83,7 +84,7 @@ protected:
 	ObjectModel(URIs& uris, const Raul::Path& path);
 	ObjectModel(const ObjectModel& copy);
 
-	virtual void set_path(const Raul::Path& p);
+	void set_path(const Raul::Path& p) override;
 	virtual void set_parent(SPtr<ObjectModel> p);
 	virtual void add_child(SPtr<ObjectModel> c) {}
 	virtual bool remove_child(SPtr<ObjectModel> c) { return true; }

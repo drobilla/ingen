@@ -70,12 +70,12 @@ public:
 	                   uint32_t    size,
 	                   uint32_t    type);
 
-	bool pre_process(PreProcessContext& ctx);
-	void execute(RunContext& context);
-	void post_process();
-	void undo(Interface& target);
+	bool pre_process(PreProcessContext& ctx) override;
+	void execute(RunContext& context) override;
+	void post_process() override;
+	void undo(Interface& target) override;
 
-	Execution get_execution() const;
+	Execution get_execution() const override;
 
 private:
 	enum class Type {

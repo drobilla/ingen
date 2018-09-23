@@ -62,7 +62,7 @@ public:
 		                            : "http://www.w3.org/2002/07/owl#Nothing");
 	}
 
-	virtual const Atom& get_property(const URI& key) const;
+	const Atom& get_property(const URI& key) const override;
 
 	Raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;

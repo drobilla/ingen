@@ -44,13 +44,13 @@ public:
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
 	                       Engine&             engine,
-	                       const LilvState*    state)
+	                       const LilvState*    state) override
 	{
 		return nullptr;
 	}
 
-	const Raul::Symbol symbol() const { return Raul::Symbol("graph"); }
-	const std::string  name()   const { return "Ingen Graph"; }
+	const Raul::Symbol symbol() const override { return Raul::Symbol("graph"); }
+	const std::string  name()   const          { return "Ingen Graph"; }
 
 private:
 	const std::string _symbol;

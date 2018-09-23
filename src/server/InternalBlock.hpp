@@ -37,9 +37,9 @@ public:
 
 	BlockImpl* duplicate(Engine&             engine,
 	                     const Raul::Symbol& symbol,
-	                     GraphImpl*          parent);
+	                     GraphImpl*          parent) override;
 
-	virtual void pre_process(RunContext& context);
+	void pre_process(RunContext& context) override;
 };
 
 } // namespace server

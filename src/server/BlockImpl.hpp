@@ -70,7 +70,7 @@ public:
 
 	virtual ~BlockImpl();
 
-	virtual GraphType graph_type() const { return GraphType::BLOCK; }
+	GraphType graph_type() const override { return GraphType::BLOCK; }
 
 	/** Activate this Block.
 	 *
@@ -136,7 +136,7 @@ public:
 	                             BufferRef   buf,
 	                             SampleCount offset);
 
-	virtual Node*     port(uint32_t index)      const;
+	Node*             port(uint32_t index)      const override;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
 
 	/** Get a port by symbol. */
@@ -156,13 +156,13 @@ public:
 	 */
 	virtual void set_polyphonic(bool p) { _polyphonic = p; }
 
-	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	virtual bool apply_poly(RunContext& context, uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
+	bool apply_poly(RunContext& context, uint32_t poly) override;
 
 	/** Information about the Plugin this Block is an instance of.
 	 * Not the best name - not all blocks come from plugins (ie Graph)
 	 */
-	virtual const Resource* plugin() const;
+	const Resource* plugin() const override;
 
 	/** Information about the Plugin this Block is an instance of.
 	 * Not the best name - not all blocks come from plugins (ie Graph)
@@ -177,9 +177,10 @@ public:
 	                             uint32_t       size);
 
 	/** The Graph this Block belongs to. */
-	inline GraphImpl* parent_graph() const { return (GraphImpl*)_parent; }
+	GraphImpl* parent_graph() const override { return (GraphImpl*)_parent; }
 
-	uint32_t         num_ports() const { return _ports ? _ports->size() : 0; }
+	uint32_t num_ports() const override { return _ports ? _ports->size() : 0; }
+
 	virtual uint32_t polyphony() const { return _polyphony; }
 
 	/** Mark used during graph compilation */

@@ -41,8 +41,8 @@ public:
 	SPtr<PortModel> tail() const { return _tail; }
 	SPtr<PortModel> head() const { return _head; }
 
-	const Raul::Path& tail_path() const { return _tail->path(); }
-	const Raul::Path& head_path() const { return _head->path(); }
+	const Raul::Path& tail_path() const override { return _tail->path(); }
+	const Raul::Path& head_path() const override { return _head->path(); }
 
 private:
 	friend class ClientStore;

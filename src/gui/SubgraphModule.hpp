@@ -45,9 +45,9 @@ public:
 
 	virtual ~SubgraphModule() {}
 
-	bool on_double_click(GdkEventButton* event);
+	bool on_double_click(GdkEventButton* event) override;
 
-	void store_location(double ax, double ay);
+	void store_location(double ax, double ay) override;
 
 	void browse_to_graph();
 	void menu_remove();

@@ -45,10 +45,10 @@ public:
 	         GraphImpl*          parent,
 	         SampleRate          srate);
 
-	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(RunContext& context, uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
+	bool apply_poly(RunContext& context, uint32_t poly) override;
 
-	void run(RunContext& context);
+	void run(RunContext& context) override;
 
 	void note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
 	void note_off(RunContext& context, uint8_t note_num, FrameTime time);

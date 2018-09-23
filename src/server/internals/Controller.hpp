@@ -45,11 +45,11 @@ public:
 	               GraphImpl*           parent,
 	               SampleRate           srate);
 
-	void run(RunContext& context);
+	void run(RunContext& context) override;
 
 	bool control(RunContext& context, uint8_t control_num, uint8_t val, FrameTime time);
 
-	void learn() { _learning = true; }
+	void learn() override { _learning = true; }
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 

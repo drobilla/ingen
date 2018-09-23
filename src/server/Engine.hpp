@@ -81,18 +81,18 @@ public:
 	Engine& operator=(const Engine&) = delete;
 
 	// EngineBase methods
-	virtual void init(double sample_rate, uint32_t block_length, size_t seq_size);
-	virtual bool supports_dynamic_ports() const;
-	virtual bool activate();
-	virtual void deactivate();
-	virtual bool pending_events() const;
-	virtual unsigned run(uint32_t sample_count);
-	virtual void quit();
-	virtual bool main_iteration();
-	virtual void register_client(SPtr<Interface> client);
-	virtual bool unregister_client(SPtr<Interface> client);
+	void init(double sample_rate, uint32_t block_length, size_t seq_size) override;
+	bool supports_dynamic_ports() const override;
+	bool activate() override;
+	void deactivate() override;
+	bool pending_events() const override;
+	unsigned run(uint32_t sample_count) override;
+	void quit() override;
+	bool main_iteration() override;
+	void register_client(SPtr<Interface> client) override;
+	bool unregister_client(SPtr<Interface> client) override;
 
-	void listen();
+	void listen() override;
 
 	/** Return a random [0..1] float with uniform distribution */
 	float frand() { return _uniform_dist(_rand_engine); }
@@ -152,10 +152,10 @@ public:
 
 	RunContext& run_context() { return *_run_contexts[0]; }
 
-	void flush_events(const std::chrono::milliseconds& sleep_ms);
+	void flush_events(const std::chrono::milliseconds& sleep_ms) override;
+	void advance(SampleCount nframes) override;
+	void locate(FrameTime s, SampleCount nframes) override;
 
-	void  advance(SampleCount nframes);
-	void  locate(FrameTime s, SampleCount nframes);
 	void  emit_notifications(FrameTime end);
 	bool  pending_notifications();
 	bool  wait_for_tasks();

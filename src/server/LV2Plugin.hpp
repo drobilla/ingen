@@ -45,18 +45,18 @@ public:
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
 	                       Engine&             engine,
-	                       const LilvState*    state);
+	                       const LilvState*    state) override;
 
-	const Raul::Symbol symbol() const;
+	const Raul::Symbol symbol() const override;
 
 	World*            world()       const { return _world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 
-	void update_properties();
+	void update_properties() override;
 
-	void load_presets();
+	void load_presets() override;
 
-	URI bundle_uri() const {
+	URI bundle_uri() const override {
 		const LilvNode* bundle = lilv_plugin_get_bundle_uri(_lilv_plugin);
 		return URI(lilv_node_as_uri(bundle));
 	}

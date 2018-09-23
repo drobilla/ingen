@@ -52,10 +52,10 @@ public:
 	           const Raul::Path& path,
 	           const Properties& properties);
 
-	bool pre_process(PreProcessContext& ctx);
-	void execute(RunContext& context);
-	void post_process();
-	void undo(Interface& target);
+	bool pre_process(PreProcessContext& ctx) override;
+	void execute(RunContext& context) override;
+	void post_process() override;
+	void undo(Interface& target) override;
 
 private:
 	enum class Flow {

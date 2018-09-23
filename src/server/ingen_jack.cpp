@@ -29,7 +29,7 @@
 using namespace ingen;
 
 struct IngenJackModule : public ingen::Module {
-	void load(ingen::World* world) {
+	void load(ingen::World* world) override {
 		if (((server::Engine*)world->engine().get())->driver()) {
 			world->log().warn("Engine already has a driver\n");
 			return;

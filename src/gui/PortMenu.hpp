@@ -44,7 +44,7 @@ public:
 	          bool                          internal_graph_port = false);
 
 private:
-	void on_menu_disconnect();
+	void on_menu_disconnect() override;
 	void on_menu_set_min();
 	void on_menu_set_max();
 	void on_menu_reset_range();

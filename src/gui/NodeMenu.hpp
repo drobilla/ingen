@@ -54,7 +54,7 @@ protected:
 
 	void add_preset(const URI& uri, const std::string& label);
 
-	void on_menu_disconnect();
+	void on_menu_disconnect() override;
 	void on_menu_embed_gui();
 	void on_menu_enabled();
 	void on_menu_randomize();

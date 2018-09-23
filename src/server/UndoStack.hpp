@@ -78,7 +78,7 @@ public:
 	UndoStack(URIs& uris, URIMap& map) : _uris(uris), _map(map), _depth(0) {}
 
 	int  start_entry();
-	bool write(const LV2_Atom* msg, int32_t default_id=0);
+	bool write(const LV2_Atom* msg, int32_t default_id=0) override;
 	int  finish_entry();
 
 	bool  empty() const { return _stack.empty(); }

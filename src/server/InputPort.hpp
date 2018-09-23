@@ -65,7 +65,7 @@ public:
 	/** Return the maximum polyphony of an output connected to this input. */
 	virtual uint32_t max_tail_poly(RunContext& context) const;
 
-	bool apply_poly(RunContext& context, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly) override;
 
 	/** Add an arc.  Realtime safe.
 	 *
@@ -92,20 +92,22 @@ public:
 	                     MPtr<Voices>&  voices,
 	                     uint32_t       poly) const;
 
-	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
+	bool
+	setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
 
 	/** Set up buffer pointers. */
-	void pre_process(RunContext& context);
+	void pre_process(RunContext& context) override;
 
 	/** Prepare buffer for access, mixing if necessary. */
-	void pre_run(RunContext& context);
+	void pre_run(RunContext& context) override;
 
 	/** Prepare buffer for next process cycle. */
-	void post_process(RunContext& context);
+	void post_process(RunContext& context) override;
 
-	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
+	SampleCount
+	next_value_offset(SampleCount offset, SampleCount end) const override;
 
-	size_t num_arcs() const     { return _num_arcs; }
+	size_t num_arcs() const override { return _num_arcs; }
 	void   increment_num_arcs() { ++_num_arcs; }
 	void   decrement_num_arcs() { --_num_arcs; }
 
@@ -116,7 +118,7 @@ protected:
 	                 PortImpl::GetFn     get,
 	                 const MPtr<Voices>& voices,
 	                 uint32_t            poly,
-	                 size_t              num_in_arcs) const;
+	                 size_t              num_in_arcs) const override;
 
 	size_t _num_arcs;  ///< Pre-process thread
 	Arcs   _arcs;      ///< Audio thread

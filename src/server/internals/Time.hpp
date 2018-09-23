@@ -44,7 +44,7 @@ public:
 	         GraphImpl*          parent,
 	         SampleRate          srate);
 
-	void run(RunContext& context);
+	void run(RunContext& context) override;
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 

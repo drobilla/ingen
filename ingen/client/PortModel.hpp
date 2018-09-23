@@ -40,7 +40,7 @@ class INGEN_API PortModel : public ObjectModel
 public:
 	enum class Direction { INPUT, OUTPUT };
 
-	GraphType graph_type() const { return Node::GraphType::PORT; }
+	GraphType graph_type() const override { return Node::GraphType::PORT; }
 
 	bool supports(const URIs::Quark& value_type) const;
 
@@ -63,7 +63,7 @@ public:
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
-	void on_property(const URI& uri, const Atom& value);
+	void on_property(const URI& uri, const Atom& value) override;
 
 	// Signals
 	INGEN_SIGNAL(value_changed, void, const Atom&);
@@ -82,10 +82,10 @@ private:
 		, _direction(dir)
 	{}
 
-	void add_child(SPtr<ObjectModel> c)    { throw; }
-	bool remove_child(SPtr<ObjectModel> c) { throw; }
+	void add_child(SPtr<ObjectModel> c) override    { throw; }
+	bool remove_child(SPtr<ObjectModel> c) override { throw; }
 
-	void set(SPtr<ObjectModel> model);
+	void set(SPtr<ObjectModel> model) override;
 
 	uint32_t  _index;
 	Direction _direction;

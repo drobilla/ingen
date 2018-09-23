@@ -27,7 +27,7 @@ namespace gui {
 struct GUIModule : public Module {
 	using SigClientInterface = client::SigClientInterface;
 
-	void load(World* world) {
+	void load(World* world) override {
 		URI uri(world->conf().option("connect").ptr<char>());
 		if (!world->interface()) {
 			world->set_interface(
@@ -40,7 +40,7 @@ struct GUIModule : public Module {
 		app = gui::App::create(world);
 	}
 
-	void run(World* world) {
+	void run(World* world) override {
 		app->run();
 	}
 

@@ -28,9 +28,9 @@ class Sentinel : public Event {
 public:
 	Sentinel(Engine& engine) : Event(engine) {}
 
-	bool pre_process(PreProcessContext& ctx) { return false; }
-	void execute(RunContext& context) {}
-	void post_process() {}
+	bool pre_process(PreProcessContext& ctx) override { return false; }
+	void execute(RunContext& context) override {}
+	void post_process() override {}
 };
 
 PostProcessor::PostProcessor(Engine& engine)

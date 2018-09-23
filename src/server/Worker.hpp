@@ -41,9 +41,9 @@ public:
 	struct Schedule : public LV2Features::Feature {
 		Schedule(bool sync) : synchronous(sync) {}
 
-		const char* uri() const { return LV2_WORKER__schedule; }
+		const char* uri() const override { return LV2_WORKER__schedule; }
 
-		SPtr<LV2_Feature> feature(World* world, Node* n);
+		SPtr<LV2_Feature> feature(World* world, Node* n) override;
 
 		const bool synchronous;
 	};

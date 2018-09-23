@@ -64,7 +64,7 @@ public:
 	void value_changed(const Atom& value);
 	void activity(const Atom& value);
 
-	bool on_selected(gboolean b);
+	bool on_selected(gboolean b) override;
 
 private:
 	Port(App&                          app,
@@ -86,7 +86,7 @@ private:
 	void on_value_changed(double value);
 	void on_scale_point_activated(float f);
 	void on_uri_activated(const URI& uri);
-	bool on_event(GdkEvent* ev);
+	bool on_event(GdkEvent* ev) override;
 	void port_properties_changed();
 	void set_type_tag();
 

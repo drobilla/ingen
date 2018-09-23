@@ -70,13 +70,13 @@ protected:
 	virtual bool on_double_click(GdkEventButton* ev);
 
 	bool idle_init();
-	bool on_event(GdkEvent* ev);
+	bool on_event(GdkEvent* ev) override;
 
 	void on_embed_gui_toggled(bool embed);
 	void embed_gui(bool embed);
 	bool popup_gui();
 	void on_gui_window_close();
-	bool on_selected(gboolean selected);
+	bool on_selected(gboolean selected) override;
 
 	void rename();
 	void property_changed(const URI& key, const Atom& value);

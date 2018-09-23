@@ -49,13 +49,13 @@ class RunContext;
 class NodeImpl : public Node
 {
 public:
-	const Raul::Symbol& symbol() const { return _symbol; }
+	const Raul::Symbol& symbol() const override { return _symbol; }
 
-	Node*     graph_parent() const { return _parent; }
-	NodeImpl* parent()       const { return _parent; }
+	Node*     graph_parent() const override { return _parent; }
+	NodeImpl* parent()       const          { return _parent; }
 
 	/** Rename */
-	virtual void set_path(const Raul::Path& new_path) {
+	void set_path(const Raul::Path& new_path) override {
 		_path = new_path;
 		const char* const new_sym = new_path.symbol();
 		if (new_sym[0] != '\0') {
@@ -64,12 +64,12 @@ public:
 		set_uri(path_to_uri(new_path));
 	}
 
-	const Atom& get_property(const URI& key) const;
+	const Atom& get_property(const URI& key) const override;
 
 	/** The Graph this object is a child of. */
 	virtual GraphImpl* parent_graph() const;
 
-	const Raul::Path& path() const { return _path; }
+	const Raul::Path& path() const override { return _path; }
 
 	/** Prepare for a new (external) polyphony value.
 	 *

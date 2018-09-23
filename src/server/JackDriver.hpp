@@ -65,37 +65,40 @@ public:
 	            const std::string& client_name,
 	            void*              jack_client);
 
-	bool activate();
-	void deactivate();
+	bool activate() override;
+	void deactivate() override;
 
-	bool dynamic_ports() const { return true; }
+	bool dynamic_ports() const override { return true; }
 
-	EnginePort* create_port(DuplexPort* graph_port);
-	EnginePort* get_port(const Raul::Path& path);
+	EnginePort* create_port(DuplexPort* graph_port) override;
+	EnginePort* get_port(const Raul::Path& path) override;
 
-	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);
-	void port_property(const Raul::Path& path, const URI& uri, const Atom& value);
-	void add_port(RunContext& context, EnginePort* port);
-	void remove_port(RunContext& context, EnginePort* port);
-	void register_port(EnginePort& port);
-	void unregister_port(EnginePort& port);
+	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path) override;
+	void port_property(const Raul::Path& path, const URI& uri, const Atom& value) override;
+	void add_port(RunContext& context, EnginePort* port) override;
+	void remove_port(RunContext& context, EnginePort* port) override;
+	void register_port(EnginePort& port) override;
+	void unregister_port(EnginePort& port) override;
 
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
 	inline const jack_position_t* position()        { return &_position; }
 	inline jack_transport_state_t transport_state() { return _transport_state; }
 
-	void append_time_events(RunContext& context,
-	                        Buffer&     buffer);
+	void append_time_events(RunContext& context, Buffer& buffer) override;
 
-	int real_time_priority() { return jack_client_real_time_priority(_client); }
+	int real_time_priority() override {
+		return jack_client_real_time_priority(_client);
+	}
 
-	jack_client_t* jack_client()  const { return _client; }
-	SampleCount    block_length() const { return _block_length; }
-	size_t         seq_size()     const { return _seq_size; }
-	SampleCount    sample_rate()  const { return _sample_rate; }
+	jack_client_t* jack_client()  const          { return _client; }
+	SampleCount    block_length() const override { return _block_length; }
+	size_t         seq_size()     const override { return _seq_size; }
+	SampleCount    sample_rate()  const override { return _sample_rate; }
 
-	inline SampleCount frame_time() const { return _client ? jack_frame_time(_client) : 0; }
+	SampleCount frame_time() const override {
+		return _client ? jack_frame_time(_client) : 0;
+	}
 
 	class PortRegistrationFailedException : public std::exception {};
 

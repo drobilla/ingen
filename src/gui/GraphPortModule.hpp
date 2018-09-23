@@ -63,7 +63,7 @@ protected:
 	                SPtr<const client::PortModel> model);
 
 	bool show_menu(GdkEventButton* ev);
-	void set_selected(gboolean b);
+	void set_selected(gboolean b) override;
 
 	void set_port(Port* port) { _port = port; }
 

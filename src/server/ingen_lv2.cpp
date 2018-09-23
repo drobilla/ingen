@@ -117,7 +117,7 @@ public:
 		, _instantiated(false)
 	{}
 
-	virtual bool dynamic_ports() const { return !_instantiated; }
+	bool dynamic_ports() const override { return !_instantiated; }
 
 	void pre_process_port(RunContext& context, EnginePort* port) {
 		const URIs&       uris       = _engine.world()->uris();
@@ -187,7 +187,7 @@ public:
 		_frame_time += nframes;
 	}
 
-	virtual void deactivate() {
+	void deactivate() override {
 		_engine.quit();
 		_main_sem.post();
 	}
@@ -195,7 +195,7 @@ public:
 	virtual void       set_root_graph(GraphImpl* graph) { _root_graph = graph; }
 	virtual GraphImpl* root_graph()                     { return _root_graph; }
 
-	virtual EnginePort* get_port(const Raul::Path& path) {
+	EnginePort* get_port(const Raul::Path& path) override {
 		for (auto& p : _ports) {
 			if (p->graph_port()->path() == path) {
 				return p;
@@ -206,7 +206,7 @@ public:
 	}
 
 	/** Add a port.  Called only during init or restore. */
-	virtual void add_port(RunContext& context, EnginePort* port) {
+	void add_port(RunContext& context, EnginePort* port) override {
 		const uint32_t index = port->graph_port()->index();
 		if (_ports.size() <= index) {
 			_ports.resize(index + 1);
@@ -215,34 +215,32 @@ public:
 	}
 
 	/** Remove a port.  Called only during init or restore. */
-	virtual void remove_port(RunContext& context, EnginePort* port) {
+	void remove_port(RunContext& context, EnginePort* port) override {
 		const uint32_t index = port->graph_port()->index();
 		_ports[index] = nullptr;
 	}
 
 	/** Unused since LV2 has no dynamic ports. */
-	virtual void register_port(EnginePort& port) {}
+	void register_port(EnginePort& port) override {}
 
 	/** Unused since LV2 has no dynamic ports. */
-	virtual void unregister_port(EnginePort& port) {}
+	void unregister_port(EnginePort& port) override {}
 
 	/** Unused since LV2 has no dynamic ports. */
-	virtual void rename_port(const Raul::Path& old_path,
-	                         const Raul::Path& new_path) {}
+	void rename_port(const Raul::Path& old_path,
+	                 const Raul::Path& new_path) override {}
 
 	/** Unused since LV2 has no dynamic ports. */
-	virtual void port_property(const Raul::Path& path,
-	                           const URI&        uri,
-	                           const Atom&       value) {}
+	void port_property(const Raul::Path& path,
+	                   const URI&        uri,
+	                   const Atom&       value) override {}
 
-	virtual EnginePort* create_port(DuplexPort* graph_port) {
+	EnginePort* create_port(DuplexPort* graph_port) override {
 		graph_port->set_is_driver_port(*_engine.buffer_factory());
 		return new EnginePort(graph_port);
 	}
 
-	virtual void append_time_events(RunContext& context,
-	                                Buffer&     buffer)
-	{
+	void append_time_events(RunContext& context, Buffer& buffer) override {
 		const URIs&        uris = _engine.world()->uris();
 		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
@@ -258,7 +256,7 @@ public:
 		}
 	}
 
-	virtual int real_time_priority() { return 60; }
+	int real_time_priority() override { return 60; }
 
 	/** Called in run thread for events received at control input port. */
 	bool enqueue_message(const LV2_Atom* atom) {
@@ -276,7 +274,7 @@ public:
 	/** AtomSink::write implementation called by the PostProcessor in the main
 	 * thread to write responses to the UI.
 	 */
-	bool write(const LV2_Atom* atom, int32_t default_id) {
+	bool write(const LV2_Atom* atom, int32_t default_id) override {
 		// Called from post-processor in main thread
 		while (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
 			// Overflow, wait until ring is drained next cycle
@@ -363,10 +361,10 @@ public:
 		}
 	}
 
-	virtual SampleCount block_length() const { return _block_length; }
-	virtual size_t      seq_size()     const { return _seq_size; }
-	virtual SampleCount sample_rate()  const { return _sample_rate; }
-	virtual SampleCount frame_time()   const { return _frame_time; }
+	SampleCount block_length() const override { return _block_length; }
+	size_t      seq_size()     const override { return _seq_size; }
+	SampleCount sample_rate()  const override { return _sample_rate; }
+	SampleCount frame_time()   const override { return _frame_time; }
 
 	AtomReader& reader() { return _reader; }
 	AtomWriter& writer() { return _writer; }

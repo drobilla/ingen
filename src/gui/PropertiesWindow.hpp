@@ -93,7 +93,7 @@ private:
 	Atom get_value(LV2_URID type, Gtk::Widget* value_widget);
 
 	void reset();
-	void on_show();
+	void on_show() override;
 
 	std::string active_key() const;
 

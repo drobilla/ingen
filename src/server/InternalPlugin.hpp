@@ -43,9 +43,9 @@ public:
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
 	                       Engine&             engine,
-	                       const LilvState*    state);
+	                       const LilvState*    state) override;
 
-	const Raul::Symbol symbol() const { return _symbol; }
+	const Raul::Symbol symbol() const override { return _symbol; }
 
 private:
 	const Raul::Symbol _symbol;

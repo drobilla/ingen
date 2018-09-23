@@ -46,9 +46,9 @@ public:
 	    SampleCount       timestamp,
 	    const ingen::Get& msg);
 
-	bool pre_process(PreProcessContext& ctx);
-	void execute(RunContext& context) {}
-	void post_process();
+	bool pre_process(PreProcessContext& ctx) override;
+	void execute(RunContext& context) override {}
+	void post_process() override;
 
 private:
 	const ingen::Get      _msg;

@@ -59,23 +59,23 @@ public:
 
 	void inherit_neighbour(const PortImpl* port,
 	                       Properties&     remove,
-	                       Properties&     add);
+	                       Properties&     add) override;
 
-	void on_property(const URI& uri, const Atom& value);
+	void on_property(const URI& uri, const Atom& value) override;
 
-	uint32_t max_tail_poly(RunContext& context) const;
+	uint32_t max_tail_poly(RunContext& context) const override;
 
-	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
 
-	bool apply_poly(RunContext& context, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly) override;
 
 	bool get_buffers(BufferFactory&      bufs,
 	                 PortImpl::GetFn     get,
 	                 const MPtr<Voices>& voices,
 	                 uint32_t            poly,
-	                 size_t              num_in_arcs) const;
+	                 size_t              num_in_arcs) const override;
 
-	virtual void set_is_driver_port(BufferFactory& bufs);
+	void set_is_driver_port(BufferFactory& bufs) override;
 
 	/** Set the external driver-provided buffer.
 	 *
@@ -84,12 +84,14 @@ public:
 	 */
 	void set_driver_buffer(void* buf, uint32_t capacity);
 
-	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
+	bool
+	setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
 
-	void pre_process(RunContext& context);
-	void post_process(RunContext& context);
+	void pre_process(RunContext& context) override;
+	void post_process(RunContext& context) override;
 
-	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
+	SampleCount
+	next_value_offset(SampleCount offset, SampleCount end) const override;
 };
 
 } // namespace server

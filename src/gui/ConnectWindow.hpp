@@ -75,8 +75,8 @@ private:
 	void activate();
 	void deactivate();
 	void quit_clicked();
-	void on_show();
-	void on_hide();
+	void on_show() override;
+	void on_hide() override;
 
 	void load_widgets();
 	void set_connecting_widget_states();

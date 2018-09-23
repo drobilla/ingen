@@ -44,13 +44,13 @@ public:
 		_ports.clear_and_dispose([](EnginePort* p) { delete p; });
 	}
 
-	bool dynamic_ports() const { return true; }
+	bool dynamic_ports() const override { return true; }
 
-	virtual EnginePort* create_port(DuplexPort* graph_port) {
+	EnginePort* create_port(DuplexPort* graph_port) override {
 		return new EnginePort(graph_port);
 	}
 
-	virtual EnginePort* get_port(const Raul::Path& path) {
+	EnginePort* get_port(const Raul::Path& path) override {
 		for (auto& p : _ports) {
 			if (p.graph_port()->path() == path) {
 				return &p;
@@ -60,35 +60,37 @@ public:
 		return nullptr;
 	}
 
-	virtual void add_port(RunContext& context, EnginePort* port) {
+	void add_port(RunContext& context, EnginePort* port) override {
 		_ports.push_back(*port);
 	}
 
-	virtual void remove_port(RunContext& context, EnginePort* port) {
+	void remove_port(RunContext& context, EnginePort* port) override {
 		_ports.erase(_ports.iterator_to(*port));
 	}
 
-	virtual void rename_port(const Raul::Path& old_path,
-	                         const Raul::Path& new_path) {}
+	void rename_port(const Raul::Path& old_path,
+	                 const Raul::Path& new_path) override {}
 
-	virtual void port_property(const Raul::Path& path,
-	                           const URI&        uri,
-	                           const Atom&       value) {}
+	void port_property(const Raul::Path& path,
+	                   const URI&        uri,
+	                   const Atom&       value) override {}
 
-	virtual void register_port(EnginePort& port) {}
-	virtual void unregister_port(EnginePort& port) {}
+	void register_port(EnginePort& port) override {}
+	void unregister_port(EnginePort& port) override {}
 
-	virtual SampleCount block_length() const { return _block_length; }
+	SampleCount block_length() const override { return _block_length; }
 
-	virtual size_t seq_size() const { return _seq_size; }
+	size_t seq_size() const override { return _seq_size; }
 
-	virtual SampleCount sample_rate() const { return _sample_rate; }
+	SampleCount sample_rate() const override { return _sample_rate; }
 
-	virtual SampleCount frame_time() const { return _engine.run_context().start(); }
+	SampleCount frame_time() const override {
+		return _engine.run_context().start();
+	}
 
-	virtual void append_time_events(RunContext& context, Buffer& buffer) {}
+	void append_time_events(RunContext& context, Buffer& buffer) override {}
 
-	virtual int real_time_priority() { return 60; }
+	int real_time_priority() override { return 60; }
 
 private:
 	typedef boost::intrusive::slist<EnginePort,

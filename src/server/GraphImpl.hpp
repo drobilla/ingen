@@ -59,23 +59,23 @@ public:
 
 	virtual ~GraphImpl();
 
-	virtual GraphType graph_type() const { return GraphType::GRAPH; }
+	GraphType graph_type() const override { return GraphType::GRAPH; }
 
 	BlockImpl* duplicate(Engine&             engine,
 	                     const Raul::Symbol& symbol,
-	                     GraphImpl*          parent);
+	                     GraphImpl*          parent) override;
 
-	void activate(BufferFactory& bufs);
-	void deactivate();
+	void activate(BufferFactory& bufs) override;
+	void deactivate() override;
 
-	void pre_process(RunContext& context);
-	void process(RunContext& context);
-	void run(RunContext& context);
+	void pre_process(RunContext& context) override;
+	void process(RunContext& context) override;
+	void run(RunContext& context) override;
 
 	void set_buffer_size(RunContext&    context,
 	                     BufferFactory& bufs,
 	                     LV2_URID       type,
-	                     uint32_t       size);
+	                     uint32_t       size) override;
 
 	/** Prepare for a new (internal) polyphony value.
 	 *

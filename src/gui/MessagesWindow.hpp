@@ -44,7 +44,7 @@ public:
 	MessagesWindow(BaseObjectType*                   cobject,
 	               const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init_window(App& app);
+	void init_window(App& app) override;
 
 	int log(LV2_URID type, const char* fmt, va_list args);
 	void flush();

@@ -48,12 +48,12 @@ public:
 	            GraphImpl*          parent,
 	            SampleRate          srate);
 
-	void run(RunContext& context);
+	void run(RunContext& context) override;
 
 	bool note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
 	bool note_off(RunContext& context, uint8_t note_num, FrameTime time);
 
-	void learn() { _learning = true; }
+	void learn() override { _learning = true; }
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 

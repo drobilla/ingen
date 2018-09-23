@@ -36,7 +36,7 @@ class INGEN_API GraphModel : public BlockModel
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
-	GraphType graph_type() const { return Node::GraphType::GRAPH; }
+	GraphType graph_type() const override { return Node::GraphType::GRAPH; }
 
 	SPtr<ArcModel> get_arc(const ingen::Node* tail,
 	                       const ingen::Node* head);
@@ -58,9 +58,9 @@ private:
 		: BlockModel(uris, uris.ingen_Graph, graph_path)
 	{}
 
-	void clear();
-	void add_child(SPtr<ObjectModel> c);
-	bool remove_child(SPtr<ObjectModel> o);
+	void clear() override;
+	void add_child(SPtr<ObjectModel> c) override;
+	bool remove_child(SPtr<ObjectModel> o) override;
 	void remove_arcs_on(SPtr<PortModel> p);
 
 	void add_arc(SPtr<ArcModel> arc);

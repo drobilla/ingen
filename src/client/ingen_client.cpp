@@ -20,7 +20,7 @@
 #include "ingen_config.h"
 
 struct IngenClientModule : public ingen::Module {
-	void load(ingen::World* world) {}
+	void load(ingen::World* world) override {}
 };
 
 extern "C" {

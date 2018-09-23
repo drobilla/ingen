@@ -58,8 +58,8 @@ public:
 	inline PortImpl* tail() const { return _tail; }
 	inline PortImpl* head() const { return _head; }
 
-	const Raul::Path& tail_path() const;
-	const Raul::Path& head_path() const;
+	const Raul::Path& tail_path() const override;
+	const Raul::Path& head_path() const override;
 
 	/** Get the buffer for a particular voice.
 	 * An Arc is smart - it knows the destination port requesting the

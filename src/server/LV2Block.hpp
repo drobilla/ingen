@@ -50,35 +50,35 @@ public:
 
 	bool instantiate(BufferFactory& bufs, const LilvState* state);
 
-	LilvInstance* instance() { return instance(0); }
-	bool          save_state(const FilePath& dir) const;
+	LilvInstance* instance() override { return instance(0); }
+	bool          save_state(const FilePath& dir) const override;
 
 	BlockImpl* duplicate(Engine&             engine,
 	                     const Raul::Symbol& symbol,
-	                     GraphImpl*          parent);
+	                     GraphImpl*          parent) override;
 
-	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(RunContext& context, uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
+	bool apply_poly(RunContext& context, uint32_t poly) override;
 
-	void activate(BufferFactory& bufs);
-	void deactivate();
+	void activate(BufferFactory& bufs) override;
+	void deactivate() override;
 
 	LV2_Worker_Status work(uint32_t size, const void* data);
 
-	void run(RunContext& context);
-	void post_process(RunContext& context);
+	void run(RunContext& context) override;
+	void post_process(RunContext& context) override;
 
-	LilvState* load_preset(const URI& uri);
+	LilvState* load_preset(const URI& uri) override;
 
-	void apply_state(const UPtr<Worker>& worker, const LilvState* state);
+	void apply_state(const UPtr<Worker>& worker, const LilvState* state) override;
 
 	boost::optional<Resource> save_preset(const URI&        uri,
-	                                      const Properties& props);
+	                                      const Properties& props) override;
 
 	void set_port_buffer(uint32_t    voice,
 	                     uint32_t    port_num,
 	                     BufferRef   buf,
-	                     SampleCount offset);
+	                     SampleCount offset) override;
 
 	static LilvState* load_state(World* world, const FilePath& path);
 

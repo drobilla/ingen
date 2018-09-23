@@ -63,8 +63,8 @@ public:
 	             Properties                     data);
 
 protected:
-	void on_show();
-	bool on_key_press_event(GdkEventKey* event);
+	void on_show() override;
+	bool on_key_press_event(GdkEventKey* event) override;
 
 private:
 	/** Columns for the plugin list */

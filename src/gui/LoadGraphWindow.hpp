@@ -55,7 +55,7 @@ public:
 	             Properties                     data);
 
 protected:
-	void on_show();
+	void on_show() override;
 
 private:
 	void merge_ports_selected();

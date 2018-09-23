@@ -49,21 +49,21 @@ public:
 	BlockModel(const BlockModel& copy);
 	virtual ~BlockModel();
 
-	GraphType graph_type() const { return Node::GraphType::BLOCK; }
+	GraphType graph_type() const override { return Node::GraphType::BLOCK; }
 
 	typedef std::vector< SPtr<const PortModel> > Ports;
 
 	SPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
 	SPtr<const PortModel> get_port(uint32_t index) const;
 
-	Node* port(uint32_t index) const;
+	Node* port(uint32_t index) const override;
 
-	const URI&        plugin_uri()   const { return _plugin_uri; }
-	const Resource*   plugin()       const { return _plugin.get(); }
-	Resource*         plugin()             { return _plugin.get(); }
-	SPtr<PluginModel> plugin_model() const { return _plugin; }
-	uint32_t          num_ports()    const { return _ports.size(); }
-	const Ports&      ports()        const { return _ports; }
+	const URI&        plugin_uri()   const          { return _plugin_uri; }
+	const Resource*   plugin()       const override { return _plugin.get(); }
+	Resource*         plugin()                      { return _plugin.get(); }
+	SPtr<PluginModel> plugin_model() const          { return _plugin; }
+	uint32_t          num_ports()    const override { return _ports.size(); }
+	const Ports&      ports()        const          { return _ports; }
 
 	void default_port_value_range(SPtr<const PortModel> port,
 	                              float&                min,
@@ -93,12 +93,12 @@ protected:
 	           const Raul::Path& path);
 	explicit BlockModel(const Raul::Path& path);
 
-	void add_child(SPtr<ObjectModel> c);
-	bool remove_child(SPtr<ObjectModel> c);
+	void add_child(SPtr<ObjectModel> c) override;
+	bool remove_child(SPtr<ObjectModel> c) override;
 	void add_port(SPtr<PortModel> pm);
 	void remove_port(SPtr<PortModel> port);
 	void remove_port(const Raul::Path& port_path);
-	void set(SPtr<ObjectModel> model);
+	void set(SPtr<ObjectModel> model) override;
 
 	virtual void clear();
 

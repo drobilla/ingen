@@ -73,7 +73,7 @@ public:
 
 	void get_new_module_location(double& x, double& y);
 
-	void clear_selection();
+	void clear_selection() override;
 	void destroy_selection();
 	void copy_selection();
 	void paste();

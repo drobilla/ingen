@@ -98,7 +98,7 @@ public:
 	         size_t              buffer_size = 0,
 	         bool                is_output = true);
 
-	virtual GraphType graph_type() const { return GraphType::PORT; }
+	GraphType graph_type() const override { return GraphType::PORT; }
 
 	/** A port's parent is always a block, so static cast should be safe */
 	BlockImpl* parent_block() const { return (BlockImpl*)_parent; }
@@ -110,14 +110,14 @@ public:
 	 *
 	 * Preprocessor thread, poly is actually applied by apply_poly.
 	 */
-	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
 
 	/** Apply a new polyphony value.
 	 *
 	 * Audio thread.
 	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
-	virtual bool apply_poly(RunContext& context, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly) override;
 
 	/** Return the number of arcs (pre-process thraed). */
 	virtual size_t num_arcs() const { return 0; }

@@ -42,9 +42,9 @@ public:
 	     SampleCount        timestamp,
 	     const ingen::Redo& msg);
 
-	bool pre_process(PreProcessContext& ctx);
-	void execute(RunContext& context);
-	void post_process();
+	bool pre_process(PreProcessContext& ctx) override;
+	void execute(RunContext& context) override;
+	void post_process() override;
 
 private:
 	UndoStack::Entry _entry;

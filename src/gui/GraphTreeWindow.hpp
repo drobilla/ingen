@@ -103,7 +103,7 @@ public:
 
 	void set_window(GraphTreeWindow* win) { _window = win; }
 
-	bool on_button_press_event(GdkEventButton* ev) {
+	bool on_button_press_event(GdkEventButton* ev) override {
 		bool ret = Gtk::TreeView::on_button_press_event(ev);
 
 		if ((ev->type == GDK_BUTTON_PRESS) && (ev->button == 3))

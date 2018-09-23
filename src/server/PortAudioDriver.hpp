@@ -52,28 +52,28 @@ public:
 
 	bool attach();
 
-	bool activate();
-	void deactivate();
+	bool activate() override;
+	void deactivate() override;
 
-	EnginePort* create_port(DuplexPort* graph_port);
-	EnginePort* get_port(const Raul::Path& path);
+	EnginePort* create_port(DuplexPort* graph_port) override;
+	EnginePort* get_port(const Raul::Path& path) override;
 
-	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);
-	void port_property(const Raul::Path& path, const URI& uri, const Atom& value);
-	void add_port(RunContext& context, EnginePort* port);
-	void remove_port(RunContext& context, EnginePort* port);
-	void register_port(EnginePort& port);
-	void unregister_port(EnginePort& port);
+	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path) override;
+	void port_property(const Raul::Path& path, const URI& uri, const Atom& value) override;
+	void add_port(RunContext& context, EnginePort* port) override;
+	void remove_port(RunContext& context, EnginePort* port) override;
+	void register_port(EnginePort& port) override;
+	void unregister_port(EnginePort& port) override;
 
-	void append_time_events(RunContext& context, Buffer& buffer) {}
+	void append_time_events(RunContext& context, Buffer& buffer) override {}
 
-	SampleCount frame_time() const;
+	SampleCount frame_time() const override;
 
-	int real_time_priority() { return 80; }
+	int real_time_priority() override { return 80; }
 
-	SampleCount    block_length() const { return _block_length; }
-	size_t         seq_size()     const { return _seq_size; }
-	SampleCount    sample_rate()  const { return _sample_rate; }
+	SampleCount    block_length() const override { return _block_length; }
+	size_t         seq_size()     const override { return _seq_size; }
+	SampleCount    sample_rate()  const override { return _sample_rate; }
 
 private:
 	friend class PortAudioPort;

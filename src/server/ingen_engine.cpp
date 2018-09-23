@@ -23,7 +23,7 @@
 using namespace ingen;
 
 struct IngenEngineModule : public ingen::Module {
-	virtual void load(ingen::World* world) {
+	void load(ingen::World* world) override {
 		server::set_denormal_flags(world->log());
 		SPtr<server::Engine> engine(new server::Engine(world));
 		world->set_engine(engine);

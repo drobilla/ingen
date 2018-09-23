@@ -46,11 +46,11 @@ public:
 	     SampleCount             timestamp,
 	     const ingen::BundleEnd& msg);
 
-	bool pre_process(PreProcessContext& ctx);
-	void execute(RunContext& context);
-	void post_process();
+	bool pre_process(PreProcessContext& ctx) override;
+	void execute(RunContext& context) override;
+	void post_process() override;
 
-	Execution get_execution() const;
+	Execution get_execution() const override;
 
 private:
 	enum class Type { BUNDLE_BEGIN, BUNDLE_END };

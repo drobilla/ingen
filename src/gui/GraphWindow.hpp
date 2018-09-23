@@ -46,7 +46,7 @@ public:
 
 	~GraphWindow();
 
-	void init_window(App& app);
+	void init_window(App& app) override;
 
 	SPtr<const client::GraphModel> graph() const { return _box->graph(); }
 	GraphBox*                      box()   const { return _box; }
@@ -63,9 +63,9 @@ public:
 	}
 
 protected:
-	void on_hide();
-	void on_show();
-	bool on_key_press_event(GdkEventKey* event);
+	void on_hide() override;
+	void on_show() override;
+	bool on_key_press_event(GdkEventKey* event) override;
 
 private:
 	GraphBox* _box;

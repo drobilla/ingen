@@ -37,7 +37,7 @@ public:
 
 	virtual void init_window(App& app) { _app = &app; }
 
-	bool on_key_press_event(GdkEventKey* event) {
+	bool on_key_press_event(GdkEventKey* event) override {
 		if (event->keyval == GDK_w && event->state & GDK_CONTROL_MASK) {
 			hide();
 			return true;
@@ -61,7 +61,7 @@ public:
 
 	virtual void init_dialog(App& app) { _app = &app; }
 
-	bool on_key_press_event(GdkEventKey* event) {
+	bool on_key_press_event(GdkEventKey* event) override {
 		if (event->keyval == GDK_w && event->state & GDK_CONTROL_MASK) {
 			hide();
 			return true;
