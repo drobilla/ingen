@@ -503,12 +503,18 @@ parse_properties(ingen::World*               world,
 {
 	Properties properties = get_properties(world, model, subject, ctx);
 
-	target->put(uri, properties, ctx);
-
-	// Set passed properties last to override any loaded values
+	// Replace any properties given in `data`
 	if (data) {
-		target->put(uri, data.get(), ctx);
+		for (const auto& prop : *data) {
+			properties.erase(prop.first);
+		}
+
+		for (const auto& prop : *data) {
+			properties.emplace(prop);
+		}
 	}
+
+	target->put(uri, properties, ctx);
 
 	return true;
 }
