@@ -734,12 +734,25 @@ GraphCanvas::paste()
 		const URI&        old_uri  = path_to_uri(old_path);
 		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
-		Properties props{{uris.lv2_prototype,
-		                  _app.forge().make_urid(old_uri)}};
+		// Copy properties, except those that should not be inherited in copies
+		Properties props = node->properties();
+		for (const auto& prop : {uris.lv2_prototype,
+		                         uris.ingen_canvasX,
+		                         uris.ingen_canvasY,
+		                         uris.lv2_index,
+		                         uris.lv2_symbol}) {
+			props.erase(prop);
+		}
 
-		// Set the same types
-		const auto t = node->properties().equal_range(uris.rdf_type);
-		props.insert(t.first, t.second);
+		// Store the old URI as a prototype (keeps provenance around)
+		props.emplace(uris.lv2_prototype, _app.forge().make_urid(old_uri));
+
+		// Adjust numeric suffix on name if appropriate
+		auto n = props.find(uris.lv2_name);
+		if (n != props.end()) {
+			n->second = _app.forge().alloc(ClashAvoider::adjust_name(
+			        old_path, new_path, n->second.ptr<char>()));
+		}
 
 		// Set coordinates so paste origin is at the mouse pointer
 		PropIter xi = node->properties().find(uris.ingen_canvasX);

@@ -41,6 +41,16 @@ public:
 
 	bool exists(const Raul::Path& path) const;
 
+	/** Adjust a new label by increasing the numeric suffix if any.
+	 *
+	 * @param old_path The old path that was mapped with `map_path()`
+	 * @param new_path The new path that `old_path` was mapped to
+	 * @param name The old name.
+	 */
+	static std::string adjust_name(const Raul::Path& old_path,
+	                               const Raul::Path& new_path,
+	                               std::string       name);
+
 private:
 	typedef std::map<Raul::Path, unsigned>   Offsets;
 	typedef std::map<Raul::Path, Raul::Path> SymbolMap;

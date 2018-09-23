@@ -221,6 +221,10 @@ Resource::remove_properties(const Properties& props)
 Properties
 Resource::properties(Resource::Graph ctx) const
 {
+	if (ctx == Resource::Graph::DEFAULT) {
+		return properties();
+	}
+
 	Properties props;
 	for (const auto& p : _properties) {
 		if (p.second.context() == ctx) {

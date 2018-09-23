@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2018 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -15,10 +15,13 @@
 */
 
 #include <cassert>
+#include <cctype>
 #include <cstdio>
 #include <sstream>
 #include <string>
 #include <utility>
+
+#include <boost/optional.hpp>
 
 #include "ingen/ClashAvoider.hpp"
 #include "ingen/Store.hpp"
@@ -131,6 +134,48 @@ bool
 ClashAvoider::exists(const Raul::Path& path) const
 {
 	return _store.find(path) != _store.end();
+}
+
+static boost::optional<size_t>
+numeric_suffix_start(const std::string& str)
+{
+	if (!isdigit(str[str.length() - 1])) {
+		return {};
+	}
+
+	size_t i = str.length() - 1;
+	while (i > 0 && isdigit(str[i - 1])) {
+		--i;
+	}
+
+	return i;
+}
+
+std::string
+ClashAvoider::adjust_name(const Raul::Path& old_path,
+                          const Raul::Path& new_path,
+                          std::string       name)
+{
+	const auto name_suffix_start = numeric_suffix_start(name);
+	if (!name_suffix_start) {
+		return name; // No numeric suffix, just re-use old label
+	}
+
+	const auto name_suffix      = atoi(name.c_str() + *name_suffix_start);
+	const auto old_suffix_start = numeric_suffix_start(old_path);
+	const auto new_suffix_start = numeric_suffix_start(new_path);
+	if (old_suffix_start && new_suffix_start) {
+		// Add the offset applied to the symbol to the label suffix
+		const auto old_suffix = atoi(old_path.c_str() + *old_suffix_start);
+		const auto new_suffix = atoi(new_path.c_str() + *new_suffix_start);
+		const auto offset     = new_suffix - old_suffix;
+		return (name.substr(0, *name_suffix_start) +
+		        std::to_string(name_suffix + offset));
+	} else {
+		// Add 1 to previous label suffix
+		return (name.substr(0, *name_suffix_start) +
+		        std::to_string(name_suffix + 1));
+	}
 }
 
 } // namespace ingen
