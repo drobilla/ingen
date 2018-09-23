@@ -28,8 +28,8 @@
 
 #include "BlockFactory.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Broadcaster for all clients.
  *
@@ -112,7 +112,7 @@ private:
 	SPtr<Interface>             _ignore_client;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BROADCASTER_HPP

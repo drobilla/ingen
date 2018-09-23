@@ -30,7 +30,7 @@ typedef struct LilvWorldImpl LilvWorld;
 
 namespace Sord { class World; }
 
-namespace Ingen {
+namespace ingen {
 
 class Configuration;
 class EngineBase;
@@ -130,7 +130,7 @@ public:
 	virtual LilvWorld*   lilv_world();
 
 	virtual LV2Features&  lv2_features();
-	virtual Ingen::Forge& forge();
+	virtual ingen::Forge& forge();
 	virtual URIMap&       uri_map();
 	virtual URIs&         uris();
 
@@ -145,6 +145,6 @@ private:
 	Impl* _impl;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_WORLD_HPP

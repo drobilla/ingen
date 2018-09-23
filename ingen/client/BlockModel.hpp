@@ -30,11 +30,11 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
+namespace ingen {
 
 class URIs;
 
-namespace Client {
+namespace client {
 
 class PluginModel;
 class ClientStore;
@@ -112,7 +112,7 @@ private:
 	mutable float*   _max_values; ///< Port max values (cached for LV2)
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_BLOCKMODEL_HPP

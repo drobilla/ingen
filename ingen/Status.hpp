@@ -17,7 +17,7 @@
 #ifndef INGEN_STATUS_HPP
 #define INGEN_STATUS_HPP
 
-namespace Ingen {
+namespace ingen {
 
 enum class Status {
 	SUCCESS,
@@ -87,6 +87,6 @@ ingen_status_string(Status st)
 	return "Unknown error";
 }
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_STATUS_HPP

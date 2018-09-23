@@ -40,7 +40,7 @@
 #endif
 
 using namespace std;
-using namespace Ingen;
+using namespace ingen;
 
 class DummyInterface : public Interface
 {
@@ -48,7 +48,7 @@ class DummyInterface : public Interface
 	void message(const Message& msg) override {}
 };
 
-unique_ptr<Ingen::World> world;
+unique_ptr<ingen::World> world;
 
 static void
 ingen_interrupt(int signal)
@@ -88,11 +88,11 @@ print_version()
 int
 main(int argc, char** argv)
 {
-	Ingen::set_bundle_path_from_code((void*)&print_version);
+	ingen::set_bundle_path_from_code((void*)&print_version);
 
 	// Create world
 	try {
-		world = unique_ptr<Ingen::World>(new Ingen::World(nullptr, NULL, NULL));
+		world = unique_ptr<ingen::World>(new ingen::World(nullptr, NULL, NULL));
 		world->load_configuration(argc, argv);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
@@ -127,7 +127,7 @@ main(int argc, char** argv)
 	}
 
 #ifdef HAVE_SOCKET
-	Client::SocketClient::register_factories(world.get());
+	client::SocketClient::register_factories(world.get());
 #endif
 
 	// Load GUI if requested

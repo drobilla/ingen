@@ -23,7 +23,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 /** Stores all messages and emits them to a sink on demand.
  *
@@ -61,6 +61,6 @@ private:
 	std::vector<Message> _messages;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ENGINE_QUEUEDINTERFACE_HPP

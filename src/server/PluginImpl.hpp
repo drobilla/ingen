@@ -22,11 +22,11 @@
 #include "ingen/Resource.hpp"
 #include "raul/Symbol.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class URIs;
 
-namespace Server {
+namespace server {
 
 class BlockImpl;
 class BufferFactory;
@@ -40,7 +40,7 @@ class GraphImpl;
 class PluginImpl : public Resource
 {
 public:
-	PluginImpl(Ingen::URIs& uris, const Atom& type, const URI& uri)
+	PluginImpl(ingen::URIs& uris, const Atom& type, const URI& uri)
 	    : Resource(uris, uri)
 	    , _type(type)
 	    , _presets_loaded(false)
@@ -90,7 +90,7 @@ private:
 	PluginImpl& operator=(const PluginImpl&) = delete;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_PLUGINIMPL_HPP

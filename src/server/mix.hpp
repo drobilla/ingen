@@ -19,11 +19,11 @@
 
 #include <cstdint>
 
-namespace Ingen {
+namespace ingen {
 
 class URIs;
 
-namespace Server {
+namespace server {
 
 class Buffer;
 class RunContext;
@@ -34,7 +34,7 @@ mix(const RunContext&   context,
     const Buffer*const* srcs,
     uint32_t            num_srcs);
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_MIX_HPP

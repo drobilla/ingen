@@ -18,10 +18,10 @@
 #include "NodeImpl.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
-NodeImpl::NodeImpl(const Ingen::URIs&  uris,
+NodeImpl::NodeImpl(const ingen::URIs&  uris,
                    NodeImpl*           parent,
                    const Raul::Symbol& symbol)
 	: Node(uris, parent ? parent->path().child(symbol) : Raul::Path("/"))
@@ -46,5 +46,5 @@ NodeImpl::parent_graph() const
 	return dynamic_cast<GraphImpl*>((BlockImpl*)_parent);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

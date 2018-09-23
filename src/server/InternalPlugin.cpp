@@ -24,10 +24,10 @@
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
-using namespace Internals;
+using namespace internals;
 
 InternalPlugin::InternalPlugin(URIs&               uris,
                                const URI&          uri,
@@ -63,5 +63,5 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

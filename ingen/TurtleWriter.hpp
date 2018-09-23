@@ -27,7 +27,7 @@
 #include "serd/serd.h"
 #include "sratom/sratom.h"
 
-namespace Ingen {
+namespace ingen {
 
 class URIMap;
 class URIs;
@@ -63,6 +63,6 @@ protected:
 	bool        _wrote_prefixes;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_TURTLE_WRITER_HPP

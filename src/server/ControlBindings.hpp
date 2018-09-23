@@ -32,8 +32,8 @@
 
 #include "BufferFactory.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Engine;
 class RunContext;
@@ -142,7 +142,7 @@ private:
 	LV2_Atom_Forge        _forge;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_CONTROLBINDINGS_HPP

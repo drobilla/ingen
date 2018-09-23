@@ -33,7 +33,7 @@ class Path;
 class Symbol;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class Arc;
 class FilePath;
@@ -101,6 +101,6 @@ protected:
 	Arcs _arcs;  ///< Graphs only
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_NODE_HPP

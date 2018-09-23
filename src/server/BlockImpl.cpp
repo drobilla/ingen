@@ -28,8 +28,8 @@
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 BlockImpl::BlockImpl(PluginImpl*         plugin,
                      const Raul::Symbol& symbol,
@@ -299,5 +299,5 @@ BlockImpl::set_port_buffer(uint32_t    voice,
 	  << " buffer " << buf << " offset " << offset << std::endl;*/
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

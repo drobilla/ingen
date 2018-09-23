@@ -30,9 +30,9 @@
 #include "lv2/core/lv2.h"
 #include "lv2/data-access/data-access.h"
 
-namespace Ingen {
+namespace ingen {
 
-struct DataAccess : public Ingen::LV2Features::Feature
+struct DataAccess : public ingen::LV2Features::Feature
 {
 	static void delete_feature(LV2_Feature* feature) {
 		free(feature->data);
@@ -63,6 +63,6 @@ struct DataAccess : public Ingen::LV2Features::Feature
 	}
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ENGINE_DATAACCESS_HPP

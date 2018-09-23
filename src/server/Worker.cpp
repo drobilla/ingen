@@ -23,8 +23,8 @@
 #include "LV2Block.hpp"
 #include "Worker.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /// A message in the Worker::_requests ring
 struct MessageHeader {
@@ -159,5 +159,5 @@ Worker::run()
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

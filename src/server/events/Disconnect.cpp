@@ -33,14 +33,14 @@
 #include "ThreadManager.hpp"
 #include "events/Disconnect.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Disconnect::Disconnect(Engine&                  engine,
                        SPtr<Interface>          client,
                        SampleCount              timestamp,
-                       const Ingen::Disconnect& msg)
+                       const ingen::Disconnect& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _graph(nullptr)
@@ -219,6 +219,6 @@ Disconnect::undo(Interface& target)
 	target.connect(_msg.tail, _msg.head);
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

@@ -22,8 +22,8 @@
 #include <glibmm.h>
 #include <gtkmm/builder.h>
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 /** Loads widgets from an XML description.
  * Purely static.
@@ -52,7 +52,7 @@ private:
 	static Glib::ustring ui_filename;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GLADEFACTORY_HPP

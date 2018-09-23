@@ -30,8 +30,8 @@
 
 #include "GraphView.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 /** Collection of breadcrumb buttons forming a path.
  * This doubles as a cache for GraphViews.
@@ -113,7 +113,7 @@ private:
 	std::list<BreadCrumb*> _breadcrumbs;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_BREADCRUMBS_HPP

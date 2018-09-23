@@ -23,7 +23,7 @@
 #include "ingen/ingen.h"
 #include "ingen/FilePath.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 extern const char search_path_separator;
 
@@ -37,6 +37,6 @@ INGEN_API FilePath ingen_module_path(const std::string& name, FilePath dir={});
 INGEN_API FilePath              user_config_dir();
 INGEN_API std::vector<FilePath> system_config_dirs();
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_RUNTIME_PATHS_HPP

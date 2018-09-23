@@ -20,8 +20,8 @@
 #include "RDFS.hpp"
 #include "URIEntry.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 URIEntry::URIEntry(App* app, std::set<URI> types, const std::string& value)
     : Gtk::HBox(false, 4)
@@ -52,7 +52,7 @@ URIEntry::build_value_menu()
 	LilvNode* rdfs_Datatype   = lilv_new_uri(lworld, LILV_NS_RDFS "Datatype");
 	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
 
-	RDFS::Objects values = RDFS::instances(world, _types);
+	rdfs::Objects values = rdfs::instances(world, _types);
 
 	for (const auto& v : values) {
 		const LilvNode* inst  = lilv_new_uri(lworld, v.second.c_str());
@@ -111,18 +111,18 @@ URIEntry::build_subclass_menu(const LilvNode* klass)
 	Gtk::Menu* menu = new Gtk::Menu();
 
 	// Add "header" item for choosing this class itself
-	add_leaf_menu_item(menu, klass, RDFS::label(world, klass));
+	add_leaf_menu_item(menu, klass, rdfs::label(world, klass));
 	menu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
 	// Put subclasses/types in a map keyed by label (to sort menu)
 	std::map<std::string, const LilvNode*> entries;
 	LILV_FOREACH(nodes, s, subclasses) {
 		const LilvNode* node = lilv_nodes_get(subclasses, s);
-		entries.emplace(RDFS::label(world, node), node);
+		entries.emplace(rdfs::label(world, node), node);
 	}
 	LILV_FOREACH(nodes, s, subtypes) {
 		const LilvNode* node = lilv_nodes_get(subtypes, s);
-		entries.emplace(RDFS::label(world, node), node);
+		entries.emplace(rdfs::label(world, node), node);
 	}
 
 	// Add an item (possibly with a submenu) for each subclass/type
@@ -188,5 +188,5 @@ URIEntry::menu_button_event(GdkEvent* ev)
 	return true;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

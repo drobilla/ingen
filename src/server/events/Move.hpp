@@ -22,13 +22,13 @@
 
 #include "Event.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class GraphImpl;
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 /** Move a graph object to a new path.
  * \ingroup engine
@@ -39,7 +39,7 @@ public:
 	Move(Engine&            engine,
 	     SPtr<Interface>    client,
 	     SampleCount        timestamp,
-	     const Ingen::Move& msg);
+	     const ingen::Move& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -47,11 +47,11 @@ public:
 	void undo(Interface& target);
 
 private:
-	const Ingen::Move _msg;
+	const ingen::Move _msg;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_MOVE_HPP

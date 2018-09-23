@@ -28,8 +28,8 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 /** Model of a port.
  *
@@ -91,7 +91,7 @@ private:
 	Direction _direction;
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_PORTMODEL_HPP

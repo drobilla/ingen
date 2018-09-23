@@ -32,12 +32,12 @@
 #include "LV2Plugin.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
-using namespace Internals;
+using namespace internals;
 
-BlockFactory::BlockFactory(Ingen::World* world)
+BlockFactory::BlockFactory(ingen::World* world)
 	: _world(world)
 	, _has_loaded(false)
 {
@@ -109,7 +109,7 @@ BlockFactory::plugin(const URI& uri)
 void
 BlockFactory::load_internal_plugins()
 {
-	Ingen::URIs& uris = _world->uris();
+	ingen::URIs& uris = _world->uris();
 	InternalPlugin* block_delay_plug = BlockDelayNode::internal_plugin(uris);
 	_plugins.emplace(block_delay_plug->uri(), block_delay_plug);
 
@@ -225,5 +225,5 @@ BlockFactory::load_lv2_plugins()
 	_world->log().info(fmt("Loaded %1% plugins\n") % _plugins.size());
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

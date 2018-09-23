@@ -45,8 +45,8 @@
 #include "RunContext.hpp"
 #include "Worker.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Partially construct a LV2Block.
  *
@@ -217,10 +217,10 @@ LV2Block::apply_poly(RunContext& context, uint32_t poly)
 bool
 LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 {
-	const Ingen::URIs& uris      = bufs.uris();
-	Ingen::World*      world     = bufs.engine().world();
+	const ingen::URIs& uris      = bufs.uris();
+	ingen::World*      world     = bufs.engine().world();
 	const LilvPlugin*  plug      = _lv2_plugin->lilv_plugin();
-	Ingen::Forge&      forge     = bufs.forge();
+	ingen::Forge&      forge     = bufs.forge();
 	const uint32_t     num_ports = lilv_plugin_get_num_ports(plug);
 
 	LilvNode* lv2_connectionOptional = lilv_new_uri(
@@ -738,5 +738,5 @@ LV2Block::set_port_buffer(uint32_t    voice,
 		buf ? buf->port_data(_ports->at(port_num)->type(), offset) : nullptr);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

@@ -19,8 +19,8 @@
 
 #include "raul/Socket.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Engine;
 
@@ -37,5 +37,5 @@ private:
 	std::unique_ptr<std::thread> thread;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

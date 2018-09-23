@@ -26,7 +26,7 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
+namespace ingen {
 
 class Arc;
 class Node;
@@ -98,6 +98,6 @@ private:
 	Impl* me;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_SERIALISER_HPP

@@ -32,8 +32,8 @@
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 GraphImpl::GraphImpl(Engine&             engine,
                      const Raul::Symbol& symbol,
@@ -375,5 +375,5 @@ GraphImpl::build_ports_array(Raul::Maid& maid)
 	return result;
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

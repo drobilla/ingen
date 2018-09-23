@@ -34,14 +34,14 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
-                                 SPtr<const Client::PortModel> model)
+                                 SPtr<const client::PortModel> model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 	, _port(nullptr)
@@ -162,5 +162,5 @@ GraphPortModule::set_selected(gboolean b)
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

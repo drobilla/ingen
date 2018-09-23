@@ -27,8 +27,8 @@
 
 #include "Task.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class GraphImpl;
@@ -78,7 +78,7 @@ inline MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph)
 	return CompiledGraph::compile(maid, graph);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_COMPILEDGRAPH_HPP

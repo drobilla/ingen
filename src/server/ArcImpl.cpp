@@ -26,8 +26,8 @@
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Constructor for an arc from a block's output port.
  *
@@ -80,7 +80,7 @@ ArcImpl::must_mix() const
 bool
 ArcImpl::can_connect(const PortImpl* src, const InputPort* dst)
 {
-	const Ingen::URIs& uris = src->bufs().uris();
+	const ingen::URIs& uris = src->bufs().uris();
 	return (
 		// (Audio | Control | CV) => (Audio | Control | CV)
 		(   (src->is_a(PortType::ID::CONTROL) ||
@@ -110,5 +110,5 @@ ArcImpl::can_connect(const PortImpl* src, const InputPort* dst)
 		|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::ID::AUDIO)));
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

@@ -26,7 +26,7 @@
 #include "lv2/atom/forge.h"
 #include "lv2/atom/util.h"
 
-namespace Ingen {
+namespace ingen {
 
 /** A resizing sink for LV2_Atom_Forge. */
 class AtomForgeSink
@@ -97,6 +97,6 @@ private:
 	LV2_Atom* _buf;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_ATOMFORGESINK_HPP

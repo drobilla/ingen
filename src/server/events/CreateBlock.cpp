@@ -31,9 +31,9 @@
 #include "PreProcessContext.hpp"
 #include "LV2Block.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 CreateBlock::CreateBlock(Engine&           engine,
                          SPtr<Interface>   client,
@@ -53,7 +53,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 {
 	typedef Properties::const_iterator iterator;
 
-	const Ingen::URIs& uris  = _engine.world()->uris();
+	const ingen::URIs& uris  = _engine.world()->uris();
 	const SPtr<Store>  store = _engine.store();
 
 	// Check sanity of target path
@@ -175,6 +175,6 @@ CreateBlock::undo(Interface& target)
 	target.del(_block->uri());
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

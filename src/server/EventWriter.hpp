@@ -27,8 +27,8 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Engine;
 
@@ -80,7 +80,7 @@ private:
 	SampleCount now() const;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_EVENTWRITER_HPP

@@ -38,17 +38,17 @@ class Atom;
 class Path;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class URI;
 
-namespace Client {
+namespace client {
 class GraphModel;
 class PortModel;
 class ObjectModel;
 }
 
-namespace GUI {
+namespace gui {
 
 class BreadCrumbs;
 class LoadGraphBox;
@@ -71,13 +71,13 @@ public:
 	~GraphBox();
 
 	static SPtr<GraphBox> create(
-		App& app, SPtr<const Client::GraphModel> graph);
+		App& app, SPtr<const client::GraphModel> graph);
 
 	void init_box(App& app);
 
 	void set_status_text(const std::string& text);
 
-	void set_graph(SPtr<const Client::GraphModel> graph,
+	void set_graph(SPtr<const client::GraphModel> graph,
 	               SPtr<GraphView>                view);
 
 	void set_window(GraphWindow* win) { _window = win; }
@@ -85,22 +85,22 @@ public:
 	bool documentation_is_visible() { return _doc_scrolledwindow->is_visible(); }
 	void set_documentation(const std::string& doc, bool html);
 
-	SPtr<const Client::GraphModel> graph() const { return _graph; }
+	SPtr<const client::GraphModel> graph() const { return _graph; }
 	SPtr<GraphView>                view()  const { return _view; }
 
-	void show_port_status(const Client::PortModel* port,
+	void show_port_status(const client::PortModel* port,
 	                      const Atom&              value);
 
 	void set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view);
 
-	void object_entered(const Client::ObjectModel* model);
-	void object_left(const Client::ObjectModel* model);
+	void object_entered(const client::ObjectModel* model);
+	void object_left(const client::ObjectModel* model);
 
 private:
-	void graph_port_added(SPtr<const Client::PortModel> port);
-	void graph_port_removed(SPtr<const Client::PortModel> port);
+	void graph_port_added(SPtr<const client::PortModel> port);
+	void graph_port_removed(SPtr<const client::PortModel> port);
 	void property_changed(const URI& predicate, const Atom& value);
-	void show_status(const Client::ObjectModel* model);
+	void show_status(const client::ObjectModel* model);
 
 	void error(const Glib::ustring& message,
 	           const Glib::ustring& secondary_text="");
@@ -144,7 +144,7 @@ private:
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
 	App*                           _app;
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 	SPtr<GraphView>                _view;
 	GraphWindow*                   _window;
 
@@ -207,7 +207,7 @@ private:
 	bool _enable_signal;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GRAPH_BOX_HPP

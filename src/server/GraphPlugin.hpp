@@ -20,8 +20,8 @@
 #include <string>
 #include "PluginImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 
@@ -57,7 +57,7 @@ private:
 	const std::string _name;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_GRAPHPLUGIN_HPP

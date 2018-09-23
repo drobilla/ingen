@@ -26,11 +26,11 @@
 #include "App.hpp"
 #include "RenameWindow.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 RenameWindow::RenameWindow(BaseObjectType*                   cobject,
                            const Glib::RefPtr<Gtk::Builder>& xml)
@@ -133,5 +133,5 @@ RenameWindow::ok_clicked()
 	hide();
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

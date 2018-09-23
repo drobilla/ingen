@@ -31,11 +31,11 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 WindowFactory::WindowFactory(App& app)
 	: _app(app)
@@ -298,5 +298,5 @@ WindowFactory::present_properties(SPtr<const ObjectModel> object)
 	_properties_win->present(object);
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

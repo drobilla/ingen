@@ -21,7 +21,7 @@
 #include "ingen/URIMap.hpp"
 #include "lv2/atom/atom.h"
 
-namespace Ingen {
+namespace ingen {
 
 Forge::Forge(URIMap& map)
 	: _map(map)
@@ -30,7 +30,7 @@ Forge::Forge(URIMap& map)
 }
 
 Atom
-Forge::make_urid(const Ingen::URI& u)
+Forge::make_urid(const ingen::URI& u)
 {
 	const LV2_URID urid = _map.map_uri(u.string());
 	return Atom(sizeof(int32_t), URID, &urid);
@@ -66,4 +66,4 @@ Forge::str(const Atom& atom, bool quoted)
 	return ss.str();
 }
 
-} // namespace Ingen
+} // namespace ingen

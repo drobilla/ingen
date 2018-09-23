@@ -19,12 +19,12 @@
 
 #include "Event.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Engine;
 
-namespace Events {
+namespace events {
 
 /** Delineate the start or end of a bundle of events.
  *
@@ -39,12 +39,12 @@ public:
 	Mark(Engine&                   engine,
 	     SPtr<Interface>           client,
 	     SampleCount               timestamp,
-	     const Ingen::BundleBegin& msg);
+	     const ingen::BundleBegin& msg);
 
 	Mark(Engine&                 engine,
 	     SPtr<Interface>         client,
 	     SampleCount             timestamp,
-	     const Ingen::BundleEnd& msg);
+	     const ingen::BundleEnd& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -62,8 +62,8 @@ private:
 	int            _depth;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_MARK_HPP

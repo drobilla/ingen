@@ -25,12 +25,12 @@
 
 namespace Raul { class Atom; }
 
-namespace Ingen { namespace Client {
+namespace ingen { namespace client {
 class PortModel;
 } }
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class GraphCanvas;
 class Port;
@@ -47,7 +47,7 @@ class GraphPortModule : public Ganv::Module
 public:
 	static GraphPortModule* create(
 		GraphCanvas&                  canvas,
-		SPtr<const Client::PortModel> model);
+		SPtr<const client::PortModel> model);
 
 	App& app() const;
 
@@ -56,11 +56,11 @@ public:
 
 	void set_name(const std::string& n);
 
-	SPtr<const Client::PortModel> port() const { return _model; }
+	SPtr<const client::PortModel> port() const { return _model; }
 
 protected:
 	GraphPortModule(GraphCanvas&                  canvas,
-	                SPtr<const Client::PortModel> model);
+	                SPtr<const client::PortModel> model);
 
 	bool show_menu(GdkEventButton* ev);
 	void set_selected(gboolean b);
@@ -69,11 +69,11 @@ protected:
 
 	void property_changed(const URI& key, const Atom& value);
 
-	SPtr<const Client::PortModel> _model;
+	SPtr<const client::PortModel> _model;
 	Port*                         _port;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GRAPHPORTMODULE_HPP

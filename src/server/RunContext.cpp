@@ -25,8 +25,8 @@
 #include "RunContext.hpp"
 #include "Task.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 struct Notification
 {
@@ -191,5 +191,5 @@ RunContext::run()
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

@@ -19,7 +19,7 @@
 
 #define USTR(s) ((const uint8_t*)(s))
 
-namespace Ingen {
+namespace ingen {
 
 static size_t
 c_text_sink(const void* buf, size_t len, void* stream)
@@ -98,4 +98,4 @@ TurtleWriter::write(const LV2_Atom* msg, int32_t default_id)
 	return true;
 }
 
-} // namespace Ingen
+} // namespace ingen

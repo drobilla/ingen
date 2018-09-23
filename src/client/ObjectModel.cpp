@@ -18,8 +18,8 @@
 #include "ingen/URIs.hpp"
 #include "ingen/client/ObjectModel.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 ObjectModel::ObjectModel(URIs& uris, const Raul::Path& path)
 	: Node(uris, path)
@@ -104,5 +104,5 @@ ObjectModel::set_parent(SPtr<ObjectModel> p)
 	_parent = p;
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

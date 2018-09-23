@@ -30,7 +30,7 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-namespace Ingen {
+namespace ingen {
 
 Configuration::Configuration(Forge& forge)
 	: _forge(forge)
@@ -383,4 +383,4 @@ Configuration::set(const std::string& long_name, const Atom& value)
 	return false;
 }
 
-} // namespace Ingen
+} // namespace ingen

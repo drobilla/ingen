@@ -29,13 +29,13 @@ namespace Raul {
 class Atom;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class URI;
 
-namespace Client { class PortModel; }
+namespace client { class PortModel; }
 
-namespace GUI {
+namespace gui {
 
 class App;
 class GraphBox;
@@ -50,12 +50,12 @@ public:
 	static Port* create(
 		App&                          app,
 		Ganv::Module&                 module,
-		SPtr<const Client::PortModel> pm,
+		SPtr<const client::PortModel> pm,
 		bool                          flip = false);
 
 	~Port();
 
-	SPtr<const Client::PortModel> model() const { return _port_model.lock(); }
+	SPtr<const client::PortModel> model() const { return _port_model.lock(); }
 
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
@@ -69,11 +69,11 @@ public:
 private:
 	Port(App&                          app,
 	     Ganv::Module&                 module,
-	     SPtr<const Client::PortModel> pm,
+	     SPtr<const client::PortModel> pm,
 	     const std::string&            name,
 	     bool                          flip = false);
 
-	static std::string port_label(App& app, SPtr<const Client::PortModel> pm);
+	static std::string port_label(App& app, SPtr<const client::PortModel> pm);
 
 	Gtk::Menu* build_enum_menu();
 	Gtk::Menu* build_uri_menu();
@@ -91,12 +91,12 @@ private:
 	void set_type_tag();
 
 	App&                          _app;
-	WPtr<const Client::PortModel> _port_model;
+	WPtr<const client::PortModel> _port_model;
 	bool                          _entered : 1;
 	bool                          _flipped : 1;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_PORT_HPP

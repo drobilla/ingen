@@ -26,7 +26,7 @@
 #include "lv2/core/lv2.h"
 #include "raul/Noncopyable.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Node;
 class World;
@@ -90,6 +90,6 @@ private:
 	Features _features;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_LV2FEATURES_HPP

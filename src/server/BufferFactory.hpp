@@ -34,11 +34,11 @@
 
 namespace Raul { class Maid; }
 
-namespace Ingen {
+namespace ingen {
 
 class URIs;
 
-namespace Server {
+namespace server {
 
 class Engine;
 
@@ -112,7 +112,7 @@ private:
 	BufferRef _silent_buffer;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BUFFERFACTORY_HPP

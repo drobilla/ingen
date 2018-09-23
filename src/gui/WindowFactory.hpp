@@ -22,15 +22,15 @@
 #include "ingen/Node.hpp"
 #include "ingen/types.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client {
+namespace client {
 class BlockModel;
 class ObjectModel;
 class GraphModel;
 }
 
-namespace GUI {
+namespace gui {
 
 class App;
 class GraphBox;
@@ -55,21 +55,21 @@ public:
 
 	size_t num_open_graph_windows();
 
-	GraphBox*    graph_box(SPtr<const Client::GraphModel> graph);
-	GraphWindow* graph_window(SPtr<const Client::GraphModel> graph);
-	GraphWindow* parent_graph_window(SPtr<const Client::BlockModel> block);
+	GraphBox*    graph_box(SPtr<const client::GraphModel> graph);
+	GraphWindow* graph_window(SPtr<const client::GraphModel> graph);
+	GraphWindow* parent_graph_window(SPtr<const client::BlockModel> block);
 
 	void present_graph(
-		SPtr<const Client::GraphModel> graph,
+		SPtr<const client::GraphModel> graph,
 		GraphWindow*                   preferred = NULL,
 		SPtr<GraphView>                view      = SPtr<GraphView>());
 
-	void present_load_plugin(SPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_load_graph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_load_subgraph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_new_subgraph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_rename(SPtr<const Client::ObjectModel> object);
-	void present_properties(SPtr<const Client::ObjectModel> object);
+	void present_load_plugin(SPtr<const client::GraphModel> graph, Properties data=Properties());
+	void present_load_graph(SPtr<const client::GraphModel> graph, Properties data=Properties());
+	void present_load_subgraph(SPtr<const client::GraphModel> graph, Properties data=Properties());
+	void present_new_subgraph(SPtr<const client::GraphModel> graph, Properties data=Properties());
+	void present_rename(SPtr<const client::ObjectModel> object);
+	void present_properties(SPtr<const client::ObjectModel> object);
 
 	bool remove_graph_window(GraphWindow* win, GdkEventAny* ignored = NULL);
 
@@ -80,7 +80,7 @@ public:
 private:
 	typedef std::map<Raul::Path, GraphWindow*> GraphWindowMap;
 
-	GraphWindow* new_graph_window(SPtr<const Client::GraphModel> graph,
+	GraphWindow* new_graph_window(SPtr<const client::GraphModel> graph,
 	                              SPtr<GraphView>                view);
 
 	App&               _app;
@@ -93,7 +93,7 @@ private:
 	RenameWindow*      _rename_win;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_WINDOWFACTORY_HPP

@@ -30,8 +30,8 @@
 #include "ThreadManager.hpp"
 #include "UndoStack.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 PreProcessor::PreProcessor(Engine& engine)
 	: _engine(engine)
@@ -244,5 +244,5 @@ PreProcessor::run()
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

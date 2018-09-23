@@ -26,7 +26,7 @@
 #include "lv2/atom/util.h"
 #include "raul/Path.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 AtomReader::AtomReader(URIMap& map, URIs& uris, Log& log, Interface& iface)
 	: _map(map)
@@ -55,7 +55,7 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 
 void
 AtomReader::get_props(const LV2_Atom_Object* obj,
-                      Ingen::Properties&     props)
+                      ingen::Properties&     props)
 {
 	if (obj->body.otype) {
 		const Atom type(sizeof(int32_t), _uris.atom_URID, &obj->body.otype);
@@ -237,7 +237,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 				_log.warn("Arc has non-path tail or head\n");
 			}
 		} else {
-			Ingen::Properties props;
+			ingen::Properties props;
 			get_props(body, props);
 			_iface(Put{seq, *subject_uri, props, atom_to_context(context)});
 		}
@@ -292,10 +292,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		Ingen::Properties add_props;
+		ingen::Properties add_props;
 		get_props(add, add_props);
 
-		Ingen::Properties remove_props;
+		ingen::Properties remove_props;
 		get_props(remove, remove_props);
 
 		_iface(Delta{seq, *subject_uri, remove_props, add_props,
@@ -367,7 +367,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 		_iface(Response{((const LV2_Atom_Int*)seq)->body,
-		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
+		                (ingen::Status)((const LV2_Atom_Int*)body)->body,
 		                subject_uri ? subject_uri->c_str() : ""});
 	} else if (obj->body.otype == _uris.ingen_BundleStart) {
 		_iface(BundleBegin{seq});
@@ -381,4 +381,4 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	return true;
 }
 
-} // namespace Ingen
+} // namespace ingen

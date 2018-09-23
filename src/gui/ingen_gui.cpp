@@ -21,11 +21,11 @@
 
 #include "App.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 struct GUIModule : public Module {
-	using SigClientInterface = Client::SigClientInterface;
+	using SigClientInterface = client::SigClientInterface;
 
 	void load(World* world) {
 		URI uri(world->conf().option("connect").ptr<char>());
@@ -37,7 +37,7 @@ struct GUIModule : public Module {
 			world->interface()->set_respondee(make_client(world));
 		}
 
-		app = GUI::App::create(world);
+		app = gui::App::create(world);
 	}
 
 	void run(World* world) {
@@ -49,19 +49,19 @@ struct GUIModule : public Module {
 		return world->engine() ? sci : SPtr<Interface>(new QueuedInterface(sci));
 	}
 
-	SPtr<GUI::App> app;
+	SPtr<gui::App> app;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 extern "C" {
 
-Ingen::Module*
+ingen::Module*
 ingen_module_load()
 {
 	Glib::thread_init();
-	return new Ingen::GUI::GUIModule();
+	return new ingen::gui::GUIModule();
 }
 
 } // extern "C"

@@ -30,10 +30,10 @@
 #include "Style.hpp"
 #include "Port.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
-using namespace Ingen::Client;
+using namespace ingen::client;
 
 Style::Style(App& app)
 	// Colours from the Tango palette with modified V
@@ -82,7 +82,7 @@ Style::apply_settings()
 }
 
 uint32_t
-Style::get_port_color(const Client::PortModel* p)
+Style::get_port_color(const client::PortModel* p)
 {
 	const URIs& uris = _app.uris();
 	if (p->is_a(uris.lv2_AudioPort)) {
@@ -102,5 +102,5 @@ Style::get_port_color(const Client::PortModel* p)
 	return 0x555555FF;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

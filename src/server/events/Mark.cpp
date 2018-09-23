@@ -19,14 +19,14 @@
 #include "UndoStack.hpp"
 #include "events/Mark.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Mark::Mark(Engine&                   engine,
            SPtr<Interface>           client,
            SampleCount               timestamp,
-           const Ingen::BundleBegin& msg)
+           const ingen::BundleBegin& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _type(Type::BUNDLE_BEGIN)
 	, _depth(0)
@@ -35,7 +35,7 @@ Mark::Mark(Engine&                   engine,
 Mark::Mark(Engine&                 engine,
            SPtr<Interface>         client,
            SampleCount             timestamp,
-           const Ingen::BundleEnd& msg)
+           const ingen::BundleEnd& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _type(Type::BUNDLE_END)
 	, _depth(0)
@@ -107,6 +107,6 @@ Mark::get_execution() const
 	return Execution::NORMAL;
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

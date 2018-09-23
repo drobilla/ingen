@@ -28,7 +28,7 @@
 #include "lv2/urid/urid.h"
 #include "raul/Exception.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class FilePath;
 class Forge;
@@ -155,6 +155,6 @@ private:
 	size_t            _max_name_length;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_CONFIGURATION_HPP

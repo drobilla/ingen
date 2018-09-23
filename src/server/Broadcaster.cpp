@@ -22,8 +22,8 @@
 #include "PluginImpl.hpp"
 #include "BlockFactory.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 Broadcaster::Broadcaster()
 	: _must_broadcast(false)
@@ -93,5 +93,5 @@ Broadcaster::send_plugins_to(Interface*                   client,
 	client->bundle_end();
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

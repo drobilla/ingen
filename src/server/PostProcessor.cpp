@@ -21,8 +21,8 @@
 #include "PostProcessor.hpp"
 #include "RunContext.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Sentinel : public Event {
 public:
@@ -110,5 +110,5 @@ PostProcessor::process()
 	_engine.emit_notifications(end_time);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

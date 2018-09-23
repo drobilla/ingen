@@ -30,8 +30,8 @@
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
@@ -56,7 +56,7 @@ ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	const Ingen::URIs& uris    = _engine.world()->uris();
+	const ingen::URIs& uris    = _engine.world()->uris();
 	const Atom&        binding = port->get_property(uris.midi_binding);
 	return binding_key(binding);
 }
@@ -64,7 +64,7 @@ ControlBindings::port_binding(PortImpl* port) const
 ControlBindings::Key
 ControlBindings::binding_key(const Atom& binding) const
 {
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 	Key       key;
 	LV2_Atom* num = nullptr;
 	if (binding.type() == uris.atom_Object) {
@@ -145,8 +145,8 @@ ControlBindings::port_value_changed(RunContext& ctx,
                                     Key         key,
                                     const Atom& value_atom)
 {
-	Ingen::World*      world = ctx.engine().world();
-	const Ingen::URIs& uris  = world->uris();
+	ingen::World*      world = ctx.engine().world();
+	const ingen::URIs& uris  = world->uris();
 	if (!!key) {
 		int16_t  value = port_value_to_control(
 			ctx, port, key.type, value_atom);
@@ -338,7 +338,7 @@ ControlBindings::set_port_value(RunContext& context,
 bool
 ControlBindings::finish_learn(RunContext& context, Key key)
 {
-	const Ingen::URIs& uris    = context.engine().world()->uris();
+	const ingen::URIs& uris    = context.engine().world()->uris();
 	Binding*           binding = _learn_binding.exchange(nullptr);
 	if (!binding || (key.type == Type::MIDI_NOTE && !binding->port->is_toggled())) {
 		return false;
@@ -384,8 +384,8 @@ void
 ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 {
 	uint16_t           value = 0;
-	Ingen::World*      world = ctx.engine().world();
-	const Ingen::URIs& uris  = world->uris();
+	ingen::World*      world = ctx.engine().world();
+	const ingen::URIs& uris  = world->uris();
 
 	_feedback->clear();
 	if ((!_learn_binding && _bindings->empty()) || !buffer->get<LV2_Atom>()) {
@@ -421,5 +421,5 @@ ControlBindings::post_process(RunContext& context, Buffer* buffer)
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

@@ -19,7 +19,7 @@
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 void
 Store::add(Node* o)
@@ -140,4 +140,4 @@ Store::child_name_offset(const Raul::Path&   parent,
 	return offset;
 }
 
-} // namespace Ingen
+} // namespace ingen

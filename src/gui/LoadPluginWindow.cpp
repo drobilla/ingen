@@ -35,11 +35,11 @@
 
 using std::string;
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
@@ -507,5 +507,5 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

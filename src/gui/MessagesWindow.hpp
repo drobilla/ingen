@@ -28,8 +28,8 @@
 
 #include "Window.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 /** Messages Window.
  *
@@ -64,7 +64,7 @@ private:
 	std::map< LV2_URID, Glib::RefPtr<Gtk::TextTag> > _tags;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_MESSAGESWINDOW_HPP

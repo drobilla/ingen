@@ -19,7 +19,7 @@
 #include "ingen/FilePath.hpp"
 #include "test_utils.hpp"
 
-using Ingen::FilePath;
+using ingen::FilePath;
 
 int
 main(int, char**)

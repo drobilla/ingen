@@ -23,13 +23,13 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class GraphImpl;
 
-namespace Events {
+namespace events {
 
 /** An event to load a Block and insert it into a Graph.
  *
@@ -59,8 +59,8 @@ private:
 	MPtr<CompiledGraph> _compiled_graph;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_CREATEBLOCK_HPP

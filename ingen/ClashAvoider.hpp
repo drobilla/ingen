@@ -22,7 +22,7 @@
 #include "ingen/ingen.h"
 #include "raul/Path.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Store;
 class URI;
@@ -50,6 +50,6 @@ private:
 	SymbolMap    _symbol_map;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_CLASHAVOIDER_HPP

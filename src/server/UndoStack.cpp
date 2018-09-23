@@ -29,8 +29,8 @@
 
 #define USTR(s) ((const uint8_t*)(s))
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 int
 UndoStack::start_entry()
@@ -249,5 +249,5 @@ UndoStack::save(FILE* stream, const char* name)
 	serd_writer_free(writer);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

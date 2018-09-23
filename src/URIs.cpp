@@ -34,7 +34,7 @@
 #include "lv2/time/time.h"
 #include "lv2/worker/worker.h"
 
-namespace Ingen {
+namespace ingen {
 
 URIs::Quark::Quark(Forge&      forge,
                    URIMap*     map,
@@ -201,4 +201,4 @@ URIs::URIs(Forge& forge, URIMap* map, LilvWorld* lworld)
 	, work_schedule         (forge, map, lworld, LV2_WORKER__schedule)
 {}
 
-} // namespace Ingen
+} // namespace ingen

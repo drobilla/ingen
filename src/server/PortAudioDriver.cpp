@@ -38,8 +38,8 @@
 #include "ThreadManager.hpp"
 #include "util.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 static bool
 pa_error(const char* msg, PaError err)
@@ -293,5 +293,5 @@ PortAudioDriver::process_cb(const void*                     inputs,
 	return 0;
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

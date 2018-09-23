@@ -49,8 +49,8 @@
 
 typedef jack_default_audio_sample_t jack_sample_t;
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 JackDriver::JackDriver(Engine& engine)
 	: _engine(engine)
@@ -580,5 +580,5 @@ JackDriver::_session_cb(jack_session_event_t* event)
 }
 #endif
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

@@ -17,8 +17,8 @@
 #ifndef INGEN_ENGINE_LOAD_HPP
 #define INGEN_ENGINE_LOAD_HPP
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 struct Load
 {
@@ -51,7 +51,7 @@ struct Load
 	bool     changed = false;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_LOAD_HPP

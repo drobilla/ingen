@@ -27,8 +27,8 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/types.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 /** Menu for a Node.
  *
@@ -40,7 +40,7 @@ public:
 	NodeMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SPtr<const Client::BlockModel> block);
+	void init(App& app, SPtr<const client::BlockModel> block);
 
 	bool has_control_inputs();
 
@@ -48,8 +48,8 @@ public:
 	sigc::signal<void, bool> signal_embed_gui;
 
 protected:
-	SPtr<const Client::BlockModel> block() const {
-		return dynamic_ptr_cast<const Client::BlockModel>(_object);
+	SPtr<const client::BlockModel> block() const {
+		return dynamic_ptr_cast<const client::BlockModel>(_object);
 	}
 
 	void add_preset(const URI& uri, const std::string& label);
@@ -69,7 +69,7 @@ protected:
 	sigc::connection    _preset_connection;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_NODEMENU_HPP

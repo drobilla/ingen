@@ -25,11 +25,11 @@
 #include "PortMenu.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 PortMenu::PortMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
@@ -148,7 +148,7 @@ PortMenu::on_menu_expose()
 	const std::string label = block->label() + " " + block->port_label(port);
 	const Raul::Path  path  = Raul::Path(block->path() + Raul::Symbol("_" + port->symbol()));
 
-	Ingen::Resource r(*_object.get());
+	ingen::Resource r(*_object.get());
 	r.remove_property(uris.lv2_index, uris.patch_wildcard);
 	r.set_property(uris.lv2_symbol, _app->forge().alloc(path.symbol()));
 	r.set_property(uris.lv2_name, _app->forge().alloc(label.c_str()));
@@ -170,5 +170,5 @@ PortMenu::on_menu_expose()
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

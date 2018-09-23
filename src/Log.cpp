@@ -22,7 +22,7 @@
 #include "ingen/World.hpp"
 #include "ingen/ColorContext.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 Log::Log(LV2_Log_Log* log, URIs& uris)
 	: _log(log)
@@ -159,4 +159,4 @@ Log::Feature::feature(World* world, Node* block)
 	return SPtr<LV2_Feature>(f, &free_log_feature);
 }
 
-}  // namespace Ingen
+}  // namespace ingen

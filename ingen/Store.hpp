@@ -30,7 +30,7 @@
 
 namespace Raul { class Symbol; }
 
-namespace Ingen {
+namespace ingen {
 
 class Node;
 
@@ -84,6 +84,6 @@ private:
 	Mutex _mutex;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_STORE_HPP

@@ -23,7 +23,7 @@
 #include "ingen/ColorContext.hpp"
 #include "ingen/TurtleWriter.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class URI;
 class URIMap;
@@ -47,6 +47,6 @@ protected:
 	ColorContext::Color _color;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_STREAMWRITER_HPP

@@ -55,11 +55,11 @@
 
 using std::string;
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 static int
 port_order(const GanvPort* a, const GanvPort* b, void* data)
@@ -291,7 +291,7 @@ ensure_port_labels(GanvNode* node, void* data)
 	if (GANV_IS_MODULE(node)) {
 		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
 		for (Ganv::Port* p : *module) {
-			Ingen::GUI::Port* port = dynamic_cast<Ingen::GUI::Port*>(p);
+			ingen::gui::Port* port = dynamic_cast<ingen::gui::Port*>(p);
 			if (port) {
 				port->ensure_label();
 			}
@@ -400,7 +400,7 @@ GraphCanvas::get_port_view(SPtr<PortModel> port)
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
 			for (const auto& p : *module) {
-				GUI::Port* pv = dynamic_cast<GUI::Port*>(p);
+				gui::Port* pv = dynamic_cast<gui::Port*>(p);
 				if (pv && pv->model() == port) {
 					return pv;
 				}
@@ -419,7 +419,7 @@ GraphCanvas::connection(SPtr<const ArcModel> arc)
 	Ganv::Port* const head = get_port_view(arc->head());
 
 	if (tail && head) {
-		new GUI::Arc(*this, arc, tail, head);
+		new gui::Arc(*this, arc, tail, head);
 	} else {
 		_app.log().error(fmt("Unable to find ports to connect %1% => %2%\n")
 		                 % arc->tail_path() % arc->head_path());
@@ -436,7 +436,7 @@ GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 	if (tail && head) {
 		remove_edge_between(tail, head);
 		if (arc->head()->is_a(_app.uris().lv2_AudioPort)) {
-			GUI::Port* const h = dynamic_cast<GUI::Port*>(head);
+			gui::Port* const h = dynamic_cast<gui::Port*>(head);
 			if (h) {
 				h->activity(_app.forge().make(0.0f));  // Reset peaks
 			}
@@ -451,8 +451,8 @@ GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 void
 GraphCanvas::connect(Ganv::Node* tail, Ganv::Node* head)
 {
-	const GUI::Port* const t = dynamic_cast<GUI::Port*>(tail);
-	const GUI::Port* const h = dynamic_cast<GUI::Port*>(head);
+	const gui::Port* const t = dynamic_cast<gui::Port*>(tail);
+	const gui::Port* const h = dynamic_cast<gui::Port*>(head);
 
 	if (t && h) {
 		_app.interface()->connect(t->model()->path(), h->model()->path());
@@ -463,8 +463,8 @@ GraphCanvas::connect(Ganv::Node* tail, Ganv::Node* head)
 void
 GraphCanvas::disconnect(Ganv::Node* tail, Ganv::Node* head)
 {
-	const GUI::Port* const t = dynamic_cast<GUI::Port*>(tail);
-	const GUI::Port* const h = dynamic_cast<GUI::Port*>(head);
+	const gui::Port* const t = dynamic_cast<gui::Port*>(tail);
+	const gui::Port* const h = dynamic_cast<gui::Port*>(head);
 
 	if (t && h) {
 		_app.interface()->disconnect(t->model()->path(), h->model()->path());
@@ -634,7 +634,7 @@ serialise_arc(GanvEdge* arc, void* data)
 		return;
 	}
 
-	GUI::Arc* garc = dynamic_cast<GUI::Arc*>(Glib::wrap(GANV_EDGE(arc)));
+	gui::Arc* garc = dynamic_cast<gui::Arc*>(Glib::wrap(GANV_EDGE(arc)));
 	if (garc) {
 		serialiser->serialise_arc(Sord::Node(), garc->model());
 	}
@@ -895,5 +895,5 @@ GraphCanvas::menu_properties()
 	_app.window_factory()->present_properties(_graph);
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

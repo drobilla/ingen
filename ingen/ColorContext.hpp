@@ -19,7 +19,7 @@
 
 #include <cstdio>
 
-namespace Ingen {
+namespace ingen {
 
 class ColorContext {
 public:
@@ -32,6 +32,6 @@ private:
 	FILE* _stream;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_COLORCONTEXT_HPP

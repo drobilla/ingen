@@ -17,7 +17,7 @@
 #include "ingen/ColorContext.hpp"
 #include "ingen/StreamWriter.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 StreamWriter::StreamWriter(URIMap&             map,
                            URIs&               uris,
@@ -36,4 +36,4 @@ StreamWriter::text_sink(const void* buf, size_t len)
 	return fwrite(buf, 1, len, _stream);
 }
 
-} // namespace Ingen
+} // namespace ingen

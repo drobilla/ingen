@@ -18,7 +18,7 @@
 
 #include "ingen/LV2Features.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 void
 LV2Features::Feature::free_feature(LV2_Feature* feature)
@@ -80,4 +80,4 @@ LV2Features::lv2_features(World* world, Node* node) const
 	return SPtr<FeatureArray>(new FeatureArray(vec));
 }
 
-} // namespace Ingen
+} // namespace ingen

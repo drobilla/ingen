@@ -40,7 +40,7 @@
 
 /* A minimal subset of the std::filesystem API from C++17. */
 
-namespace Ingen {
+namespace ingen {
 namespace filesystem {
 
 inline bool exists(const FilePath& path)
@@ -81,6 +81,6 @@ inline FilePath current_path()
 }
 
 } // namespace filesystem
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_FILESYSTEM_HPP

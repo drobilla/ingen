@@ -28,11 +28,11 @@
 #include "SubgraphModule.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 SubgraphModule::SubgraphModule(GraphCanvas&           canvas,
                                SPtr<const GraphModel> graph)
@@ -98,5 +98,5 @@ SubgraphModule::menu_remove()
 	app().interface()->del(_graph->uri());
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

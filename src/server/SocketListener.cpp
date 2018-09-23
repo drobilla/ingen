@@ -36,8 +36,8 @@
 #include "SocketListener.hpp"
 #include "SocketServer.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 static constexpr const char* const unix_scheme = "unix://";
 
@@ -82,7 +82,7 @@ SocketListener::~SocketListener() {
 static void
 ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 {
-	Ingen::World* world = engine->world();
+	ingen::World* world = engine->world();
 
 	const std::string link_path(world->conf().option("socket").ptr<char>());
 	const std::string unix_path(link_path + "." + std::to_string(getpid()));
@@ -186,5 +186,5 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

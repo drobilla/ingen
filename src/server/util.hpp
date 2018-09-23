@@ -43,13 +43,13 @@
 #    define INGEN_THREAD_LOCAL
 #endif
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Set flags to disable denormal processing.
  */
 inline void
-set_denormal_flags(Ingen::Log& log)
+set_denormal_flags(ingen::Log& log)
 {
 #ifdef __SSE__
 	_mm_setcsr(_mm_getcsr() | 0x8040);
@@ -57,7 +57,7 @@ set_denormal_flags(Ingen::Log& log)
 #endif
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_UTIL_HPP

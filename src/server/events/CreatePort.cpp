@@ -32,9 +32,9 @@
 #include "GraphImpl.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 CreatePort::CreatePort(Engine&           engine,
                        SPtr<Interface>   client,
@@ -51,7 +51,7 @@ CreatePort::CreatePort(Engine&           engine,
 	, _engine_port(nullptr)
 	, _properties(properties)
 {
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 
 	typedef Properties::const_iterator    Iterator;
 	typedef std::pair<Iterator, Iterator> Range;
@@ -214,6 +214,6 @@ CreatePort::undo(Interface& target)
 	target.del(_graph_port->uri());
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

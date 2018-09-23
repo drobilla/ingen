@@ -22,8 +22,8 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 BlockModel::BlockModel(URIs&             uris,
                        SPtr<PluginModel> plugin,
@@ -157,12 +157,12 @@ BlockModel::get_port(uint32_t index) const
 	return _ports[index];
 }
 
-Ingen::Node*
+ingen::Node*
 BlockModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
-	return const_cast<Ingen::Node*>(
-		dynamic_cast<const Ingen::Node*>(_ports[index].get()));
+	return const_cast<ingen::Node*>(
+		dynamic_cast<const ingen::Node*>(_ports[index].get()));
 }
 
 void
@@ -281,5 +281,5 @@ BlockModel::set(SPtr<ObjectModel> model)
 	ObjectModel::set(model);
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

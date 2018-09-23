@@ -22,7 +22,7 @@
 #include "lv2/atom/atom.h"
 #include "lv2/core/lv2.h"
 
-namespace Ingen {
+namespace ingen {
 
 /** The type of a port.
  *
@@ -86,6 +86,6 @@ private:
 	ID _id;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_INTERFACE_PORTTYPE_HPP

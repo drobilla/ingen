@@ -31,7 +31,7 @@
 #include "lv2/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Log;
 class Node;
@@ -95,6 +95,6 @@ private:
 	std::vector<std::string>                  _unmap;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_URIMAP_HPP

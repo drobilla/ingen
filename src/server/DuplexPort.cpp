@@ -22,8 +22,8 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 DuplexPort::DuplexPort(BufferFactory&      bufs,
                        GraphImpl*          parent,
@@ -232,5 +232,5 @@ DuplexPort::next_value_offset(SampleCount offset, SampleCount end) const
 	return PortImpl::next_value_offset(offset, end);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

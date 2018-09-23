@@ -22,9 +22,9 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 
-using namespace Ingen;
+using namespace ingen;
 
-class TestClient : public Ingen::Interface
+class TestClient : public ingen::Interface
 {
 public:
 	explicit TestClient(Log& log) : _log(log) {}

@@ -28,8 +28,8 @@
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 static const uint32_t monitor_rate = 25.0;  // Hz
 
@@ -79,7 +79,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	assert(block != nullptr);
 	assert(_poly > 0);
 
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 
 	set_type(type, buffer_type);
 
@@ -128,8 +128,8 @@ PortImpl::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
 void
 PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 {
-	const Ingen::URIs& uris  = _bufs.uris();
-	Ingen::World*      world = _bufs.engine().world();
+	const ingen::URIs& uris  = _bufs.uris();
+	ingen::World*      world = _bufs.engine().world();
 
 	// Update type properties so clients are aware of current type
 	remove_property(uris.rdf_type, uris.lv2_AudioPort);
@@ -565,5 +565,5 @@ PortImpl::post_process(RunContext& context)
 	monitor(context);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

@@ -31,7 +31,7 @@
 
 #define INGEN_LV2_UI_URI INGEN_NS "GraphUIGtk2"
 
-namespace Ingen {
+namespace ingen {
 
 /** A sink that writes atoms to a port via the UI extension. */
 struct IngenLV2AtomSink : public AtomSink {
@@ -71,14 +71,14 @@ struct IngenLV2UI {
 	Forge*                           forge;
 	World*                           world;
 	IngenLV2AtomSink*                sink;
-	SPtr<GUI::App>                   app;
-	SPtr<GUI::GraphBox>              view;
+	SPtr<gui::App>                   app;
+	SPtr<gui::GraphBox>              view;
 	SPtr<Interface>                  engine;
 	SPtr<AtomReader>                 reader;
-	SPtr<Client::SigClientInterface> client;
+	SPtr<client::SigClientInterface> client;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 static LV2UI_Handle
 instantiate(const LV2UI_Descriptor*   descriptor,
@@ -90,12 +90,12 @@ instantiate(const LV2UI_Descriptor*   descriptor,
             const LV2_Feature* const* features)
 {
 #if __cplusplus >= 201103L
-	using Ingen::SPtr;
+	using ingen::SPtr;
 #endif
 
-	Ingen::set_bundle_path(bundle_path);
+	ingen::set_bundle_path(bundle_path);
 
-	Ingen::IngenLV2UI* ui = new Ingen::IngenLV2UI();
+	ingen::IngenLV2UI* ui = new ingen::IngenLV2UI();
 
 	LV2_URID_Map*   map   = nullptr;
 	LV2_URID_Unmap* unmap = nullptr;
@@ -110,8 +110,8 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		}
 	}
 
-	ui->world = new Ingen::World(map, unmap, log);
-	ui->forge = new Ingen::Forge(ui->world->uri_map());
+	ui->world = new ingen::World(map, unmap, log);
+	ui->forge = new ingen::Forge(ui->world->uri_map());
 
 	ui->world->load_configuration(ui->argc, ui->argv);
 
@@ -120,45 +120,45 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		return nullptr;
 	}
 
-	ui->sink = new Ingen::IngenLV2AtomSink(
+	ui->sink = new ingen::IngenLV2AtomSink(
 		ui->world->uris(), write_function, controller);
 
 	// Set up an engine interface that writes LV2 atoms
-	ui->engine = SPtr<Ingen::Interface>(
-		new Ingen::AtomWriter(
+	ui->engine = SPtr<ingen::Interface>(
+		new ingen::AtomWriter(
 			ui->world->uri_map(), ui->world->uris(), *ui->sink));
 
 	ui->world->set_interface(ui->engine);
 
 	// Create App and client
-	ui->app = Ingen::GUI::App::create(ui->world);
-	ui->client = SPtr<Ingen::Client::SigClientInterface>(
-		new Ingen::Client::SigClientInterface());
+	ui->app = ingen::gui::App::create(ui->world);
+	ui->client = SPtr<ingen::client::SigClientInterface>(
+		new ingen::client::SigClientInterface());
 	ui->app->set_is_plugin(true);
 	ui->app->attach(ui->client);
 
-	ui->reader = SPtr<Ingen::AtomReader>(
-		new Ingen::AtomReader(ui->world->uri_map(),
+	ui->reader = SPtr<ingen::AtomReader>(
+		new ingen::AtomReader(ui->world->uri_map(),
 		                      ui->world->uris(),
 		                      ui->world->log(),
 		                      *ui->client.get()));
 
 	// Create empty root graph model
-	Ingen::Properties props;
+	ingen::Properties props;
 	props.emplace(ui->app->uris().rdf_type,
-	              Ingen::Property(ui->app->uris().ingen_Graph));
-	ui->app->store()->put(Ingen::main_uri(), props);
+	              ingen::Property(ui->app->uris().ingen_Graph));
+	ui->app->store()->put(ingen::main_uri(), props);
 
 	// Create a GraphBox for the root and set as the UI widget
-	SPtr<const Ingen::Client::GraphModel> root =
-		Ingen::dynamic_ptr_cast<const Ingen::Client::GraphModel>(
+	SPtr<const ingen::client::GraphModel> root =
+		ingen::dynamic_ptr_cast<const ingen::client::GraphModel>(
 			ui->app->store()->object(Raul::Path("/")));
-	ui->view = Ingen::GUI::GraphBox::create(*ui->app, root);
+	ui->view = ingen::gui::GraphBox::create(*ui->app, root);
 	ui->view->unparent();
 	*widget = ui->view->gobj();
 
 	// Request the actual root graph
-	ui->world->interface()->get(Ingen::main_uri());
+	ui->world->interface()->get(ingen::main_uri());
 
 	return ui;
 }
@@ -166,7 +166,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 static void
 cleanup(LV2UI_Handle handle)
 {
-	Ingen::IngenLV2UI* ui = (Ingen::IngenLV2UI*)handle;
+	ingen::IngenLV2UI* ui = (ingen::IngenLV2UI*)handle;
 	delete ui;
 }
 
@@ -177,7 +177,7 @@ port_event(LV2UI_Handle handle,
            uint32_t     format,
            const void*  buffer)
 {
-	Ingen::IngenLV2UI* ui   = (Ingen::IngenLV2UI*)handle;
+	ingen::IngenLV2UI* ui   = (ingen::IngenLV2UI*)handle;
 	const LV2_Atom*    atom = (const LV2_Atom*)buffer;
 	ui->reader->write(atom);
 }

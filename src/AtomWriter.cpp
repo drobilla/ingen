@@ -60,7 +60,7 @@
 #include "raul/Path.hpp"
 #include "serd/serd.h"
 
-namespace Ingen {
+namespace ingen {
 
 AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
@@ -649,4 +649,4 @@ AtomWriter::operator()(const Error&)
  * @endcode
  */
 
-} // namespace Ingen
+} // namespace ingen

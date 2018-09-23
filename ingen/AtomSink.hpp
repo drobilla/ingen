@@ -22,7 +22,7 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 
-namespace Ingen {
+namespace ingen {
 
 /** A sink for LV2 Atoms.
  * @ingroup IngenShared
@@ -42,6 +42,6 @@ public:
 	virtual bool write(const LV2_Atom* msg, int32_t default_id=0) = 0;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ATOMSINK_HPP

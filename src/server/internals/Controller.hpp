@@ -19,14 +19,14 @@
 
 #include "InternalBlock.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class InputPort;
 class OutputPort;
 class InternalPlugin;
 
-namespace Internals {
+namespace internals {
 
 /** MIDI control input block.
  *
@@ -64,8 +64,8 @@ private:
 	bool        _learning;
 };
 
-} // namespace Server
-} // namespace Ingen
-} // namespace Internals
+} // namespace server
+} // namespace ingen
+} // namespace internals
 
 #endif // INGEN_INTERNALS_CONTROLLER_HPP

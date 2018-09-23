@@ -27,7 +27,7 @@
 
 #include "ingen_config.h"
 
-namespace Ingen {
+namespace ingen {
 
 static FilePath bundle_path;
 
@@ -143,4 +143,4 @@ system_config_dirs()
 	return paths;
 }
 
-} // namespace Ingen
+} // namespace ingen

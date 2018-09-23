@@ -27,7 +27,7 @@
 #    include <sys/time.h>
 #endif
 
-namespace Ingen {
+namespace ingen {
 
 class Clock {
 public:
@@ -58,6 +58,6 @@ private:
 #endif
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ENGINE_CLOCK_HPP

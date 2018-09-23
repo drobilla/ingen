@@ -25,8 +25,8 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/types.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class ObjectControlWindow;
 class ObjectPropertiesWindow;
@@ -42,9 +42,9 @@ public:
 	ObjectMenu(BaseObjectType*                   cobject,
 	           const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SPtr<const Client::ObjectModel> object);
+	void init(App& app, SPtr<const client::ObjectModel> object);
 
-	SPtr<const Client::ObjectModel> object() const { return _object; }
+	SPtr<const client::ObjectModel> object() const { return _object; }
 	App*                            app()    const { return _app; }
 
 protected:
@@ -58,7 +58,7 @@ protected:
 	void property_changed(const URI& predicate, const Atom& value);
 
 	App*                            _app;
-	SPtr<const Client::ObjectModel> _object;
+	SPtr<const client::ObjectModel> _object;
 	Gtk::MenuItem*                  _learn_menuitem;
 	Gtk::MenuItem*                  _unlearn_menuitem;
 	Gtk::CheckMenuItem*             _polyphonic_menuitem;
@@ -71,7 +71,7 @@ protected:
 	bool _enable_signal;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_OBJECTMENU_HPP

@@ -33,14 +33,14 @@
 #include "events/DisconnectAll.hpp"
 #include "util.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 DisconnectAll::DisconnectAll(Engine&                     engine,
                              SPtr<Interface>             client,
                              SampleCount                 timestamp,
-                             const Ingen::DisconnectAll& msg)
+                             const ingen::DisconnectAll& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _parent(nullptr)
@@ -171,6 +171,6 @@ DisconnectAll::undo(Interface& target)
 	}
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

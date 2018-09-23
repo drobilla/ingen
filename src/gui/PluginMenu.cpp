@@ -18,10 +18,10 @@
 #include "ingen/Log.hpp"
 #include "ingen/client/PluginModel.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
-PluginMenu::PluginMenu(Ingen::World& world)
+PluginMenu::PluginMenu(ingen::World& world)
 	: _world(world)
 	, _classless_menu(nullptr, nullptr)
 {
@@ -62,7 +62,7 @@ PluginMenu::clear()
 }
 
 void
-PluginMenu::add_plugin(SPtr<Client::PluginModel> p)
+PluginMenu::add_plugin(SPtr<client::PluginModel> p)
 {
 	typedef ClassMenus::iterator iterator;
 
@@ -141,7 +141,7 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 }
 
 void
-PluginMenu::add_plugin_to_menu(MenuRecord& menu, SPtr<Client::PluginModel> p)
+PluginMenu::add_plugin_to_menu(MenuRecord& menu, SPtr<client::PluginModel> p)
 {
 	const URIs& uris        = _world.uris();
 	LilvWorld*  lworld      = _world.lilv_world();
@@ -167,10 +167,10 @@ PluginMenu::add_plugin_to_menu(MenuRecord& menu, SPtr<Client::PluginModel> p)
 }
 
 void
-PluginMenu::load_plugin(WPtr<Client::PluginModel> weak_plugin)
+PluginMenu::load_plugin(WPtr<client::PluginModel> weak_plugin)
 {
 	signal_load_plugin.emit(weak_plugin);
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

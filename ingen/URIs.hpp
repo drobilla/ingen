@@ -24,7 +24,7 @@
 #include "lv2/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Forge;
 class URIMap;
@@ -39,10 +39,10 @@ class URIMap;
  */
 class INGEN_API URIs : public Raul::Noncopyable {
 public:
-	URIs(Ingen::Forge& forge, URIMap* map, LilvWorld* lworld);
+	URIs(ingen::Forge& forge, URIMap* map, LilvWorld* lworld);
 
 	struct Quark : public URI {
-		Quark(Ingen::Forge& forge,
+		Quark(ingen::Forge& forge,
 		      URIMap*       map,
 		      LilvWorld*    lworld,
 		      const char*   str);
@@ -60,7 +60,7 @@ public:
 		LilvNode* lnode;
 	};
 
-	Ingen::Forge& forge;
+	ingen::Forge& forge;
 
 	const Quark atom_AtomPort;
 	const Quark atom_Bool;
@@ -229,6 +229,6 @@ operator!=(const URIs::Quark& lhs, const Atom& rhs)
 	return !(lhs == rhs);
 }
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_URIS_HPP

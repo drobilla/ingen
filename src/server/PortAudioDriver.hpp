@@ -34,8 +34,8 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class DuplexPort;
 class Engine;
@@ -126,7 +126,7 @@ protected:
 	bool                        _is_activated;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_PORTAUDIODRIVER_HPP

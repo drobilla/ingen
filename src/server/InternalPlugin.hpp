@@ -23,8 +23,8 @@
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class BufferFactory;
@@ -51,7 +51,7 @@ private:
 	const Raul::Symbol _symbol;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_INTERNALPLUGIN_HPP

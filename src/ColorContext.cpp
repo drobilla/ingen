@@ -23,7 +23,7 @@
 inline int isatty(int fd) { return 0; }
 #endif
 
-namespace Ingen {
+namespace ingen {
 
 ColorContext::ColorContext(FILE* stream, Color color)
 	: _stream(stream)
@@ -41,4 +41,4 @@ ColorContext::~ColorContext()
 	}
 }
 
-}  // namespace Ingen
+}  // namespace ingen

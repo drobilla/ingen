@@ -36,7 +36,7 @@ class Maid;
 class RingBuffer;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class AtomReader;
 class Interface;
@@ -44,7 +44,7 @@ class Log;
 class Store;
 class World;
 
-namespace Server {
+namespace server {
 
 class BlockFactory;
 class Broadcaster;
@@ -67,14 +67,14 @@ class Worker;
 
    This is a simple class that provides pointers to the various components
    that make up the engine implementation.  In processes with a local engine,
-   it can be accessed via the Ingen::World.
+   it can be accessed via the ingen::World.
 
    @ingroup engine
 */
 class INGEN_API Engine : public EngineBase
 {
 public:
-	explicit Engine(Ingen::World* world);
+	explicit Engine(ingen::World* world);
 	virtual ~Engine();
 
 	Engine(const Engine&) = delete;
@@ -129,7 +129,7 @@ public:
 	/** Process all events (no RT limits). */
 	unsigned process_all_events();
 
-	Ingen::World* world() const { return _world; }
+	ingen::World* world() const { return _world; }
 	Log&          log()   const;
 
 	const SPtr<Interface>&       interface()        const { return _interface; }
@@ -176,7 +176,7 @@ public:
 	Properties load_properties() const;
 
 private:
-	Ingen::World* _world;
+	ingen::World* _world;
 
 	SPtr<LV2Options>      _options;
 	UPtr<BufferFactory>   _buffer_factory;
@@ -215,7 +215,7 @@ private:
 	bool _activated;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_ENGINE_HPP

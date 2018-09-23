@@ -23,7 +23,7 @@
 #include "ingen/URI.hpp"
 #include "raul/Path.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 inline URI main_uri() { return URI("ingen:/main"); }
 
@@ -50,6 +50,6 @@ inline URI path_to_uri(const Raul::Path& path)
 	return URI(main_uri().string() + path.c_str());
 }
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_PATHS_HPP

@@ -33,14 +33,14 @@
 
 #include "Window.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client {
+namespace client {
 class GraphModel;
 class PluginModel;
 }
 
-namespace GUI {
+namespace gui {
 
 /** 'Load Plugin' window.
  *
@@ -54,12 +54,12 @@ public:
 	LoadPluginWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_graph(SPtr<const Client::GraphModel> graph);
-	void set_plugins(SPtr<const Client::ClientStore::Plugins> plugins);
+	void set_graph(SPtr<const client::GraphModel> graph);
+	void set_plugins(SPtr<const client::ClientStore::Plugins> plugins);
 
-	void add_plugin(SPtr<const Client::PluginModel> plugin);
+	void add_plugin(SPtr<const client::PluginModel> plugin);
 
-	void present(SPtr<const Client::GraphModel> graph,
+	void present(SPtr<const client::GraphModel> graph,
 	             Properties                     data);
 
 protected:
@@ -86,7 +86,7 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> _col_uri;
 
 		// Not displayed:
-		Gtk::TreeModelColumn< SPtr<const Client::PluginModel> > _col_plugin;
+		Gtk::TreeModelColumn< SPtr<const client::PluginModel> > _col_plugin;
 	};
 
 	/** Column for the filter criteria combo box. */
@@ -110,9 +110,9 @@ private:
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
 
 	void set_row(Gtk::TreeModel::Row&            row,
-	             SPtr<const Client::PluginModel> plugin);
+	             SPtr<const client::PluginModel> plugin);
 
-	void new_plugin(SPtr<const Client::PluginModel> pm);
+	void new_plugin(SPtr<const client::PluginModel> pm);
 
 	void plugin_property_changed(const URI&  plugin,
 	                             const URI&  predicate,
@@ -121,14 +121,14 @@ private:
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
 
-	std::string generate_module_name(SPtr<const Client::PluginModel> plugin,
+	std::string generate_module_name(SPtr<const client::PluginModel> plugin,
 	                                 int                             offset=0);
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 
 	Properties _initial_data;
 
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 
 	typedef std::map<URI, Gtk::TreeModel::iterator> Rows;
 	Rows _rows;
@@ -154,7 +154,7 @@ private:
 	Gtk::Entry*       _search_entry;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_LOADPLUGINWINDOW_HPP

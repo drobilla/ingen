@@ -28,11 +28,11 @@
 #include "GraphView.hpp"
 #include "WidgetFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 GraphView::GraphView(BaseObjectType*                   cobject,
                      const Glib::RefPtr<Gtk::Builder>& xml)
@@ -150,5 +150,5 @@ GraphView::property_changed(const URI& predicate, const Atom& value)
 	_enable_signal = true;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

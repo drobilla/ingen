@@ -36,14 +36,14 @@
 #include "SetPortValue.hpp"
 #include "events/Get.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Delta::Delta(Engine&           engine,
              SPtr<Interface>   client,
              SampleCount       timestamp,
-             const Ingen::Put& msg)
+             const ingen::Put& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.uri)
@@ -62,7 +62,7 @@ Delta::Delta(Engine&           engine,
 Delta::Delta(Engine&             engine,
              SPtr<Interface>     client,
              SampleCount         timestamp,
-             const Ingen::Delta& msg)
+             const ingen::Delta& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.uri)
@@ -82,7 +82,7 @@ Delta::Delta(Engine&             engine,
 Delta::Delta(Engine&                   engine,
              SPtr<Interface>           client,
              SampleCount               timestamp,
-             const Ingen::SetProperty& msg)
+             const ingen::SetProperty& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.subject)
@@ -117,7 +117,7 @@ Delta::init()
 	}
 
 	// Set atomic execution if polyphony is to be changed
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 	if (_properties.count(uris.ingen_polyphonic) ||
 	    _properties.count(uris.ingen_polyphony)) {
 		_block = true;
@@ -171,7 +171,7 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 bool
 Delta::pre_process(PreProcessContext& ctx)
 {
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 
 	const bool is_graph_object = uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
@@ -218,8 +218,8 @@ Delta::pre_process(PreProcessContext& ctx)
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	_object = is_graph_object
-		? static_cast<Ingen::Resource*>(_engine.store()->get(uri_to_path(_subject)))
-		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
+		? static_cast<ingen::Resource*>(_engine.store()->get(uri_to_path(_subject)))
+		: static_cast<ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
 	if (!_object && !is_client && !is_engine &&
 	    (!is_graph_object || _type != Type::PUT)) {
@@ -229,7 +229,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	if (is_graph_object && !_object) {
 		Raul::Path path(uri_to_path(_subject));
 		bool is_graph = false, is_block = false, is_port = false, is_output = false;
-		Ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
+		ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 
 		if (is_graph) {
 			_create_event = new CreateGraph(
@@ -481,7 +481,7 @@ Delta::execute(RunContext& context)
 		return;
 	}
 
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 
 	if (_create_event) {
 		_create_event->set_time(_time);
@@ -665,6 +665,6 @@ Delta::get_execution() const
 	return _block ? Execution::ATOMIC : Execution::NORMAL;
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

@@ -24,7 +24,7 @@
 #include "ingen/Store.hpp"
 #include "ingen/paths.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 ClashAvoider::ClashAvoider(const Store& store)
 	: _store(store)
@@ -133,4 +133,4 @@ ClashAvoider::exists(const Raul::Path& path) const
 	return _store.find(path) != _store.end();
 }
 
-} // namespace Ingen
+} // namespace ingen

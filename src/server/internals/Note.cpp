@@ -34,9 +34,9 @@
 
 // #define NOTE_DEBUG 1
 
-namespace Ingen {
-namespace Server {
-namespace Internals {
+namespace ingen {
+namespace server {
+namespace internals {
 
 InternalPlugin* NoteNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
@@ -53,7 +53,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	, _voices(bufs.maid().make_managed<Voices>(_polyphony))
 	, _sustain(false)
 {
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(8);
 
 	const Atom zero = bufs.forge().make(0.0f);
@@ -415,6 +415,6 @@ NoteNode::channel_pressure(RunContext& context, FrameTime time, float amount)
 	_pressure_port->set_control_value(context, time, amount);
 }
 
-} // namespace Internals
-} // namespace Server
-} // namespace Ingen
+} // namespace internals
+} // namespace server
+} // namespace ingen

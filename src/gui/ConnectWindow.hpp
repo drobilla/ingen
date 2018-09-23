@@ -31,8 +31,8 @@
 
 #include "Window.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class App;
 
@@ -49,8 +49,8 @@ public:
 	ConnectWindow(BaseObjectType*            cobject,
 	              Glib::RefPtr<Gtk::Builder> xml);
 
-	void set_connected_to(SPtr<Ingen::Interface> engine);
-	void start(App& app, Ingen::World* world);
+	void set_connected_to(SPtr<ingen::Interface> engine);
+	void start(App& app, ingen::World* world);
 
 	bool attached()  const { return _finished_connecting; }
 	bool quit_flag() const { return _quit_flag; }
@@ -110,7 +110,7 @@ private:
 	bool      _quit_flag;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_CONNECTWINDOW_HPP

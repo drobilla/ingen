@@ -24,10 +24,10 @@
 #include "Buffer.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
-struct ResizeFeature : public Ingen::LV2Features::Feature {
+struct ResizeFeature : public ingen::LV2Features::Feature {
 	static LV2_Resize_Port_Status resize_port(
 		LV2_Resize_Port_Feature_Data data,
 		uint32_t                     index,
@@ -59,7 +59,7 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 	}
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_LV2RESIZEFEATURE_HPP

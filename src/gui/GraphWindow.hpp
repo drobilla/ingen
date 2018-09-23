@@ -26,13 +26,13 @@
 #include "GraphBox.hpp"
 #include "Window.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client {
+namespace client {
 class GraphModel;
 }
 
-namespace GUI {
+namespace gui {
 
 /** A window for a graph.
  *
@@ -48,7 +48,7 @@ public:
 
 	void init_window(App& app);
 
-	SPtr<const Client::GraphModel> graph() const { return _box->graph(); }
+	SPtr<const client::GraphModel> graph() const { return _box->graph(); }
 	GraphBox*                      box()   const { return _box; }
 
 	bool documentation_is_visible() { return _box->documentation_is_visible(); }
@@ -57,7 +57,7 @@ public:
 		_box->set_documentation(doc, html);
 	}
 
-	void show_port_status(const Client::PortModel* model,
+	void show_port_status(const client::PortModel* model,
 	                      const Atom&              value) {
 		_box->show_port_status(model, value);
 	}
@@ -74,7 +74,7 @@ private:
 	int       _y;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GRAPH_WINDOW_HPP

@@ -23,8 +23,8 @@
 #include "GraphImpl.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 void
 ClientUpdate::put(const URI&        uri,
@@ -151,5 +151,5 @@ ClientUpdate::send(Interface& dest)
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

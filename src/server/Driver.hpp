@@ -24,8 +24,8 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class DuplexPort;
 class EnginePort;
@@ -104,7 +104,7 @@ public:
 	virtual int real_time_priority() = 0;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_DRIVER_HPP

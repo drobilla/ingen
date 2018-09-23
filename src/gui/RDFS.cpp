@@ -23,9 +23,9 @@
 
 #include "RDFS.hpp"
 
-namespace Ingen {
-namespace GUI {
-namespace RDFS {
+namespace ingen {
+namespace gui {
+namespace rdfs {
 
 std::string
 label(World* world, const LilvNode* node)
@@ -113,7 +113,7 @@ datatypes(World* world, URISet& types, bool super)
 }
 
 URISet
-types(World* world, SPtr<const Client::ObjectModel> model)
+types(World* world, SPtr<const client::ObjectModel> model)
 {
 	typedef Properties::const_iterator    PropIter;
 	typedef std::pair<PropIter, PropIter> PropRange;
@@ -137,16 +137,16 @@ types(World* world, SPtr<const Client::ObjectModel> model)
 	}
 
 	// Add every superclass of every type, recursively
-	RDFS::classes(world, types, true);
+	rdfs::classes(world, types, true);
 
 	return types;
 }
 
 URISet
-properties(World* world, SPtr<const Client::ObjectModel> model)
+properties(World* world, SPtr<const client::ObjectModel> model)
 {
 	URISet properties;
-	URISet types = RDFS::types(world, model);
+	URISet types = rdfs::types(world, model);
 
 	LilvNode* rdf_type = lilv_new_uri(world->lilv_world(),
 	                                  LILV_NS_RDF "type");
@@ -209,7 +209,7 @@ instances(World* world, const URISet& types)
 			if (!lilv_node_is_uri(object)) {
 				continue;
 			}
-			const std::string label = RDFS::label(world, object);
+			const std::string label = rdfs::label(world, object);
 			result.emplace(label, URI(lilv_node_as_string(object)));
 		}
 		lilv_node_free(type);
@@ -234,7 +234,7 @@ range(World* world, const LilvNode* prop, bool recursive)
 	}
 
 	if (recursive) {
-		RDFS::classes(world, ranges, false);
+		rdfs::classes(world, ranges, false);
 	}
 
 	lilv_nodes_free(nodes);
@@ -254,6 +254,6 @@ is_a(World* world, const LilvNode* inst, const LilvNode* klass)
 	return is_instance;
 }
 
-} // namespace RDFS
-} // namespace GUI
-} // namespace Ingen
+} // namespace rdfs
+} // namespace gui
+} // namespace ingen

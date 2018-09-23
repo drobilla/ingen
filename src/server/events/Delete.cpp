@@ -31,14 +31,14 @@
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Delete::Delete(Engine&           engine,
                SPtr<Interface>   client,
                FrameTime         timestamp,
-               const Ingen::Del& msg)
+               const ingen::Del& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _engine_port(nullptr)
@@ -60,7 +60,7 @@ Delete::~Delete()
 bool
 Delete::pre_process(PreProcessContext& ctx)
 {
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 	if (_path.is_root() || _path == "/control" || _path == "/notify") {
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
@@ -187,8 +187,8 @@ Delete::post_process()
 void
 Delete::undo(Interface& target)
 {
-	const Ingen::URIs& uris  = _engine.world()->uris();
-	Ingen::Forge&      forge = _engine.buffer_factory()->forge();
+	const ingen::URIs& uris  = _engine.world()->uris();
+	ingen::Forge&      forge = _engine.buffer_factory()->forge();
 
 	auto i = _removed_objects.find(_path);
 	if (i != _removed_objects.end()) {
@@ -211,6 +211,6 @@ Delete::undo(Interface& target)
 	}
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

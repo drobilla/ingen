@@ -28,15 +28,15 @@
 #include "Event.hpp"
 #include "PortType.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class DuplexPort;
 class EnginePort;
 class GraphImpl;
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 /** An event to add a Port to a Graph.
  *
@@ -75,8 +75,8 @@ private:
 	boost::optional<Flow>  _flow;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_CREATEPORT_HPP

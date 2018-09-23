@@ -28,11 +28,11 @@
 
 namespace Raul { class Maid; }
 
-namespace Ingen {
+namespace ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
-namespace Server {
+namespace server {
 
 class BufferFactory;
 class GraphImpl;
@@ -94,7 +94,7 @@ public:
 	bool is_main() const { return !_parent; }
 
 protected:
-	NodeImpl(const Ingen::URIs&  uris,
+	NodeImpl(const ingen::URIs&  uris,
 	         NodeImpl*           parent,
 	         const Raul::Symbol& symbol);
 
@@ -103,7 +103,7 @@ protected:
 	Raul::Symbol _symbol;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_NODEIMPL_HPP

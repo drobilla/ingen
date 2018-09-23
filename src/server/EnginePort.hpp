@@ -24,8 +24,8 @@
 
 #include "DuplexPort.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** A "system" port (e.g. a Jack port, an external port on Ingen).
  *
@@ -60,7 +60,7 @@ protected:
 	uint32_t    _driver_index;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_ENGINE_PORT_HPP

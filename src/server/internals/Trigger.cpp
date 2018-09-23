@@ -30,9 +30,9 @@
 #include "internals/Trigger.hpp"
 #include "util.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Internals {
+namespace ingen {
+namespace server {
+namespace internals {
 
 InternalPlugin* TriggerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
@@ -48,7 +48,7 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	: InternalBlock(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(6);
 
 	const Atom zero = bufs.forge().make(0.0f);
@@ -182,6 +182,6 @@ TriggerNode::note_off(RunContext& context, uint8_t note_num, FrameTime time)
 	return false;
 }
 
-} // namespace Internals
-} // namespace Server
-} // namespace Ingen
+} // namespace internals
+} // namespace server
+} // namespace ingen

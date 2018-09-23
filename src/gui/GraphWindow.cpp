@@ -23,8 +23,8 @@
 #include "GraphWindow.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 GraphWindow::GraphWindow(BaseObjectType*                   cobject,
                          const Glib::RefPtr<Gtk::Builder>& xml)
@@ -81,5 +81,5 @@ GraphWindow::on_key_press_event(GdkEventKey* event)
 	return Gtk::Window::on_key_press_event(event);
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

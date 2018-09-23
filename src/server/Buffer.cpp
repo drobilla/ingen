@@ -37,8 +37,8 @@
 #include "Engine.hpp"
 #include "RunContext.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 Buffer::Buffer(BufferFactory& bufs,
                LV2_URID       type,
@@ -464,5 +464,5 @@ intrusive_ptr_release(Buffer* b)
 	b->deref();
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

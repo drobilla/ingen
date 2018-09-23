@@ -24,8 +24,8 @@
 
 #include "lilv/lilv.h"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class App;
 
@@ -62,7 +62,7 @@ private:
 	Gtk::Entry*         _entry;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_URI_ENTRY_HPP

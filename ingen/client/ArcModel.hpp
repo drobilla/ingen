@@ -26,8 +26,8 @@
 #include "ingen/client/PortModel.hpp"
 #include "ingen/ingen.h"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 class ClientStore;
 
@@ -62,7 +62,7 @@ private:
 	const SPtr<PortModel> _head;
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_ARCMODEL_HPP

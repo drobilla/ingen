@@ -24,12 +24,12 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 /** An event to change the value of a port.
  *
@@ -64,8 +64,8 @@ private:
 	bool                 _synthetic;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_SETPORTVALUE_HPP

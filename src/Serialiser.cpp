@@ -43,7 +43,7 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-namespace Ingen {
+namespace ingen {
 
 struct Serialiser::Impl {
 	explicit Impl(World& world)
@@ -530,7 +530,7 @@ Serialiser::Impl::serialise_arc(const Sord::Node& parent,
 }
 
 static bool
-skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
+skip_property(ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate == INGEN__file ||
 	        predicate == uris.ingen_arc ||
@@ -580,4 +580,4 @@ Serialiser::Impl::serialise_properties(Sord::Node        id,
 	serd_env_free(env);
 }
 
-} // namespace Ingen
+} // namespace ingen

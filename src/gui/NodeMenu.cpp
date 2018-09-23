@@ -33,11 +33,11 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 NodeMenu::NodeMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
@@ -51,7 +51,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
+NodeMenu::init(App& app, SPtr<const client::BlockModel> block)
 {
 	ObjectMenu::init(app, block);
 
@@ -249,5 +249,5 @@ NodeMenu::has_control_inputs()
 	return false;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

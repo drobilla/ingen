@@ -25,13 +25,13 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class GraphImpl;
 
-namespace Events {
+namespace events {
 
 /** Copy a graph object to a new path.
  * \ingroup engine
@@ -42,7 +42,7 @@ public:
 	Copy(Engine&            engine,
 	     SPtr<Interface>    client,
 	     SampleCount        timestamp,
-	     const Ingen::Copy& msg);
+	     const ingen::Copy& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -54,15 +54,15 @@ private:
 	bool engine_to_filesystem(PreProcessContext& ctx);
 	bool filesystem_to_engine(PreProcessContext& ctx);
 
-	const Ingen::Copy   _msg;
+	const ingen::Copy   _msg;
 	SPtr<BlockImpl>     _old_block;
 	GraphImpl*          _parent;
 	BlockImpl*          _block;
 	MPtr<CompiledGraph> _compiled_graph;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_COPY_HPP

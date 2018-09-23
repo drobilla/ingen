@@ -19,14 +19,14 @@
 
 #include "InternalBlock.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class InputPort;
 class OutputPort;
 class InternalPlugin;
 
-namespace Internals {
+namespace internals {
 
 /** Time information block.
  *
@@ -52,8 +52,8 @@ private:
 	OutputPort* _notify_port;
 };
 
-} // namespace Server
-} // namespace Ingen
-} // namespace Internals
+} // namespace server
+} // namespace ingen
+} // namespace internals
 
 #endif // INGEN_INTERNALS_TIME_HPP

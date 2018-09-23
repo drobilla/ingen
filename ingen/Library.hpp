@@ -20,7 +20,7 @@
 #include "ingen/FilePath.hpp"
 #include "ingen/ingen.h"
 
-namespace Ingen {
+namespace ingen {
 
 /** A dynamically loaded library (module, plugin). */
 class INGEN_API Library {
@@ -43,6 +43,6 @@ private:
 	void* _lib;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_LIBRARY_HPP

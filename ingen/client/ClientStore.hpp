@@ -30,13 +30,13 @@
 
 namespace Raul { class Atom; }
 
-namespace Ingen {
+namespace ingen {
 
 class Log;
 class Node;
 class URIs;
 
-namespace Client {
+namespace client {
 
 class BlockModel;
 class GraphModel;
@@ -121,7 +121,7 @@ private:
 	SPtr<Plugins> _plugins; ///< Map, keyed by plugin URI
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_CLIENTSTORE_HPP

@@ -34,11 +34,11 @@
 #include "Style.hpp"
 #include "ThreadedLoader.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
@@ -88,7 +88,7 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 	property_select_multiple() = true;
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	const FilePath examples_dir = Ingen::data_file_path("graphs");
+	const FilePath examples_dir = ingen::data_file_path("graphs");
 	if (Glib::file_test(examples_dir, Glib::FILE_TEST_IS_DIR)) {
 		add_shortcut_folder(examples_dir.string());
 	}
@@ -253,5 +253,5 @@ LoadGraphWindow::selection_changed()
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

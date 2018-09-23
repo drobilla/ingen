@@ -19,8 +19,8 @@
 
 #include "BlockImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** An internal Block implemented inside Ingen.
  *
@@ -42,7 +42,7 @@ public:
 	virtual void pre_process(RunContext& context);
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BLOCKIMPL_HPP

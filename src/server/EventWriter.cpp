@@ -22,8 +22,8 @@
 #include "EventWriter.hpp"
 #include "events.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
@@ -46,56 +46,56 @@ EventWriter::message(const Message& msg)
 void
 EventWriter::operator()(const BundleBegin& msg)
 {
-	_engine.enqueue_event(new Events::Mark(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Mark(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const BundleEnd& msg)
 {
-	_engine.enqueue_event(new Events::Mark(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Mark(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Put& msg)
 {
-	_engine.enqueue_event(new Events::Delta(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Delta(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Delta& msg)
 {
-	_engine.enqueue_event(new Events::Delta(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Delta(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Copy& msg)
 {
-	_engine.enqueue_event(new Events::Copy(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Copy(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Move& msg)
 {
-	_engine.enqueue_event(new Events::Move(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Move(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Del& msg)
 {
-	_engine.enqueue_event(new Events::Delete(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Delete(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Connect& msg)
 {
-	_engine.enqueue_event(new Events::Connect(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Connect(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
@@ -103,7 +103,7 @@ void
 EventWriter::operator()(const Disconnect& msg)
 {
 	_engine.enqueue_event(
-		new Events::Disconnect(_engine, _respondee, now(), msg),
+		new events::Disconnect(_engine, _respondee, now(), msg),
 		_event_mode);
 }
 
@@ -111,37 +111,37 @@ void
 EventWriter::operator()(const DisconnectAll& msg)
 {
 	_engine.enqueue_event(
-		new Events::DisconnectAll(_engine, _respondee, now(), msg),
+		new events::DisconnectAll(_engine, _respondee, now(), msg),
 		_event_mode);
 }
 
 void
 EventWriter::operator()(const SetProperty& msg)
 {
-	_engine.enqueue_event(new Events::Delta(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Delta(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Undo& msg)
 {
-	_engine.enqueue_event(new Events::Undo(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Undo(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Redo& msg)
 {
-	_engine.enqueue_event(new Events::Undo(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Undo(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
 void
 EventWriter::operator()(const Get& msg)
 {
-	_engine.enqueue_event(new Events::Get(_engine, _respondee, now(), msg),
+	_engine.enqueue_event(new events::Get(_engine, _respondee, now(), msg),
 	                      _event_mode);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

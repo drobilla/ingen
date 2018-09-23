@@ -22,8 +22,8 @@
 
 #include "WidgetFactory.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 Glib::ustring WidgetFactory::ui_filename = "";
 
@@ -40,7 +40,7 @@ void
 WidgetFactory::find_ui_file()
 {
 	// Try file in bundle (directory where executable resides)
-	ui_filename = Ingen::bundle_file_path("ingen_gui.ui");
+	ui_filename = ingen::bundle_file_path("ingen_gui.ui");
 	if (is_readable(ui_filename)) {
 		return;
 	}
@@ -53,7 +53,7 @@ WidgetFactory::find_ui_file()
 	}
 
 	// Try the default system installed path
-	ui_filename = Ingen::data_file_path("ingen_gui.ui");
+	ui_filename = ingen::data_file_path("ingen_gui.ui");
 	if (is_readable(ui_filename)) {
 		return;
 	}
@@ -76,5 +76,5 @@ WidgetFactory::create(const std::string& toplevel_widget)
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

@@ -33,7 +33,7 @@
 #include "ingen_config.h"
 
 using namespace std;
-using namespace Ingen;
+using namespace ingen;
 
 World* world = nullptr;
 
@@ -66,7 +66,7 @@ main(int argc, char** argv)
 		world = new World(nullptr, nullptr, nullptr);
 		world->conf().add(
 			"output", "output", 'O', "File to write benchmark output",
-			Ingen::Configuration::SESSION, world->forge().String, Atom());
+			ingen::Configuration::SESSION, world->forge().String, Atom());
 		world->load_configuration(argc, argv);
 	} catch (std::exception& e) {
 		cout << "ingen: " << e.what() << endl;
@@ -110,7 +110,7 @@ main(int argc, char** argv)
 
 	// Run benchmark
 	// TODO: Set up real-time scheduling for this and worker threads
-	Ingen::Clock   clock;
+	ingen::Clock   clock;
 	const uint32_t n_test_frames = 1 << 20;
 	const uint32_t block_length  = 4096;
 	const uint64_t t_start       = clock.now_microseconds();

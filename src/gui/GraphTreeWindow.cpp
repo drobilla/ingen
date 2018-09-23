@@ -24,11 +24,11 @@
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
@@ -133,7 +133,7 @@ GraphTreeWindow::remove_graph(SPtr<GraphModel> pm)
 
 Gtk::TreeModel::iterator
 GraphTreeWindow::find_graph(Gtk::TreeModel::Children  root,
-                            SPtr<Client::ObjectModel> graph)
+                            SPtr<client::ObjectModel> graph)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
 		SPtr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
@@ -231,5 +231,5 @@ GraphTreeWindow::graph_moved(SPtr<GraphModel> graph)
 	_enable_signal = true;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

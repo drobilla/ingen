@@ -26,11 +26,11 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class ClientStore; class ObjectModel; }
+namespace client { class ClientStore; class ObjectModel; }
 
-namespace GUI {
+namespace gui {
 
 class GraphWindow;
 class GraphTreeView;
@@ -45,18 +45,18 @@ public:
 	GraphTreeWindow(BaseObjectType*                   cobject,
 	                const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, Client::ClientStore& store);
+	void init(App& app, client::ClientStore& store);
 
-	void new_object(SPtr<Client::ObjectModel> object);
+	void new_object(SPtr<client::ObjectModel> object);
 
 	void graph_property_changed(const URI&               key,
 	                            const Atom&              value,
-	                            SPtr<Client::GraphModel> graph);
+	                            SPtr<client::GraphModel> graph);
 
-	void graph_moved(SPtr<Client::GraphModel> graph);
+	void graph_moved(SPtr<client::GraphModel> graph);
 
-	void add_graph(SPtr<Client::GraphModel> pm);
-	void remove_graph(SPtr<Client::GraphModel> pm);
+	void add_graph(SPtr<client::GraphModel> pm);
+	void remove_graph(SPtr<client::GraphModel> pm);
 	void show_graph_menu(GdkEventButton* ev);
 
 protected:
@@ -67,7 +67,7 @@ protected:
 
 	Gtk::TreeModel::iterator find_graph(
 		Gtk::TreeModel::Children  root,
-		SPtr<Client::ObjectModel> graph);
+		SPtr<client::ObjectModel> graph);
 
 	GraphTreeView* _graphs_treeview;
 
@@ -81,7 +81,7 @@ protected:
 
 		Gtk::TreeModelColumn<Glib::ustring>             name_col;
 		Gtk::TreeModelColumn<bool>                      enabled_col;
-		Gtk::TreeModelColumn<SPtr<Client::GraphModel> > graph_model_col;
+		Gtk::TreeModelColumn<SPtr<client::GraphModel> > graph_model_col;
 	};
 
 	App*                             _app;
@@ -117,7 +117,7 @@ private:
 
 }; // struct GraphTreeView
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GRAPHTREEWINDOW_HPP

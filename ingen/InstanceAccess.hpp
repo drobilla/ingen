@@ -28,9 +28,9 @@
 
 #include "lv2/core/lv2.h"
 
-namespace Ingen {
+namespace ingen {
 
-struct InstanceAccess : public Ingen::LV2Features::Feature
+struct InstanceAccess : public ingen::LV2Features::Feature
 {
 	const char* uri() const override { return "http://lv2plug.in/ns/ext/instance-access"; }
 
@@ -51,6 +51,6 @@ struct InstanceAccess : public Ingen::LV2Features::Feature
 	}
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ENGINE_INSTANCEACCESS_HPP

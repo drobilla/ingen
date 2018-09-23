@@ -41,10 +41,10 @@
 #include "ConnectWindow.hpp"
 #include "WindowFactory.hpp"
 
-using namespace Ingen::Client;
+using namespace ingen::client;
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 ConnectWindow::ConnectWindow(BaseObjectType*            cobject,
                              Glib::RefPtr<Gtk::Builder> xml)
@@ -102,7 +102,7 @@ ConnectWindow::error(const std::string& msg)
 }
 
 void
-ConnectWindow::start(App& app, Ingen::World* world)
+ConnectWindow::start(App& app, ingen::World* world)
 {
 	_app = &app;
 
@@ -129,7 +129,7 @@ ConnectWindow::ingen_response(int32_t            id,
 }
 
 void
-ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
+ConnectWindow::set_connected_to(SPtr<ingen::Interface> engine)
 {
 	_app->world()->set_interface(engine);
 
@@ -193,12 +193,12 @@ ConnectWindow::set_connecting_widget_states()
 bool
 ConnectWindow::connect_remote(const URI& uri)
 {
-	Ingen::World* world = _app->world();
+	ingen::World* world = _app->world();
 
 	SPtr<SigClientInterface> sci(new SigClientInterface());
 	SPtr<QueuedInterface>    qi(new QueuedInterface(sci));
 
-	SPtr<Ingen::Interface> iface(world->new_interface(uri, qi));
+	SPtr<ingen::Interface> iface(world->new_interface(uri, qi));
 	if (iface) {
 		world->set_interface(iface);
 		_app->attach(qi);
@@ -223,14 +223,14 @@ ConnectWindow::connect(bool existing)
 	set_connecting_widget_states();
 	_connect_stage = 0;
 
-	Ingen::World* world = _app->world();
+	ingen::World* world = _app->world();
 
 	if (_mode == Mode::CONNECT_REMOTE) {
 		std::string uri_str = world->conf().option("connect").ptr<char>();
 		if (existing) {
 			uri_str = world->interface()->uri();
 			_connect_stage = 1;
-			SPtr<Client::SocketClient> client = dynamic_ptr_cast<Client::SocketClient>(world->interface());
+			SPtr<client::SocketClient> client = dynamic_ptr_cast<client::SocketClient>(world->interface());
 			if (client) {
 				_app->attach(client->respondee());
 				_app->register_callbacks();
@@ -290,7 +290,7 @@ ConnectWindow::disconnect()
 	_attached = false;
 
 	_app->detach();
-	set_connected_to(SPtr<Ingen::Interface>());
+	set_connected_to(SPtr<ingen::Interface>());
 
 	if (!_widgets_loaded) {
 		return;
@@ -568,5 +568,5 @@ ConnectWindow::quit()
 	Gtk::Main::quit();
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

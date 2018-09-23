@@ -21,8 +21,8 @@
 #include <cmath>
 #include <cstdint>
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Delay-locked loop for monotonic sample time.
  *
@@ -104,7 +104,7 @@ private:
 	bool     initialized;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_FRAMETIMER_HPP

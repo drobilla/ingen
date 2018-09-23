@@ -30,9 +30,9 @@
 #include "RunContext.hpp"
 #include "util.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Internals {
+namespace ingen {
+namespace server {
+namespace internals {
 
 InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
@@ -48,7 +48,7 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 	: InternalBlock(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(7);
 
 	const Atom zero       = bufs.forge().make(0.0f);
@@ -169,6 +169,6 @@ ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, F
 	return true;
 }
 
-} // namespace Internals
-} // namespace Server
-} // namespace Ingen
+} // namespace internals
+} // namespace server
+} // namespace ingen

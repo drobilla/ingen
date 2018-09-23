@@ -25,7 +25,7 @@
 #    define MSG_NOSIGNAL 0
 #endif
 
-namespace Ingen {
+namespace ingen {
 
 SocketWriter::SocketWriter(URIMap&            map,
                            URIs&              uris,
@@ -55,4 +55,4 @@ SocketWriter::bundle_end()
 	send(_socket->fd(), end, 1, MSG_NOSIGNAL);
 }
 
-} // namespace Ingen
+} // namespace ingen

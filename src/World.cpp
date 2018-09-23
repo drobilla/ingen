@@ -41,7 +41,7 @@
 
 using std::string;
 
-namespace Ingen {
+namespace ingen {
 
 class EngineBase;
 class Interface;
@@ -68,7 +68,7 @@ ingen_load_library(Log& log, const string& name)
 		string dir;
 		std::istringstream iss(module_path);
 		while (getline(iss, dir, search_path_separator)) {
-			FilePath filename = Ingen::ingen_module_path(name, FilePath(dir));
+			FilePath filename = ingen::ingen_module_path(name, FilePath(dir));
 			if (filesystem::exists(filename)) {
 				library = std::unique_ptr<Library>(new Library(filename));
 				if (*library) {
@@ -81,7 +81,7 @@ ingen_load_library(Log& log, const string& name)
 	}
 
 	// Try default directory if not found
-	library = std::unique_ptr<Library>(new Library(Ingen::ingen_module_path(name)));
+	library = std::unique_ptr<Library>(new Library(ingen::ingen_module_path(name)));
 
 	if (*library) {
 		return library;
@@ -275,9 +275,9 @@ World::load_module(const char* name)
 		return true;
 	}
 	log().info(fmt("Loading %1% module\n") % name);
-	std::unique_ptr<Ingen::Library> lib = ingen_load_library(log(), name);
-	Ingen::Module* (*module_load)() =
-		lib ? (Ingen::Module* (*)())lib->get_function("ingen_module_load")
+	std::unique_ptr<ingen::Library> lib = ingen_load_library(log(), name);
+	ingen::Module* (*module_load)() =
+		lib ? (ingen::Module* (*)())lib->get_function("ingen_module_load")
 		    : nullptr;
 	if (module_load) {
 		Module* module = module_load();
@@ -352,4 +352,4 @@ World::jack_uuid()
 	return _impl->jack_uuid;
 }
 
-} // namespace Ingen
+} // namespace ingen

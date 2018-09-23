@@ -17,8 +17,8 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 void
 PortModel::on_property(const URI& uri, const Atom& value)
@@ -74,5 +74,5 @@ PortModel::set(SPtr<ObjectModel> model)
 	}
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

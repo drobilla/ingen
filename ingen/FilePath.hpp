@@ -27,7 +27,7 @@
 #define USE_WINDOWS_FILE_PATHS 1
 #endif
 
-namespace Ingen {
+namespace ingen {
 
 /** A path to a file.
  *
@@ -118,6 +118,6 @@ operator<<(std::basic_ostream<Char, Traits>& os, const FilePath& path)
 	return os << path.string();
 }
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_FILE_PATH_HPP

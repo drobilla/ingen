@@ -33,11 +33,11 @@
 #include "RDFS.hpp"
 #include "URIEntry.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 typedef std::set<URI> URISet;
 
@@ -109,7 +109,7 @@ PropertiesWindow::add_property(const URI& key, const Atom& value)
 
 	// Column 0: Property
 	LilvNode*   prop = lilv_new_uri(world->lilv_world(), key.c_str());
-	std::string name = RDFS::label(world, prop);
+	std::string name = rdfs::label(world, prop);
 	if (name.empty()) {
 		name = world->rdf_world()->prefixes().qualify(key);
 	}
@@ -145,7 +145,7 @@ PropertiesWindow::add_property(const URI& key, const Atom& value)
 }
 
 bool
-PropertiesWindow::datatype_supported(const RDFS::URISet& types,
+PropertiesWindow::datatype_supported(const rdfs::URISet& types,
                                      URI*                widget_type)
 {
 	if (types.find(_app->uris().atom_Int) != types.end()) {
@@ -169,7 +169,7 @@ PropertiesWindow::datatype_supported(const RDFS::URISet& types,
 }
 
 bool
-PropertiesWindow::class_supported(const RDFS::URISet& types)
+PropertiesWindow::class_supported(const rdfs::URISet& types)
 {
 	World*    world    = _app->world();
 	LilvNode* rdf_type = lilv_new_uri(
@@ -213,12 +213,12 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 		world->lilv_world(), LILV_NS_RDFS "Datatype");
 
 	// Populate key combo
-	const URISet               props = RDFS::properties(world, model);
+	const URISet               props = rdfs::properties(world, model);
 	std::map<std::string, URI> entries;
 	for (const auto& p : props) {
 		LilvNode*         prop   = lilv_new_uri(world->lilv_world(), p.c_str());
-		const std::string label  = RDFS::label(world, prop);
-		URISet            ranges = RDFS::range(world, prop, true);
+		const std::string label  = rdfs::label(world, prop);
+		URISet            ranges = rdfs::range(world, prop, true);
 
 		lilv_node_free(prop);
 		if (label.empty() || ranges.empty()) {
@@ -227,9 +227,9 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 		}
 
 		LilvNode* range = lilv_new_uri(world->lilv_world(), (*ranges.begin()).c_str());
-		if (RDFS::is_a(world, range, rdfs_DataType)) {
+		if (rdfs::is_a(world, range, rdfs_DataType)) {
 			// Range is a datatype, show if type or any subtype is supported
-			RDFS::datatypes(_app->world(), ranges, false);
+			rdfs::datatypes(_app->world(), ranges, false);
 			URI widget_type("urn:nothing");
 			if (datatype_supported(ranges, &widget_type)) {
 				entries.emplace(label, p);
@@ -274,12 +274,12 @@ PropertiesWindow::create_value_widget(const URI&  key,
 	}
 
 	URI     type(type_uri);
-	Ingen::World* world  = _app->world();
+	ingen::World* world  = _app->world();
 	LilvWorld*    lworld = world->lilv_world();
 
 	// See if type is a datatype we support
 	std::set<URI> types{type};
-	RDFS::datatypes(_app->world(), types, false);
+	rdfs::datatypes(_app->world(), types, false);
 
 	URI  widget_type("urn:nothing");
 	const bool supported = datatype_supported(types, &widget_type);
@@ -333,7 +333,7 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		                   : "");
 
 		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
-		URISet      ranges = RDFS::range(world, pred, true);
+		URISet      ranges = rdfs::range(world, pred, true);
 		URIEntry*   widget = manage(new URIEntry(_app, ranges, str ? str : ""));
 		widget->signal_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
@@ -343,7 +343,7 @@ PropertiesWindow::create_value_widget(const URI&  key,
 
 	LilvNode*  type_node  = lilv_new_uri(lworld, type.c_str());
 	LilvNode*  rdfs_Class = lilv_new_uri(lworld, LILV_NS_RDFS "Class");
-	const bool is_class   = RDFS::is_a(world, type_node, rdfs_Class);
+	const bool is_class   = rdfs::is_a(world, type_node, rdfs_Class);
 	lilv_node_free(rdfs_Class);
 	lilv_node_free(type_node);
 
@@ -351,7 +351,7 @@ PropertiesWindow::create_value_widget(const URI&  key,
 	    type == _app->uris().rdfs_Class ||
 	    is_class) {
 		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
-		URISet      ranges = RDFS::range(world, pred, true);
+		URISet      ranges = rdfs::range(world, pred, true);
 		const char* str    = value.is_valid() ? value.ptr<const char>() : "";
 		URIEntry*   widget = manage(new URIEntry(_app, ranges, str));
 		widget->signal_changed().connect(
@@ -511,7 +511,7 @@ PropertiesWindow::key_changed()
 	LilvNode*                 prop    = lilv_new_uri(lworld, key_uri.c_str());
 
 	// Try to create a value widget in the range of this property
-	const URISet ranges = RDFS::range(_app->world(), prop, true);
+	const URISet ranges = rdfs::range(_app->world(), prop, true);
 	for (const auto& r : ranges) {
 		Gtk::Widget* value_widget = create_value_widget(
 			URI(key_uri), r.c_str(), Atom());
@@ -587,5 +587,5 @@ PropertiesWindow::ok_clicked()
 	Gtk::Window::hide();
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

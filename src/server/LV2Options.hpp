@@ -21,10 +21,10 @@
 #include "ingen/URIs.hpp"
 #include "lv2/options/options.h"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
-class LV2Options : public Ingen::LV2Features::Feature {
+class LV2Options : public ingen::LV2Features::Feature {
 public:
 	explicit LV2Options(const URIs& uris)
 		: _uris(uris)
@@ -65,7 +65,7 @@ private:
 	int32_t     _seq_size;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_LV2OPTIONS_HPP

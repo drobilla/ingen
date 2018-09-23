@@ -22,7 +22,7 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
+namespace ingen {
 
 /** A connection between two ports.
  *
@@ -35,6 +35,6 @@ public:
 	virtual const Raul::Path& head_path() const = 0;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ARC_HPP

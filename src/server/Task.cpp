@@ -17,8 +17,8 @@
 #include "BlockImpl.hpp"
 #include "Task.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 void
 Task::run(RunContext& context)
@@ -154,5 +154,5 @@ Task::dump(std::function<void (const std::string&)> sink, unsigned indent, bool 
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

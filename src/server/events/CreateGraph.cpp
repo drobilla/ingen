@@ -27,9 +27,9 @@
 #include "events/CreateGraph.hpp"
 #include "events/CreatePort.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 CreateGraph::CreateGraph(Engine&           engine,
                          SPtr<Interface>   client,
@@ -54,7 +54,7 @@ CreateGraph::~CreateGraph()
 void
 CreateGraph::build_child_events()
 {
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 
 	// Properties common to both ports
 	Properties control_properties;
@@ -76,7 +76,7 @@ CreateGraph::build_child_events()
 	                  Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		new Events::CreatePort(
+		new events::CreatePort(
 			_engine, _request_client, -1, _time,
 			_path.child(Raul::Symbol("control")),
 			in_properties));
@@ -92,7 +92,7 @@ CreateGraph::build_child_events()
 	                   Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		new Events::CreatePort(_engine, _request_client, -1, _time,
+		new events::CreatePort(_engine, _request_client, -1, _time,
 		                       _path.child(Raul::Symbol("notify")),
 		                       out_properties));
 }
@@ -111,7 +111,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		}
 	}
 
-	const Ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world()->uris();
 
 	typedef Properties::const_iterator iterator;
 
@@ -231,6 +231,6 @@ CreateGraph::undo(Interface& target)
 	target.del(_graph->uri());
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

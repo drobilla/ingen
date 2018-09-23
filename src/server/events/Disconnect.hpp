@@ -29,13 +29,13 @@ namespace Raul {
 template <typename T> class Array;
 }
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class InputPort;
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 /** Remove an Arc between two Ports.
  *
@@ -47,7 +47,7 @@ public:
 	Disconnect(Engine&                  engine,
 	           SPtr<Interface>          client,
 	           SampleCount              timestamp,
-	           const Ingen::Disconnect& msg);
+	           const ingen::Disconnect& msg);
 
 	~Disconnect();
 
@@ -74,14 +74,14 @@ public:
 	};
 
 private:
-	const Ingen::Disconnect _msg;
+	const ingen::Disconnect _msg;
 	GraphImpl*              _graph;
 	Impl*                   _impl;
 	MPtr<CompiledGraph>     _compiled_graph;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_DISCONNECT_HPP

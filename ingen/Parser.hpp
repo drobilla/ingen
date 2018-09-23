@@ -32,7 +32,7 @@
 
 namespace Sord { class World; }
 
-namespace Ingen {
+namespace ingen {
 
 class Interface;
 class World;
@@ -94,6 +94,6 @@ public:
 		boost::optional<Properties>   data   = boost::optional<Properties>());
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_PARSER_HPP

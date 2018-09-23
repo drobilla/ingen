@@ -22,14 +22,14 @@
 #include "NodeModule.hpp"
 #include "GraphPortModule.hpp"
 
-namespace Ingen { namespace Client {
+namespace ingen { namespace client {
 class GraphModel;
 class GraphWindow;
 class PortModel;
 } }
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class GraphCanvas;
 
@@ -41,7 +41,7 @@ class SubgraphModule : public NodeModule
 {
 public:
 	SubgraphModule(GraphCanvas&                        canvas,
-	               SPtr<const Client::GraphModel> graph);
+	               SPtr<const client::GraphModel> graph);
 
 	virtual ~SubgraphModule() {}
 
@@ -52,13 +52,13 @@ public:
 	void browse_to_graph();
 	void menu_remove();
 
-	SPtr<const Client::GraphModel> graph() const { return _graph; }
+	SPtr<const client::GraphModel> graph() const { return _graph; }
 
 protected:
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_SUBGRAPHMODULE_HPP

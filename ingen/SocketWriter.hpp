@@ -27,7 +27,7 @@ namespace Raul {
 class Socket;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class URI;
 class URIMap;
@@ -52,6 +52,6 @@ protected:
 	SPtr<Raul::Socket> _socket;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_SOCKET_WRITER_HPP

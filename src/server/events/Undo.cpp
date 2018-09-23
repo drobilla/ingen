@@ -20,14 +20,14 @@
 #include "EventWriter.hpp"
 #include "Undo.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Undo::Undo(Engine&            engine,
            SPtr<Interface>    client,
            SampleCount        timestamp,
-           const Ingen::Undo& msg)
+           const ingen::Undo& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _is_redo(false)
 {}
@@ -35,7 +35,7 @@ Undo::Undo(Engine&            engine,
 Undo::Undo(Engine&            engine,
            SPtr<Interface>    client,
            SampleCount        timestamp,
-           const Ingen::Redo& msg)
+           const ingen::Redo& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _is_redo(true)
 {}
@@ -80,6 +80,6 @@ Undo::post_process()
 	respond();
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

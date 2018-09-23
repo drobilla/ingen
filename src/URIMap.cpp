@@ -20,7 +20,7 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 URIMap::URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 	: _urid_map_feature(new URIDMapFeature(this, map, log))
@@ -120,4 +120,4 @@ URIMap::unmap_uri(uint32_t urid) const
 	return uri;
 }
 
-} // namespace Ingen
+} // namespace ingen

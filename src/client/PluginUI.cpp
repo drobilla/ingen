@@ -23,8 +23,8 @@
 #include "lv2/atom/atom.h"
 #include "lv2/ui/ui.h"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 SuilHost* PluginUI::ui_host = nullptr;
 
@@ -145,7 +145,7 @@ lv2_ui_unsubscribe(SuilController            controller,
 	return 0;
 }
 
-PluginUI::PluginUI(Ingen::World*          world,
+PluginUI::PluginUI(ingen::World*          world,
                    SPtr<const BlockModel> block,
                    LilvUIs*               uis,
                    const LilvUI*          ui,
@@ -173,7 +173,7 @@ PluginUI::~PluginUI()
 }
 
 SPtr<PluginUI>
-PluginUI::create(Ingen::World*          world,
+PluginUI::create(ingen::World*          world,
                  SPtr<const BlockModel> block,
                  const LilvPlugin*      plugin)
 {
@@ -332,5 +332,5 @@ PluginUI::is_resizable() const
 	return !fs_matches && !nrs_matches;
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

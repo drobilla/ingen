@@ -24,7 +24,7 @@
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Interface;
 
@@ -140,6 +140,6 @@ public:
 	virtual bool unregister_client(SPtr<Interface> client) = 0;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ENGINEBASE_HPP

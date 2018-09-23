@@ -26,7 +26,7 @@
 #include "ingen/Message.hpp"
 #include "ingen/types.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 /** Interface that forwards all calls to several sinks. */
 class Tee : public Interface
@@ -58,6 +58,6 @@ private:
 	Sinks      _sinks;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ENGINE_TEE_HPP

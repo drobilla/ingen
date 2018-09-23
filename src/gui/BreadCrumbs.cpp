@@ -24,8 +24,8 @@
 #include "App.hpp"
 #include "BreadCrumbs.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 using std::string;
 
@@ -225,5 +225,5 @@ BreadCrumbs::object_moved(const Raul::Path& old_path, const Raul::Path& new_path
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

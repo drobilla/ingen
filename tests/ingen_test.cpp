@@ -49,7 +49,7 @@
 #include "TestClient.hpp"
 
 using namespace std;
-using namespace Ingen;
+using namespace ingen;
 
 World* world = nullptr;
 

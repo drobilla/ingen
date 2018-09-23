@@ -23,12 +23,12 @@
 #include "ingen/Resource.hpp"
 #include "raul/Path.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Interface;
 class URIs;
 
-namespace Server {
+namespace server {
 
 class PortImpl;
 class BlockImpl;
@@ -74,7 +74,7 @@ struct ClientUpdate {
 	std::vector<Connect> connects;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_CLIENTUPDATE_HPP

@@ -22,8 +22,8 @@
 #include "ingen/ingen.h"
 #include "raul/Socket.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 /** The client side of an Ingen socket connection. */
 class INGEN_API SocketClient : public SocketWriter
@@ -46,10 +46,10 @@ public:
 		_respondee = respondee;
 	}
 
-	static SPtr<Ingen::Interface>
-	new_socket_interface(Ingen::World*          world,
+	static SPtr<ingen::Interface>
+	new_socket_interface(ingen::World*          world,
 	                     const URI&             uri,
-	                     SPtr<Ingen::Interface> respondee)
+	                     SPtr<ingen::Interface> respondee)
 	{
 		const Raul::Socket::Type type = (uri.scheme() == "unix"
 		                                 ? Raul::Socket::Type::UNIX
@@ -74,7 +74,7 @@ private:
 	SocketReader    _reader;
 };
 
-}  // namespace Client
-}  // namespace Ingen
+}  // namespace client
+}  // namespace ingen
 
 #endif  // INGEN_CLIENT_SOCKET_CLIENT_HPP

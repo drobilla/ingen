@@ -24,8 +24,8 @@
 #include "ingen/types.hpp"
 #include "raul/Noncopyable.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class PluginImpl;
 
@@ -36,7 +36,7 @@ class PluginImpl;
 class BlockFactory : public Raul::Noncopyable
 {
 public:
-	explicit BlockFactory(Ingen::World* world);
+	explicit BlockFactory(ingen::World* world);
 	~BlockFactory();
 
 	/** Reload plugin list.
@@ -57,11 +57,11 @@ private:
 	void load_internal_plugins();
 
 	Plugins       _plugins;
-	Ingen::World* _world;
+	ingen::World* _world;
 	bool          _has_loaded;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BLOCKFACTORY_HPP

@@ -29,9 +29,9 @@
 #include "RunContext.hpp"
 #include "internals/BlockDelay.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Internals {
+namespace ingen {
+namespace server {
+namespace internals {
 
 InternalPlugin* BlockDelayNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
@@ -46,7 +46,7 @@ BlockDelayNode::BlockDelayNode(InternalPlugin*     plugin,
                                SampleRate          srate)
 	: InternalBlock(plugin, symbol, polyphonic, parent, srate)
 {
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(2);
 
 	_in_port = new InputPort(bufs, this, Raul::Symbol("in"), 0, 1,
@@ -84,6 +84,6 @@ BlockDelayNode::run(RunContext& context)
 	_buffer->copy(context, _in_port->buffer(0).get());
 }
 
-} // namespace Internals
-} // namespace Server
-} // namespace Ingen
+} // namespace internals
+} // namespace server
+} // namespace ingen

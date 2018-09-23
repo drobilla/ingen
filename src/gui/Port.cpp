@@ -36,10 +36,10 @@
 #include "ingen_config.h"
 #include "rgba.hpp"
 
-using namespace Ingen::Client;
+using namespace ingen::client;
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 Port*
 Port::create(App&                  app,
@@ -274,16 +274,16 @@ Port::build_uri_menu()
 		world->lilv_world(), LILV_NS_RDFS "range");
 
 	// Get every class in the range of the port's property
-	RDFS::URISet ranges;
+	rdfs::URISet ranges;
 	LilvNodes* range = lilv_world_find_nodes(
 		world->lilv_world(), designation, rdfs_range, nullptr);
 	LILV_FOREACH(nodes, r, range) {
 		ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 	}
-	RDFS::classes(world, ranges, false);
+	rdfs::classes(world, ranges, false);
 
 	// Get all objects in range
-	RDFS::Objects values = RDFS::instances(world, ranges);
+	rdfs::Objects values = rdfs::instances(world, ranges);
 
 	// Add a menu item for each such class
 	for (const auto& v : values) {
@@ -530,5 +530,5 @@ Port::on_selected(gboolean b)
 	return true;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

@@ -28,11 +28,11 @@
 
 #include "Window.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class GraphModel; }
+namespace client { class GraphModel; }
 
-namespace GUI {
+namespace gui {
 
 /** 'New Subgraph' window.
  *
@@ -46,9 +46,9 @@ public:
 	NewSubgraphWindow(BaseObjectType*                   cobject,
 	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_graph(SPtr<const Client::GraphModel> graph);
+	void set_graph(SPtr<const client::GraphModel> graph);
 
-	void present(SPtr<const Client::GraphModel> graph,
+	void present(SPtr<const client::GraphModel> graph,
 	             Properties                     data);
 
 private:
@@ -57,7 +57,7 @@ private:
 	void cancel_clicked();
 
 	Properties                     _initial_data;
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 
 	Gtk::Entry*      _name_entry;
 	Gtk::Label*      _message_label;
@@ -66,7 +66,7 @@ private:
 	Gtk::Button*     _cancel_button;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_NEWSUBGRAPHWINDOW_HPP

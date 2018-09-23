@@ -24,15 +24,15 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class GraphImpl;
 class PluginImpl;
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 /** A request from a client to send an object.
  *
@@ -44,22 +44,22 @@ public:
 	Get(Engine&           engine,
 	    SPtr<Interface>   client,
 	    SampleCount       timestamp,
-	    const Ingen::Get& msg);
+	    const ingen::Get& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context) {}
 	void post_process();
 
 private:
-	const Ingen::Get      _msg;
+	const ingen::Get      _msg;
 	const Node*           _object;
 	PluginImpl*           _plugin;
 	BlockFactory::Plugins _plugins;
 	ClientUpdate          _response;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_GET_HPP

@@ -25,7 +25,7 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/forge.h"
 
-namespace Ingen {
+namespace ingen {
 
 class URIMap;
 class URI;
@@ -53,7 +53,7 @@ public:
 
 	Atom make_urid(int32_t v) { return Atom(sizeof(int32_t), URID, &v); }
 
-	Atom make_urid(const Ingen::URI& u);
+	Atom make_urid(const ingen::URI& u);
 
 	Atom alloc(uint32_t size, uint32_t type, const void* val) {
 		return Atom(size, type, val);
@@ -81,6 +81,6 @@ private:
 	URIMap& _map;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_FORGE_HPP

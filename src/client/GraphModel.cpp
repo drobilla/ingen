@@ -22,8 +22,8 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 void
 GraphModel::add_child(SPtr<ObjectModel> c)
@@ -172,5 +172,5 @@ GraphModel::polyphonic() const
 	return poly.is_valid() && poly.get<int32_t>();
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

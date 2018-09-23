@@ -30,8 +30,8 @@
 
 using std::string;
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 LilvWorld*         PluginModel::_lilv_world   = nullptr;
 const LilvPlugins* PluginModel::_lilv_plugins = nullptr;
@@ -240,7 +240,7 @@ PluginModel::has_ui() const
 }
 
 SPtr<PluginUI>
-PluginModel::ui(Ingen::World*          world,
+PluginModel::ui(ingen::World*          world,
                 SPtr<const BlockModel> block) const
 {
 	if (!_lilv_plugin) {
@@ -356,5 +356,5 @@ PluginModel::set_lilv_world(LilvWorld* world)
 	_lilv_plugins = lilv_world_get_all_plugins(_lilv_world);
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

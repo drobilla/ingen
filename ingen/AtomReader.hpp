@@ -30,7 +30,7 @@ namespace Raul {
 class Path;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class URI;
 class Atom;
@@ -63,7 +63,7 @@ private:
 	Resource::Graph             atom_to_context(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object* obj,
-	               Ingen::Properties&     props);
+	               ingen::Properties&     props);
 
 	URIMap&    _map;
 	URIs&      _uris;
@@ -71,6 +71,6 @@ private:
 	Interface& _iface;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ATOMREADER_HPP

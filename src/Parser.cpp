@@ -39,7 +39,7 @@
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-namespace Ingen {
+namespace ingen {
 
 std::set<Parser::ResourceRecord>
 Parser::find_resources(Sord::World& world,
@@ -84,7 +84,7 @@ get_path(const URI base, const URI uri)
 }
 
 static bool
-skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
+skip_property(ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate == INGEN__file ||
 	        predicate == uris.ingen_arc ||
@@ -93,7 +93,7 @@ skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 }
 
 static Properties
-get_properties(Ingen::World*     world,
+get_properties(ingen::World*     world,
                Sord::Model&      model,
                const Sord::Node& subject,
                Resource::Graph   ctx)
@@ -128,7 +128,7 @@ get_properties(Ingen::World*     world,
 typedef std::pair<Raul::Path, Properties> PortRecord;
 
 static boost::optional<PortRecord>
-get_port(Ingen::World*     world,
+get_port(ingen::World*     world,
          Sord::Model&      model,
          const Sord::Node& subject,
          Resource::Graph   ctx,
@@ -232,8 +232,8 @@ parse_arcs(
 	const Raul::Path&  graph);
 
 static boost::optional<Raul::Path>
-parse_block(Ingen::World*               world,
-            Ingen::Interface*           target,
+parse_block(ingen::World*               world,
+            ingen::Interface*           target,
             Sord::Model&                model,
             const URI&                  base_uri,
             const Sord::Node&           subject,
@@ -307,8 +307,8 @@ parse_block(Ingen::World*               world,
 }
 
 static boost::optional<Raul::Path>
-parse_graph(Ingen::World*                 world,
-            Ingen::Interface*             target,
+parse_graph(ingen::World*                 world,
+            ingen::Interface*             target,
             Sord::Model&                  model,
             const URI&                    base_uri,
             const Sord::Node&             subject,
@@ -423,8 +423,8 @@ parse_graph(Ingen::World*                 world,
 }
 
 static bool
-parse_arc(Ingen::World*      world,
-          Ingen::Interface*  target,
+parse_arc(ingen::World*      world,
+          ingen::Interface*  target,
           Sord::Model&       model,
           const URI&         base_uri,
           const Sord::Node&  subject,
@@ -475,8 +475,8 @@ parse_arc(Ingen::World*      world,
 }
 
 static bool
-parse_arcs(Ingen::World*      world,
-           Ingen::Interface*  target,
+parse_arcs(ingen::World*      world,
+           ingen::Interface*  target,
            Sord::Model&       model,
            const URI&         base_uri,
            const Sord::Node&  subject,
@@ -493,8 +493,8 @@ parse_arcs(Ingen::World*      world,
 }
 
 static bool
-parse_properties(Ingen::World*               world,
-                 Ingen::Interface*           target,
+parse_properties(ingen::World*               world,
+                 ingen::Interface*           target,
                  Sord::Model&                model,
                  const Sord::Node&           subject,
                  Resource::Graph             ctx,
@@ -514,8 +514,8 @@ parse_properties(Ingen::World*               world,
 }
 
 static boost::optional<Raul::Path>
-parse(Ingen::World*                 world,
-      Ingen::Interface*             target,
+parse(ingen::World*                 world,
+      ingen::Interface*             target,
       Sord::Model&                  model,
       const URI&                    base_uri,
       Sord::Node&                   subject,
@@ -593,8 +593,8 @@ parse(Ingen::World*                 world,
 }
 
 bool
-Parser::parse_file(Ingen::World*                 world,
-                   Ingen::Interface*             target,
+Parser::parse_file(ingen::World*                 world,
+                   ingen::Interface*             target,
                    const FilePath&               path,
                    boost::optional<Raul::Path>   parent,
                    boost::optional<Raul::Symbol> symbol,
@@ -681,8 +681,8 @@ Parser::parse_file(Ingen::World*                 world,
 }
 
 boost::optional<URI>
-Parser::parse_string(Ingen::World*                     world,
-                     Ingen::Interface*                 target,
+Parser::parse_string(ingen::World*                     world,
+                     ingen::Interface*                 target,
                      const std::string&                str,
                      const URI&                        base_uri,
                      boost::optional<Raul::Path>       parent,
@@ -710,4 +710,4 @@ Parser::parse_string(Ingen::World*                     world,
 	return actual_base;
 }
 
-} // namespace Ingen
+} // namespace ingen

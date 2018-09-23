@@ -28,8 +28,8 @@
 #include "BufferRef.hpp"
 #include "RunContext.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class PortImpl;
 class InputPort;
@@ -78,7 +78,7 @@ protected:
 	PortImpl* const _head;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_ARC_IMPL_HPP

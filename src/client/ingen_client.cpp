@@ -19,13 +19,13 @@
 
 #include "ingen_config.h"
 
-struct IngenClientModule : public Ingen::Module {
-	void load(Ingen::World* world) {}
+struct IngenClientModule : public ingen::Module {
+	void load(ingen::World* world) {}
 };
 
 extern "C" {
 
-Ingen::Module*
+ingen::Module*
 ingen_module_load()
 {
 	return new IngenClientModule();

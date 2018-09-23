@@ -34,11 +34,11 @@
 
 #include "Window.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class ObjectModel; }
+namespace client { class ObjectModel; }
 
-namespace GUI {
+namespace gui {
 
 /** Object properties window.
  *
@@ -52,8 +52,8 @@ public:
 	PropertiesWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SPtr<const Client::ObjectModel> model);
-	void set_object(SPtr<const Client::ObjectModel> model);
+	void present(SPtr<const client::ObjectModel> model);
+	void set_object(SPtr<const client::ObjectModel> model);
 
 private:
 	/** Record of a property (row in the table) */
@@ -106,7 +106,7 @@ private:
 	typedef std::map<URI, Record> Records;
 	Records _records;
 
-	SPtr<const Client::ObjectModel> _model;
+	SPtr<const client::ObjectModel> _model;
 	ComboColumns                    _combo_columns;
 	Glib::RefPtr<Gtk::ListStore>    _key_store;
 	sigc::connection                _property_connection;
@@ -123,7 +123,7 @@ private:
 	Gtk::Button*                    _ok_button;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_PROPERTIES_WINDOW_HPP

@@ -21,9 +21,9 @@
 #include "UndoStack.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 /** A request to undo the last change to the engine.
  *
@@ -35,12 +35,12 @@ public:
 	Undo(Engine&            engine,
 	     SPtr<Interface>    client,
 	     SampleCount        timestamp,
-	     const Ingen::Undo& msg);
+	     const ingen::Undo& msg);
 
 	Undo(Engine&            engine,
 	     SPtr<Interface>    client,
 	     SampleCount        timestamp,
-	     const Ingen::Redo& msg);
+	     const ingen::Redo& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -51,8 +51,8 @@ private:
 	bool             _is_redo;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_UNDO_HPP

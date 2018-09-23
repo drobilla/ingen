@@ -28,7 +28,7 @@
 #include "ingen/Status.hpp"
 #include "raul/Path.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 struct BundleBegin
 {
@@ -153,6 +153,6 @@ using Message = boost::variant<BundleBegin,
                                SetProperty,
                                Undo>;
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_MESSAGE_HPP

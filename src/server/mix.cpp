@@ -20,8 +20,8 @@
 #include "RunContext.hpp"
 #include "mix.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 static inline bool
 is_end(const Buffer* buf, const LV2_Atom_Event* ev)
@@ -108,5 +108,5 @@ mix(const RunContext&   context,
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

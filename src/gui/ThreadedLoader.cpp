@@ -27,8 +27,8 @@
 
 using boost::optional;
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 ThreadedLoader::ThreadedLoader(App& app, SPtr<Interface> engine)
     : _app(app)
@@ -114,7 +114,7 @@ ThreadedLoader::load_graph_event(const FilePath&        file_path,
 }
 
 void
-ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model, const URI& uri)
+ThreadedLoader::save_graph(SPtr<const client::GraphModel> model, const URI& uri)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
@@ -127,7 +127,7 @@ ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model, const URI& uri)
 }
 
 void
-ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
+ThreadedLoader::save_graph_event(SPtr<const client::GraphModel> model,
                                  const URI&                     uri)
 {
 	assert(uri.scheme() == "file");
@@ -144,5 +144,5 @@ ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

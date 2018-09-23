@@ -21,8 +21,8 @@
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 class ArcModel;
 class ClientStore;
@@ -38,8 +38,8 @@ public:
 
 	GraphType graph_type() const { return Node::GraphType::GRAPH; }
 
-	SPtr<ArcModel> get_arc(const Ingen::Node* tail,
-	                       const Ingen::Node* head);
+	SPtr<ArcModel> get_arc(const ingen::Node* tail,
+	                       const ingen::Node* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
@@ -64,11 +64,11 @@ private:
 	void remove_arcs_on(SPtr<PortModel> p);
 
 	void add_arc(SPtr<ArcModel> arc);
-	void remove_arc(const Ingen::Node* tail,
-	                const Ingen::Node* head);
+	void remove_arc(const ingen::Node* tail,
+	                const ingen::Node* head);
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_GRAPHMODEL_HPP

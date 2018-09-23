@@ -28,17 +28,17 @@
 #include "Event.hpp"
 #include "PluginImpl.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Resource;
 
-namespace Server {
+namespace server {
 
 class Engine;
 class GraphImpl;
 class RunContext;
 
-namespace Events {
+namespace events {
 
 class SetPortValue;
 
@@ -51,17 +51,17 @@ public:
 	Delta(Engine&           engine,
 	      SPtr<Interface>   client,
 	      SampleCount       timestamp,
-	      const Ingen::Put& msg);
+	      const ingen::Put& msg);
 
 	Delta(Engine&             engine,
 	      SPtr<Interface>     client,
 	      SampleCount         timestamp,
-	      const Ingen::Delta& msg);
+	      const ingen::Delta& msg);
 
 	Delta(Engine&                   engine,
 	      SPtr<Interface>           client,
 	      SampleCount               timestamp,
-	      const Ingen::SetProperty& msg);
+	      const ingen::SetProperty& msg);
 
 	~Delta();
 
@@ -108,7 +108,7 @@ private:
 	Properties                _properties;
 	Properties                _remove;
 	ClientUpdate              _update;
-	Ingen::Resource*          _object;
+	ingen::Resource*          _object;
 	GraphImpl*                _graph;
 	MPtr<CompiledGraph>       _compiled_graph;
 	ControlBindings::Binding* _binding;
@@ -126,8 +126,8 @@ private:
 	bool _block;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_DELTA_HPP

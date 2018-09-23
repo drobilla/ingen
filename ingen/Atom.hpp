@@ -27,7 +27,7 @@
 #include "lv2/atom/atom.h"
 #include "lv2/urid/urid.h"
 
-namespace Ingen {
+namespace ingen {
 
 /**
    A generic typed data container.
@@ -173,6 +173,6 @@ private:
 	} _body;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ATOM_HPP

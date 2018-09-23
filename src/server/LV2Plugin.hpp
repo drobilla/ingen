@@ -24,11 +24,11 @@
 
 #include "PluginImpl.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class World;
 
-namespace Server {
+namespace server {
 
 class GraphImpl;
 class BlockImpl;
@@ -66,7 +66,7 @@ private:
 	const LilvPlugin* _lilv_plugin;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_LV2PLUGIN_HPP

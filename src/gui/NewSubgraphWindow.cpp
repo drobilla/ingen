@@ -24,8 +24,8 @@
 #include "NewSubgraphWindow.hpp"
 #include "GraphView.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
                                      const Glib::RefPtr<Gtk::Builder>& xml)
@@ -47,7 +47,7 @@ NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
 }
 
 void
-NewSubgraphWindow::present(SPtr<const Client::GraphModel> graph,
+NewSubgraphWindow::present(SPtr<const client::GraphModel> graph,
                            Properties                     data)
 {
 	set_graph(graph);
@@ -60,7 +60,7 @@ NewSubgraphWindow::present(SPtr<const Client::GraphModel> graph,
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubgraphWindow::set_graph(SPtr<const Client::GraphModel> graph)
+NewSubgraphWindow::set_graph(SPtr<const client::GraphModel> graph)
 {
 	_graph = graph;
 }
@@ -115,5 +115,5 @@ NewSubgraphWindow::cancel_clicked()
 	hide();
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

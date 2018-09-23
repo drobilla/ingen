@@ -30,14 +30,14 @@
 #include "internals/BlockDelay.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Connect::Connect(Engine&               engine,
                  SPtr<Interface>       client,
                  SampleCount           timestamp,
-                 const Ingen::Connect& msg)
+                 const ingen::Connect& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _graph(nullptr)
@@ -113,7 +113,7 @@ Connect::pre_process(PreProcessContext& ctx)
 		// The tail block is now a dependency (provider) of the head block
 		head_block->providers().insert(tail_block);
 
-		if (!dynamic_cast<Internals::BlockDelayNode*>(tail_block)) {
+		if (!dynamic_cast<internals::BlockDelayNode*>(tail_block)) {
 			/* Arcs leaving a delay node are ignored for the purposes of
 			   compilation, since the output is from the previous cycle and
 			   does not affect execution order.  Otherwise, the head block is
@@ -183,6 +183,6 @@ Connect::undo(Interface& target)
 	target.disconnect(_msg.tail, _msg.head);
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

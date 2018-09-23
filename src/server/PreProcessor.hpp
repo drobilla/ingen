@@ -23,8 +23,8 @@
 
 #include "raul/Semaphore.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Engine;
 class Event;
@@ -81,7 +81,7 @@ private:
 	std::thread             _thread;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_PREPROCESSOR_HPP

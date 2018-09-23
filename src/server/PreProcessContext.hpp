@@ -23,8 +23,8 @@
 
 namespace Raul { class Maid; }
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Event pre-processing context.
  *
@@ -78,7 +78,7 @@ private:
 	bool        _in_bundle = false;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_PREPROCESSCONTEXT_HPP

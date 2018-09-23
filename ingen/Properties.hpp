@@ -24,7 +24,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/URIs.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 /** A property value (an Atom with a context). */
 class Property : public Atom {
@@ -85,6 +85,6 @@ public:
 	}
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_PROPERTIES_HPP

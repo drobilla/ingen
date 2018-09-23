@@ -21,15 +21,15 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class InputPort;
 class OutputPort;
 class InternalPlugin;
 class BufferFactory;
 
-namespace Internals {
+namespace internals {
 
 class BlockDelayNode : public InternalBlock
 {
@@ -55,8 +55,8 @@ private:
 	BufferRef   _buffer;
 };
 
-} // namespace Server
-} // namespace Ingen
-} // namespace Internals
+} // namespace server
+} // namespace ingen
+} // namespace internals
 
 #endif // INGEN_INTERNALS_BLOCKDELAY_HPP

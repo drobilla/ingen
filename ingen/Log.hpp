@@ -30,7 +30,7 @@
 #include "lv2/log/log.h"
 #include "lv2/urid/urid.h"
 
-namespace Ingen {
+namespace ingen {
 
 typedef boost::basic_format<char> fmt;
 
@@ -83,6 +83,6 @@ private:
 	bool         _trace;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_LOG_HPP

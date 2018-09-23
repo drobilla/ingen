@@ -22,7 +22,7 @@
 
 #include "raul/Maid.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 template <class T>
 void NullDeleter(T* ptr) {}
@@ -57,6 +57,6 @@ SPtr<T> const_ptr_cast(const SPtr<U>& r) {
 	return std::const_pointer_cast<T>(r);
 }
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_TYPES_HPP

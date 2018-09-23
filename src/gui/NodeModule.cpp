@@ -43,11 +43,11 @@
 #include "WindowFactory.hpp"
 #include "ingen_config.h"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 NodeModule::NodeModule(GraphCanvas&           canvas,
                        SPtr<const BlockModel> block)
@@ -178,7 +178,7 @@ NodeModule::show_human_names(bool b)
 	}
 
 	for (iterator i = begin(); i != end(); ++i) {
-		Ingen::GUI::Port* const port = dynamic_cast<Ingen::GUI::Port*>(*i);
+		ingen::gui::Port* const port = dynamic_cast<ingen::gui::Port*>(*i);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
 			const Atom& name_property = port->model()->get_property(uris.lv2_name);
@@ -235,7 +235,7 @@ void
 NodeModule::plugin_changed()
 {
 	for (iterator p = begin(); p != end(); ++p) {
-		dynamic_cast<Ingen::GUI::Port*>(*p)->update_metadata();
+		dynamic_cast<ingen::gui::Port*>(*p)->update_metadata();
 	}
 }
 
@@ -514,5 +514,5 @@ NodeModule::on_selected(gboolean selected)
 	return true;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

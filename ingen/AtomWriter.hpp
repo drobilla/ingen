@@ -30,7 +30,7 @@
 
 namespace Raul { class Path; }
 
-namespace Ingen {
+namespace ingen {
 
 class AtomSink;
 class URIMap;
@@ -81,6 +81,6 @@ private:
 	LV2_Atom_Forge _forge;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_ATOMWRITER_HPP

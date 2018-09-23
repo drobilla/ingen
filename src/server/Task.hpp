@@ -24,8 +24,8 @@
 #include <memory>
 #include <ostream>
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class RunContext;
@@ -114,7 +114,7 @@ private:
 	std::atomic<bool>     _done;      ///< Completion phase
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_TASK_HPP

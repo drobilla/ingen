@@ -24,11 +24,11 @@
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Log;
 
-namespace Server {
+namespace server {
 
 class LV2Block;
 
@@ -70,7 +70,7 @@ private:
 	void run();
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_WORKER_HPP

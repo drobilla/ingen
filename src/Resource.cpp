@@ -22,7 +22,7 @@
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 bool
 Resource::add_property(const URI& uri, const Atom& value, Graph ctx)
@@ -231,4 +231,4 @@ Resource::properties(Resource::Graph ctx) const
 	return props;
 }
 
-} // namespace Ingen
+} // namespace ingen

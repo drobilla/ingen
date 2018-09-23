@@ -24,15 +24,15 @@
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 
-namespace Ingen {
+namespace ingen {
 
 class World;
 
-namespace Client { class ObjectModel; }
+namespace client { class ObjectModel; }
 
-namespace GUI {
+namespace gui {
 
-namespace RDFS {
+namespace rdfs {
 
 /** Set of URIs. */
 typedef std::set<URI> URISet;
@@ -60,10 +60,10 @@ void datatypes(World* world, URISet& types, bool super);
 Objects instances(World* world, const URISet& types);
 
 /** Get all the types which `model` is an instance of. */
-URISet types(World* world, SPtr<const Client::ObjectModel> model);
+URISet types(World* world, SPtr<const client::ObjectModel> model);
 
 /** Get all the properties with domains appropriate for `model`. */
-URISet properties(World* world, SPtr<const Client::ObjectModel> model);
+URISet properties(World* world, SPtr<const client::ObjectModel> model);
 
 /** Return the range (value types) of `prop`.
  * @param recursive If true, include all subclasses.
@@ -73,8 +73,8 @@ URISet range(World* world, const LilvNode* prop, bool recursive);
 /** Return true iff `inst` is-a `klass`. */
 bool is_a(World* world, const LilvNode* inst, const LilvNode* klass);
 
-} // namespace RDFS
-} // namespace GUI
-} // namespace Ingen
+} // namespace rdfs
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_RDF_HPP

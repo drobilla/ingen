@@ -58,19 +58,19 @@
 
 namespace Raul { class Deletable; }
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class PluginModel; }
+namespace client { class PluginModel; }
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 class Port;
 
 Gtk::Main* App::_main = nullptr;
 
-App::App(Ingen::World* world)
+App::App(ingen::World* world)
 	: _style(new Style(*this))
 	, _about_dialog(nullptr)
 	, _window_factory(new WindowFactory(*this))
@@ -111,12 +111,12 @@ App::~App()
 }
 
 SPtr<App>
-App::create(Ingen::World* world)
+App::create(ingen::World* world)
 {
 	suil_init(&world->argc(), &world->argv(), SUIL_ARG_NONE);
 
 	// Add RC file for embedded GUI Gtk style
-	const std::string rc_path = Ingen::data_file_path("ingen_style.rc");
+	const std::string rc_path = ingen::data_file_path("ingen_style.rc");
 	Gtk::RC::add_default_file(rc_path);
 
 	_main = Gtk::Main::instance();
@@ -158,7 +158,7 @@ App::run()
 }
 
 void
-App::attach(SPtr<Ingen::Interface> client)
+App::attach(SPtr<ingen::Interface> client)
 {
 	assert(!_client);
 	assert(!_store);
@@ -282,7 +282,7 @@ App::set_property(const URI&      subject,
 void
 App::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
 {
-	const std::string comment = RDFS::comment(_world, node);
+	const std::string comment = rdfs::comment(_world, node);
 	if (!comment.empty()) {
 		widget->set_tooltip_text(comment);
 	}
@@ -480,7 +480,7 @@ App::quit(Gtk::Window* dialog_parent)
 }
 
 bool
-App::can_control(const Client::PortModel* port) const
+App::can_control(const client::PortModel* port) const
 {
 	return port->is_a(uris().lv2_ControlPort)
 		|| port->is_a(uris().lv2_CVPort)
@@ -495,5 +495,5 @@ App::sample_rate() const
 	return _sample_rate;
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

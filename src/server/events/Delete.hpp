@@ -31,15 +31,15 @@ namespace Raul {
 template<typename T> class Array;
 }
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class DuplexPort;
 class EnginePort;
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 class DisconnectAll;
 
@@ -52,7 +52,7 @@ public:
 	Delete(Engine&           engine,
 	       SPtr<Interface>   client,
 	       FrameTime         timestamp,
-	       const Ingen::Del& msg);
+	       const ingen::Del& msg);
 
 	~Delete();
 
@@ -65,7 +65,7 @@ private:
 	using IndexChange  = std::pair<uint32_t, uint32_t>;
 	using IndexChanges = std::map<Raul::Path, IndexChange>;
 
-	const Ingen::Del        _msg;
+	const ingen::Del        _msg;
 	Raul::Path              _path;
 	SPtr<BlockImpl>         _block; ///< Non-NULL iff a block
 	SPtr<DuplexPort>        _port; ///< Non-NULL iff a port
@@ -79,8 +79,8 @@ private:
 	std::vector<ControlBindings::Binding*> _removed_bindings;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_DELETE_HPP

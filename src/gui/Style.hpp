@@ -20,10 +20,10 @@
 #include <cstdint>
 #include <string>
 
-namespace Ingen { namespace Client { class PortModel; } }
+namespace ingen { namespace client { class PortModel; } }
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class App;
 class Port;
@@ -38,7 +38,7 @@ public:
 
 	void apply_settings();
 
-	uint32_t get_port_color(const Client::PortModel* p);
+	uint32_t get_port_color(const client::PortModel* p);
 
 private:
 	App& _app;
@@ -50,7 +50,7 @@ private:
 	uint32_t _string_port_color;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_STYLE_HPP

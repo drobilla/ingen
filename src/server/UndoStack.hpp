@@ -26,12 +26,12 @@
 #include "serd/serd.h"
 #include "sratom/sratom.h"
 
-namespace Ingen {
+namespace ingen {
 
 class URIMap;
 class URIs;
 
-namespace Server {
+namespace server {
 
 class INGEN_API UndoStack : public AtomSink {
 public:
@@ -101,7 +101,7 @@ private:
 	int               _depth;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_UNDOSTACK_HPP

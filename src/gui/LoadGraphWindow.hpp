@@ -28,11 +28,11 @@
 #include "ingen/Node.hpp"
 #include "ingen/types.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class GraphModel; }
+namespace client { class GraphModel; }
 
-namespace GUI {
+namespace gui {
 
 /** 'Load Graph' Window.
  *
@@ -48,9 +48,9 @@ public:
 
 	void init(App& app) { _app = &app; }
 
-	void set_graph(SPtr<const Client::GraphModel> graph);
+	void set_graph(SPtr<const client::GraphModel> graph);
 
-	void present(SPtr<const Client::GraphModel> graph,
+	void present(SPtr<const client::GraphModel> graph,
 	             bool                           import,
 	             Properties                     data);
 
@@ -72,7 +72,7 @@ private:
 
 	Properties _initial_data;
 
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 
 	Gtk::Label*       _symbol_label;
 	Gtk::Entry*       _symbol_entry;
@@ -89,7 +89,7 @@ private:
 	bool _merge_ports;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_LOADGRAPHWINDOW_HPP

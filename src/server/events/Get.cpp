@@ -29,14 +29,14 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Get::Get(Engine&           engine,
          SPtr<Interface>   client,
          SampleCount       timestamp,
-         const Ingen::Get& msg)
+         const ingen::Get& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _object(nullptr)
@@ -106,6 +106,6 @@ Get::post_process()
 	}
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

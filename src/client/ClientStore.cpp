@@ -26,8 +26,8 @@
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 
-namespace Ingen {
-namespace Client {
+namespace ingen {
+namespace client {
 
 ClientStore::ClientStore(URIs&                    uris,
                          Log&                     log,
@@ -483,5 +483,5 @@ ClientStore::operator()(const DisconnectAll& msg)
 	}
 }
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen

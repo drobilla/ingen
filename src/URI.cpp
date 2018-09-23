@@ -19,7 +19,7 @@
 #include "ingen/FilePath.hpp"
 #include "ingen/URI.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 URI::URI()
     : _node(SERD_NODE_NULL)
@@ -110,4 +110,4 @@ URI::make_relative(const URI& base) const
 	return URI(node, uri);
 }
 
-}  // namespace Ingen
+}  // namespace ingen

@@ -20,12 +20,12 @@
 #include "EventWriter.hpp"
 #include "util.hpp"
 
-using namespace Ingen;
+using namespace ingen;
 
-struct IngenEngineModule : public Ingen::Module {
-	virtual void load(Ingen::World* world) {
-		Server::set_denormal_flags(world->log());
-		SPtr<Server::Engine> engine(new Server::Engine(world));
+struct IngenEngineModule : public ingen::Module {
+	virtual void load(ingen::World* world) {
+		server::set_denormal_flags(world->log());
+		SPtr<server::Engine> engine(new server::Engine(world));
 		world->set_engine(engine);
 		if (!world->interface()) {
 			world->set_interface(engine->interface());
@@ -35,7 +35,7 @@ struct IngenEngineModule : public Ingen::Module {
 
 extern "C" {
 
-Ingen::Module*
+ingen::Module*
 ingen_module_load()
 {
 	return new IngenEngineModule();

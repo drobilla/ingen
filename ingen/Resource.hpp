@@ -26,7 +26,7 @@
 #include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Atom;
 
@@ -200,6 +200,6 @@ private:
 	mutable Properties _properties;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_RESOURCE_HPP

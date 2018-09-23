@@ -25,14 +25,14 @@
 #include "Disconnect.hpp"
 #include "Event.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BlockImpl;
 class GraphImpl;
 class PortImpl;
 
-namespace Events {
+namespace events {
 
 class Disconnect;
 
@@ -46,7 +46,7 @@ public:
 	DisconnectAll(Engine&                     engine,
 	              SPtr<Interface>             client,
 	              SampleCount                 timestamp,
-	              const Ingen::DisconnectAll& msg);
+	              const ingen::DisconnectAll& msg);
 
 	DisconnectAll(Engine&    engine,
 	              GraphImpl* parent,
@@ -62,7 +62,7 @@ public:
 private:
 	typedef std::list<Disconnect::Impl*> Impls;
 
-	const Ingen::DisconnectAll _msg;
+	const ingen::DisconnectAll _msg;
 	GraphImpl*                 _parent;
 	BlockImpl*                 _block;
 	PortImpl*                  _port;
@@ -71,8 +71,8 @@ private:
 	bool                       _deleting;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_DISCONNECTALL_HPP

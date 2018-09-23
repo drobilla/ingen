@@ -32,11 +32,11 @@
 
 #include "NodeModule.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class GraphModel; }
+namespace client { class GraphModel; }
 
-namespace GUI {
+namespace gui {
 
 class NodeModule;
 class PluginMenu;
@@ -49,7 +49,7 @@ class GraphCanvas : public Ganv::Canvas
 {
 public:
 	GraphCanvas(App&                           app,
-	            SPtr<const Client::GraphModel> graph,
+	            SPtr<const client::GraphModel> graph,
 	            int                            width,
 	            int                            height);
 
@@ -62,14 +62,14 @@ public:
 	void show_port_names(bool b);
 	bool show_port_names() const { return _show_port_names; }
 
-	void add_plugin(SPtr<Client::PluginModel> p);
+	void add_plugin(SPtr<client::PluginModel> p);
 	void remove_plugin(const URI& uri);
-	void add_block(SPtr<const Client::BlockModel> bm);
-	void remove_block(SPtr<const Client::BlockModel> bm);
-	void add_port(SPtr<const Client::PortModel> pm);
-	void remove_port(SPtr<const Client::PortModel> pm);
-	void connection(SPtr<const Client::ArcModel> arc);
-	void disconnection(SPtr<const Client::ArcModel> arc);
+	void add_block(SPtr<const client::BlockModel> bm);
+	void remove_block(SPtr<const client::BlockModel> bm);
+	void add_port(SPtr<const client::PortModel> pm);
+	void remove_port(SPtr<const client::PortModel> pm);
+	void connection(SPtr<const client::ArcModel> arc);
+	void disconnection(SPtr<const client::ArcModel> arc);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -97,7 +97,7 @@ private:
 	void menu_new_graph();
 	void menu_load_graph();
 	void menu_properties();
-	void load_plugin(WPtr<Client::PluginModel> weak_plugin);
+	void load_plugin(WPtr<client::PluginModel> weak_plugin);
 
 	void build_menus();
 
@@ -107,7 +107,7 @@ private:
 
 	Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
-	Ganv::Port* get_port_view(SPtr<Client::PortModel> port);
+	Ganv::Port* get_port_view(SPtr<client::PortModel> port);
 
 	void connect(Ganv::Node* tail,
 	             Ganv::Node* head);
@@ -116,9 +116,9 @@ private:
 	                Ganv::Node* head);
 
 	App&                           _app;
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 
-	typedef std::map<SPtr<const Client::ObjectModel>, Ganv::Module*> Views;
+	typedef std::map<SPtr<const client::ObjectModel>, Ganv::Module*> Views;
 	Views _views;
 
 	int                 _auto_position_count;
@@ -153,7 +153,7 @@ private:
 	bool _menu_dirty;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GRAPHCANVAS_HPP

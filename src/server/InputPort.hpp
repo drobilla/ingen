@@ -27,8 +27,8 @@
 #include "ArcImpl.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class ArcImpl;
 class BlockImpl;
@@ -122,7 +122,7 @@ protected:
 	Arcs   _arcs;      ///< Audio thread
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_INPUTPORT_HPP

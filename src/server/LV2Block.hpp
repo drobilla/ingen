@@ -28,8 +28,8 @@
 #include "ingen/LV2Features.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class LV2Plugin;
 
@@ -146,7 +146,7 @@ protected:
 	SPtr<LV2Features::FeatureArray> _features;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_LV2BLOCK_HPP

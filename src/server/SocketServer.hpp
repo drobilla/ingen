@@ -25,15 +25,15 @@
 
 #include "EventWriter.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** The server side of an Ingen socket connection. */
 class SocketServer
 {
 public:
 	SocketServer(World&             world,
-	             Server::Engine&    engine,
+	             server::Engine&    engine,
 	             SPtr<Raul::Socket> sock)
 		: _engine(engine)
 		, _sink(world.conf().option("dump").get<int32_t>()
@@ -68,13 +68,13 @@ protected:
 	}
 
 private:
-	Server::Engine&    _engine;
+	server::Engine&    _engine;
 	SPtr<Interface>    _sink;
 	SPtr<SocketReader> _reader;
 	SPtr<SocketWriter> _writer;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 }  // namespace Socket
 
 #endif  // INGEN_SERVER_SOCKET_SERVER_HPP

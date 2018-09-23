@@ -56,7 +56,7 @@
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-namespace Ingen {
+namespace ingen {
 
 /** Record of a graph in this bundle. */
 struct LV2Graph : public Parser::ResourceRecord {
@@ -75,7 +75,7 @@ public:
 	Graphs graphs;
 };
 
-namespace Server {
+namespace server {
 
 class LV2Driver;
 
@@ -87,8 +87,8 @@ ui_ring_size(SampleCount block_length)
 	return std::max((size_t)8192, (size_t)block_length * 16);
 }
 
-class LV2Driver : public Ingen::Server::Driver
-                , public Ingen::AtomSink
+class LV2Driver : public ingen::server::Driver
+                , public ingen::AtomSink
 {
 public:
 	LV2Driver(Engine&     engine,
@@ -396,13 +396,13 @@ private:
 	bool             _instantiated;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 extern "C" {
 
-using namespace Ingen;
-using namespace Ingen::Server;
+using namespace ingen;
+using namespace ingen::server;
 
 static void
 ingen_lv2_main(SPtr<Engine> engine, const SPtr<LV2Driver>& driver)
@@ -430,7 +430,7 @@ struct IngenPlugin {
 		, argv(nullptr)
 	{}
 
-	Ingen::World* world;
+	ingen::World* world;
 	SPtr<Engine>  engine;
 	std::thread*  main;
 	LV2_URID_Map* map;
@@ -492,7 +492,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	set_bundle_path(bundle_path);
-	const std::string manifest_path = Ingen::bundle_file_path("manifest.ttl");
+	const std::string manifest_path = ingen::bundle_file_path("manifest.ttl");
 	SerdNode          manifest_node = serd_node_new_file_uri(
 		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 
@@ -514,7 +514,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	IngenPlugin* plugin = new IngenPlugin();
 	plugin->map   = map;
-	plugin->world = new Ingen::World(map, unmap, log);
+	plugin->world = new ingen::World(map, unmap, log);
 	plugin->world->load_configuration(plugin->argc, plugin->argv);
 
 	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
@@ -547,7 +547,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		"queue-size",
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
-	SPtr<Server::Engine> engine(new Server::Engine(plugin->world));
+	SPtr<server::Engine> engine(new server::Engine(plugin->world));
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
@@ -555,14 +555,14 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	plugin->world->set_interface(interface);
 
-	Server::ThreadManager::set_flag(Server::THREAD_PRE_PROCESS);
-	Server::ThreadManager::single_threaded = true;
+	server::ThreadManager::set_flag(server::THREAD_PRE_PROCESS);
+	server::ThreadManager::single_threaded = true;
 
 	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, seq_size, rate);
-	engine->set_driver(SPtr<Ingen::Server::Driver>(driver));
+	engine->set_driver(SPtr<ingen::server::Driver>(driver));
 
 	engine->activate();
-	Server::ThreadManager::single_threaded = true;
+	server::ThreadManager::single_threaded = true;
 
 	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 
@@ -597,10 +597,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	using namespace Ingen::Server;
+	using namespace ingen::server;
 
 	IngenPlugin*           me     = (IngenPlugin*)instance;
-	Server::Engine*        engine = (Server::Engine*)me->world->engine().get();
+	server::Engine*        engine = (server::Engine*)me->world->engine().get();
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
@@ -613,7 +613,7 @@ static void
 ingen_activate(LV2_Handle instance)
 {
 	IngenPlugin*           me     = (IngenPlugin*)instance;
-	SPtr<Server::Engine>   engine = static_ptr_cast<Server::Engine>(me->world->engine());
+	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	engine->activate();
 	me->main = new std::thread(ingen_lv2_main, engine, driver);
@@ -623,11 +623,11 @@ static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	IngenPlugin*           me     = (IngenPlugin*)instance;
-	SPtr<Server::Engine>   engine = static_ptr_cast<Server::Engine>(me->world->engine());
+	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 
-	Server::ThreadManager::set_flag(Ingen::Server::THREAD_PROCESS);
-	Server::ThreadManager::set_flag(Ingen::Server::THREAD_IS_REAL_TIME);
+	server::ThreadManager::set_flag(ingen::server::THREAD_PROCESS);
+	server::ThreadManager::set_flag(ingen::server::THREAD_IS_REAL_TIME);
 
 	driver->run(sample_count);
 }
@@ -648,8 +648,8 @@ static void
 ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->set_engine(SPtr<Ingen::Server::Engine>());
-	me->world->set_interface(SPtr<Ingen::Interface>());
+	me->world->set_engine(SPtr<ingen::server::Engine>());
+	me->world->set_interface(SPtr<ingen::Interface>());
 	if (me->main) {
 		me->main->join();
 		delete me->main;
@@ -804,8 +804,8 @@ LV2Graph::LV2Graph(Parser::ResourceRecord record)
 
 Lib::Lib(const char* bundle_path)
 {
-	Ingen::set_bundle_path(bundle_path);
-	const std::string manifest_path = Ingen::bundle_file_path("manifest.ttl");
+	ingen::set_bundle_path(bundle_path);
+	const std::string manifest_path = ingen::bundle_file_path("manifest.ttl");
 	SerdNode          manifest_node = serd_node_new_file_uri(
 		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 

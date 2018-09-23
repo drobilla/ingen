@@ -50,11 +50,11 @@
 #include <webkit/webkit.h>
 #endif
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 static const int STATUS_CONTEXT_ENGINE = 0;
 static const int STATUS_CONTEXT_GRAPH  = 1;
@@ -818,7 +818,7 @@ GraphBox::event_arrange()
 void
 GraphBox::event_parent_activated()
 {
-	SPtr<Client::GraphModel> parent = dynamic_ptr_cast<Client::GraphModel>(_graph->parent());
+	SPtr<client::GraphModel> parent = dynamic_ptr_cast<client::GraphModel>(_graph->parent());
 	if (parent) {
 		_app->window_factory()->present_graph(parent, _window);
 	}
@@ -918,5 +918,5 @@ GraphBox::event_port_names_toggled()
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

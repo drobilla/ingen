@@ -25,12 +25,12 @@
 #include "Event.hpp"
 #include "events/Get.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class GraphImpl;
 
-namespace Events {
+namespace events {
 
 /** Creates a new Graph.
  *
@@ -67,8 +67,8 @@ private:
 	std::list<Event*>   _child_events;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_CREATEGRAPH_HPP

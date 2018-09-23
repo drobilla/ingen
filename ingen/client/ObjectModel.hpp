@@ -33,11 +33,11 @@
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 
-namespace Ingen {
+namespace ingen {
 
 class URIs;
 
-namespace Client {
+namespace client {
 
 class ClientStore;
 
@@ -97,7 +97,7 @@ private:
 	Raul::Symbol _symbol;
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_OBJECTMODEL_HPP

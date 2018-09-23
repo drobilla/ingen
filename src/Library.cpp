@@ -25,7 +25,7 @@
 #    include <dlfcn.h>
 #endif
 
-namespace Ingen {
+namespace ingen {
 
 Library::Library(const FilePath& path) : _lib(dlopen(path.c_str(), RTLD_NOW))
 {}
@@ -53,4 +53,4 @@ Library::get_last_error()
 	return dlerror();
 }
 
-} // namespace Ingen
+} // namespace ingen

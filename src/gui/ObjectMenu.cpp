@@ -25,11 +25,11 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-using namespace Client;
+using namespace client;
 
-namespace GUI {
+namespace gui {
 
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
                        const Glib::RefPtr<Gtk::Builder>& xml)
@@ -141,5 +141,5 @@ ObjectMenu::on_menu_properties()
 	_app->window_factory()->present_properties(_object);
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

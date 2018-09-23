@@ -30,8 +30,8 @@
 #include "PortType.hpp"
 #include "types.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class BufferFactory;
 class Engine;
@@ -238,7 +238,7 @@ private:
 	bool                  _external; ///< Buffer is externally allocated
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BUFFER_HPP

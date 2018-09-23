@@ -26,7 +26,7 @@
 
 namespace Raul { class Socket; }
 
-namespace Ingen {
+namespace ingen {
 
 class Interface;
 class World;
@@ -73,6 +73,6 @@ private:
 	std::thread        _thread;
 };
 
-}  // namespace Ingen
+}  // namespace ingen
 
 #endif  // INGEN_SOCKET_READER_HPP

@@ -30,16 +30,16 @@
 
 namespace Raul { class Atom; }
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client {
+namespace client {
 class PortModel;
 class MetadataModel;
 class GraphModel;
 class ObjectModel;
 }
 
-namespace GUI {
+namespace gui {
 
 class App;
 class LoadPluginWindow;
@@ -63,14 +63,14 @@ public:
 	void init(App& app);
 
 	SPtr<GraphCanvas>              canvas()               const { return _canvas; }
-	SPtr<const Client::GraphModel> graph()                const { return _graph; }
+	SPtr<const client::GraphModel> graph()                const { return _graph; }
 	Gtk::ToolItem*                 breadcrumb_container() const { return _breadcrumb_container; }
 
 	static SPtr<GraphView> create(App& app,
-	                              SPtr<const Client::GraphModel> graph);
+	                              SPtr<const client::GraphModel> graph);
 
 private:
-	void set_graph(SPtr<const Client::GraphModel> graph);
+	void set_graph(SPtr<const client::GraphModel> graph);
 
 	void process_toggled();
 	void poly_changed();
@@ -80,7 +80,7 @@ private:
 
 	App* _app;
 
-	SPtr<const Client::GraphModel> _graph;
+	SPtr<const client::GraphModel> _graph;
 	SPtr<GraphCanvas>              _canvas;
 
 	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
@@ -92,7 +92,7 @@ private:
 	bool _enable_signal;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_GRAPHVIEW_HPP

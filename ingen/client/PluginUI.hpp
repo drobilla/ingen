@@ -25,12 +25,12 @@
 #include "lilv/lilv.h"
 #include "suil/suil.h"
 
-namespace Ingen {
+namespace ingen {
 
 class Interface;
 class World;
 
-namespace Client {
+namespace client {
 
 class BlockModel;
 
@@ -48,7 +48,7 @@ public:
 	 * connected first.  The caller should connect to signal_property_changed,
 	 * then call instantiate().
 	 */
-	static SPtr<PluginUI> create(Ingen::World*          world,
+	static SPtr<PluginUI> create(ingen::World*          world,
 	                             SPtr<const BlockModel> block,
 	                             const LilvPlugin*      plugin);
 
@@ -81,17 +81,17 @@ public:
 	             const Atom&,       // Object
 	             Resource::Graph);  // Context
 
-	Ingen::World*          world() const { return _world; }
+	ingen::World*          world() const { return _world; }
 	SPtr<const BlockModel> block() const { return _block; }
 
 private:
-	PluginUI(Ingen::World*          world,
+	PluginUI(ingen::World*          world,
 	         SPtr<const BlockModel> block,
 	         LilvUIs*               uis,
 	         const LilvUI*          ui,
 	         const LilvNode*        ui_type);
 
-	Ingen::World*          _world;
+	ingen::World*          _world;
 	SPtr<const BlockModel> _block;
 	SuilInstance*          _instance;
 	LilvUIs*               _uis;
@@ -105,7 +105,7 @@ private:
 	SPtr<LV2Features::FeatureArray> _features;
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_PLUGINUI_HPP

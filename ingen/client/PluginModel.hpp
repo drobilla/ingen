@@ -32,11 +32,11 @@
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class URIs;
 
-namespace Client {
+namespace client {
 
 class GraphModel;
 class BlockModel;
@@ -46,13 +46,13 @@ class PluginUI;
  *
  * @ingroup IngenClient
  */
-class INGEN_API PluginModel : public Ingen::Resource
+class INGEN_API PluginModel : public ingen::Resource
 {
 public:
 	PluginModel(URIs&                    uris,
 	            const URI&               uri,
 	            const Atom&              type,
-	            const Ingen::Properties& properties);
+	            const ingen::Properties& properties);
 
 	const Atom& type() const { return _type; }
 
@@ -83,7 +83,7 @@ public:
 
 	bool has_ui() const;
 
-	SPtr<PluginUI> ui(Ingen::World*               world,
+	SPtr<PluginUI> ui(ingen::World*               world,
 	                  SPtr<const BlockModel> block) const;
 
 	std::string documentation(bool html) const;
@@ -122,7 +122,7 @@ private:
 	bool              _fetched;
 };
 
-} // namespace Client
-} // namespace Ingen
+} // namespace client
+} // namespace ingen
 
 #endif // INGEN_CLIENT_PLUGINMODEL_HPP

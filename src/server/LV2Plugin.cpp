@@ -26,8 +26,8 @@
 #include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
 	: PluginImpl(world->uris(),
@@ -139,5 +139,5 @@ LV2Plugin::load_presets()
 	PluginImpl::load_presets();
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

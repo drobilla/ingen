@@ -24,14 +24,14 @@
 
 namespace Raul { class Atom; }
 
-namespace Ingen { namespace Client {
+namespace ingen { namespace client {
 class BlockModel;
 class PluginUI;
 class PortModel;
 } }
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 class GraphCanvas;
 class Port;
@@ -48,24 +48,24 @@ class NodeModule : public Ganv::Module
 public:
 	static NodeModule* create(
 		GraphCanvas&                   canvas,
-		SPtr<const Client::BlockModel> block,
+		SPtr<const client::BlockModel> block,
 		bool                           human);
 
 	virtual ~NodeModule();
 
 	App& app() const;
 
-	Port* port(SPtr<const Client::PortModel> model);
+	Port* port(SPtr<const client::PortModel> model);
 
-	void delete_port_view(SPtr<const Client::PortModel> model);
+	void delete_port_view(SPtr<const client::PortModel> model);
 
 	virtual void store_location(double ax, double ay);
 	void show_human_names(bool b);
 
-	SPtr<const Client::BlockModel> block() const { return _block; }
+	SPtr<const client::BlockModel> block() const { return _block; }
 
 protected:
-	NodeModule(GraphCanvas& canvas, SPtr<const Client::BlockModel> block);
+	NodeModule(GraphCanvas& canvas, SPtr<const client::BlockModel> block);
 
 	virtual bool on_double_click(GdkEventButton* ev);
 
@@ -81,7 +81,7 @@ protected:
 	void rename();
 	void property_changed(const URI& key, const Atom& value);
 
-	void new_port_view(SPtr<const Client::PortModel> port);
+	void new_port_view(SPtr<const client::PortModel> port);
 
 	void port_activity(uint32_t index, const Atom& value);
 	void port_value_changed(uint32_t index, const Atom& value);
@@ -90,15 +90,15 @@ protected:
 
 	bool show_menu(GdkEventButton* ev);
 
-	SPtr<const Client::BlockModel> _block;
+	SPtr<const client::BlockModel> _block;
 	NodeMenu*                      _menu;
-	SPtr<Client::PluginUI>         _plugin_ui;
+	SPtr<client::PluginUI>         _plugin_ui;
 	Gtk::Widget*                   _gui_widget;
 	Gtk::Window*                   _gui_window; ///< iff popped up
 	bool                           _initialised;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_NODEMODULE_HPP

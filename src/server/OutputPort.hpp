@@ -19,8 +19,8 @@
 
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** An output port.
  *
@@ -45,7 +45,7 @@ public:
 	{}
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_OUTPUTPORT_HPP

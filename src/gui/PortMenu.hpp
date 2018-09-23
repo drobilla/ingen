@@ -26,8 +26,8 @@
 
 #include "ObjectMenu.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 /** Menu for a Port.
  *
@@ -40,7 +40,7 @@ public:
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(App&                          app,
-	          SPtr<const Client::PortModel> port,
+	          SPtr<const client::PortModel> port,
 	          bool                          internal_graph_port = false);
 
 private:
@@ -60,7 +60,7 @@ private:
 	bool _internal_graph_port;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_PORTMENU_HPP

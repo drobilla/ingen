@@ -27,14 +27,14 @@
 #include "PreProcessContext.hpp"
 #include "events/Copy.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Copy::Copy(Engine&            engine,
            SPtr<Interface>    client,
            SampleCount        timestamp,
-           const Ingen::Copy& msg)
+           const ingen::Copy& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _old_block(nullptr)
@@ -211,6 +211,6 @@ Copy::undo(Interface& target)
 	}
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

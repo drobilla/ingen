@@ -58,13 +58,13 @@
 #include "SocketListener.hpp"
 #endif
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 INGEN_THREAD_LOCAL unsigned ThreadManager::flags(0);
 bool               ThreadManager::single_threaded(true);
 
-Engine::Engine(Ingen::World* world)
+Engine::Engine(ingen::World* world)
 	: _world(world)
 	, _options(new LV2Options(world->uris()))
 	, _buffer_factory(new BufferFactory(*this, world->uris()))
@@ -92,7 +92,7 @@ Engine::Engine(Ingen::World* world)
 	, _activated(false)
 {
 	if (!world->store()) {
-		world->set_store(SPtr<Ingen::Store>(new Store()));
+		world->set_store(SPtr<ingen::Store>(new Store()));
 	}
 
 	for (int i = 0; i < world->conf().option("threads").get<int32_t>(); ++i) {
@@ -167,7 +167,7 @@ Engine::~Engine()
 		store->clear();
 	}
 
-	_world->set_store(SPtr<Ingen::Store>());
+	_world->set_store(SPtr<ingen::Store>());
 }
 
 void
@@ -310,7 +310,7 @@ Engine::quit()
 Properties
 Engine::load_properties() const
 {
-	const Ingen::URIs& uris = world()->uris();
+	const ingen::URIs& uris = world()->uris();
 
 	return { { uris.ingen_meanRunLoad,
 		       uris.forge.make(floorf(_run_load.mean) / 100.0f) },
@@ -392,7 +392,7 @@ Engine::activate()
 
 	ThreadManager::single_threaded = true;
 
-	const Ingen::URIs& uris = world()->uris();
+	const ingen::URIs& uris = world()->uris();
 
 	if (!_root_graph) {
 		// No root graph has been loaded, create an empty one
@@ -403,7 +403,7 @@ Engine::activate()
 			          Resource::Graph::INTERNAL)}};
 
 		enqueue_event(
-			new Events::CreateGraph(
+			new events::CreateGraph(
 				*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), properties));
 
 		flush_events(std::chrono::milliseconds(10));
@@ -522,5 +522,5 @@ Engine::unregister_client(SPtr<Interface> client)
 	return _broadcaster->unregister_client(client);
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

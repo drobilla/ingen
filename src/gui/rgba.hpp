@@ -19,8 +19,8 @@
 
 #include <cmath>
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 static inline uint32_t
 rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -52,7 +52,7 @@ rgba_interpolate(uint32_t c1, uint32_t c2, float f)
 		mono_interpolate(RGBA_A(c1), RGBA_A(c2), f));
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_RGBA_HPP

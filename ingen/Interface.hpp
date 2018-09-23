@@ -35,7 +35,7 @@ namespace Raul {
 class Path;
 }
 
-namespace Ingen {
+namespace ingen {
 
 class Atom;
 class URI;
@@ -144,6 +144,6 @@ private:
 	int32_t _seq;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif // INGEN_INTERFACE_HPP

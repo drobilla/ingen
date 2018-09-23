@@ -27,9 +27,9 @@
 #include "internals/Time.hpp"
 #include "util.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Internals {
+namespace ingen {
+namespace server {
+namespace internals {
 
 InternalPlugin* TimeNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
@@ -44,7 +44,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
                    SampleRate          srate)
 	: InternalBlock(plugin, symbol, false, parent, srate)
 {
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(1);
 
 	_notify_port = new OutputPort(
@@ -73,6 +73,6 @@ TimeNode::run(RunContext& context)
 		context, *_notify_port->buffer(0));
 }
 
-} // namespace Internals
-} // namespace Server
-} // namespace Ingen
+} // namespace internals
+} // namespace server
+} // namespace ingen

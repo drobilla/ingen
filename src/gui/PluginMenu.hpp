@@ -27,11 +27,11 @@
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class PluginModel; }
+namespace client { class PluginModel; }
 
-namespace GUI {
+namespace gui {
 
 /**
    Type-hierarchical plugin menu.
@@ -41,12 +41,12 @@ namespace GUI {
 class PluginMenu : public Gtk::Menu
 {
 public:
-	PluginMenu(Ingen::World& world);
+	PluginMenu(ingen::World& world);
 
 	void clear();
-	void add_plugin(SPtr<Client::PluginModel> p);
+	void add_plugin(SPtr<client::PluginModel> p);
 
-	sigc::signal< void, WPtr<Client::PluginModel> > signal_load_plugin;
+	sigc::signal< void, WPtr<client::PluginModel> > signal_load_plugin;
 
 private:
 	struct MenuRecord {
@@ -65,16 +65,16 @@ private:
 	                               const LV2Children&       children,
 	                               std::set<const char*>&   ancestors);
 
-	void add_plugin_to_menu(MenuRecord& menu, SPtr<Client::PluginModel> p);
+	void add_plugin_to_menu(MenuRecord& menu, SPtr<client::PluginModel> p);
 
-	void load_plugin(WPtr<Client::PluginModel> weak_plugin);
+	void load_plugin(WPtr<client::PluginModel> weak_plugin);
 
-	Ingen::World& _world;
+	ingen::World& _world;
 	MenuRecord    _classless_menu;
 	ClassMenus    _class_menus;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_PLUGINMENU_HPP

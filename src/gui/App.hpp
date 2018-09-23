@@ -34,7 +34,7 @@
 #include "lilv/lilv.h"
 #include "raul/Deletable.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class Interface;
 class Log;
@@ -43,7 +43,7 @@ class Serialiser;
 class StreamWriter;
 class World;
 
-namespace Client {
+namespace client {
 
 class ClientStore;
 class GraphModel;
@@ -53,7 +53,7 @@ class SigClientInterface;
 
 }
 
-namespace GUI {
+namespace gui {
 
 class ConnectWindow;
 class GraphCanvas;
@@ -75,7 +75,7 @@ public:
 
 	void error_message(const std::string& str);
 
-	void attach(SPtr<Ingen::Interface> client);
+	void attach(SPtr<ingen::Interface> client);
 
 	void detach();
 
@@ -89,7 +89,7 @@ public:
 
 	void port_activity(Port* port);
 	void activity_port_destroyed(Port* port);
-	bool can_control(const Client::PortModel* port) const;
+	bool can_control(const client::PortModel* port) const;
 
 	bool signal() const { return _enable_signal; }
 	void enable_signals(bool b) { _enable_signal = b; }
@@ -118,17 +118,17 @@ public:
 	Style*           style()           const { return _style; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
-	Ingen::Forge&             forge()     const { return _world->forge(); }
-	SPtr<Ingen::Interface>    interface() const { return _world->interface(); }
-	SPtr<Ingen::Interface>    client()    const { return _client; }
-	SPtr<Client::ClientStore> store()     const { return _store; }
+	ingen::Forge&             forge()     const { return _world->forge(); }
+	SPtr<ingen::Interface>    interface() const { return _world->interface(); }
+	SPtr<ingen::Interface>    client()    const { return _client; }
+	SPtr<client::ClientStore> store()     const { return _store; }
 	SPtr<ThreadedLoader>      loader()    const { return _loader; }
 
-	SPtr<Client::SigClientInterface> sig_client();
+	SPtr<client::SigClientInterface> sig_client();
 
 	SPtr<Serialiser> serialiser();
 
-	static SPtr<App> create(Ingen::World* world);
+	static SPtr<App> create(ingen::World* world);
 
 	void run();
 
@@ -136,17 +136,17 @@ public:
 
 	sigc::signal<void, const std::string&> signal_status_text_changed;
 
-	inline Ingen::World* world() const { return _world; }
-	inline Ingen::URIs&  uris()  const { return _world->uris(); }
-	inline Ingen::Log&   log()   const { return _world->log(); }
+	inline ingen::World* world() const { return _world; }
+	inline ingen::URIs&  uris()  const { return _world->uris(); }
+	inline ingen::Log&   log()   const { return _world->log(); }
 
 protected:
-	explicit App(Ingen::World* world);
+	explicit App(ingen::World* world);
 
-	void message(const Ingen::Message& msg);
+	void message(const ingen::Message& msg);
 
 	bool animate();
-	void response(int32_t id, Ingen::Status status, const std::string& subject);
+	void response(int32_t id, ingen::Status status, const std::string& subject);
 
 	void put(const URI&        uri,
 	         const Properties& properties,
@@ -159,8 +159,8 @@ protected:
 
 	static Gtk::Main* _main;
 
-	SPtr<Ingen::Interface>    _client;
-	SPtr<Client::ClientStore> _store;
+	SPtr<ingen::Interface>    _client;
+	SPtr<client::ClientStore> _store;
 	SPtr<ThreadedLoader>      _loader;
 	SPtr<StreamWriter>        _dumper;
 
@@ -172,7 +172,7 @@ protected:
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
 
-	Ingen::World* _world;
+	ingen::World* _world;
 
 	int32_t     _sample_rate;
 	int32_t     _block_length;
@@ -190,7 +190,7 @@ protected:
 	bool _is_plugin;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_APP_HPP

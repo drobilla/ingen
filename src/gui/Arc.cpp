@@ -20,19 +20,19 @@
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 Arc::Arc(Ganv::Canvas&                canvas,
-         SPtr<const Client::ArcModel> model,
+         SPtr<const client::ArcModel> model,
          Ganv::Node*                  src,
          Ganv::Node*                  dst)
 	: Ganv::Edge(canvas, src, dst)
 	, _arc_model(model)
 {
-	SPtr<const Client::ObjectModel> tparent = model->tail()->parent();
-	SPtr<const Client::BlockModel>  tparent_block;
-	if ((tparent_block = dynamic_ptr_cast<const Client::BlockModel>(tparent))) {
+	SPtr<const client::ObjectModel> tparent = model->tail()->parent();
+	SPtr<const client::BlockModel>  tparent_block;
+	if ((tparent_block = dynamic_ptr_cast<const client::BlockModel>(tparent))) {
 		if (tparent_block->plugin_uri() == NS_INTERNALS "BlockDelay") {
 			g_object_set(_gobj, "dash-length", 4.0, NULL);
 			set_constraining(false);
@@ -40,5 +40,5 @@ Arc::Arc(Ganv::Canvas&                canvas,
 	}
 }
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen

@@ -29,9 +29,9 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-namespace Ingen {
+namespace ingen {
 
-SocketReader::SocketReader(Ingen::World&      world,
+SocketReader::SocketReader(ingen::World&      world,
                            Interface&         iface,
                            SPtr<Raul::Socket> sock)
 	: _world(world)
@@ -196,4 +196,4 @@ SocketReader::run()
 	_socket.reset();
 }
 
-}  // namespace Ingen
+}  // namespace ingen

@@ -20,8 +20,8 @@
 #include "InternalPlugin.hpp"
 #include "PortImpl.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 InternalBlock::InternalBlock(PluginImpl*         plugin,
                              const Raul::Symbol& symbol,
@@ -69,5 +69,5 @@ InternalBlock::pre_process(RunContext& context)
 	}
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

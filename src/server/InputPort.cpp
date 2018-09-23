@@ -30,8 +30,8 @@
 #include "RunContext.hpp"
 #include "mix.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 InputPort::InputPort(BufferFactory&      bufs,
                      BlockImpl*          parent,
@@ -45,7 +45,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size, false)
 	, _num_arcs(0)
 {
-	const Ingen::URIs& uris = bufs.uris();
+	const ingen::URIs& uris = bufs.uris();
 
 	if (parent->graph_type() != Node::GraphType::GRAPH) {
 		add_property(uris.rdf_type, uris.lv2_InputPort.urid);
@@ -257,5 +257,5 @@ InputPort::direct_connect() const
 		&& buffer(0)->type() != _bufs.uris().atom_Sequence;
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

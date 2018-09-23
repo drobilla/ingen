@@ -28,9 +28,9 @@
 #include "RunContext.hpp"
 #include "SetPortValue.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 /** Internal */
 SetPortValue::SetPortValue(Engine&         engine,
@@ -52,7 +52,7 @@ SetPortValue::SetPortValue(Engine&         engine,
 bool
 SetPortValue::pre_process(PreProcessContext& ctx)
 {
-	Ingen::URIs& uris = _engine.world()->uris();
+	ingen::URIs& uris = _engine.world()->uris();
 	if (_port->is_output()) {
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
@@ -90,7 +90,7 @@ SetPortValue::apply(RunContext& context)
 		return;
 	}
 
-	Ingen::URIs&  uris = _engine.world()->uris();
+	ingen::URIs&  uris = _engine.world()->uris();
 	Buffer*       buf  = _port->buffer(0).get();
 
 	if (_buffer) {
@@ -134,6 +134,6 @@ SetPortValue::post_process()
 	}
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

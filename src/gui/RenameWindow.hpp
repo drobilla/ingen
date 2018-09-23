@@ -27,8 +27,8 @@
 
 #include "Window.hpp"
 
-namespace Ingen {
-namespace GUI {
+namespace ingen {
+namespace gui {
 
 /** Rename window.  Handles renaming of any (Ingen) object.
  *
@@ -40,16 +40,16 @@ public:
 	RenameWindow(BaseObjectType*                   cobject,
 	             const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SPtr<const Client::ObjectModel> object);
+	void present(SPtr<const client::ObjectModel> object);
 
 private:
-	void set_object(SPtr<const Client::ObjectModel> object);
+	void set_object(SPtr<const client::ObjectModel> object);
 
 	void values_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
-	SPtr<const Client::ObjectModel> _object;
+	SPtr<const client::ObjectModel> _object;
 
 	Gtk::Entry*  _symbol_entry;
 	Gtk::Entry*  _label_entry;
@@ -58,7 +58,7 @@ private:
 	Gtk::Button* _ok_button;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_RENAMEWINDOW_HPP

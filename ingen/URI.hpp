@@ -27,7 +27,7 @@
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class INGEN_API URI
 {
@@ -155,6 +155,6 @@ operator<<(std::basic_ostream<Char, Traits>& os, const URI& uri)
 	return os << uri.string();
 }
 
-} // namespace Ingen
+} // namespace ingen
 
 #endif  // INGEN_URI_HPP

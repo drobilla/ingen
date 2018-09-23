@@ -22,8 +22,8 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Driver for running Ingen directly as a library.
  * \ingroup engine
@@ -102,7 +102,7 @@ private:
 	size_t      _seq_size;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_DIRECT_DRIVER_HPP

@@ -23,7 +23,7 @@
 #include "ingen/Library.hpp"
 #include "ingen/ingen.h"
 
-namespace Ingen {
+namespace ingen {
 
 class World;
 
@@ -40,8 +40,8 @@ public:
 	Module(const Module&) = delete;
 	Module& operator=(const Module&) = delete;
 
-	virtual void load(Ingen::World* world) = 0;
-	virtual void run(Ingen::World* world) {}
+	virtual void load(ingen::World* world) = 0;
+	virtual void run(ingen::World* world) {}
 
 	/** Library implementing this module.
 	 *
@@ -52,12 +52,12 @@ public:
 	std::unique_ptr<Library> library;
 };
 
-} // namespace Ingen
+} // namespace ingen
 
 extern "C" {
 
 /** Prototype for the ingen_module_load() entry point in an ingen module. */
-INGEN_API Ingen::Module* ingen_module_load();
+INGEN_API ingen::Module* ingen_module_load();
 
 }
 

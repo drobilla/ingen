@@ -22,11 +22,11 @@
 #include "ganv/Edge.hpp"
 #include "ingen/types.hpp"
 
-namespace Ingen {
+namespace ingen {
 
-namespace Client { class ArcModel; }
+namespace client { class ArcModel; }
 
-namespace GUI {
+namespace gui {
 
 /** An Arc (directed edge) in a Graph.
  *
@@ -36,17 +36,17 @@ class Arc : public Ganv::Edge
 {
 public:
 	Arc(Ganv::Canvas&                canvas,
-	    SPtr<const Client::ArcModel> model,
+	    SPtr<const client::ArcModel> model,
 	    Ganv::Node*                  src,
 	    Ganv::Node*                  dst);
 
-	SPtr<const Client::ArcModel> model() const { return _arc_model; }
+	SPtr<const client::ArcModel> model() const { return _arc_model; }
 
 private:
-	SPtr<const Client::ArcModel> _arc_model;
+	SPtr<const client::ArcModel> _arc_model;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_ARC_HPP

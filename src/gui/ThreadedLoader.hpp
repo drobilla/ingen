@@ -32,11 +32,11 @@
 #include "ingen/Serialiser.hpp"
 #include "raul/Semaphore.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 class URI;
 
-namespace GUI {
+namespace gui {
 
 /** Thread for loading graph files.
  *
@@ -63,7 +63,7 @@ public:
 	                boost::optional<Raul::Symbol> engine_symbol,
 	                boost::optional<Properties>   engine_data);
 
-	void save_graph(SPtr<const Client::GraphModel> model, const URI& uri);
+	void save_graph(SPtr<const client::GraphModel> model, const URI& uri);
 
 	SPtr<Parser> parser();
 
@@ -73,7 +73,7 @@ private:
 	                      boost::optional<Raul::Symbol> engine_symbol,
 	                      boost::optional<Properties>   engine_data);
 
-	void save_graph_event(SPtr<const Client::GraphModel> model,
+	void save_graph_event(SPtr<const client::GraphModel> model,
 	                      const URI&                     filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
@@ -90,7 +90,7 @@ private:
 	std::thread        _thread;
 };
 
-} // namespace GUI
-} // namespace Ingen
+} // namespace gui
+} // namespace ingen
 
 #endif // INGEN_GUI_LOADERRTHREAD_HPP

@@ -26,26 +26,26 @@
 #include "PortAudioDriver.hpp"
 #include "Engine.hpp"
 
-using namespace Ingen;
+using namespace ingen;
 
-struct IngenPortAudioModule : public Ingen::Module {
-	void load(Ingen::World* world) {
-		if (((Server::Engine*)world->engine().get())->driver()) {
+struct IngenPortAudioModule : public ingen::Module {
+	void load(ingen::World* world) {
+		if (((server::Engine*)world->engine().get())->driver()) {
 			world->log().warn("Engine already has a driver\n");
 			return;
 		}
 
-		Server::PortAudioDriver* driver = new Server::PortAudioDriver(
-			*(Server::Engine*)world->engine().get());
+		server::PortAudioDriver* driver = new server::PortAudioDriver(
+			*(server::Engine*)world->engine().get());
 		driver->attach();
-		((Server::Engine*)world->engine().get())->set_driver(
-			SPtr<Server::Driver>(driver));
+		((server::Engine*)world->engine().get())->set_driver(
+			SPtr<server::Driver>(driver));
 	}
 };
 
 extern "C" {
 
-Ingen::Module*
+ingen::Module*
 ingen_module_load()
 {
 	return new IngenPortAudioModule();

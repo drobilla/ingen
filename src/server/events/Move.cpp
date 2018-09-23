@@ -25,14 +25,14 @@
 #include "GraphImpl.hpp"
 #include "events/Move.hpp"
 
-namespace Ingen {
-namespace Server {
-namespace Events {
+namespace ingen {
+namespace server {
+namespace events {
 
 Move::Move(Engine&           engine,
            SPtr<Interface>   client,
            SampleCount       timestamp,
-           const Ingen::Move& msg)
+           const ingen::Move& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 {
@@ -86,6 +86,6 @@ Move::undo(Interface& target)
 	target.move(_msg.new_path, _msg.old_path);
 }
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen

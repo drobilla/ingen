@@ -16,7 +16,7 @@
 
 #include "ingen/FilePath.hpp"
 
-namespace Ingen {
+namespace ingen {
 
 template <typename Char>
 static bool
@@ -239,4 +239,4 @@ operator/(const FilePath& lhs, const FilePath& rhs)
 	return FilePath(lhs) /= rhs;
 }
 
-} // namespace Ingen
+} // namespace ingen

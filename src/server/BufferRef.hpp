@@ -21,8 +21,8 @@
 
 #include "ingen/ingen.h"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class Buffer;
 
@@ -32,7 +32,7 @@ typedef boost::intrusive_ptr<Buffer> BufferRef;
 INGEN_API void intrusive_ptr_add_ref(Buffer* b);
 INGEN_API void intrusive_ptr_release(Buffer* b);
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BUFFER_REF_HPP

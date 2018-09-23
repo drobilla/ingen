@@ -28,14 +28,14 @@ namespace Raul {
 template <typename T> class Array;
 }
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 class ArcImpl;
 class GraphImpl;
 class InputPort;
 
-namespace Events {
+namespace events {
 
 /** Make an Arc between two Ports.
  *
@@ -47,7 +47,7 @@ public:
 	Connect(Engine&               engine,
 	        SPtr<Interface>       client,
 	        SampleCount           timestamp,
-	        const Ingen::Connect& msg);
+	        const ingen::Connect& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -55,7 +55,7 @@ public:
 	void undo(Interface& target);
 
 private:
-	const Ingen::Connect   _msg;
+	const ingen::Connect   _msg;
 	GraphImpl*             _graph;
 	InputPort*             _head;
 	MPtr<CompiledGraph>    _compiled_graph;
@@ -67,8 +67,8 @@ private:
 	Properties             _head_add;
 };
 
-} // namespace Events
-} // namespace Server
-} // namespace Ingen
+} // namespace events
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_EVENTS_CONNECT_HPP

@@ -26,8 +26,8 @@
 #include "GraphImpl.hpp"
 #include "ThreadManager.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 /** Graph contains ambiguous feedback with no delay nodes. */
 class FeedbackException : public std::exception {
@@ -270,5 +270,5 @@ CompiledGraph::dump(const std::string& name) const
 	sink(")\n");
 }
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen

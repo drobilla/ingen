@@ -23,8 +23,8 @@
 
 #include "util.hpp"
 
-namespace Ingen {
-namespace Server {
+namespace ingen {
+namespace server {
 
 enum ThreadFlag {
 	THREAD_IS_REAL_TIME = 1,
@@ -62,7 +62,7 @@ public:
 	static INGEN_THREAD_LOCAL unsigned flags;
 };
 
-} // namespace Server
-} // namespace Ingen
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_THREADMANAGER_HPP
