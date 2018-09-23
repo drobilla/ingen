@@ -93,10 +93,11 @@ skip_property(ingen::URIs& uris, const Sord::Node& predicate)
 }
 
 static Properties
-get_properties(ingen::World*     world,
-               Sord::Model&      model,
-               const Sord::Node& subject,
-               Resource::Graph   ctx)
+get_properties(ingen::World*               world,
+               Sord::Model&                model,
+               const Sord::Node&           subject,
+               Resource::Graph             ctx,
+               boost::optional<Properties> data = {})
 {
 	LV2_URID_Map* map    = &world->uri_map().urid_map_feature()->urid_map;
 	Sratom*       sratom = sratom_new(map);
@@ -122,6 +123,24 @@ get_properties(ingen::World*     world,
 	}
 
 	sratom_free(sratom);
+
+	// Replace any properties given in `data`
+	if (data) {
+		for (const auto& prop : *data) {
+			if (ctx == Resource::Graph::DEFAULT ||
+			    prop.second.context() == ctx) {
+				props.erase(prop.first);
+			}
+		}
+
+		for (const auto& prop : *data) {
+			if (ctx == Resource::Graph::DEFAULT ||
+			    prop.second.context() == ctx) {
+				props.emplace(prop);
+			}
+		}
+	}
+
 	return props;
 }
 
@@ -213,16 +232,6 @@ parse_block(
 	boost::optional<Properties> data = boost::optional<Properties>());
 
 static bool
-parse_properties(
-	World*                      world,
-	Interface*                  target,
-	Sord::Model&                model,
-	const Sord::Node&           subject,
-	Resource::Graph             ctx,
-	const URI&                  uri,
-	boost::optional<Properties> data = boost::optional<Properties>());
-
-static bool
 parse_arcs(
 	World*             world,
 	Interface*         target,
@@ -291,15 +300,15 @@ parse_block(ingen::World*               world,
 		Sord::URI sub_node(*world->rdf_world(), sub_file);
 		parse_graph(world, target, sub_model, sub_base,
 		            sub_node, Resource::Graph::INTERNAL,
-		            path.parent(), Raul::Symbol(path.symbol()));
+		            path.parent(), Raul::Symbol(path.symbol()), data);
 
 		parse_graph(world, target, model, base_uri,
 		            subject, Resource::Graph::EXTERNAL,
-		            path.parent(), Raul::Symbol(path.symbol()));
+		            path.parent(), Raul::Symbol(path.symbol()), data);
 	} else {
 		// Prototype is non-file URI, plugin
 		Properties props = get_properties(
-			world, model, subject, Resource::Graph::DEFAULT);
+			world, model, subject, Resource::Graph::DEFAULT, data);
 		props.emplace(uris.rdf_type, uris.forge.make_urid(uris.ingen_Block));
 		target->put(path_to_uri(path), props);
 	}
@@ -340,7 +349,7 @@ parse_graph(ingen::World*                 world,
 	}
 
 	// Create graph
-	Properties props = get_properties(world, model, subject, ctx);
+	Properties props = get_properties(world, model, subject, ctx, data);
 	target->put(path_to_uri(graph_path), props, ctx);
 
 	// For each port on this graph
@@ -492,33 +501,6 @@ parse_arcs(ingen::World*      world,
 	return true;
 }
 
-static bool
-parse_properties(ingen::World*               world,
-                 ingen::Interface*           target,
-                 Sord::Model&                model,
-                 const Sord::Node&           subject,
-                 Resource::Graph             ctx,
-                 const URI&                  uri,
-                 boost::optional<Properties> data)
-{
-	Properties properties = get_properties(world, model, subject, ctx);
-
-	// Replace any properties given in `data`
-	if (data) {
-		for (const auto& prop : *data) {
-			properties.erase(prop.first);
-		}
-
-		for (const auto& prop : *data) {
-			properties.emplace(prop);
-		}
-	}
-
-	target->put(uri, properties, ctx);
-
-	return true;
-}
-
 static boost::optional<Raul::Path>
 parse(ingen::World*                 world,
       ingen::Interface*             target,
@@ -583,9 +565,9 @@ parse(ingen::World*                 world,
 		           types.find(out_port_class) != types.end()) {
 			const Raul::Path rel_path(*get_path(base_uri, s));
 			const Raul::Path path = parent ? parent->child(rel_path) : rel_path;
-			parse_properties(world, target, model,
-			                 s, Resource::Graph::DEFAULT,
-			                 path_to_uri(path), data);
+			const Properties properties = get_properties(
+				world, model, s, Resource::Graph::DEFAULT, data);
+			target->put(path_to_uri(path), properties);
 			ret = path;
 		} else if (types.find(arc_class) != types.end()) {
 			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
