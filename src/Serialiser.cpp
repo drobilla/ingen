@@ -277,7 +277,7 @@ Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 }
 
 void
-Serialiser::serialise(SPtr<const Node> object)
+Serialiser::serialise(SPtr<const Node> object, Resource::Graph context)
 {
 	if (!me->_model) {
 		throw std::logic_error("serialise called without serialisation in progress");
@@ -289,9 +289,8 @@ Serialiser::serialise(SPtr<const Node> object)
 		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri());
 		me->serialise_block(object, plugin_id, me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == Node::GraphType::PORT) {
-		me->serialise_port(object.get(),
-		                   Resource::Graph::DEFAULT,
-		                   me->path_rdf_node(object->path()));
+		me->serialise_port(
+			object.get(), context, me->path_rdf_node(object->path()));
 	} else {
 		me->serialise_properties(me->path_rdf_node(object->path()),
 		                         object->properties());

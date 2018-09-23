@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "sord/sordmm.hpp"
@@ -75,7 +76,8 @@ public:
 	 *
 	 * @throw std::logic_error
 	 */
-	virtual void serialise(SPtr<const Node> object);
+	virtual void serialise(SPtr<const Node> object,
+	                       Property::Graph  context = Property::Graph::DEFAULT);
 
 	/** Serialize an arc.
 	 *
