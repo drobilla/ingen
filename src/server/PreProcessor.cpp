@@ -64,7 +64,7 @@ PreProcessor::event(Event* const ev, Event::Mode mode)
 	ev->set_mode(mode);
 
 	/* Note that tail is only used here, not in process().  The head must be
-	   checked first here, since if it is NULL the tail pointer is junk. */
+	   checked first here, since if it is null the tail pointer is junk. */
 	Event* const head = _head.load();
 	if (!head) {
 		_head = ev;
@@ -153,10 +153,10 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 		last->next(nullptr);
 		dest.append(context, head, last);
 
-		// Since _head was not NULL, we know it hasn't been changed since
+		// Since _head was not null, we know it hasn't been changed since
 		_head = next;
 
-		/* If next is NULL, then _tail may now be invalid.  However, it would cause
+		/* If next is null, then _tail may now be invalid.  However, it would cause
 		   a race to reset _tail here.  Instead, append() checks only _head for
 		   emptiness, and resets the tail appropriately. */
 	}

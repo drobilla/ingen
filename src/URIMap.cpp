@@ -91,7 +91,7 @@ URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle h,
 
 	return (urid > 0 && urid <= map->_unmap.size()
 	        ? map->_unmap[urid - 1].c_str()
-	        : NULL);
+	        : nullptr);
 }
 
 const char*

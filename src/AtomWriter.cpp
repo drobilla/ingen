@@ -24,7 +24,7 @@
  *
  * 1. When Ingen is running as a process, a socket accepts messages in
  * (textual) Turtle syntax, and responds in the same syntax.  Transfers are
- * delimited by NULL characters in the stream, so the client knows when to
+ * delimited by null characters in the stream, so the client knows when to
  * finish parsing to interpret responses.  By default, Ingen listens on
  * unix:///tmp/ingen.sock and tcp://localhost:16180
  *

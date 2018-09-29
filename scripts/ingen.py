@@ -148,7 +148,7 @@ class Remote(Interface):
         return uri
 
     def recv(self):
-        'Read from socket until a NULL terminator is received'
+        'Read from socket until a null terminator is received'
         msg = u''
         while True:
             c = self.sock.recv(1, 0).decode('utf-8')

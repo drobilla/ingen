@@ -34,7 +34,7 @@ Arc::Arc(Ganv::Canvas&                canvas,
 	SPtr<const client::BlockModel>  tparent_block;
 	if ((tparent_block = dynamic_ptr_cast<const client::BlockModel>(tparent))) {
 		if (tparent_block->plugin_uri() == NS_INTERNALS "BlockDelay") {
-			g_object_set(_gobj, "dash-length", 4.0, NULL);
+			g_object_set(_gobj, "dash-length", 4.0, nullptr);
 			set_constraining(false);
 		}
 	}

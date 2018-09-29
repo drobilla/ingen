@@ -156,7 +156,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	lv2_atom_object_get(obj,
 	                    (LV2_URID)_uris.patch_subject,        &subject,
 	                    (LV2_URID)_uris.patch_sequenceNumber, &number,
-	                    NULL);
+	                    nullptr);
 
 	const boost::optional<URI> subject_uri = atom_to_uri(subject);
 
@@ -187,7 +187,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			                    (LV2_URID)_uris.ingen_tail,       &tail,
 			                    (LV2_URID)_uris.ingen_head,       &head,
 			                    (LV2_URID)_uris.ingen_incidentTo, &incidentTo,
-			                    NULL);
+			                    nullptr);
 
 			boost::optional<Raul::Path> subject_path(atom_to_path(subject));
 			boost::optional<Raul::Path> tail_path(atom_to_path(tail));
@@ -223,7 +223,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			lv2_atom_object_get(body,
 			                    (LV2_URID)_uris.ingen_tail, &tail,
 			                    (LV2_URID)_uris.ingen_head, &head,
-			                    NULL);
+			                    nullptr);
 			if (!tail || !head) {
 				_log.warn("Arc has no tail or head\n");
 				return false;

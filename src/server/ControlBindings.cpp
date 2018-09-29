@@ -75,8 +75,11 @@ ControlBindings::binding_key(const Atom& binding) const
 		} else if (obj->otype == uris.midi_ChannelPressure) {
 			key = Key(Type::MIDI_CHANNEL_PRESSURE);
 		} else if (obj->otype == uris.midi_Controller) {
-			lv2_atom_object_body_get(
-				binding.size(), obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
+			lv2_atom_object_body_get(binding.size(),
+			                         obj,
+			                         (LV2_URID)uris.midi_controllerNumber,
+			                         &num,
+			                         nullptr);
 			if (!num) {
 				_engine.log().rt_error("Controller binding missing number\n");
 			} else if (num->type != uris.atom_Int) {
@@ -85,8 +88,11 @@ ControlBindings::binding_key(const Atom& binding) const
 				key = Key(Type::MIDI_CC, ((LV2_Atom_Int*)num)->body);
 			}
 		} else if (obj->otype == uris.midi_NoteOn) {
-			lv2_atom_object_body_get(
-				binding.size(), obj, (LV2_URID)uris.midi_noteNumber, &num, NULL);
+			lv2_atom_object_body_get(binding.size(),
+			                         obj,
+			                         (LV2_URID)uris.midi_noteNumber,
+			                         &num,
+			                         nullptr);
 			if (!num) {
 				_engine.log().rt_error("Note binding missing number\n");
 			} else if (num->type != uris.atom_Int) {

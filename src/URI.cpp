@@ -28,12 +28,12 @@ URI::URI()
 
 URI::URI(const std::string& str)
     : _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
-                                          NULL,
+                                          nullptr,
                                           &_uri))
 {}
 
 URI::URI(const char* str)
-    : _node(serd_node_new_uri_from_string((const uint8_t*)str, NULL, &_uri))
+    : _node(serd_node_new_uri_from_string((const uint8_t*)str, nullptr, &_uri))
 {}
 
 URI::URI(const std::string& str, const URI& base)
@@ -43,7 +43,7 @@ URI::URI(const std::string& str, const URI& base)
 {}
 
 URI::URI(SerdNode node)
-    : _node(serd_node_new_uri_from_node(&node, NULL, &_uri))
+    : _node(serd_node_new_uri_from_node(&node, nullptr, &_uri))
 {
 	assert(node.type == SERD_URI);
 }
@@ -62,20 +62,20 @@ URI::URI(const Sord::Node& node)
 
 URI::URI(const FilePath& path)
     : _node(serd_node_new_file_uri((const uint8_t*)path.c_str(),
-                                   NULL,
+                                   nullptr,
                                    &_uri,
                                    true))
 {}
 
 URI::URI(const URI& uri)
-    : _node(serd_node_new_uri(&uri._uri, NULL, &_uri))
+    : _node(serd_node_new_uri(&uri._uri, nullptr, &_uri))
 {}
 
 URI&
 URI::operator=(const URI& uri)
 {
 	serd_node_free(&_node);
-	_node = serd_node_new_uri(&uri._uri, NULL, &_uri);
+	_node = serd_node_new_uri(&uri._uri, nullptr, &_uri);
 	return *this;
 }
 
@@ -106,7 +106,7 @@ URI
 URI::make_relative(const URI& base) const
 {
 	SerdURI  uri;
-	SerdNode node = serd_node_new_relative_uri(&_uri, &base._uri, NULL, &uri);
+	SerdNode node = serd_node_new_relative_uri(&_uri, &base._uri, nullptr, &uri);
 	return URI(node, uri);
 }
 

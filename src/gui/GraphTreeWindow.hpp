@@ -98,7 +98,7 @@ public:
 	GraphTreeView(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml)
 		: Gtk::TreeView(cobject)
-		, _window(NULL)
+		, _window(nullptr)
 	{}
 
 	void set_window(GraphTreeWindow* win) { _window = win; }

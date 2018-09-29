@@ -61,7 +61,7 @@ public:
 
 	void present_graph(
 		SPtr<const client::GraphModel> graph,
-		GraphWindow*                   preferred = NULL,
+		GraphWindow*                   preferred = nullptr,
 		SPtr<GraphView>                view      = SPtr<GraphView>());
 
 	void present_load_plugin(SPtr<const client::GraphModel> graph, Properties data=Properties());
@@ -71,7 +71,7 @@ public:
 	void present_rename(SPtr<const client::ObjectModel> object);
 	void present_properties(SPtr<const client::ObjectModel> object);
 
-	bool remove_graph_window(GraphWindow* win, GdkEventAny* ignored = NULL);
+	bool remove_graph_window(GraphWindow* win, GdkEventAny* ignored = nullptr);
 
 	void set_main_box(GraphBox* box) { _main_box = box; }
 

@@ -144,7 +144,7 @@ protected:
 	Engine&           _engine;      ///< Engine we're running in
 	Raul::RingBuffer* _event_sink;  ///< Port updates from process context
 	Task*             _task;        ///< Currently executing task
-	std::thread*      _thread;      ///< Thread (NULL for main run context)
+	std::thread*      _thread;      ///< Thread (null for main run context)
 	unsigned          _id;          ///< Context ID
 
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative

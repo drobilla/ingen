@@ -50,7 +50,7 @@ public:
 
 	/** Append some data and return a reference to its start. */
 	intptr_t append(const void* buf, uint32_t len) {
-		// Record offset of the start of this write (+1 to avoid NULL)
+		// Record offset of the start of this write (+1 to avoid null)
 		const intptr_t ref = _size + 1;
 
 		// Update size and reallocate if necessary

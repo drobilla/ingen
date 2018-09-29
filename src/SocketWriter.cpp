@@ -50,7 +50,7 @@ SocketWriter::bundle_end()
 {
 	TurtleWriter::bundle_end();
 
-	// Send a NULL byte to indicate end of bundle
+	// Send a null byte to indicate end of bundle
 	const char end[] = { 0 };
 	send(_socket->fd(), end, 1, MSG_NOSIGNAL);
 }

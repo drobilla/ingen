@@ -168,7 +168,7 @@ main(int argc, char** argv)
 			sratom,
 			&world->uri_map().urid_unmap_feature()->urid_unmap,
 			(const char*)cmds_file_uri.buf,
-			NULL, NULL, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
+			nullptr, nullptr, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
 #endif
 
 		if (!atom_reader.write(out.atom(), n_events + 1)) {

@@ -67,8 +67,8 @@ private:
 
 	const ingen::Del        _msg;
 	Raul::Path              _path;
-	SPtr<BlockImpl>         _block; ///< Non-NULL iff a block
-	SPtr<DuplexPort>        _port; ///< Non-NULL iff a port
+	SPtr<BlockImpl>         _block; ///< Non-null iff a block
+	SPtr<DuplexPort>        _port; ///< Non-null iff a port
 	EnginePort*             _engine_port;
 	MPtr<GraphImpl::Ports>  _ports_array; ///< New (external) ports for Graph
 	MPtr<CompiledGraph>     _compiled_graph; ///< Graph's new process order

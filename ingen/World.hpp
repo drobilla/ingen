@@ -64,9 +64,9 @@ class URIs;
 class INGEN_API World : public Raul::Noncopyable {
 public:
 	/** Construct a new Ingen world.
-	 * @param map LV2 URID map implementation, or NULL to use internal.
-	 * @param unmap LV2 URID unmap implementation, or NULL to use internal.
-	 * @param log LV2 log implementation, or NULL to use internal.
+	 * @param map LV2 URID map implementation, or null to use internal.
+	 * @param unmap LV2 URID unmap implementation, or null to use internal.
+	 * @param log LV2 log implementation, or null to use internal.
 	 */
 	World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log);
 

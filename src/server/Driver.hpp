@@ -48,7 +48,7 @@ public:
 	virtual void deactivate() {}
 
 	/** Create a port ready to be inserted with add_input (non realtime).
-	 * May return NULL if the Driver can not create the port for some reason.
+	 * May return null if the Driver can not create the port for some reason.
 	 */
 	virtual EnginePort* create_port(DuplexPort* graph_port) = 0;
 

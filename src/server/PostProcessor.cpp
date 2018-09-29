@@ -76,7 +76,7 @@ PostProcessor::process()
 {
 	const FrameTime end_time = _max_time;
 
-	/* We can never empty the list and set _head = _tail = NULL since this
+	/* We can never empty the list and set _head = _tail = null since this
 	   would cause a race with append.  Instead, head is an already
 	   post-processed node, or initially a sentinel. */
 	Event* ev   = _head.load();
