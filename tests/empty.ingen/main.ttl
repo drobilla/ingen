@@ -12,7 +12,6 @@
 <control>
 	ingen:canvasX 32.0 ;
 	ingen:canvasY 32.0 ;
-	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
 	atom:supports patch:Message ;
 	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
@@ -30,7 +29,6 @@
 	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
 	lv2:port <control> ,
 		<notify> ;
-	lv2:symbol "empty" ;
 	doap:name "empty" ;
 	a ingen:Graph ,
 		lv2:Plugin .
@@ -38,13 +36,12 @@
 <notify>
 	ingen:canvasX 128.0 ;
 	ingen:canvasY 32.0 ;
-	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
 	atom:supports patch:Message ;
 	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
 	lv2:designation lv2:control ;
 	lv2:index 1 ;
-	lv2:name "Control" ;
+	lv2:name "Notify" ;
 	lv2:portProperty lv2:connectionOptional ;
 	lv2:symbol "notify" ;
 	a atom:AtomPort ,
