@@ -18,6 +18,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include <boost/variant/get.hpp>
+
 #include "ingen/SocketWriter.hpp"
 #include "raul/Socket.hpp"
 
@@ -35,6 +37,19 @@ SocketWriter::SocketWriter(URIMap&            map,
 	, _socket(std::move(sock))
 {}
 
+void
+SocketWriter::message(const Message& message)
+{
+	TurtleWriter::message(message);
+	if (boost::get<BundleEnd>(&message)) {
+		fprintf(stderr, "BUNDLE END!\n");
+
+		// Send a null byte to indicate end of bundle
+		const char end[] = { 0 };
+		send(_socket->fd(), end, 1, MSG_NOSIGNAL);
+	}
+}
+
 size_t
 SocketWriter::text_sink(const void* buf, size_t len)
 {
@@ -43,16 +58,6 @@ SocketWriter::text_sink(const void* buf, size_t len)
 		return 0;
 	}
 	return ret;
-}
-
-void
-SocketWriter::bundle_end()
-{
-	TurtleWriter::bundle_end();
-
-	// Send a null byte to indicate end of bundle
-	const char end[] = { 0 };
-	send(_socket->fd(), end, 1, MSG_NOSIGNAL);
 }
 
 } // namespace ingen

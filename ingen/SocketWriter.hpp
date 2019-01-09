@@ -43,10 +43,9 @@ public:
 	             const URI&         uri,
 	             SPtr<Raul::Socket> sock);
 
-	size_t text_sink(const void* buf, size_t len) override;
+	void message(const Message& message) override;
 
-	/** Override of bundle_end to terminate bundles in the stream. */
-	void bundle_end();
+	size_t text_sink(const void* buf, size_t len) override;
 
 protected:
 	SPtr<Raul::Socket> _socket;
