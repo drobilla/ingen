@@ -68,7 +68,7 @@ def configure(conf):
                        define_name='INGEN_HAVE_THREAD_BUILTIN')
 
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
-                      atleast_version='1.15.4', mandatory=True)
+                      atleast_version='1.16.0', mandatory=True)
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
                       atleast_version='0.21.5', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
