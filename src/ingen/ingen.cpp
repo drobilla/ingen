@@ -48,7 +48,7 @@ class DummyInterface : public Interface
 	void message(const Message& msg) override {}
 };
 
-unique_ptr<ingen::World> world;
+unique_ptr<World> world;
 
 static void
 ingen_interrupt(int signal)

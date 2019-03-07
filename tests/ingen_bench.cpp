@@ -35,14 +35,14 @@
 using namespace std;
 using namespace ingen;
 
-World* world = nullptr;
+unique_ptr<World> world;
 
 static void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
 		cerr << "ingen: Error: " << msg << endl;
-		delete world;
+		world.reset();
 		exit(EXIT_FAILURE);
 	}
 }
@@ -63,7 +63,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new World(nullptr, nullptr, nullptr);
+		world = unique_ptr<World>{new World(nullptr, nullptr, nullptr)};
 		world->conf().add(
 			"output", "output", 'O', "File to write benchmark output",
 			ingen::Configuration::SESSION, world->forge().String, Atom());
@@ -135,6 +135,5 @@ main(int argc, char** argv)
 	// Shut down
 	world->engine()->deactivate();
 
-	delete world;
 	return EXIT_SUCCESS;
 }
