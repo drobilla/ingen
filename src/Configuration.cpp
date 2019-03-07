@@ -18,6 +18,7 @@
 #include <cerrno>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <thread>
 
 #include "ingen/Configuration.hpp"
@@ -279,7 +280,8 @@ Configuration::save(URIMap&            uri_map,
 	}
 
 	// Attempt to open file for writing
-	FILE* file = fopen(path.c_str(), "w");
+	std::unique_ptr<FILE, decltype(&fclose)> file{fopen(path.c_str(), "w"),
+	                                              &fclose};
 	if (!file) {
 		throw FileError((fmt("Failed to open file %1% (%2%)")
 		                 % path % strerror(errno)).str());
@@ -302,7 +304,7 @@ Configuration::save(URIMap&            uri_map,
 		env,
 		&base_uri,
 		serd_file_sink,
-		file);
+		file.get());
 
 	// Write a prefix directive for each prefix in the environment
 	serd_env_foreach(env, (SerdPrefixSink)serd_writer_set_prefix, writer);
@@ -334,7 +336,6 @@ Configuration::save(URIMap&            uri_map,
 	serd_writer_free(writer);
 	serd_env_free(env);
 	serd_node_free(&base);
-	fclose(file);
 
 	return path;
 }

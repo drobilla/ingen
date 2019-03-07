@@ -15,6 +15,7 @@
 */
 
 #include <cerrno>
+#include <memory>
 
 #include <poll.h>
 
@@ -93,7 +94,8 @@ SocketReader::run()
 	LV2_URID_Map* map   = &_world.uri_map().urid_map_feature()->urid_map;
 
 	// Open socket as a FILE for reading directly with serd
-	FILE* f = fdopen(_socket->fd(), "r");
+	std::unique_ptr<FILE, decltype(&fclose)> f{fdopen(_socket->fd(), "r"),
+	                                           &fclose};
 	if (!f) {
 		_world.log().error(fmt("Failed to open connection (%1%)\n")
 		                   % strerror(errno));
@@ -134,7 +136,7 @@ SocketReader::run()
 		nullptr);
 
 	serd_env_set_base_uri(_env, sord_node_to_serd_node(base_uri));
-	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
+	serd_reader_start_stream(reader, f.get(), (const uint8_t*)"(socket)", false);
 
 	// Make an AtomReader to call Ingen Interface methods based on Atom
 	AtomReader ar(_world.uri_map(), _world.uris(), _world.log(), _iface);
@@ -145,7 +147,7 @@ SocketReader::run()
 	pfd.revents = 0;
 
 	while (!_exit_flag) {
-		if (feof(f)) {
+		if (feof(f.get())) {
 			break;  // Lost connection
 		}
 
@@ -187,7 +189,7 @@ SocketReader::run()
 	std::lock_guard<std::mutex> lock(_world.rdf_mutex());
 
 	// Destroy everything
-	fclose(f);
+	f.reset();
 	sord_inserter_free(_inserter);
 	serd_reader_end_stream(reader);
 	sratom_free(sratom);

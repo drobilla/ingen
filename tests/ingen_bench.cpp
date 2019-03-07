@@ -122,15 +122,15 @@ main(int argc, char** argv)
 	const uint64_t t_end = clock.now_microseconds();
 
 	// Write log output
-	FILE* log = fopen(out_file.c_str(), "a");
-	if (ftell(log) == 0) {
-		fprintf(log, "# n_threads\trun_time\treal_time\n");
+	std::unique_ptr<FILE, decltype(&fclose)> log{fopen(out_file.c_str(), "a"),
+	                                             &fclose};
+	if (ftell(log.get()) == 0) {
+		fprintf(log.get(), "# n_threads\trun_time\treal_time\n");
 	}
-	fprintf(log, "%u\t%f\t%f\n",
+	fprintf(log.get(), "%u\t%f\t%f\n",
 	        world->conf().option("threads").get<int32_t>(),
 	        (t_end - t_start) / 1000000.0,
 	        (n_test_frames / 48000.0));
-	fclose(log);
 
 	// Shut down
 	world->engine()->deactivate();
