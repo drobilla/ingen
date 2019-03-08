@@ -23,8 +23,8 @@
 
 #include <cstddef>
 #include <mutex>
-#include <set>
 #include <utility>
+#include <vector>
 
 namespace ingen {
 
@@ -32,16 +32,16 @@ namespace ingen {
 class Tee : public Interface
 {
 public:
-	typedef std::set< SPtr<Interface> > Sinks;
+	typedef std::vector<SPtr<Interface>> Sinks;
 
 	explicit Tee(Sinks sinks) : _sinks(std::move(sinks)) {}
 
 	SPtr<Interface> respondee() const override {
-		return (*_sinks.begin())->respondee();
+		return _sinks.front()->respondee();
 	}
 
 	void set_respondee(SPtr<Interface> respondee) override {
-		(*_sinks.begin())->set_respondee(respondee);
+		_sinks.front()->set_respondee(respondee);
 	}
 
 	void message(const Message& message) override {
