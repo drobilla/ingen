@@ -429,7 +429,7 @@ struct IngenPlugin {
 
 	UPtr<ingen::World> world;
 	SPtr<Engine>       engine;
-	std::thread*       main;
+	UPtr<std::thread>  main;
 	LV2_URID_Map*      map;
 	int                argc;
 	char**             argv;
@@ -613,7 +613,7 @@ ingen_activate(LV2_Handle instance)
 	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	engine->activate();
-	me->main = new std::thread(ingen_lv2_main, engine, driver);
+	me->main = make_unique<std::thread>(ingen_lv2_main, engine, driver);
 }
 
 static void
@@ -636,8 +636,7 @@ ingen_deactivate(LV2_Handle instance)
 	me->world->engine()->deactivate();
 	if (me->main) {
 		me->main->join();
-		delete me->main;
-		me->main = nullptr;
+		me->main.reset();
 	}
 }
 
@@ -649,7 +648,7 @@ ingen_cleanup(LV2_Handle instance)
 	me->world->set_interface(SPtr<ingen::Interface>());
 	if (me->main) {
 		me->main->join();
-		delete me->main;
+		me->main.reset();
 	}
 
 	auto world = std::move(me->world);

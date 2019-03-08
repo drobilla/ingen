@@ -96,9 +96,11 @@ Engine::Engine(ingen::World& world)
 	}
 
 	for (int i = 0; i < world.conf().option("threads").get<int32_t>(); ++i) {
-		Raul::RingBuffer* ring = new Raul::RingBuffer(24 * event_queue_size());
-		_notifications.push_back(ring);
-		_run_contexts.push_back(new RunContext(*this, ring, i, i > 0));
+		_notifications.emplace_back(
+			make_unique<Raul::RingBuffer>(uint32_t(24 * event_queue_size())));
+		_run_contexts.emplace_back(
+			make_unique<RunContext>(
+				*this, _notifications.back().get(), unsigned(i), i > 0));
 	}
 
 	_world.lv2_features().add_feature(_worker->schedule_feature());
@@ -149,12 +151,8 @@ Engine::~Engine()
 	// Delete run contexts
 	_quit_flag = true;
 	_tasks_available.notify_all();
-	for (RunContext* ctx : _run_contexts) {
+	for (const auto& ctx : _run_contexts) {
 		ctx->join();
-		delete ctx;
-	}
-	for (Raul::RingBuffer* ring : _notifications) {
-		delete ring;
 	}
 
 	const SPtr<Store> store = this->store();
@@ -181,7 +179,7 @@ Engine::listen()
 void
 Engine::advance(SampleCount nframes)
 {
-	for (RunContext* ctx : _run_contexts) {
+	for (const auto& ctx : _run_contexts) {
 		ctx->locate(ctx->start() + nframes, block_length());
 	}
 }
@@ -189,7 +187,7 @@ Engine::advance(SampleCount nframes)
 void
 Engine::locate(FrameTime s, SampleCount nframes)
 {
-	for (RunContext* ctx : _run_contexts) {
+	for (const auto& ctx : _run_contexts) {
 		ctx->locate(s, nframes);
 	}
 }
@@ -222,7 +220,7 @@ Engine::flush_events(const std::chrono::milliseconds& sleep_ms)
 void
 Engine::emit_notifications(FrameTime end)
 {
-	for (RunContext* ctx : _run_contexts) {
+	for (const auto& ctx : _run_contexts) {
 		ctx->emit_notifications(end);
 	}
 }
@@ -230,7 +228,7 @@ Engine::emit_notifications(FrameTime end)
 bool
 Engine::pending_notifications()
 {
-	for (const RunContext* ctx : _run_contexts) {
+	for (const auto& ctx : _run_contexts) {
 		if (ctx->pending_notifications()) {
 			return true;
 		}
@@ -258,9 +256,9 @@ Task*
 Engine::steal_task(unsigned start_thread)
 {
 	for (unsigned i = 0; i < _run_contexts.size(); ++i) {
-		const unsigned    id  = (start_thread + i) % _run_contexts.size();
-		RunContext* const ctx = _run_contexts[id];
-		Task*             par = ctx->task();
+		const unsigned id  = (start_thread + i) % _run_contexts.size();
+		const auto&    ctx = _run_contexts[id];
+		Task*          par = ctx->task();
 		if (par) {
 			Task* t = par->steal(*ctx);
 			if (t) {
@@ -338,7 +336,7 @@ void
 Engine::set_driver(SPtr<Driver> driver)
 {
 	_driver = driver;
-	for (RunContext* ctx : _run_contexts) {
+	for (const auto& ctx : _run_contexts) {
 		ctx->set_priority(driver->real_time_priority());
 		ctx->set_rate(driver->sample_rate());
 	}

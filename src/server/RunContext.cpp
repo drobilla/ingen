@@ -177,7 +177,7 @@ RunContext::join()
 		if (_thread->joinable()) {
 			_thread->join();
 		}
-		delete _thread;
+		_thread.reset();
 	}
 }
 

@@ -49,8 +49,6 @@ public:
 	           SampleCount              timestamp,
 	           const ingen::Disconnect& msg);
 
-	~Disconnect();
-
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;
 	void post_process() override;
@@ -76,7 +74,7 @@ public:
 private:
 	const ingen::Disconnect _msg;
 	GraphImpl*              _graph;
-	Impl*                   _impl;
+	UPtr<Impl>              _impl;
 	MPtr<CompiledGraph>     _compiled_graph;
 };
 

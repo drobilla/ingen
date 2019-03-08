@@ -44,13 +44,6 @@ CreateGraph::CreateGraph(Engine&           engine,
 	, _parent(nullptr)
 {}
 
-CreateGraph::~CreateGraph()
-{
-	for (Event* ev : _child_events) {
-		delete ev;
-	}
-}
-
 void
 CreateGraph::build_child_events()
 {
@@ -76,10 +69,9 @@ CreateGraph::build_child_events()
 	                  Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		new events::CreatePort(
-			_engine, _request_client, -1, _time,
-			_path.child(Raul::Symbol("control")),
-			in_properties));
+		make_unique<events::CreatePort>(_engine, _request_client, -1, _time,
+		                                _path.child(Raul::Symbol("control")),
+		                                in_properties));
 
 	// Add notify port (message respond)
 	Properties out_properties(control_properties);
@@ -92,9 +84,9 @@ CreateGraph::build_child_events()
 	                   Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		new events::CreatePort(_engine, _request_client, -1, _time,
-		                       _path.child(Raul::Symbol("notify")),
-		                       out_properties));
+		make_unique<events::CreatePort>(_engine, _request_client, -1, _time,
+		                                _path.child(Raul::Symbol("notify")),
+		                                out_properties));
 }
 
 bool
@@ -184,7 +176,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 
 	// Build and pre-process child events to create standard ports
 	build_child_events();
-	for (Event* ev : _child_events) {
+	for (const auto& ev : _child_events) {
 		ev->pre_process(ctx);
 	}
 
@@ -204,7 +196,7 @@ CreateGraph::execute(RunContext& context)
 			_graph->enable();
 		}
 
-		for (Event* ev : _child_events) {
+		for (const auto& ev : _child_events) {
 			ev->execute(context);
 		}
 	}
@@ -219,7 +211,7 @@ CreateGraph::post_process()
 	}
 
 	if (_graph) {
-		for (Event* ev : _child_events) {
+		for (const auto& ev : _child_events) {
 			ev->post_process();
 		}
 	}

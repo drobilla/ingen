@@ -197,11 +197,11 @@ private:
 	UPtr<AtomReader>      _atom_interface;
 	GraphImpl*            _root_graph;
 
-	std::vector<Raul::RingBuffer*> _notifications;
-	std::vector<RunContext*>       _run_contexts;
-	uint64_t                       _cycle_start_time;
-	Load                           _run_load;
-	Clock                          _clock;
+	std::vector<UPtr<Raul::RingBuffer>> _notifications;
+	std::vector<UPtr<RunContext>>       _run_contexts;
+	uint64_t                            _cycle_start_time;
+	Load                                _run_load;
+	Clock                               _clock;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;

@@ -86,7 +86,7 @@ Broadcaster::send_plugins_to(Interface*                   client,
 	client->bundle_begin();
 
 	for (const auto& p : plugins) {
-		const PluginImpl* const plugin = p.second;
+		const auto& plugin = p.second;
 		client->put(plugin->uri(), plugin->properties());
 	}
 

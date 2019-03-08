@@ -20,6 +20,7 @@
 #include <list>
 
 #include "ingen/Resource.hpp"
+#include "ingen/types.hpp"
 
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
@@ -46,8 +47,6 @@ public:
 	            const Raul::Path& path,
 	            const Properties& properties);
 
-	~CreateGraph();
-
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;
 	void post_process() override;
@@ -58,13 +57,13 @@ public:
 private:
 	void build_child_events();
 
-	const Raul::Path    _path;
-	Properties          _properties;
-	ClientUpdate        _update;
-	GraphImpl*          _graph;
-	GraphImpl*          _parent;
-	MPtr<CompiledGraph> _compiled_graph;
-	std::list<Event*>   _child_events;
+	const Raul::Path       _path;
+	Properties             _properties;
+	ClientUpdate           _update;
+	GraphImpl*             _graph;
+	GraphImpl*             _parent;
+	MPtr<CompiledGraph>    _compiled_graph;
+	std::list<UPtr<Event>> _child_events;
 };
 
 } // namespace events

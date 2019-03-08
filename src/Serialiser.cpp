@@ -101,13 +101,11 @@ struct Serialiser::Impl {
 };
 
 Serialiser::Serialiser(World& world)
-	: me(new Impl(world))
+	: me{make_unique<Impl>(world)}
 {}
 
 Serialiser::~Serialiser()
-{
-	delete me;
-}
+{}
 
 void
 Serialiser::Impl::write_manifest(const FilePath&  bundle_path,

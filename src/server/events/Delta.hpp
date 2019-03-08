@@ -96,11 +96,11 @@ private:
 		LOADED_BUNDLE
 	};
 
-	typedef std::vector<SetPortValue*> SetEvents;
+	typedef std::vector<UPtr<SetPortValue>> SetEvents;
 
 	void init();
 
-	Event*                    _create_event;
+	UPtr<Event>               _create_event;
 	SetEvents                 _set_events;
 	std::vector<SpecialType>  _types;
 	std::vector<SpecialType>  _remove_types;

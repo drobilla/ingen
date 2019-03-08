@@ -46,11 +46,6 @@ BlockFactory::BlockFactory(ingen::World& world)
 
 BlockFactory::~BlockFactory()
 {
-	for (auto& p : _plugins) {
-		delete p.second;
-	}
-
-	_plugins.clear();
 }
 
 const BlockFactory::Plugins&
@@ -64,12 +59,12 @@ BlockFactory::plugins()
 	return _plugins;
 }
 
-std::set<PluginImpl*>
+std::set<SPtr<PluginImpl>>
 BlockFactory::refresh()
 {
 	// Record current plugins, and those that are currently zombies
-	const Plugins         old_plugins(_plugins);
-	std::set<PluginImpl*> zombies;
+	const Plugins              old_plugins(_plugins);
+	std::set<SPtr<PluginImpl>> zombies;
 	for (const auto& p : _plugins) {
 		if (p.second->is_zombie()) {
 			zombies.insert(p.second);
@@ -80,7 +75,7 @@ BlockFactory::refresh()
 	load_lv2_plugins();
 
 	// Add any new plugins to response
-	std::set<PluginImpl*> new_plugins;
+	std::set<SPtr<PluginImpl>> new_plugins;
 	for (const auto& p : _plugins) {
 		auto o = old_plugins.find(p.first);
 		if (o == old_plugins.end()) {
@@ -103,7 +98,7 @@ BlockFactory::plugin(const URI& uri)
 {
 	load_plugin(uri);
 	const Plugins::const_iterator i = _plugins.find(uri);
-	return ((i != _plugins.end()) ? i->second : nullptr);
+	return ((i != _plugins.end()) ? i->second.get() : nullptr);
 }
 
 void

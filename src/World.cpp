@@ -105,20 +105,20 @@ public:
 		, argv(nullptr)
 		, lv2_features(nullptr)
 		, rdf_world(new Sord::World())
-		, lilv_world(lilv_world_new())
-		, uri_map(new URIMap(log, map, unmap))
-		, forge(new Forge(*uri_map))
-		, uris(new URIs(*forge, uri_map, lilv_world))
-		, conf(*forge)
-		, log(lv2_log, *uris)
+		, lilv_world(lilv_world_new(), lilv_world_free)
+		, uri_map(log, map, unmap)
+		, forge(uri_map)
+		, uris(forge, &uri_map, lilv_world.get())
+		, conf(forge)
+		, log(lv2_log, uris)
 	{
 		lv2_features = new LV2Features();
-		lv2_features->add_feature(uri_map->urid_map_feature());
-		lv2_features->add_feature(uri_map->urid_unmap_feature());
+		lv2_features->add_feature(uri_map.urid_map_feature());
+		lv2_features->add_feature(uri_map.urid_unmap_feature());
 		lv2_features->add_feature(SPtr<InstanceAccess>(new InstanceAccess()));
 		lv2_features->add_feature(SPtr<DataAccess>(new DataAccess()));
 		lv2_features->add_feature(SPtr<Log::Feature>(new Log::Feature()));
-		lilv_world_load_all(lilv_world);
+		lilv_world_load_all(lilv_world.get());
 
 		// Set up RDF namespaces
 		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
@@ -134,14 +134,14 @@ public:
 
 		// Load internal 'plugin' information into lilv world
 		LilvNode* rdf_type = lilv_new_uri(
-			lilv_world, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+			lilv_world.get(), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 		LilvNode* ingen_Plugin = lilv_new_uri(
-			lilv_world, INGEN__Plugin);
+			lilv_world.get(), INGEN__Plugin);
 		LilvNodes* internals = lilv_world_find_nodes(
-			lilv_world, nullptr, rdf_type, ingen_Plugin);
+			lilv_world.get(), nullptr, rdf_type, ingen_Plugin);
 		LILV_FOREACH(nodes, i, internals) {
 			const LilvNode* internal = lilv_nodes_get(internals, i);
-			lilv_world_load_resource(lilv_world, internal);
+			lilv_world_load_resource(lilv_world.get(), internal);
 		}
 		lilv_nodes_free(internals);
 		lilv_node_free(rdf_type);
@@ -171,18 +171,12 @@ public:
 		interface_factories.clear();
 		script_runners.clear();
 
-		delete rdf_world;
 		delete lv2_features;
-		delete uris;
-		delete forge;
-		delete uri_map;
-
-		lilv_world_free(lilv_world);
 
 		// Module libraries go out of scope and close here
 	}
 
-	typedef std::map<const std::string, Module*> Modules;
+	typedef std::map<std::string, Module*> Modules;
 	Modules modules;
 
 	typedef std::map<const std::string, World::InterfaceFactory> InterfaceFactories;
@@ -192,24 +186,26 @@ public:
 	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
 	ScriptRunners script_runners;
 
-	int*             argc;
-	char***          argv;
-	LV2Features*     lv2_features;
-	Sord::World*     rdf_world;
-	LilvWorld*       lilv_world;
-	URIMap*          uri_map;
-	Forge*           forge;
-	URIs*            uris;
-	LV2_Log_Log*     lv2_log;
-	Configuration    conf;
-	Log              log;
-	SPtr<Interface>  interface;
-	SPtr<EngineBase> engine;
-	SPtr<Serialiser> serialiser;
-	SPtr<Parser>     parser;
-	SPtr<Store>      store;
-	std::mutex       rdf_mutex;
-	std::string      jack_uuid;
+	using LilvWorldUPtr = std::unique_ptr<LilvWorld, decltype(&lilv_world_free)>;
+
+	int*              argc;
+	char***           argv;
+	LV2Features*      lv2_features;
+	UPtr<Sord::World> rdf_world;
+	LilvWorldUPtr     lilv_world;
+	URIMap            uri_map;
+	Forge             forge;
+	URIs              uris;
+	LV2_Log_Log*      lv2_log;
+	Configuration     conf;
+	Log               log;
+	SPtr<Interface>   interface;
+	SPtr<EngineBase>  engine;
+	SPtr<Serialiser>  serialiser;
+	SPtr<Parser>      parser;
+	SPtr<Store>       store;
+	std::mutex        rdf_mutex;
+	std::string       jack_uuid;
 };
 
 World::World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log)
@@ -259,13 +255,13 @@ Log&           World::log()  { return _impl->log; }
 
 std::mutex& World::rdf_mutex() { return _impl->rdf_mutex; }
 
-Sord::World* World::rdf_world()  { return _impl->rdf_world; }
-LilvWorld*   World::lilv_world() { return _impl->lilv_world; }
+Sord::World* World::rdf_world()  { return _impl->rdf_world.get(); }
+LilvWorld*   World::lilv_world() { return _impl->lilv_world.get(); }
 
 LV2Features& World::lv2_features() { return *_impl->lv2_features; }
-Forge&       World::forge()        { return *_impl->forge; }
-URIs&        World::uris()         { return *_impl->uris; }
-URIMap&      World::uri_map()      { return *_impl->uri_map; }
+Forge&       World::forge()        { return _impl->forge; }
+URIs&        World::uris()         { return _impl->uris; }
+URIMap&      World::uri_map()      { return _impl->uri_map; }
 
 bool
 World::load_module(const char* name)

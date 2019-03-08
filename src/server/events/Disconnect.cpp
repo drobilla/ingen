@@ -44,13 +44,7 @@ Disconnect::Disconnect(Engine&                  engine,
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _graph(nullptr)
-	, _impl(nullptr)
 {
-}
-
-Disconnect::~Disconnect()
-{
-	delete _impl;
 }
 
 Disconnect::Impl::Impl(Engine&     e,
@@ -154,10 +148,10 @@ Disconnect::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _msg.head);
 	}
 
-	_impl = new Impl(_engine,
-	                 _graph,
-	                 dynamic_cast<PortImpl*>(tail),
-	                 dynamic_cast<InputPort*>(head));
+	_impl = make_unique<Impl>(_engine,
+	                          _graph,
+	                          dynamic_cast<PortImpl*>(tail),
+	                          dynamic_cast<InputPort*>(head));
 
 	_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_graph);
 

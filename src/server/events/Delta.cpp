@@ -84,7 +84,6 @@ Delta::Delta(Engine&                   engine,
              SampleCount               timestamp,
              const ingen::SetProperty& msg)
 	: Event(engine, client, msg.seq, timestamp)
-	, _create_event(nullptr)
 	, _subject(msg.subject)
 	, _properties{{msg.predicate, msg.value}}
 	, _object(nullptr)
@@ -100,11 +99,6 @@ Delta::Delta(Engine&                   engine,
 
 Delta::~Delta()
 {
-	for (auto& s : _set_events) {
-		delete s;
-	}
-
-	delete _create_event;
 }
 
 void
@@ -137,11 +131,10 @@ Delta::add_set_event(const char* port_symbol,
 		return;
 	}
 
-	SetPortValue* ev = new SetPortValue(
-		_engine, _request_client, _request_id, _time,
-		port, Atom(size, type, value), false, true);
-
-	_set_events.push_back(ev);
+	_set_events.emplace_back(
+		make_unique<SetPortValue>(
+			_engine, _request_client, _request_id, _time,
+			port, Atom(size, type, value), false, true));
 }
 
 static void
@@ -232,13 +225,13 @@ Delta::pre_process(PreProcessContext& ctx)
 		ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 
 		if (is_graph) {
-			_create_event = new CreateGraph(
+			_create_event = make_unique<CreateGraph>(
 				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_block) {
-			_create_event = new CreateBlock(
+			_create_event = make_unique<CreateBlock>(
 				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_port) {
-			_create_event = new CreatePort(
+			_create_event = make_unique<CreatePort>(
 				_engine, _request_client, _request_id, _time,
 				path, _properties);
 		}
@@ -333,10 +326,10 @@ Delta::pre_process(PreProcessContext& ctx)
 						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_value || key == uris.ingen_activity) {
-					SetPortValue* ev = new SetPortValue(
-						_engine, _request_client, _request_id, _time, port, value,
-						key == uris.ingen_activity);
-					_set_events.push_back(ev);
+					_set_events.emplace_back(
+						make_unique<SetPortValue>(
+							_engine, _request_client, _request_id, _time,
+							port, value, key == uris.ingen_activity));
 				} else if (key == uris.midi_binding) {
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 						if (value == uris.patch_wildcard) {
@@ -444,12 +437,11 @@ Delta::pre_process(PreProcessContext& ctx)
 			LilvNode*  bundle = get_file_node(lworld, uris, value);
 			if (bundle) {
 				lilv_world_load_bundle(lworld, bundle);
-				const std::set<PluginImpl*> new_plugins =
-					_engine.block_factory()->refresh();
+				const auto new_plugins = _engine.block_factory()->refresh();
 
-				for (PluginImpl* p : new_plugins) {
+				for (const auto& p : new_plugins) {
 					if (p->bundle_uri() == lilv_node_as_string(bundle)) {
-						_update.put_plugin(p);
+						_update.put_plugin(p.get());
 					}
 				}
 				lilv_node_free(bundle);

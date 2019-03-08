@@ -20,6 +20,7 @@
 #include <thread>
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/types.hpp"
 #include "lv2/worker/worker.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
@@ -57,15 +58,15 @@ public:
 private:
 	SPtr<Schedule> _schedule;
 
-	Log&             _log;
-	Raul::Semaphore  _sem;
-	Raul::RingBuffer _requests;
-	Raul::RingBuffer _responses;
-	uint8_t* const   _buffer;
-	const uint32_t   _buffer_size;
-	std::thread*     _thread;
-	bool             _exit_flag;
-	bool             _synchronous;
+	Log&              _log;
+	Raul::Semaphore   _sem;
+	Raul::RingBuffer  _requests;
+	Raul::RingBuffer  _responses;
+	uint8_t* const    _buffer;
+	const uint32_t    _buffer_size;
+	UPtr<std::thread> _thread;
+	bool              _exit_flag;
+	bool              _synchronous;
 
 	void run();
 };

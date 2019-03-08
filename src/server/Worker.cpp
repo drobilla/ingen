@@ -118,7 +118,7 @@ Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)
 	, _synchronous(synchronous)
 {
 	if (!synchronous) {
-		_thread = new std::thread(&Worker::run, this);
+		_thread = make_unique<std::thread>(&Worker::run, this);
 	}
 }
 
@@ -128,7 +128,6 @@ Worker::~Worker()
 	_sem.post();
 	if (_thread) {
 		_thread->join();
-		delete _thread;
 	}
 	free(_buffer);
 }

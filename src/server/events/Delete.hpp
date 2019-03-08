@@ -72,7 +72,7 @@ private:
 	EnginePort*             _engine_port;
 	MPtr<GraphImpl::Ports>  _ports_array; ///< New (external) ports for Graph
 	MPtr<CompiledGraph>     _compiled_graph; ///< Graph's new process order
-	DisconnectAll*          _disconnect_event;
+	UPtr<DisconnectAll>     _disconnect_event;
 	Store::Objects          _removed_objects;
 	IndexChanges            _port_index_changes;
 

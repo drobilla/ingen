@@ -97,7 +97,7 @@ public:
 
 private:
 	struct Impl;
-	Impl* me;
+	UPtr<Impl> me;
 };
 
 } // namespace ingen

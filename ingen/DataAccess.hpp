@@ -58,8 +58,8 @@ struct DataAccess : public ingen::LV2Features::Feature
 
 		data->data_access = desc->extension_data;
 
-		return SPtr<LV2_Feature>(
-			new LV2_Feature{ "http://lv2plug.in/ns/ext/data-access", data });
+		return make_shared<LV2_Feature>(
+			LV2_Feature{"http://lv2plug.in/ns/ext/data-access", data});
 	}
 };
 

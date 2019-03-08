@@ -43,11 +43,11 @@ public:
 	 *
 	 * @return The set of newly loaded plugins.
 	 */
-	std::set<PluginImpl*> refresh();
+	std::set<SPtr<PluginImpl>> refresh();
 
 	void load_plugin(const URI& uri);
 
-	typedef std::map<URI, PluginImpl*> Plugins;
+	using Plugins = std::map<URI, SPtr<PluginImpl>>;
 	const Plugins& plugins();
 
 	PluginImpl* plugin(const URI& uri);
