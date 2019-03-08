@@ -180,7 +180,7 @@ Copy::filesystem_to_engine(PreProcessContext& ctx)
 	}
 
 	_engine.world()->parser()->parse_file(
-		_engine.world(), _engine.world()->interface().get(), src_path,
+		*_engine.world(), *_engine.world()->interface(), src_path,
 		dst_parent, dst_symbol);
 
 	return Event::pre_process_done(Status::SUCCESS);

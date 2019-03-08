@@ -195,7 +195,7 @@ main(int argc, char** argv)
 
 		std::lock_guard<std::mutex> lock(world->rdf_mutex());
 		world->parser()->parse_file(
-			world.get(), engine_interface.get(), graph, parent, symbol);
+			*world, *engine_interface, graph, parent, symbol);
 	} else if (conf.option("server-load").is_valid()) {
 		const char* path = conf.option("server-load").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {

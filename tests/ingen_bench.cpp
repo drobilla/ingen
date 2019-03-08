@@ -102,7 +102,7 @@ main(int argc, char** argv)
 	world->engine()->activate();
 
 	// Load graph
-	if (!world->parser()->parse_file(world, world->interface().get(), start_graph)) {
+	if (!world->parser()->parse_file(*world, *world->interface(), start_graph)) {
 		cerr << "error: failed to load initial graph " << start_graph << endl;
 		return EXIT_FAILURE;
 	}

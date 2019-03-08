@@ -685,7 +685,7 @@ GraphCanvas::paste()
 
 	// Parse clipboard text into clipboard store
 	boost::optional<URI> base_uri = parser->parse_string(
-		_app.world(), &clipboard, str, main_uri());
+		*_app.world(), clipboard, str, main_uri());
 
 	// Figure out the copy graph base path
 	Raul::Path copy_root("/");

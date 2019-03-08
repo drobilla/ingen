@@ -105,8 +105,8 @@ ThreadedLoader::load_graph_event(const FilePath&        file_path,
 {
 	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
 
-	_app.world()->parser()->parse_file(_app.world(),
-	                                   _app.world()->interface().get(),
+	_app.world()->parser()->parse_file(*_app.world(),
+	                                   *_app.world()->interface(),
 	                                   file_path,
 	                                   engine_parent,
 	                                   engine_symbol,

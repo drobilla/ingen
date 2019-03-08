@@ -570,8 +570,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	// Parse graph, filling the queue with events to create it
 	plugin->world->interface()->bundle_begin();
-	plugin->world->parser()->parse_file(plugin->world,
-	                                    plugin->world->interface().get(),
+	plugin->world->parser()->parse_file(*plugin->world,
+	                                    *plugin->world->interface(),
 	                                    graph->filename);
 	plugin->world->interface()->bundle_end();
 
@@ -771,7 +771,7 @@ ingen_restore(LV2_Handle                  instance,
 	// Load new graph
 	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 	plugin->world->parser()->parse_file(
-		plugin->world, plugin->world->interface().get(), real_path);
+		*plugin->world, *plugin->world->interface(), real_path);
 
 	free(real_path);
 	return LV2_STATE_SUCCESS;
