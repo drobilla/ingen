@@ -45,11 +45,6 @@ style "ingen-default"
 	text[ACTIVE]      = "#FFF"
 	text[SELECTED]    = "#FFF"
 	text[INSENSITIVE] = "#666"
-
-	engine "clearlooks"
-	{
-		contrast = 1.0
-	}
 }
 
 style "ingen-progressbar" = "ingen-default"
