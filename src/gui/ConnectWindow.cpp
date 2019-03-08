@@ -442,7 +442,7 @@ ConnectWindow::next_stage()
 		"Pinging engine...",
 		"Attaching to engine...",
 		"Requesting root graph...",
-		"Loading plugins...",
+		"Waiting for root graph...",
 		"Connected"
 	};
 
