@@ -345,9 +345,9 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	_alignment->show_all();
 
 	_menu_human_names->set_active(
-		_app->world()->conf().option("human-names").get<int32_t>());
+		_app->world().conf().option("human-names").get<int32_t>());
 	_menu_show_port_names->set_active(
-		_app->world()->conf().option("port-labels").get<int32_t>());
+		_app->world().conf().option("port-labels").get<int32_t>());
 
 	_doc_paned->set_position(std::numeric_limits<int>::max());
 	_doc_scrolledwindow->hide();
@@ -576,7 +576,7 @@ GraphBox::event_save_as()
 
 		// Set current folder to most sensible default
 		const Atom& document = _graph->get_property(uris.ingen_file);
-		const Atom& dir      = _app->world()->conf().option("graph-directory");
+		const Atom& dir      = _app->world().conf().option("graph-directory");
 		if (document.type() == uris.forge.URI) {
 			dialog.set_uri(document.ptr<char>());
 		} else if (dir.is_valid()) {
@@ -649,9 +649,9 @@ GraphBox::event_save_as()
 				_app->forge().alloc_uri(uri.c_str()));
 		}
 
-		_app->world()->conf().set(
+		_app->world().conf().set(
 			"graph-directory",
-			_app->world()->forge().alloc(dialog.get_current_folder()));
+			_app->world().forge().alloc(dialog.get_current_folder()));
 
 		break;
 	}
@@ -898,17 +898,17 @@ void
 GraphBox::event_human_names_toggled()
 {
 	_view->canvas()->show_human_names(_menu_human_names->get_active());
-	_app->world()->conf().set(
+	_app->world().conf().set(
 		"human-names",
-		_app->world()->forge().make(_menu_human_names->get_active()));
+		_app->world().forge().make(_menu_human_names->get_active()));
 }
 
 void
 GraphBox::event_port_names_toggled()
 {
-	_app->world()->conf().set(
+	_app->world().conf().set(
 		"port-labels",
-		_app->world()->forge().make(_menu_show_port_names->get_active()));
+		_app->world().forge().make(_menu_show_port_names->get_active()));
 	if (_menu_show_port_names->get_active()) {
 		_view->canvas()->set_direction(GANV_DIRECTION_RIGHT);
 		_view->canvas()->show_port_names(true);

@@ -80,7 +80,7 @@ public:
 	                     BufferRef   buf,
 	                     SampleCount offset) override;
 
-	static LilvState* load_state(World* world, const FilePath& path);
+	static LilvState* load_state(World& world, const FilePath& path);
 
 protected:
 	struct Instance : public Raul::Noncopyable {

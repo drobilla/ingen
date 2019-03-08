@@ -141,7 +141,7 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 	if (n_processed > 0) {
 #ifndef NDEBUG
 		Engine& engine = context.engine();
-		if (engine.world()->conf().option("trace").get<int32_t>()) {
+		if (engine.world().conf().option("trace").get<int32_t>()) {
 			const uint64_t start = engine.cycle_start_time(context);
 			const uint64_t end   = engine.current_time();
 			fprintf(stderr, "Processed %zu events in %u us\n",
@@ -172,9 +172,9 @@ PreProcessor::run()
 	UndoStack& undo_stack = *_engine.undo_stack();
 	UndoStack& redo_stack = *_engine.redo_stack();
 	AtomWriter undo_writer(
-		_engine.world()->uri_map(), _engine.world()->uris(), undo_stack);
+		_engine.world().uri_map(), _engine.world().uris(), undo_stack);
 	AtomWriter redo_writer(
-		_engine.world()->uri_map(), _engine.world()->uris(), redo_stack);
+		_engine.world().uri_map(), _engine.world().uris(), redo_stack);
 
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 

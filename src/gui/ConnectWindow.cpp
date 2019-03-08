@@ -96,22 +96,22 @@ ConnectWindow::error(const std::string& msg)
 		_progress_label->set_text(msg);
 	}
 
-	if (_app && _app->world()) {
-		_app->world()->log().error(msg + "\n");
+	if (_app) {
+		_app->world().log().error(msg + "\n");
 	}
 }
 
 void
-ConnectWindow::start(App& app, ingen::World* world)
+ConnectWindow::start(App& app, ingen::World& world)
 {
 	_app = &app;
 
-	if (world->engine()) {
+	if (world.engine()) {
 		_mode = Mode::INTERNAL;
 	}
 
-	set_connected_to(world->interface());
-	connect(bool(world->interface()));
+	set_connected_to(world.interface());
+	connect(bool(world.interface()));
 }
 
 void
@@ -131,7 +131,7 @@ ConnectWindow::ingen_response(int32_t            id,
 void
 ConnectWindow::set_connected_to(SPtr<ingen::Interface> engine)
 {
-	_app->world()->set_interface(engine);
+	_app->world().set_interface(engine);
 
 	if (!_widgets_loaded) {
 		return;
@@ -193,14 +193,14 @@ ConnectWindow::set_connecting_widget_states()
 bool
 ConnectWindow::connect_remote(const URI& uri)
 {
-	ingen::World* world = _app->world();
+	ingen::World& world = _app->world();
 
 	SPtr<SigClientInterface> sci(new SigClientInterface());
 	SPtr<QueuedInterface>    qi(new QueuedInterface(sci));
 
-	SPtr<ingen::Interface> iface(world->new_interface(uri, qi));
+	SPtr<ingen::Interface> iface(world.new_interface(uri, qi));
 	if (iface) {
-		world->set_interface(iface);
+		world.set_interface(iface);
 		_app->attach(qi);
 		_app->register_callbacks();
 		return true;
@@ -223,14 +223,15 @@ ConnectWindow::connect(bool existing)
 	set_connecting_widget_states();
 	_connect_stage = 0;
 
-	ingen::World* world = _app->world();
+	ingen::World& world = _app->world();
 
 	if (_mode == Mode::CONNECT_REMOTE) {
-		std::string uri_str = world->conf().option("connect").ptr<char>();
+		std::string uri_str = world.conf().option("connect").ptr<char>();
 		if (existing) {
-			uri_str = world->interface()->uri();
+			uri_str = world.interface()->uri();
 			_connect_stage = 1;
-			SPtr<client::SocketClient> client = dynamic_ptr_cast<client::SocketClient>(world->interface());
+			SPtr<client::SocketClient> client = dynamic_ptr_cast<client::SocketClient>(
+				world.interface());
 			if (client) {
 				_app->attach(client->respondee());
 				_app->register_callbacks();
@@ -261,14 +262,14 @@ ConnectWindow::connect(bool existing)
 		_connect_uri = URI(std::string("tcp://localhost:") + port);
 
 	} else if (_mode == Mode::INTERNAL) {
-		if (!world->engine()) {
-			if (!world->load_module("server")) {
+		if (!world.engine()) {
+			if (!world.load_module("server")) {
 				error("Failed to load server module");
 				return;
-			} else if (!world->load_module("jack")) {
+			} else if (!world.load_module("jack")) {
 				error("Failed to load jack module");
 				return;
-			} else if (!world->engine()->activate()) {
+			} else if (!world.engine()->activate()) {
 				error("Failed to activate engine");
 				return;
 			}
@@ -376,7 +377,7 @@ ConnectWindow::load_widgets()
 	_quit_button->signal_clicked().connect(
 		sigc::mem_fun(this, &ConnectWindow::quit_clicked));
 
-	_url_entry->set_text(_app->world()->conf().option("connect").ptr<char>());
+	_url_entry->set_text(_app->world().conf().option("connect").ptr<char>());
 	if (URI::is_valid(_url_entry->get_text())) {
 		_connect_uri = URI(_url_entry->get_text());
 	}
@@ -384,7 +385,7 @@ ConnectWindow::load_widgets()
 	_port_spinbutton->set_range(1, std::numeric_limits<uint16_t>::max());
 	_port_spinbutton->set_increments(1, 100);
 	_port_spinbutton->set_value(
-		_app->world()->conf().option("engine-port").get<int32_t>());
+		_app->world().conf().option("engine-port").get<int32_t>());
 
 	_progress_bar->set_pulse_step(0.01);
 	_widgets_loaded = true;
@@ -485,7 +486,7 @@ ConnectWindow::gtk_callback()
 			last = now;
 			if (_mode == Mode::INTERNAL) {
 				SPtr<SigClientInterface> client(new SigClientInterface());
-				_app->world()->interface()->set_respondee(client);
+				_app->world().interface()->set_respondee(client);
 				_app->attach(client);
 				_app->register_callbacks();
 				next_stage();

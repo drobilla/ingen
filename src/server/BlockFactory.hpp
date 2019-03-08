@@ -36,7 +36,7 @@ class PluginImpl;
 class BlockFactory : public Raul::Noncopyable
 {
 public:
-	explicit BlockFactory(ingen::World* world);
+	explicit BlockFactory(ingen::World& world);
 	~BlockFactory();
 
 	/** Reload plugin list.
@@ -57,7 +57,7 @@ private:
 	void load_internal_plugins();
 
 	Plugins       _plugins;
-	ingen::World* _world;
+	ingen::World& _world;
 	bool          _has_loaded;
 };
 

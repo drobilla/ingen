@@ -83,7 +83,7 @@ public:
 
 	bool has_ui() const;
 
-	SPtr<PluginUI> ui(ingen::World*               world,
+	SPtr<PluginUI> ui(ingen::World&               world,
 	                  SPtr<const BlockModel> block) const;
 
 	std::string documentation(bool html) const;

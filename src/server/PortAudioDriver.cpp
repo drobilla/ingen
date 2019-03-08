@@ -54,7 +54,7 @@ PortAudioDriver::PortAudioDriver(Engine& engine)
 	, _sem(0)
 	, _stream(nullptr)
 	, _seq_size(4096)
-	, _block_length(engine.world()->conf().option("buffer-size").get<int32_t>())
+	, _block_length(engine.world().conf().option("buffer-size").get<int32_t>())
 	, _sample_rate(48000)
 	, _n_inputs(0)
 	, _n_outputs(0)
@@ -218,7 +218,7 @@ PortAudioDriver::create_port(DuplexPort* graph_port)
 		eport = new EnginePort(graph_port);
 		graph_port->set_is_driver_port(*_engine.buffer_factory());
 	} else if (graph_port->is_a(PortType::ATOM) &&
-	           graph_port->buffer_type() == _engine.world()->uris().atom_Sequence) {
+	           graph_port->buffer_type() == _engine.world().uris().atom_Sequence) {
 		// Sequence port, make Jack port but use internal LV2 format buffer
 		eport = new EnginePort(graph_port);
 	}

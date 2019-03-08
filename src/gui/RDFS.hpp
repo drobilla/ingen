@@ -41,37 +41,37 @@ typedef std::set<URI> URISet;
 typedef std::map<std::string, URI> Objects;
 
 /** Return the label of `node`. */
-std::string label(World* world, const LilvNode* node);
+std::string label(World& world, const LilvNode* node);
 
 /** Return the comment of `node`. */
-std::string comment(World* world, const LilvNode* node);
+std::string comment(World& world, const LilvNode* node);
 
 /** Set `types` to its super/sub class closure.
  * @param super If true, find all superclasses, otherwise all subclasses
  */
-void classes(World* world, URISet& types, bool super);
+void classes(World& world, URISet& types, bool super);
 
 /** Set `types` to its super/sub datatype closure.
  * @param super If true, find all supertypes, otherwise all subtypes.
  */
-void datatypes(World* world, URISet& types, bool super);
+void datatypes(World& world, URISet& types, bool super);
 
 /** Get all instances of any class in `types`. */
-Objects instances(World* world, const URISet& types);
+Objects instances(World& world, const URISet& types);
 
 /** Get all the types which `model` is an instance of. */
-URISet types(World* world, SPtr<const client::ObjectModel> model);
+URISet types(World& world, SPtr<const client::ObjectModel> model);
 
 /** Get all the properties with domains appropriate for `model`. */
-URISet properties(World* world, SPtr<const client::ObjectModel> model);
+URISet properties(World& world, SPtr<const client::ObjectModel> model);
 
 /** Return the range (value types) of `prop`.
  * @param recursive If true, include all subclasses.
  */
-URISet range(World* world, const LilvNode* prop, bool recursive);
+URISet range(World& world, const LilvNode* prop, bool recursive);
 
 /** Return true iff `inst` is-a `klass`. */
-bool is_a(World* world, const LilvNode* inst, const LilvNode* klass);
+bool is_a(World& world, const LilvNode* inst, const LilvNode* klass);
 
 } // namespace rdfs
 } // namespace gui

@@ -51,7 +51,7 @@ CreatePort::CreatePort(Engine&           engine,
 	, _engine_port(nullptr)
 	, _properties(properties)
 {
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 
 	typedef Properties::const_iterator    Iterator;
 	typedef std::pair<Iterator, Iterator> Range;
@@ -77,7 +77,7 @@ CreatePort::CreatePort(Engine&           engine,
 	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
 	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
 		if (uris.forge.is_uri(i->second)) {
-			_buf_type = _engine.world()->uri_map().map_uri(
+			_buf_type = _engine.world().uri_map().map_uri(
 				uris.forge.str(i->second, false));
 		}
 	}
@@ -107,7 +107,7 @@ CreatePort::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}
 
-	const URIs&    uris        = _engine.world()->uris();
+	const URIs&    uris        = _engine.world().uris();
 	BufferFactory& bufs        = *_engine.buffer_factory();
 	const uint32_t buf_size    = bufs.default_size(_buf_type);
 	const int32_t  old_n_ports = _graph->num_ports_non_rt();
@@ -130,7 +130,7 @@ CreatePort::pre_process(PreProcessContext& ctx)
 		// No index given, append
 		index   = old_n_ports;
 		index_i = _properties.emplace(uris.lv2_index,
-		                              _engine.world()->forge().make(index));
+		                              _engine.world().forge().make(index));
 	}
 
 	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);

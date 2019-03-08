@@ -40,8 +40,8 @@ public:
 	Module(const Module&) = delete;
 	Module& operator=(const Module&) = delete;
 
-	virtual void load(ingen::World* world) = 0;
-	virtual void run(ingen::World* world) {}
+	virtual void load(ingen::World& world) = 0;
+	virtual void run(ingen::World& world) {}
 
 	/** Library implementing this module.
 	 *

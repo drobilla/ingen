@@ -48,7 +48,7 @@ public:
 	 * connected first.  The caller should connect to signal_property_changed,
 	 * then call instantiate().
 	 */
-	static SPtr<PluginUI> create(ingen::World*          world,
+	static SPtr<PluginUI> create(ingen::World&          world,
 	                             SPtr<const BlockModel> block,
 	                             const LilvPlugin*      plugin);
 
@@ -81,17 +81,17 @@ public:
 	             const Atom&,       // Object
 	             Resource::Graph);  // Context
 
-	ingen::World*          world() const { return _world; }
+	ingen::World&          world() const { return _world; }
 	SPtr<const BlockModel> block() const { return _block; }
 
 private:
-	PluginUI(ingen::World*          world,
+	PluginUI(ingen::World&          world,
 	         SPtr<const BlockModel> block,
 	         LilvUIs*               uis,
 	         const LilvUI*          ui,
 	         const LilvNode*        ui_type);
 
-	ingen::World*          _world;
+	ingen::World&          _world;
 	SPtr<const BlockModel> _block;
 	SuilInstance*          _instance;
 	LilvUIs*               _uis;

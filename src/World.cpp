@@ -188,7 +188,7 @@ public:
 	typedef std::map<const std::string, World::InterfaceFactory> InterfaceFactories;
 	InterfaceFactories interface_factories;
 
-	typedef bool (*ScriptRunner)(World* world, const char* filename);
+	typedef bool (*ScriptRunner)(World& world, const char* filename);
 	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
 	ScriptRunners script_runners;
 
@@ -283,7 +283,7 @@ World::load_module(const char* name)
 		Module* module = module_load();
 		if (module) {
 			module->library = std::move(lib);
-			module->load(this);
+			module->load(*this);
 			_impl->modules.emplace(string(name), module);
 			return true;
 		}
@@ -302,7 +302,7 @@ World::run_module(const char* name)
 		return false;
 	}
 
-	i->second->run(this);
+	i->second->run(*this);
 	return true;
 }
 
@@ -318,7 +318,7 @@ World::new_interface(const URI& engine_uri, SPtr<Interface> respondee)
 		return SPtr<Interface>();
 	}
 
-	return i->second(this, engine_uri, respondee);
+	return i->second(*this, engine_uri, respondee);
 }
 
 /** Run a script of type `mime_type` at filename `filename` */
@@ -331,7 +331,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 		return false;
 	}
 
-	return i->second(this, filename.c_str());
+	return i->second(*this, filename.c_str());
 }
 
 void

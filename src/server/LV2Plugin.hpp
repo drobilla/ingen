@@ -38,7 +38,7 @@ class BlockImpl;
 class LV2Plugin : public PluginImpl
 {
 public:
-	LV2Plugin(World* world, const LilvPlugin* lplugin);
+	LV2Plugin(World& world, const LilvPlugin* lplugin);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
 	                       const Raul::Symbol& symbol,
@@ -49,7 +49,7 @@ public:
 
 	const Raul::Symbol symbol() const override;
 
-	World*            world()       const { return _world; }
+	World&            world()       const { return _world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 
 	void update_properties() override;
@@ -62,7 +62,7 @@ public:
 	}
 
 private:
-	World*            _world;
+	World&            _world;
 	const LilvPlugin* _lilv_plugin;
 };
 

@@ -49,7 +49,7 @@ BufferFactory::~BufferFactory()
 Forge&
 BufferFactory::forge()
 {
-	return _engine.world()->forge();
+	return _engine.world().forge();
 }
 
 Raul::Maid&
@@ -146,7 +146,7 @@ BufferFactory::claim_buffer(LV2_URID type,
 {
 	Buffer* try_head = try_get_buffer(type);
 	if (!try_head) {
-		_engine.world()->log().rt_error("Failed to obtain buffer");
+		_engine.world().log().rt_error("Failed to obtain buffer");
 		return BufferRef();
 	}
 

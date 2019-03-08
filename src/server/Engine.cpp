@@ -64,64 +64,64 @@ namespace server {
 INGEN_THREAD_LOCAL unsigned ThreadManager::flags(0);
 bool               ThreadManager::single_threaded(true);
 
-Engine::Engine(ingen::World* world)
+Engine::Engine(ingen::World& world)
 	: _world(world)
-	, _options(new LV2Options(world->uris()))
-	, _buffer_factory(new BufferFactory(*this, world->uris()))
+	, _options(new LV2Options(world.uris()))
+	, _buffer_factory(new BufferFactory(*this, world.uris()))
 	, _maid(new Raul::Maid)
-	, _worker(new Worker(world->log(), event_queue_size()))
-	, _sync_worker(new Worker(world->log(), event_queue_size(), true))
+	, _worker(new Worker(world.log(), event_queue_size()))
+	, _sync_worker(new Worker(world.log(), event_queue_size(), true))
 	, _broadcaster(new Broadcaster())
 	, _control_bindings(new ControlBindings(*this))
 	, _block_factory(new BlockFactory(world))
-	, _undo_stack(new UndoStack(_world->uris(), _world->uri_map()))
-	, _redo_stack(new UndoStack(_world->uris(), _world->uri_map()))
+	, _undo_stack(new UndoStack(world.uris(), world.uri_map()))
+	, _redo_stack(new UndoStack(world.uris(), world.uri_map()))
 	, _post_processor(new PostProcessor(*this))
 	, _pre_processor(new PreProcessor(*this))
 	, _event_writer(new EventWriter(*this))
 	, _interface(_event_writer)
 	, _atom_interface(
-		new AtomReader(world->uri_map(), world->uris(), world->log(), *_interface))
+		new AtomReader(world.uri_map(), world.uris(), world.log(), *_interface))
 	, _root_graph(nullptr)
 	, _cycle_start_time(0)
 	, _rand_engine(0)
 	, _uniform_dist(0.0f, 1.0f)
 	, _quit_flag(false)
 	, _reset_load_flag(false)
-	, _atomic_bundles(world->conf().option("atomic-bundles").get<int32_t>())
+	, _atomic_bundles(world.conf().option("atomic-bundles").get<int32_t>())
 	, _activated(false)
 {
-	if (!world->store()) {
-		world->set_store(SPtr<ingen::Store>(new Store()));
+	if (!world.store()) {
+		world.set_store(SPtr<ingen::Store>(new Store()));
 	}
 
-	for (int i = 0; i < world->conf().option("threads").get<int32_t>(); ++i) {
+	for (int i = 0; i < world.conf().option("threads").get<int32_t>(); ++i) {
 		Raul::RingBuffer* ring = new Raul::RingBuffer(24 * event_queue_size());
 		_notifications.push_back(ring);
 		_run_contexts.push_back(new RunContext(*this, ring, i, i > 0));
 	}
 
-	_world->lv2_features().add_feature(_worker->schedule_feature());
-	_world->lv2_features().add_feature(_options);
-	_world->lv2_features().add_feature(
+	_world.lv2_features().add_feature(_worker->schedule_feature());
+	_world.lv2_features().add_feature(_options);
+	_world.lv2_features().add_feature(
 		SPtr<LV2Features::Feature>(
 			new LV2Features::EmptyFeature(LV2_BUF_SIZE__powerOf2BlockLength)));
-	_world->lv2_features().add_feature(
+	_world.lv2_features().add_feature(
 		SPtr<LV2Features::Feature>(
 			new LV2Features::EmptyFeature(LV2_BUF_SIZE__fixedBlockLength)));
-	_world->lv2_features().add_feature(
+	_world.lv2_features().add_feature(
 		SPtr<LV2Features::Feature>(
 			new LV2Features::EmptyFeature(LV2_BUF_SIZE__boundedBlockLength)));
-	_world->lv2_features().add_feature(
+	_world.lv2_features().add_feature(
 		SPtr<LV2Features::Feature>(
 			new LV2Features::EmptyFeature(LV2_STATE__loadDefaultState)));
 
-	if (world->conf().option("dump").get<int32_t>()) {
+	if (world.conf().option("dump").get<int32_t>()) {
 		_interface = std::make_shared<Tee>(
 			Tee::Sinks{
 				_event_writer,
-				std::make_shared<StreamWriter>(world->uri_map(),
-				                               world->uris(),
+				std::make_shared<StreamWriter>(world.uri_map(),
+				                               world.uris(),
 				                               URI("ingen:/engine"),
 				                               stderr,
 				                               ColorContext::Color::MAGENTA)});
@@ -167,7 +167,7 @@ Engine::~Engine()
 		store->clear();
 	}
 
-	_world->set_store(SPtr<ingen::Store>());
+	_world.set_store(SPtr<ingen::Store>());
 }
 
 void
@@ -274,7 +274,7 @@ Engine::steal_task(unsigned start_thread)
 SPtr<Store>
 Engine::store() const
 {
-	return _world->store();
+	return _world.store();
 }
 
 SampleRate
@@ -298,7 +298,7 @@ Engine::sequence_size() const
 size_t
 Engine::event_queue_size() const
 {
-	return world()->conf().option("queue-size").get<int32_t>();
+	return _world.conf().option("queue-size").get<int32_t>();
 }
 
 void
@@ -310,7 +310,7 @@ Engine::quit()
 Properties
 Engine::load_properties() const
 {
-	const ingen::URIs& uris = world()->uris();
+	const ingen::URIs& uris = _world.uris();
 
 	return { { uris.ingen_meanRunLoad,
 		       uris.forge.make(floorf(_run_load.mean) / 100.0f) },
@@ -346,7 +346,7 @@ Engine::set_driver(SPtr<Driver> driver)
 	_buffer_factory->set_block_length(driver->block_length());
 	_options->set(sample_rate(),
 	              block_length(),
-	              buffer_factory()->default_size(_world->uris().atom_Sequence));
+	              buffer_factory()->default_size(_world.uris().atom_Sequence));
 }
 
 SampleCount
@@ -392,14 +392,14 @@ Engine::activate()
 
 	ThreadManager::single_threaded = true;
 
-	const ingen::URIs& uris = world()->uris();
+	const ingen::URIs& uris = _world.uris();
 
 	if (!_root_graph) {
 		// No root graph has been loaded, create an empty one
 		const Properties properties = {
 			{uris.rdf_type, uris.ingen_Graph},
 			{uris.ingen_polyphony,
-			 Property(_world->forge().make(1),
+			 Property(_world.forge().make(1),
 			          Resource::Graph::INTERNAL)}};
 
 		enqueue_event(
@@ -505,7 +505,7 @@ Engine::process_all_events()
 Log&
 Engine::log() const
 {
-	return _world->log();
+	return _world.log();
 }
 
 void

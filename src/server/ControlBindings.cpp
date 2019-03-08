@@ -38,12 +38,12 @@ ControlBindings::ControlBindings(Engine& engine)
 	, _learn_binding(nullptr)
 	, _bindings(new Bindings())
 	, _feedback(new Buffer(*_engine.buffer_factory(),
-	                       engine.world()->uris().atom_Sequence,
+	                       engine.world().uris().atom_Sequence,
 	                       0,
 	                       4096)) // FIXME: capacity?
 {
 	lv2_atom_forge_init(
-		&_forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
+		&_forge, &engine.world().uri_map().urid_map_feature()->urid_map);
 }
 
 ControlBindings::~ControlBindings()
@@ -56,7 +56,7 @@ ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	const ingen::URIs& uris    = _engine.world()->uris();
+	const ingen::URIs& uris    = _engine.world().uris();
 	const Atom&        binding = port->get_property(uris.midi_binding);
 	return binding_key(binding);
 }
@@ -64,7 +64,7 @@ ControlBindings::port_binding(PortImpl* port) const
 ControlBindings::Key
 ControlBindings::binding_key(const Atom& binding) const
 {
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 	Key       key;
 	LV2_Atom* num = nullptr;
 	if (binding.type() == uris.atom_Object) {
@@ -151,8 +151,7 @@ ControlBindings::port_value_changed(RunContext& ctx,
                                     Key         key,
                                     const Atom& value_atom)
 {
-	ingen::World*      world = ctx.engine().world();
-	const ingen::URIs& uris  = world->uris();
+	const ingen::URIs& uris = ctx.engine().world().uris();
 	if (!!key) {
 		int16_t  value = port_value_to_control(
 			ctx, port, key.type, value_atom);
@@ -336,7 +335,7 @@ ControlBindings::set_port_value(RunContext& context,
 	// TODO: Set port value property so it is saved
 	port->set_control_value(context, context.start(), val);
 
-	URIs& uris = context.engine().world()->uris();
+	URIs& uris = context.engine().world().uris();
 	context.notify(uris.ingen_value, context.start(), port,
 	               sizeof(float), _forge.Float, &val);
 }
@@ -344,7 +343,7 @@ ControlBindings::set_port_value(RunContext& context,
 bool
 ControlBindings::finish_learn(RunContext& context, Key key)
 {
-	const ingen::URIs& uris    = context.engine().world()->uris();
+	const ingen::URIs& uris    = context.engine().world().uris();
 	Binding*           binding = _learn_binding.exchange(nullptr);
 	if (!binding || (key.type == Type::MIDI_NOTE && !binding->port->is_toggled())) {
 		return false;
@@ -390,8 +389,7 @@ void
 ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 {
 	uint16_t           value = 0;
-	ingen::World*      world = ctx.engine().world();
-	const ingen::URIs& uris  = world->uris();
+	const ingen::URIs& uris  = ctx.engine().world().uris();
 
 	_feedback->clear();
 	if ((!_learn_binding && _bindings->empty()) || !buffer->get<LV2_Atom>()) {

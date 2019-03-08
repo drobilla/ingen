@@ -29,20 +29,20 @@
 using namespace ingen;
 
 struct IngenJackModule : public ingen::Module {
-	void load(ingen::World* world) override {
-		if (((server::Engine*)world->engine().get())->driver()) {
-			world->log().warn("Engine already has a driver\n");
+	void load(ingen::World& world) override {
+		if (((server::Engine*)world.engine().get())->driver()) {
+			world.log().warn("Engine already has a driver\n");
 			return;
 		}
 
 		server::JackDriver* driver = new server::JackDriver(
-			*(server::Engine*)world->engine().get());
-		const Atom& s = world->conf().option("jack-server");
+			*(server::Engine*)world.engine().get());
+		const Atom& s = world.conf().option("jack-server");
 		const std::string server_name = s.is_valid() ? s.ptr<char>() : "";
 		driver->attach(server_name,
-		               world->conf().option("jack-name").ptr<char>(),
+		               world.conf().option("jack-name").ptr<char>(),
 		               nullptr);
-		((server::Engine*)world->engine().get())->set_driver(
+		((server::Engine*)world.engine().get())->set_driver(
 			SPtr<server::Driver>(driver));
 	}
 };

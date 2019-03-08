@@ -86,7 +86,7 @@ Worker::request(LV2Block*   block,
 }
 
 SPtr<LV2_Feature>
-Worker::Schedule::feature(World* world, Node* n)
+Worker::Schedule::feature(World& world, Node* n)
 {
 	LV2Block* block = dynamic_cast<LV2Block*>(n);
 	if (!block) {

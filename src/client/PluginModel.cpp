@@ -240,7 +240,7 @@ PluginModel::has_ui() const
 }
 
 SPtr<PluginUI>
-PluginModel::ui(ingen::World*          world,
+PluginModel::ui(ingen::World&          world,
                 SPtr<const BlockModel> block) const
 {
 	if (!_lilv_plugin) {

@@ -47,7 +47,7 @@ public:
 	}
 
 	static SPtr<ingen::Interface>
-	new_socket_interface(ingen::World*          world,
+	new_socket_interface(ingen::World&          world,
 	                     const URI&             uri,
 	                     SPtr<ingen::Interface> respondee)
 	{
@@ -57,16 +57,16 @@ public:
 
 		SPtr<Raul::Socket> sock(new Raul::Socket(type));
 		if (!sock->connect(uri)) {
-			world->log().error(fmt("Failed to connect <%1%> (%2%)\n")
+			world.log().error(fmt("Failed to connect <%1%> (%2%)\n")
 			                   % sock->uri() % strerror(errno));
 			return SPtr<Interface>();
 		}
-		return SPtr<Interface>(new SocketClient(*world, uri, sock, respondee));
+		return SPtr<Interface>(new SocketClient(world, uri, sock, respondee));
 	}
 
-	static void register_factories(World* world) {
-		world->add_interface_factory("unix", &new_socket_interface);
-		world->add_interface_factory("tcp", &new_socket_interface);
+	static void register_factories(World& world) {
+		world.add_interface_factory("unix", &new_socket_interface);
+		world.add_interface_factory("tcp", &new_socket_interface);
 	}
 
 private:

@@ -131,7 +131,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->world->set_interface(ui->engine);
 
 	// Create App and client
-	ui->app = ingen::gui::App::create(ui->world);
+	ui->app = ingen::gui::App::create(*ui->world);
 	ui->client = SPtr<ingen::client::SigClientInterface>(
 		new ingen::client::SigClientInterface());
 	ui->app->set_is_plugin(true);

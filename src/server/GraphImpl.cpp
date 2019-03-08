@@ -41,8 +41,8 @@ GraphImpl::GraphImpl(Engine&             engine,
                      GraphImpl*          parent,
                      SampleRate          srate,
                      uint32_t            internal_poly)
-	: BlockImpl(new GraphPlugin(engine.world()->uris(),
-	                            engine.world()->uris().ingen_Graph,
+	: BlockImpl(new GraphPlugin(engine.world().uris(),
+	                            engine.world().uris().ingen_Graph,
 	                            Raul::Symbol("graph"),
 	                            "Ingen Graph"),
 	            symbol, poly, parent, srate)

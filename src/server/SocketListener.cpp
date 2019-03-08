@@ -82,16 +82,16 @@ SocketListener::~SocketListener() {
 static void
 ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 {
-	ingen::World* world = engine->world();
+	ingen::World& world = engine->world();
 
-	const std::string link_path(world->conf().option("socket").ptr<char>());
+	const std::string link_path(world.conf().option("socket").ptr<char>());
 	const std::string unix_path(link_path + "." + std::to_string(getpid()));
 
 	// Bind UNIX socket and create PID-less symbolic link
 	const URI unix_uri(unix_scheme + unix_path);
 	bool      make_link = true;
 	if (!unix_sock->bind(unix_uri) || !unix_sock->listen()) {
-		world->log().error("Failed to create UNIX socket\n");
+		world.log().error("Failed to create UNIX socket\n");
 		unix_sock->close();
 		make_link = false;
 	} else {
@@ -101,37 +101,37 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 			const pid_t       pid    = std::stoi(suffix);
 			if (!kill(pid, 0)) {
 				make_link = false;
-				world->log().warn(fmt("Another Ingen instance is running at %1% => %2%\n")
-				                  % link_path % old_path);
+				world.log().warn(fmt("Another Ingen instance is running at %1% => %2%\n")
+				                 % link_path % old_path);
 			} else {
-				world->log().warn(fmt("Replacing old link %1% => %2%\n")
-				                  % link_path % old_path);
+				world.log().warn(fmt("Replacing old link %1% => %2%\n")
+				                 % link_path % old_path);
 				unlink(link_path.c_str());
 			}
 		}
 
 		if (make_link) {
 			if (!symlink(unix_path.c_str(), link_path.c_str())) {
-				world->log().info(fmt("Listening on %1%\n") %
-				                  (unix_scheme + link_path));
+				world.log().info(fmt("Listening on %1%\n") %
+				                 (unix_scheme + link_path));
 			} else {
-				world->log().error(fmt("Failed to link %1% => %2% (%3%)\n")
-				                   % link_path % unix_path % strerror(errno));
+				world.log().error(fmt("Failed to link %1% => %2% (%3%)\n")
+				                  % link_path % unix_path % strerror(errno));
 			}
 		} else {
-			world->log().info(fmt("Listening on %1%\n") % unix_uri);
+			world.log().info(fmt("Listening on %1%\n") % unix_uri);
 		}
 	}
 
 	// Bind TCP socket
-	const int port = world->conf().option("engine-port").get<int32_t>();
+	const int port = world.conf().option("engine-port").get<int32_t>();
 	std::ostringstream ss;
 	ss << "tcp://*:" << port;
 	if (!net_sock->bind(URI(ss.str())) || !net_sock->listen()) {
-		world->log().error("Failed to create TCP socket\n");
+		world.log().error("Failed to create TCP socket\n");
 		net_sock->close();
 	} else {
-		world->log().info(fmt("Listening on TCP port %1%\n") % port);
+		world.log().info(fmt("Listening on TCP port %1%\n") % port);
 	}
 
 	if (unix_sock->fd() == -1 && net_sock->fd() == -1) {
@@ -157,10 +157,10 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 		// Wait for input to arrive at a socket
 		const int ret = poll(pfds, nfds, -1);
 		if (ret == -1) {
-			world->log().error(fmt("Poll error: %1%\n") % strerror(errno));
+			world.log().error(fmt("Poll error: %1%\n") % strerror(errno));
 			break;
 		} else if (ret == 0) {
-			world->log().warn("Poll returned with no data\n");
+			world.log().warn("Poll returned with no data\n");
 			continue;
 		} else if ((pfds[0].revents & POLLHUP) || pfds[1].revents & POLLHUP) {
 			break;
@@ -169,14 +169,14 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 		if (pfds[0].revents & POLLIN) {
 			SPtr<Raul::Socket> conn = unix_sock->accept();
 			if (conn) {
-				new SocketServer(*world, *engine, conn);
+				new SocketServer(world, *engine, conn);
 			}
 		}
 
 		if (pfds[1].revents & POLLIN) {
 			SPtr<Raul::Socket> conn = net_sock->accept();
 			if (conn) {
-				new SocketServer(*world, *engine, conn);
+				new SocketServer(world, *engine, conn);
 			}
 		}
 	}

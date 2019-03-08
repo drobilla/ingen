@@ -97,12 +97,12 @@ public:
 	          SampleCount sample_rate)
 		: _engine(engine)
 		, _main_sem(0)
-		, _reader(engine.world()->uri_map(),
-		          engine.world()->uris(),
-		          engine.world()->log(),
-		          *engine.world()->interface().get())
-		, _writer(engine.world()->uri_map(),
-		          engine.world()->uris(),
+		, _reader(engine.world().uri_map(),
+		          engine.world().uris(),
+		          engine.world().log(),
+		          *engine.world().interface().get())
+		, _writer(engine.world().uri_map(),
+		          engine.world().uris(),
 		          *this)
 		, _from_ui(ui_ring_size(block_length))
 		, _to_ui(ui_ring_size(block_length))
@@ -120,7 +120,7 @@ public:
 	bool dynamic_ports() const override { return !_instantiated; }
 
 	void pre_process_port(RunContext& context, EnginePort* port) {
-		const URIs&       uris       = _engine.world()->uris();
+		const URIs&       uris       = _engine.world().uris();
 		const SampleCount nframes    = context.nframes();
 		DuplexPort*       graph_port = port->graph_port();
 		Buffer*           graph_buf  = graph_port->buffer(0).get();
@@ -241,7 +241,7 @@ public:
 	}
 
 	void append_time_events(RunContext& context, Buffer& buffer) override {
-		const URIs&        uris = _engine.world()->uris();
+		const URIs&        uris = _engine.world().uris();
 		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 			if (ev->body.type == uris.atom_Object) {
@@ -322,7 +322,7 @@ public:
 		}
 
 		// Initialise output port buffer to an empty Sequence
-		seq->atom.type = _engine.world()->uris().atom_Sequence;
+		seq->atom.type = _engine.world().uris().atom_Sequence;
 		seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
 
 		const uint32_t read_space = _to_ui.read_space();
@@ -421,19 +421,18 @@ ingen_lv2_main(SPtr<Engine> engine, const SPtr<LV2Driver>& driver)
 
 struct IngenPlugin {
 	IngenPlugin()
-		: world(nullptr)
-		, main(nullptr)
+		: main(nullptr)
 		, map(nullptr)
 		, argc(0)
 		, argv(nullptr)
 	{}
 
-	ingen::World* world;
-	SPtr<Engine>  engine;
-	std::thread*  main;
-	LV2_URID_Map* map;
-	int           argc;
-	char**        argv;
+	UPtr<ingen::World> world;
+	SPtr<Engine>       engine;
+	std::thread*       main;
+	LV2_URID_Map*      map;
+	int                argc;
+	char**             argv;
 };
 
 static Lib::Graphs
@@ -512,7 +511,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	IngenPlugin* plugin = new IngenPlugin();
 	plugin->map   = map;
-	plugin->world = new ingen::World(map, unmap, log);
+	plugin->world = UPtr<ingen::World>(new ingen::World(map, unmap, log));
 	plugin->world->load_configuration(plugin->argc, plugin->argv);
 
 	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
@@ -545,7 +544,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		"queue-size",
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
-	SPtr<server::Engine> engine(new server::Engine(plugin->world));
+	SPtr<server::Engine> engine(new server::Engine(*plugin->world));
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
@@ -653,9 +652,8 @@ ingen_cleanup(LV2_Handle instance)
 		delete me->main;
 	}
 
-	World* world = me->world;
+	auto world = std::move(me->world);
 	delete me;
-	delete world;
 }
 
 static void

@@ -34,8 +34,8 @@ struct InstanceAccess : public ingen::LV2Features::Feature
 {
 	const char* uri() const override { return "http://lv2plug.in/ns/ext/instance-access"; }
 
-	SPtr<LV2_Feature> feature(World* world, Node* node) override {
-		Node* store_node = world->store()->get(node->path());
+	SPtr<LV2_Feature> feature(World& world, Node* node) override {
+		Node* store_node = world.store()->get(node->path());
 		if (!store_node) {
 			return SPtr<LV2_Feature>();
 		}

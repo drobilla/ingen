@@ -42,8 +42,8 @@ URIEntry::URIEntry(App* app, std::set<URI> types, const std::string& value)
 Gtk::Menu*
 URIEntry::build_value_menu()
 {
-	World*     world  = _app->world();
-	LilvWorld* lworld = world->lilv_world();
+	World&     world  = _app->world();
+	LilvWorld* lworld = world.lilv_world();
 	Gtk::Menu* menu   = new Gtk::Menu();
 
 	LilvNode* owl_onDatatype  = lilv_new_uri(lworld, LILV_NS_OWL "onDatatype");
@@ -62,8 +62,8 @@ URIEntry::build_value_menu()
 			label = lilv_node_as_string(inst);
 		}
 
-		if (lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Class) ||
-		    lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Datatype)) {
+		if (lilv_world_ask(world.lilv_world(), inst, rdf_type, rdfs_Class) ||
+		    lilv_world_ask(world.lilv_world(), inst, rdf_type, rdfs_Datatype)) {
 			// This value is a class or datatype...
 			if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, nullptr) &&
 			    !lilv_world_ask(lworld, inst, owl_onDatatype, nullptr)) {
@@ -93,8 +93,8 @@ URIEntry::build_value_menu()
 Gtk::Menu*
 URIEntry::build_subclass_menu(const LilvNode* klass)
 {
-	World*     world  = _app->world();
-	LilvWorld* lworld = world->lilv_world();
+	World&     world  = _app->world();
+	LilvWorld* lworld = world.lilv_world();
 
 	LilvNode* owl_onDatatype  = lilv_new_uri(lworld, LILV_NS_OWL "onDatatype");
 	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");

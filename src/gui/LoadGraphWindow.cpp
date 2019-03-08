@@ -126,7 +126,7 @@ LoadGraphWindow::set_graph(SPtr<const GraphModel> graph)
 void
 LoadGraphWindow::on_show()
 {
-	const Atom& dir = _app->world()->conf().option("graph-directory");
+	const Atom& dir = _app->world().conf().option("graph-directory");
 	if (dir.is_valid()) {
 		set_current_folder(dir.ptr<char>());
 	}
@@ -201,9 +201,9 @@ LoadGraphWindow::ok_clicked()
 	_graph.reset();
 	hide();
 
-	_app->world()->conf().set(
+	_app->world().conf().set(
 		"graph-directory",
-		_app->world()->forge().alloc(get_current_folder()));
+		_app->world().forge().alloc(get_current_folder()));
 }
 
 void

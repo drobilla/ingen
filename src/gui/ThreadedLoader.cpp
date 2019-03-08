@@ -54,7 +54,7 @@ ThreadedLoader::~ThreadedLoader()
 SPtr<Parser>
 ThreadedLoader::parser()
 {
-	return _app.world()->parser();
+	return _app.world().parser();
 }
 
 void
@@ -103,14 +103,14 @@ ThreadedLoader::load_graph_event(const FilePath&        file_path,
                                  optional<Raul::Symbol> engine_symbol,
                                  optional<Properties>   engine_data)
 {
-	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
-	_app.world()->parser()->parse_file(*_app.world(),
-	                                   *_app.world()->interface(),
-	                                   file_path,
-	                                   engine_parent,
-	                                   engine_symbol,
-	                                   engine_data);
+	_app.world().parser()->parse_file(_app.world(),
+	                                  *_app.world().interface(),
+	                                  file_path,
+	                                  engine_parent,
+	                                  engine_symbol,
+	                                  engine_data);
 }
 
 void
@@ -132,7 +132,7 @@ ThreadedLoader::save_graph_event(SPtr<const client::GraphModel> model,
 {
 	assert(uri.scheme() == "file");
 	if (_app.serialiser()) {
-		std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+		std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
 		if (uri.string().find(".ingen") != std::string::npos) {
 			_app.serialiser()->write_bundle(model, uri);

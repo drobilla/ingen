@@ -114,11 +114,11 @@ RunContext::emit_notifications(FrameTime end)
 			return;
 		}
 		if (_event_sink->read(sizeof(note), &note) == sizeof(note)) {
-			Atom value = _engine.world()->forge().alloc(
+			Atom value = _engine.world().forge().alloc(
 				note.size, note.type, nullptr);
 			if (_event_sink->read(note.size, value.get_body()) == note.size) {
 				i += note.size;
-				const char* key = _engine.world()->uri_map().unmap_uri(note.key);
+				const char* key = _engine.world().uri_map().unmap_uri(note.key);
 				if (key) {
 					_engine.broadcaster()->set_property(
 						note.port->uri(), URI(key), value);

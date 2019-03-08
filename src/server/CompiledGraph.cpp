@@ -144,7 +144,7 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 
 	_master = Task::simplify(std::move(_master));
 
-	if (graph->engine().world()->conf().option("trace").get<int32_t>()) {
+	if (graph->engine().world().conf().option("trace").get<int32_t>()) {
 		ColorContext ctx(stderr, ColorContext::Color::YELLOW);
 		dump(graph->path());
 	}

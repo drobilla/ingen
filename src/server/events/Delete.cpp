@@ -60,7 +60,7 @@ Delete::~Delete()
 bool
 Delete::pre_process(PreProcessContext& ctx)
 {
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 	if (_path.is_root() || _path == "/control" || _path == "/notify") {
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
@@ -187,7 +187,7 @@ Delete::post_process()
 void
 Delete::undo(Interface& target)
 {
-	const ingen::URIs& uris  = _engine.world()->uris();
+	const ingen::URIs& uris  = _engine.world().uris();
 	ingen::Forge&      forge = _engine.buffer_factory()->forge();
 
 	auto i = _removed_objects.find(_path);

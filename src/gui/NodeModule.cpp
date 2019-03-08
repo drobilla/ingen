@@ -295,8 +295,8 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::rename()
 {
-	if (app().world()->conf().option("port-labels").get<int32_t>() &&
-	    !app().world()->conf().option("human-names").get<int32_t>()) {
+	if (app().world().conf().option("port-labels").get<int32_t>() &&
+	    !app().world().conf().option("human-names").get<int32_t>()) {
 		set_label(_block->path().symbol());
 	}
 }
@@ -484,7 +484,7 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name
-		    && app().world()->conf().option("human-names").get<int32_t>()) {
+		    && app().world().conf().option("human-names").get<int32_t>()) {
 			set_label(value.ptr<char>());
 		}
 	}

@@ -38,7 +38,7 @@ public:
 
 	const char* uri() const override { return LV2_OPTIONS__options; }
 
-	SPtr<LV2_Feature> feature(World* w, Node* n) override {
+	SPtr<LV2_Feature> feature(World& w, Node* n) override {
 		const LV2_Options_Option options[] = {
 			{ LV2_OPTIONS_INSTANCE, 0, _uris.bufsz_minBlockLength,
 			  sizeof(int32_t), _uris.atom_Int, &_block_length },

@@ -52,7 +52,7 @@ SetPortValue::SetPortValue(Engine&         engine,
 bool
 SetPortValue::pre_process(PreProcessContext& ctx)
 {
-	ingen::URIs& uris = _engine.world()->uris();
+	ingen::URIs& uris = _engine.world().uris();
 	if (_port->is_output()) {
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
@@ -60,7 +60,7 @@ SetPortValue::pre_process(PreProcessContext& ctx)
 	if (!_activity) {
 		// Set value metadata (does not affect buffers)
 		_port->set_value(_value);
-		_port->set_property(_engine.world()->uris().ingen_value, _value);
+		_port->set_property(_engine.world().uris().ingen_value, _value);
 	}
 
 	_binding = _engine.control_bindings()->port_binding(_port);
@@ -90,7 +90,7 @@ SetPortValue::apply(RunContext& context)
 		return;
 	}
 
-	ingen::URIs&  uris = _engine.world()->uris();
+	ingen::URIs&  uris = _engine.world().uris();
 	Buffer*       buf  = _port->buffer(0).get();
 
 	if (_buffer) {
@@ -129,7 +129,7 @@ SetPortValue::post_process()
 	if (respond() == Status::SUCCESS && !_activity) {
 		_engine.broadcaster()->set_property(
 			_port->uri(),
-			_engine.world()->uris().ingen_value,
+			_engine.world().uris().ingen_value,
 			_value);
 	}
 }

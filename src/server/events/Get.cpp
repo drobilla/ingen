@@ -88,7 +88,7 @@ Get::post_process()
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
 		} else if (_msg.subject == "ingen:/engine") {
 			// TODO: Keep a proper RDF model of the engine
-			URIs&      uris  = _engine.world()->uris();
+			URIs&      uris  = _engine.world().uris();
 			Properties props = {
 				{ uris.param_sampleRate,
 				  uris.forge.make(int32_t(_engine.sample_rate())) },

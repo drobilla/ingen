@@ -118,8 +118,8 @@ public:
 	Style*           style()           const { return _style; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
-	ingen::Forge&             forge()     const { return _world->forge(); }
-	SPtr<ingen::Interface>    interface() const { return _world->interface(); }
+	ingen::Forge&             forge()     const { return _world.forge(); }
+	SPtr<ingen::Interface>    interface() const { return _world.interface(); }
 	SPtr<ingen::Interface>    client()    const { return _client; }
 	SPtr<client::ClientStore> store()     const { return _store; }
 	SPtr<ThreadedLoader>      loader()    const { return _loader; }
@@ -128,7 +128,7 @@ public:
 
 	SPtr<Serialiser> serialiser();
 
-	static SPtr<App> create(ingen::World* world);
+	static SPtr<App> create(ingen::World& world);
 
 	void run();
 
@@ -136,12 +136,12 @@ public:
 
 	sigc::signal<void, const std::string&> signal_status_text_changed;
 
-	inline ingen::World* world() const { return _world; }
-	inline ingen::URIs&  uris()  const { return _world->uris(); }
-	inline ingen::Log&   log()   const { return _world->log(); }
+	inline ingen::World& world() const { return _world; }
+	inline ingen::URIs&  uris()  const { return _world.uris(); }
+	inline ingen::Log&   log()   const { return _world.log(); }
 
 protected:
-	explicit App(ingen::World* world);
+	explicit App(ingen::World& world);
 
 	void message(const ingen::Message& msg);
 
@@ -172,7 +172,7 @@ protected:
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
 
-	ingen::World* _world;
+	ingen::World& _world;
 
 	int32_t     _sample_rate;
 	int32_t     _block_length;

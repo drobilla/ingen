@@ -74,7 +74,7 @@ class Worker;
 class INGEN_API Engine : public EngineBase
 {
 public:
-	explicit Engine(ingen::World* world);
+	explicit Engine(ingen::World& world);
 	virtual ~Engine();
 
 	Engine(const Engine&) = delete;
@@ -129,7 +129,7 @@ public:
 	/** Process all events (no RT limits). */
 	unsigned process_all_events();
 
-	ingen::World* world() const { return _world; }
+	ingen::World& world() const { return _world; }
 	Log&          log()   const;
 
 	const SPtr<Interface>&       interface()        const { return _interface; }
@@ -176,7 +176,7 @@ public:
 	Properties load_properties() const;
 
 private:
-	ingen::World* _world;
+	ingen::World& _world;
 
 	SPtr<LV2Options>      _options;
 	UPtr<BufferFactory>   _buffer_factory;

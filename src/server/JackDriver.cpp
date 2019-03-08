@@ -65,9 +65,9 @@ JackDriver::JackDriver(Engine& engine)
 	, _old_frame(0)
 	, _old_rolling(false)
 {
-	_midi_event_type = _engine.world()->uris().midi_MidiEvent;
+	_midi_event_type = _engine.world().uris().midi_MidiEvent;
 	lv2_atom_forge_init(
-		&_forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
+		&_forge, &engine.world().uri_map().urid_map_feature()->urid_map);
 }
 
 JackDriver::~JackDriver()
@@ -84,7 +84,7 @@ JackDriver::attach(const std::string& server_name,
 	assert(!_client);
 	if (!jack_client) {
 #ifdef INGEN_JACK_SESSION
-		const std::string uuid = _engine.world()->jack_uuid();
+		const std::string uuid = _engine.world().jack_uuid();
 		if (!uuid.empty()) {
 			_client = jack_client_open(client_name.c_str(),
 			                           JackSessionID, nullptr,
@@ -147,7 +147,7 @@ JackDriver::attach(const std::string& server_name,
 bool
 JackDriver::activate()
 {
-	World* world = _engine.world();
+	World& world = _engine.world();
 
 	if (_is_activated) {
 		_engine.log().warn("Jack driver already activated\n");
@@ -155,8 +155,8 @@ JackDriver::activate()
 	}
 
 	if (!_client) {
-		attach(world->conf().option("jack-server").ptr<char>(),
-		       world->conf().option("jack-name").ptr<char>(), nullptr);
+		attach(world.conf().option("jack-server").ptr<char>(),
+		       world.conf().option("jack-name").ptr<char>(), nullptr);
 	}
 
 	if (!_client) {
@@ -172,7 +172,7 @@ JackDriver::activate()
 		return false;
 	} else {
 		_engine.log().info(fmt("Activated Jack client `%1%'\n") %
-		                   world->conf().option("jack-name").ptr<char>());
+		                   world.conf().option("jack-name").ptr<char>());
 	}
 	return true;
 }
@@ -306,15 +306,15 @@ JackDriver::port_property_internal(const jack_port_t* jport,
                                    const Atom&        value)
 {
 #ifdef HAVE_JACK_METADATA
-	if (uri == _engine.world()->uris().lv2_name) {
+	if (uri == _engine.world().uris().lv2_name) {
 		jack_set_property(_client, jack_port_uuid(jport),
 		                  JACK_METADATA_PRETTY_NAME, value.ptr<char>(), "text/plain");
-	} else if (uri == _engine.world()->uris().lv2_index) {
+	} else if (uri == _engine.world().uris().lv2_index) {
 		jack_set_property(_client, jack_port_uuid(jport),
 		                  JACKEY_ORDER, std::to_string(value.get<int32_t>()).c_str(),
 		                  "http://www.w3.org/2001/XMLSchema#integer");
-	} else if (uri == _engine.world()->uris().rdf_type) {
-		if (value == _engine.world()->uris().lv2_CVPort) {
+	} else if (uri == _engine.world().uris().rdf_type) {
+		if (value == _engine.world().uris().lv2_CVPort) {
 			jack_set_property(_client, jack_port_uuid(jport),
 			                  JACKEY_SIGNAL_TYPE, "CV", "text/plain");
 		}
@@ -331,7 +331,7 @@ JackDriver::create_port(DuplexPort* graph_port)
 		eport = new EnginePort(graph_port);
 		graph_port->set_is_driver_port(*_engine.buffer_factory());
 	} else if (graph_port->is_a(PortType::ATOM) &&
-	           graph_port->buffer_type() == _engine.world()->uris().atom_Sequence) {
+	           graph_port->buffer_type() == _engine.world().uris().atom_Sequence) {
 		// Sequence port, make Jack port but use internal LV2 format buffer
 		eport = new EnginePort(graph_port);
 	}
@@ -346,7 +346,7 @@ JackDriver::create_port(DuplexPort* graph_port)
 void
 JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 {
-	const URIs&       uris       = context.engine().world()->uris();
+	const URIs&       uris       = context.engine().world().uris();
 	const SampleCount nframes    = context.nframes();
 	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
 	DuplexPort*       graph_port = port->graph_port();
@@ -381,7 +381,7 @@ JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 void
 JackDriver::post_process_port(RunContext& context, EnginePort* port)
 {
-	const URIs&       uris       = context.engine().world()->uris();
+	const URIs&       uris       = context.engine().world().uris();
 	const SampleCount nframes    = context.nframes();
 	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
 	DuplexPort*       graph_port = port->graph_port();
@@ -420,7 +420,7 @@ void
 JackDriver::append_time_events(RunContext& context,
                                Buffer&     buffer)
 {
-	const URIs&            uris    = context.engine().world()->uris();
+	const URIs&            uris    = context.engine().world().uris();
 	const jack_position_t* pos     = &_position;
 	const bool             rolling = (_transport_state == JackTransportRolling);
 
@@ -552,9 +552,9 @@ JackDriver::_session_cb(jack_session_event_t* event)
 		% jack_get_client_name(_client)
 		% event->client_uuid).str();
 
-	SPtr<Serialiser> serialiser = _engine.world()->serialiser();
+	SPtr<Serialiser> serialiser = _engine.world().serialiser();
 	if (serialiser) {
-		std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
+		std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
 
 		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root,

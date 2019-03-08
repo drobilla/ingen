@@ -44,7 +44,7 @@ public:
 
 		virtual const char* uri() const = 0;
 
-		virtual SPtr<LV2_Feature> feature(World* world,
+		virtual SPtr<LV2_Feature> feature(World& world,
 		                                  Node*  block) = 0;
 
 protected:
@@ -57,7 +57,7 @@ protected:
 
 		const char* uri() const override { return _uri; }
 
-		SPtr<LV2_Feature> feature(World* world, Node* block) override {
+		SPtr<LV2_Feature> feature(World& world, Node* block) override {
 			return SPtr<LV2_Feature>();
 		}
 
@@ -82,8 +82,7 @@ protected:
 	void add_feature(SPtr<Feature> feature);
 	bool is_supported(const std::string& uri) const;
 
-	SPtr<FeatureArray> lv2_features(World* world,
-	                                Node*  node) const;
+	SPtr<FeatureArray> lv2_features(World& world, Node*  node) const;
 
 private:
 	typedef std::vector< SPtr<Feature> > Features;

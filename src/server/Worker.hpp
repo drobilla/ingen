@@ -43,7 +43,7 @@ public:
 
 		const char* uri() const override { return LV2_WORKER__schedule; }
 
-		SPtr<LV2_Feature> feature(World* world, Node* n) override;
+		SPtr<LV2_Feature> feature(World& world, Node* n) override;
 
 		const bool synchronous;
 	};

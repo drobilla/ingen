@@ -32,7 +32,7 @@ static SPtr<const PortModel>
 get_port(PluginUI* ui, uint32_t port_index)
 {
 	if (port_index >= ui->block()->ports().size()) {
-		ui->world()->log().error(
+		ui->world().log().error(
 			fmt("%1% UI tried to access invalid port %2%\n")
 			% ui->block()->plugin()->uri().c_str() % port_index);
 		return SPtr<const PortModel>();
@@ -48,7 +48,7 @@ lv2_ui_write(SuilController controller,
              const void*    buffer)
 {
 	PluginUI* const       ui   = (PluginUI*)controller;
-	const URIs&           uris = ui->world()->uris();
+	const URIs&           uris = ui->world().uris();
 	SPtr<const PortModel> port = get_port(ui, port_index);
 	if (!port) {
 		return;
@@ -57,7 +57,7 @@ lv2_ui_write(SuilController controller,
 	// float (special case, always 0)
 	if (format == 0) {
 		if (buffer_size != 4) {
-			ui->world()->log().error(
+			ui->world().log().error(
 				fmt("%1% UI wrote corrupt float with bad size\n")
 				% ui->block()->plugin()->uri().c_str());
 			return;
@@ -71,19 +71,19 @@ lv2_ui_write(SuilController controller,
 		ui->signal_property_changed()(
 			port->uri(),
 			uris.ingen_value,
-			ui->world()->forge().make(value),
+			ui->world().forge().make(value),
 			Resource::Graph::DEFAULT);
 
 	} else if (format == uris.atom_eventTransfer.urid.get<LV2_URID>()) {
 		const LV2_Atom* atom = (const LV2_Atom*)buffer;
-		Atom            val  = ui->world()->forge().alloc(
+		Atom            val  = ui->world().forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 		ui->signal_property_changed()(port->uri(),
 		                              uris.ingen_activity,
 		                              val,
 		                              Resource::Graph::DEFAULT);
 	} else {
-		ui->world()->log().warn(
+		ui->world().log().warn(
 			fmt("Unknown value format %1% from LV2 UI\n")
 			% format % ui->block()->plugin()->uri().c_str());
 	}
@@ -117,8 +117,8 @@ lv2_ui_subscribe(SuilController            controller,
 
 	ui->signal_property_changed()(
 		ui->block()->ports()[port_index]->uri(),
-		ui->world()->uris().ingen_broadcast,
-		ui->world()->forge().make(true),
+		ui->world().uris().ingen_broadcast,
+		ui->world().forge().make(true),
 		Resource::Graph::DEFAULT);
 
 	return 0;
@@ -138,14 +138,14 @@ lv2_ui_unsubscribe(SuilController            controller,
 
 	ui->signal_property_changed()(
 		ui->block()->ports()[port_index]->uri(),
-		ui->world()->uris().ingen_broadcast,
-		ui->world()->forge().make(false),
+		ui->world().uris().ingen_broadcast,
+		ui->world().forge().make(false),
 		Resource::Graph::DEFAULT);
 
 	return 0;
 }
 
-PluginUI::PluginUI(ingen::World*          world,
+PluginUI::PluginUI(ingen::World&          world,
                    SPtr<const BlockModel> block,
                    LilvUIs*               uis,
                    const LilvUI*          ui,
@@ -169,11 +169,11 @@ PluginUI::~PluginUI()
 	lilv_node_free(_ui_node);
 	lilv_node_free(_ui_type);
 	lilv_uis_free(_uis);
-	lilv_world_unload_resource(_world->lilv_world(), lilv_ui_get_uri(_ui));
+	lilv_world_unload_resource(_world.lilv_world(), lilv_ui_get_uri(_ui));
 }
 
 SPtr<PluginUI>
-PluginUI::create(ingen::World*          world,
+PluginUI::create(ingen::World&          world,
                  SPtr<const BlockModel> block,
                  const LilvPlugin*      plugin)
 {
@@ -186,7 +186,7 @@ PluginUI::create(ingen::World*          world,
 
 	static const char* gtk_ui_uri = LV2_UI__GtkUI;
 
-	LilvNode* gtk_ui = lilv_new_uri(world->lilv_world(), gtk_ui_uri);
+	LilvNode* gtk_ui = lilv_new_uri(world.lilv_world(), gtk_ui_uri);
 
 	LilvUIs*        uis     = lilv_plugin_get_uis(plugin);
 	const LilvUI*   ui      = nullptr;
@@ -210,7 +210,7 @@ PluginUI::create(ingen::World*          world,
 
 	// Create the PluginUI, but don't instantiate yet
 	SPtr<PluginUI> ret(new PluginUI(world, block, uis, ui, ui_type));
-	ret->_features = world->lv2_features().lv2_features(
+	ret->_features = world.lv2_features().lv2_features(
 		world, const_cast<BlockModel*>(block.get()));
 
 	return ret;
@@ -219,9 +219,9 @@ PluginUI::create(ingen::World*          world,
 bool
 PluginUI::instantiate()
 {
-	const URIs&       uris       = _world->uris();
+	const URIs&       uris       = _world.uris();
 	const std::string plugin_uri = _block->plugin()->uri();
-	LilvWorld*        lworld     = _world->lilv_world();
+	LilvWorld*        lworld     = _world.lilv_world();
 
 	// Load seeAlso files to access data like portNotification descriptions
 	lilv_world_load_resource(lworld, lilv_ui_get_uri(_ui));
@@ -238,14 +238,14 @@ PluginUI::instantiate()
 		const LilvNode* sym  = lilv_world_get(lworld, note, uris.lv2_symbol, nullptr);
 		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, nullptr);
 		if (!plug) {
-			_world->log().error(fmt("%1% UI %2% notification missing plugin\n")
-			                    % plugin_uri % lilv_node_as_string(_ui_node));
+			_world.log().error(fmt("%1% UI %2% notification missing plugin\n")
+			                   % plugin_uri % lilv_node_as_string(_ui_node));
 		} else if (!sym) {
-			_world->log().error(fmt("%1% UI %2% notification missing symbol\n")
-			                    % plugin_uri % lilv_node_as_string(_ui_node));
+			_world.log().error(fmt("%1% UI %2% notification missing symbol\n")
+			                   % plugin_uri % lilv_node_as_string(_ui_node));
 		} else if (!lilv_node_is_uri(plug)) {
-			_world->log().error(fmt("%1% UI %2% notification has non-URI plugin\n")
-			                    % plugin_uri % lilv_node_as_string(_ui_node));
+			_world.log().error(fmt("%1% UI %2% notification has non-URI plugin\n")
+			                   % plugin_uri % lilv_node_as_string(_ui_node));
 		} else if (!strcmp(lilv_node_as_uri(plug), plugin_uri.c_str())) {
 			// Notification is valid and for this plugin
 			uint32_t index = lv2_ui_port_index(this, lilv_node_as_string(sym));
@@ -280,7 +280,7 @@ PluginUI::instantiate()
 	lilv_free(bundle_path);
 
 	if (!_instance) {
-		_world->log().error("Failed to instantiate LV2 UI\n");
+		_world.log().error("Failed to instantiate LV2 UI\n");
 		// Cancel any subscriptions
 		for (uint32_t i : _subscribed_ports) {
 			lv2_ui_unsubscribe(this, i, 0, nullptr);
@@ -307,14 +307,14 @@ PluginUI::port_event(uint32_t    port_index,
 		suil_instance_port_event(
 			_instance, port_index, buffer_size, format, buffer);
 	} else {
-		_world->log().warn("LV2 UI port event with no instance\n");
+		_world.log().warn("LV2 UI port event with no instance\n");
 	}
 }
 
 bool
 PluginUI::is_resizable() const
 {
-	LilvWorld*      w   = _world->lilv_world();
+	LilvWorld*      w   = _world.lilv_world();
 	const LilvNode* s   = _ui_node;
 	LilvNode*       p   = lilv_new_uri(w, LV2_CORE__optionalFeature);
 	LilvNode*       fs  = lilv_new_uri(w, LV2_UI__fixedSize);

@@ -29,9 +29,9 @@
 namespace ingen {
 namespace server {
 
-LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
-	: PluginImpl(world->uris(),
-	             world->uris().lv2_Plugin.urid,
+LV2Plugin::LV2Plugin(World& world, const LilvPlugin* lplugin)
+	: PluginImpl(world.uris(),
+	             world.uris().lv2_Plugin.urid,
 	             URI(lilv_node_as_uri(lilv_plugin_get_uri(lplugin))))
 	, _world(world)
 	, _lilv_plugin(lplugin)
@@ -44,20 +44,20 @@ LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
 void
 LV2Plugin::update_properties()
 {
-	LilvNode* minor = lilv_world_get(_world->lilv_world(),
+	LilvNode* minor = lilv_world_get(_world.lilv_world(),
 	                                 lilv_plugin_get_uri(_lilv_plugin),
 	                                 _uris.lv2_minorVersion,
 	                                 nullptr);
-	LilvNode* micro = lilv_world_get(_world->lilv_world(),
+	LilvNode* micro = lilv_world_get(_world.lilv_world(),
 	                                 lilv_plugin_get_uri(_lilv_plugin),
 	                                 _uris.lv2_microVersion,
 	                                 nullptr);
 
 	if (lilv_node_is_int(minor) && lilv_node_is_int(micro)) {
 		set_property(_uris.lv2_minorVersion,
-		             _world->forge().make(lilv_node_as_int(minor)));
+		             _world.forge().make(lilv_node_as_int(minor)));
 		set_property(_uris.lv2_microVersion,
-		             _world->forge().make(lilv_node_as_int(micro)));
+		             _world.forge().make(lilv_node_as_int(micro)));
 	}
 
 	lilv_node_free(minor);
@@ -108,8 +108,8 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
 void
 LV2Plugin::load_presets()
 {
-	const URIs& uris    = _world->uris();
-	LilvWorld*  lworld  = _world->lilv_world();
+	const URIs& uris    = _world.uris();
+	LilvWorld*  lworld  = _world.lilv_world();
 	LilvNodes*  presets = lilv_plugin_get_related(_lilv_plugin, uris.pset_Preset);
 
 	if (presets) {
@@ -127,7 +127,7 @@ LV2Plugin::load_presets()
 
 				lilv_nodes_free(labels);
 			} else {
-				_world->log().error(
+				_world.log().error(
 					fmt("Preset <%1%> has no rdfs:label\n")
 					% lilv_node_as_string(lilv_nodes_get(presets, i)));
 			}

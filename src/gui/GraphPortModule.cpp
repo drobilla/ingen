@@ -141,10 +141,10 @@ GraphPortModule::property_changed(const URI& key, const Atom& value)
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name &&
-		    app().world()->conf().option("human-names").get<int32_t>()) {
+		    app().world().conf().option("human-names").get<int32_t>()) {
 			set_name(value.ptr<char>());
 		} else if (key == uris.lv2_symbol &&
-		           !app().world()->conf().option("human-names").get<int32_t>()) {
+		           !app().world().conf().option("human-names").get<int32_t>()) {
 			set_name(value.ptr<char>());
 		}
 	} else if (value.type() == uris.forge.Bool) {

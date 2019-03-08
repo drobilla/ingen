@@ -117,7 +117,7 @@ Delta::init()
 	}
 
 	// Set atomic execution if polyphony is to be changed
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 	if (_properties.count(uris.ingen_polyphonic) ||
 	    _properties.count(uris.ingen_polyphony)) {
 		_block = true;
@@ -171,7 +171,7 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 bool
 Delta::pre_process(PreProcessContext& ctx)
 {
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 
 	const bool is_graph_object = uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
@@ -189,11 +189,11 @@ Delta::pre_process(PreProcessContext& ctx)
 		const auto p = _properties.find(uris.lv2_prototype);
 		if (p == _properties.end()) {
 			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
-		} else if (!_engine.world()->forge().is_uri(p->second)) {
+		} else if (!_engine.world().forge().is_uri(p->second)) {
 			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
 		}
 
-		const URI prot(_engine.world()->forge().str(p->second, false));
+		const URI prot(_engine.world().forge().str(p->second, false));
 		if (!uri_is_path(prot)) {
 			return Event::pre_process_done(Status::BAD_URI, _subject);
 		}
@@ -271,7 +271,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			_removed.emplace(key, value);
 			_object->remove_property(key, value);
 		} else if (is_engine && key == uris.ingen_loadedBundle) {
- 			LilvWorld* lworld = _engine.world()->lilv_world();
+ 			LilvWorld* lworld = _engine.world().lilv_world();
 			LilvNode*  bundle = get_file_node(lworld, uris, value);
 			if (bundle) {
 				for (const auto& p : _engine.block_factory()->plugins()) {
@@ -440,7 +440,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			_engine.broadcaster()->set_broadcast(
 				_request_client, value.get<int32_t>());
 		} else if (is_engine && key == uris.ingen_loadedBundle) {
- 			LilvWorld* lworld = _engine.world()->lilv_world();
+ 			LilvWorld* lworld = _engine.world().lilv_world();
 			LilvNode*  bundle = get_file_node(lworld, uris, value);
 			if (bundle) {
 				lilv_world_load_bundle(lworld, bundle);
@@ -481,7 +481,7 @@ Delta::execute(RunContext& context)
 		return;
 	}
 
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 
 	if (_create_event) {
 		_create_event->set_time(_time);

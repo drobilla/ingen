@@ -171,8 +171,8 @@ GraphCanvas::GraphCanvas(App&                   app,
 	_menu_properties->signal_activate().connect(
 		sigc::mem_fun(this, &GraphCanvas::menu_properties));
 
-	show_human_names(app.world()->conf().option("human-names").get<int32_t>());
-	show_port_names(app.world()->conf().option("port-labels").get<int32_t>());
+	show_human_names(app.world().conf().option("human-names").get<int32_t>());
+	show_port_names(app.world().conf().option("port-labels").get<int32_t>());
 	set_port_order(port_order, nullptr);
 }
 
@@ -213,7 +213,7 @@ GraphCanvas::build_menus()
 	if (_plugin_menu) {
 		_plugin_menu->clear();
 	} else {
-		_plugin_menu = Gtk::manage(new PluginMenu(*_app.world()));
+		_plugin_menu = Gtk::manage(new PluginMenu(_app.world()));
 		_menu->items().push_back(
 			Gtk::Menu_Helpers::ImageMenuElem(
 				"_Plugin",
@@ -280,7 +280,7 @@ void
 GraphCanvas::show_human_names(bool b)
 {
 	_human_names = b;
-	_app.world()->conf().set("human-names", _app.forge().make(b));
+	_app.world().conf().set("human-names", _app.forge().make(b));
 
 	for_each_node(show_module_human_names, &b);
 }
@@ -643,9 +643,9 @@ serialise_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::copy_selection()
 {
-	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
-	Serialiser serialiser(*_app.world());
+	Serialiser serialiser(_app.world());
 	serialiser.start_to_string(_graph->path(), _graph->base_uri());
 
 	for_each_selected_node(serialise_node, &serialiser);
@@ -661,7 +661,7 @@ GraphCanvas::paste()
 {
 	typedef Properties::const_iterator PropIter;
 
-	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
 	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
 	SPtr<Parser>        parser = _app.loader()->parser();
@@ -678,14 +678,14 @@ GraphCanvas::paste()
 	++_paste_count;
 
 	// Make a client store to serve as clipboard
-	ClientStore clipboard(_app.world()->uris(), _app.log());
+	ClientStore clipboard(_app.world().uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
 	clipboard.put(main_uri(),
 	              {{uris.rdf_type, Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
 	boost::optional<URI> base_uri = parser->parse_string(
-		*_app.world(), clipboard, str, main_uri());
+		_app.world(), clipboard, str, main_uri());
 
 	// Figure out the copy graph base path
 	Raul::Path copy_root("/");

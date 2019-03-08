@@ -47,7 +47,7 @@ public:
 	struct Feature : public LV2Features::Feature {
 		const char* uri() const override { return LV2_LOG__log; }
 
-		SPtr<LV2_Feature> feature(World* world, Node* block) override;
+		SPtr<LV2_Feature> feature(World& world, Node* block) override;
 
 		struct Handle {
 			LV2_Log_Log lv2_log;

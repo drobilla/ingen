@@ -143,18 +143,18 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _msg.old_uri);
 	}
 
-	if (!_engine.world()->serialiser()) {
+	if (!_engine.world().serialiser()) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
 	}
 
-	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
+	std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
 
 	if (ends_with(_msg.new_uri, ".ingen") || ends_with(_msg.new_uri, ".ingen/")) {
-		_engine.world()->serialiser()->write_bundle(graph, URI(_msg.new_uri));
+		_engine.world().serialiser()->write_bundle(graph, URI(_msg.new_uri));
 	} else {
-		_engine.world()->serialiser()->start_to_file(graph->path(), _msg.new_uri);
-		_engine.world()->serialiser()->serialise(graph);
-		_engine.world()->serialiser()->finish();
+		_engine.world().serialiser()->start_to_file(graph->path(), _msg.new_uri);
+		_engine.world().serialiser()->serialise(graph);
+		_engine.world().serialiser()->finish();
 	}
 
 	return Event::pre_process_done(Status::SUCCESS);
@@ -163,11 +163,11 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 bool
 Copy::filesystem_to_engine(PreProcessContext& ctx)
 {
-	if (!_engine.world()->parser()) {
+	if (!_engine.world().parser()) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
 	}
 
-	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
+	std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
 
 	// Old URI is a filesystem path and new URI is a path within the engine
 	const std::string             src_path(_msg.old_uri.path());
@@ -179,8 +179,8 @@ Copy::filesystem_to_engine(PreProcessContext& ctx)
 		dst_symbol = Raul::Symbol(dst_path.symbol());
 	}
 
-	_engine.world()->parser()->parse_file(
-		*_engine.world(), *_engine.world()->interface(), src_path,
+	_engine.world().parser()->parse_file(
+		_engine.world(), *_engine.world().interface(), src_path,
 		dst_parent, dst_symbol);
 
 	return Event::pre_process_done(Status::SUCCESS);

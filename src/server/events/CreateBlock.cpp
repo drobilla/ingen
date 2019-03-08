@@ -53,7 +53,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 {
 	typedef Properties::const_iterator iterator;
 
-	const ingen::URIs& uris  = _engine.world()->uris();
+	const ingen::URIs& uris  = _engine.world().uris();
 	const SPtr<Store>  store = _engine.store();
 
 	// Check sanity of target path

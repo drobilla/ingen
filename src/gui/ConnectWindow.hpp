@@ -50,7 +50,7 @@ public:
 	              Glib::RefPtr<Gtk::Builder> xml);
 
 	void set_connected_to(SPtr<ingen::Interface> engine);
-	void start(App& app, ingen::World* world);
+	void start(App& app, ingen::World& world);
 
 	bool attached()  const { return _finished_connecting; }
 	bool quit_flag() const { return _quit_flag; }

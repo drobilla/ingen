@@ -218,13 +218,13 @@ bool
 LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 {
 	const ingen::URIs& uris      = bufs.uris();
-	ingen::World*      world     = bufs.engine().world();
+	ingen::World&      world     = bufs.engine().world();
 	const LilvPlugin*  plug      = _lv2_plugin->lilv_plugin();
 	ingen::Forge&      forge     = bufs.forge();
 	const uint32_t     num_ports = lilv_plugin_get_num_ports(plug);
 
 	LilvNode* lv2_connectionOptional = lilv_new_uri(
-		bufs.engine().world()->lilv_world(), LV2_CORE__connectionOptional);
+		world.lilv_world(), LV2_CORE__connectionOptional);
 
 	_ports = bufs.maid().make_managed<BlockImpl::Ports>(num_ports, nullptr);
 
@@ -291,7 +291,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 			LILV_FOREACH(nodes, i, types) {
 				const LilvNode* type = lilv_nodes_get(types, i);
 				if (lilv_node_is_uri(type)) {
-					buffer_type = bufs.engine().world()->uri_map().map_uri(
+					buffer_type = world.uri_map().map_uri(
 						lilv_node_as_uri(type));
 				}
 			}
@@ -322,8 +322,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 					port_buffer_size = std::max(port_buffer_size, str_val_len);
 				} else if (lilv_node_is_uri(d)) {
 					const char* uri_val = lilv_node_as_uri(d);
-					val = forge.make_urid(
-						bufs.engine().world()->uri_map().map_uri(uri_val));
+					val = forge.make_urid(world.uri_map().map_uri(uri_val));
 				}
 			}
 			lilv_nodes_free(defaults);
@@ -420,7 +419,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		return ret;
 	}
 
-	_features = world->lv2_features().lv2_features(world, this);
+	_features = world.lv2_features().lv2_features(world, this);
 
 	// Actually create plugin instances and port buffers.
 	const SampleRate rate = bufs.engine().sample_rate();
@@ -461,12 +460,12 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 bool
 LV2Block::save_state(const FilePath& dir) const
 {
-	World*     world  = _lv2_plugin->world();
-	LilvWorld* lworld = world->lilv_world();
+	World&     world  = _lv2_plugin->world();
+	LilvWorld* lworld = world.lilv_world();
 
 	LilvState* state = lilv_state_new_from_instance(
 		_lv2_plugin->lilv_plugin(), const_cast<LV2Block*>(this)->instance(0),
-		&world->uri_map().urid_map_feature()->urid_map,
+		&world.uri_map().urid_map_feature()->urid_map,
 		nullptr, dir.c_str(), dir.c_str(), dir.c_str(), nullptr, nullptr,
 		LV2_STATE_IS_POD|LV2_STATE_IS_PORTABLE, nullptr);
 
@@ -478,8 +477,8 @@ LV2Block::save_state(const FilePath& dir) const
 	}
 
 	lilv_state_save(lworld,
-	                &world->uri_map().urid_map_feature()->urid_map,
-	                &world->uri_map().urid_unmap_feature()->urid_unmap,
+	                &world.uri_map().urid_map_feature()->urid_map,
+	                &world.uri_map().urid_unmap_feature()->urid_unmap,
 	                state,
 	                nullptr,
 	                dir.c_str(),
@@ -500,7 +499,7 @@ LV2Block::duplicate(Engine&             engine,
 	// Get current state
 	LilvState* state = lilv_state_new_from_instance(
 		_lv2_plugin->lilv_plugin(), instance(0),
-		&engine.world()->uri_map().urid_map_feature()->urid_map,
+		&engine.world().uri_map().urid_map_feature()->urid_map,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, LV2_STATE_IS_NATIVE, nullptr);
 
 	// Duplicate and instantiate block
@@ -606,15 +605,15 @@ LV2Block::post_process(RunContext& context)
 LilvState*
 LV2Block::load_preset(const URI& uri)
 {
-	World*     world  = _lv2_plugin->world();
-	LilvWorld* lworld = world->lilv_world();
+	World&     world  = _lv2_plugin->world();
+	LilvWorld* lworld = world.lilv_world();
 	LilvNode*  preset = lilv_new_uri(lworld, uri.c_str());
 
 	// Load preset into world if necessary
 	lilv_world_load_resource(lworld, preset);
 
 	// Load preset from world
-	LV2_URID_Map* map   = &world->uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Map* map   = &world.uri_map().urid_map_feature()->urid_map;
 	LilvState*    state = lilv_state_new_from_world(lworld, map, preset);
 
 	lilv_node_free(preset);
@@ -622,15 +621,15 @@ LV2Block::load_preset(const URI& uri)
 }
 
 LilvState*
-LV2Block::load_state(World* world, const FilePath& path)
+LV2Block::load_state(World& world, const FilePath& path)
 {
-	LilvWorld* lworld  = world->lilv_world();
+	LilvWorld* lworld  = world.lilv_world();
 	const URI  uri     = URI(path);
 	LilvNode*  subject = lilv_new_uri(lworld, uri.c_str());
 
 	LilvState* state = lilv_state_new_from_file(
 		lworld,
-		&world->uri_map().urid_map_feature()->urid_map,
+		&world.uri_map().urid_map_feature()->urid_map,
 		subject,
 		path.c_str());
 
@@ -641,7 +640,7 @@ LV2Block::load_state(World* world, const FilePath& path)
 void
 LV2Block::apply_state(const UPtr<Worker>& worker, const LilvState* state)
 {
-	World*            world = parent_graph()->engine().world();
+	World&            world = parent_graph()->engine().world();
 	SPtr<LV2_Feature> sched;
 	if (worker) {
 		sched = worker->schedule_feature()->feature(world, this);
@@ -679,10 +678,10 @@ boost::optional<Resource>
 LV2Block::save_preset(const URI&        uri,
                       const Properties& props)
 {
-	World*          world  = parent_graph()->engine().world();
-	LilvWorld*      lworld = _lv2_plugin->world()->lilv_world();
-	LV2_URID_Map*   lmap   = &world->uri_map().urid_map_feature()->urid_map;
-	LV2_URID_Unmap* lunmap = &world->uri_map().urid_unmap_feature()->urid_unmap;
+	World&          world  = parent_graph()->engine().world();
+	LilvWorld*      lworld = world.lilv_world();
+	LV2_URID_Map*   lmap   = &world.uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Unmap* lunmap = &world.uri_map().urid_unmap_feature()->urid_unmap;
 
 	const FilePath path     = FilePath(uri.path());
 	const FilePath dirname  = path.parent_path();
@@ -710,9 +709,9 @@ LV2Block::save_preset(const URI&        uri,
 
 		Resource preset(_uris, uri);
 		preset.set_property(_uris.rdf_type, _uris.pset_Preset);
-		preset.set_property(_uris.rdfs_label, world->forge().alloc(label));
+		preset.set_property(_uris.rdfs_label, world.forge().alloc(label));
 		preset.set_property(_uris.lv2_appliesTo,
-		                    world->forge().make_urid(_lv2_plugin->uri()));
+		                    world.forge().make_urid(_lv2_plugin->uri()));
 
 		const std::string bundle_uri = URI(dirname).string() + '/';
 		LilvNode* lbundle = lilv_new_uri(lworld, bundle_uri.c_str());

@@ -54,7 +54,7 @@ CreateGraph::~CreateGraph()
 void
 CreateGraph::build_child_events()
 {
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 
 	// Properties common to both ports
 	Properties control_properties;
@@ -111,7 +111,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		}
 	}
 
-	const ingen::URIs& uris = _engine.world()->uris();
+	const ingen::URIs& uris = _engine.world().uris();
 
 	typedef Properties::const_iterator iterator;
 

@@ -128,7 +128,7 @@ main(int argc, char** argv)
 	}
 
 #ifdef HAVE_SOCKET
-	client::SocketClient::register_factories(world.get());
+	client::SocketClient::register_factories(*world);
 #endif
 
 	// Load GUI if requested

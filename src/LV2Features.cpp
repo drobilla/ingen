@@ -68,7 +68,7 @@ LV2Features::is_supported(const std::string& uri) const
 }
 
 SPtr<LV2Features::FeatureArray>
-LV2Features::lv2_features(World* world, Node* node) const
+LV2Features::lv2_features(World& world, Node* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (const auto& f : _features) {

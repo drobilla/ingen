@@ -27,26 +27,26 @@ namespace gui {
 struct GUIModule : public Module {
 	using SigClientInterface = client::SigClientInterface;
 
-	void load(World* world) override {
-		URI uri(world->conf().option("connect").ptr<char>());
-		if (!world->interface()) {
-			world->set_interface(
-				world->new_interface(URI(uri), make_client(world)));
+	void load(World& world) override {
+		URI uri(world.conf().option("connect").ptr<char>());
+		if (!world.interface()) {
+			world.set_interface(
+				world.new_interface(URI(uri), make_client(world)));
 		} else if (!dynamic_ptr_cast<SigClientInterface>(
-			           world->interface()->respondee())) {
-			world->interface()->set_respondee(make_client(world));
+			           world.interface()->respondee())) {
+			world.interface()->set_respondee(make_client(world));
 		}
 
 		app = gui::App::create(world);
 	}
 
-	void run(World* world) override {
+	void run(World& world) override {
 		app->run();
 	}
 
-	SPtr<Interface> make_client(World* const world) {
+	SPtr<Interface> make_client(World& world) {
 		SPtr<SigClientInterface> sci(new SigClientInterface());
-		return world->engine() ? sci : SPtr<Interface>(new QueuedInterface(sci));
+		return world.engine() ? sci : SPtr<Interface>(new QueuedInterface(sci));
 	}
 
 	SPtr<gui::App> app;

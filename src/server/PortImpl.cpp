@@ -129,14 +129,14 @@ void
 PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 {
 	const ingen::URIs& uris  = _bufs.uris();
-	ingen::World*      world = _bufs.engine().world();
+	ingen::World&      world = _bufs.engine().world();
 
 	// Update type properties so clients are aware of current type
 	remove_property(uris.rdf_type, uris.lv2_AudioPort);
 	remove_property(uris.rdf_type, uris.lv2_CVPort);
 	remove_property(uris.rdf_type, uris.lv2_ControlPort);
 	remove_property(uris.rdf_type, uris.atom_AtomPort);
-	add_property(uris.rdf_type, world->forge().make_urid(port_type.uri()));
+	add_property(uris.rdf_type, world.forge().make_urid(port_type.uri()));
 
 	// Update audio thread types
 	_type        = port_type;
@@ -450,8 +450,8 @@ PortImpl::monitor(RunContext& context, bool send_now)
 		return;
 	}
 
-	Forge&   forge = context.engine().world()->forge();
-	URIs&    uris  = context.engine().world()->uris();
+	Forge&   forge = context.engine().world().forge();
+	URIs&    uris  = context.engine().world().uris();
 	LV2_URID key   = 0;
 	float    val   = 0.0f;
 	switch (_type.id()) {

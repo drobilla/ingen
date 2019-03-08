@@ -143,13 +143,13 @@ free_log_feature(LV2_Feature* feature) {
 }
 
 SPtr<LV2_Feature>
-Log::Feature::feature(World* world, Node* block)
+Log::Feature::feature(World& world, Node* block)
 {
 	Handle* handle = (Handle*)calloc(1, sizeof(Handle));
 	handle->lv2_log.handle  = handle;
 	handle->lv2_log.printf  = log_printf;
 	handle->lv2_log.vprintf = log_vprintf;
-	handle->log             = &world->log();
+	handle->log             = &world.log();
 	handle->node            = block;
 
 	LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));

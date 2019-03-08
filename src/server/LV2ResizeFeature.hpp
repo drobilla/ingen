@@ -44,7 +44,7 @@ struct ResizeFeature : public ingen::LV2Features::Feature {
 
 	const char* uri() const { return LV2_RESIZE_PORT_URI; }
 
-	SPtr<LV2_Feature> feature(World* w, Node* n) {
+	SPtr<LV2_Feature> feature(World& w, Node* n) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
 		if (!block)
 			return SPtr<LV2_Feature>();

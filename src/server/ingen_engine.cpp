@@ -23,12 +23,12 @@
 using namespace ingen;
 
 struct IngenEngineModule : public ingen::Module {
-	void load(ingen::World* world) override {
-		server::set_denormal_flags(world->log());
+	void load(ingen::World& world) override {
+		server::set_denormal_flags(world.log());
 		SPtr<server::Engine> engine(new server::Engine(world));
-		world->set_engine(engine);
-		if (!world->interface()) {
-			world->set_interface(engine->interface());
+		world.set_engine(engine);
+		if (!world.interface()) {
+			world.set_interface(engine->interface());
 		}
 	}
 };

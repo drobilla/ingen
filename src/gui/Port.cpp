@@ -117,8 +117,8 @@ Port::port_label(App& app, SPtr<const PortModel> pm)
 	}
 
 	std::string label;
-	if (app.world()->conf().option("port-labels").get<int32_t>()) {
-		if (app.world()->conf().option("human-names").get<int32_t>()) {
+	if (app.world().conf().option("port-labels").get<int32_t>()) {
+		if (app.world().conf().option("human-names").get<int32_t>()) {
 			const Atom& name = pm->get_property(app.uris().lv2_name);
 			if (name.type() == app.forge().String) {
 				label = name.ptr<char>();
@@ -178,8 +178,8 @@ Port::show_menu(GdkEventButton* ev)
 void
 Port::moved()
 {
-	if (_app.world()->conf().option("port-labels").get<int32_t>() &&
-	    !_app.world()->conf().option("human-names").get<int32_t>()) {
+	if (_app.world().conf().option("port-labels").get<int32_t>() &&
+	    !_app.world().conf().option("human-names").get<int32_t>()) {
 		set_label(model()->symbol().c_str());
 	}
 }
@@ -199,7 +199,7 @@ Port::on_value_changed(double value)
 
 	const Atom atom = _app.forge().make(float(value));
 	_app.set_property(model()->uri(),
-	                  _app.world()->uris().ingen_value,
+	                  _app.world().uris().ingen_value,
 	                  atom);
 
 	if (_entered) {
@@ -222,8 +222,8 @@ void
 Port::on_scale_point_activated(float f)
 {
 	_app.set_property(model()->uri(),
-	                  _app.world()->uris().ingen_value,
-	                  _app.world()->forge().make(f));
+	                  _app.world().uris().ingen_value,
+	                  _app.world().forge().make(f));
 }
 
 Gtk::Menu*
@@ -249,15 +249,15 @@ void
 Port::on_uri_activated(const URI& uri)
 {
 	_app.set_property(model()->uri(),
-	                  _app.world()->uris().ingen_value,
-	                  _app.world()->forge().make_urid(
-		                  _app.world()->uri_map().map_uri(uri.c_str())));
+	                  _app.world().uris().ingen_value,
+	                  _app.world().forge().make_urid(
+		                  _app.world().uri_map().map_uri(uri.c_str())));
 }
 
 Gtk::Menu*
 Port::build_uri_menu()
 {
-	World*                 world = _app.world();
+	World&                 world = _app.world();
 	SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(model()->parent());
 	Gtk::Menu*             menu  = Gtk::manage(new Gtk::Menu());
 
@@ -269,14 +269,14 @@ Port::build_uri_menu()
 	}
 
 	LilvNode* designation = lilv_new_uri(
-		world->lilv_world(), world->forge().str(designation_atom, false).c_str());
+		world.lilv_world(), world.forge().str(designation_atom, false).c_str());
 	LilvNode* rdfs_range = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "range");
+		world.lilv_world(), LILV_NS_RDFS "range");
 
 	// Get every class in the range of the port's property
 	rdfs::URISet ranges;
 	LilvNodes* range = lilv_world_find_nodes(
-		world->lilv_world(), designation, rdfs_range, nullptr);
+		world.lilv_world(), designation, rdfs_range, nullptr);
 	LILV_FOREACH(nodes, r, range) {
 		ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 	}
@@ -288,7 +288,7 @@ Port::build_uri_menu()
 	// Add a menu item for each such class
 	for (const auto& v : values) {
 		if (!v.first.empty()) {
-			const std::string qname = world->rdf_world()->prefixes().qualify(v.second);
+			const std::string qname = world.rdf_world()->prefixes().qualify(v.second);
 			const std::string label = qname + " - " + v.first;
 			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
 			Gtk::MenuItem* menu_item = &(menu->items().back());
@@ -482,8 +482,8 @@ Port::property_changed(const URI& key, const Atom& value)
 		port_properties_changed();
 	} else if (key == uris.lv2_name) {
 		if (value.type() == uris.forge.String &&
-		    _app.world()->conf().option("port-labels").get<int32_t>() &&
-		    _app.world()->conf().option("human-names").get<int32_t>()) {
+		    _app.world().conf().option("port-labels").get<int32_t>() &&
+		    _app.world().conf().option("human-names").get<int32_t>()) {
 			set_label(value.ptr<char>());
 		}
 	} else if (key == uris.rdf_type || key == uris.atom_bufferType) {

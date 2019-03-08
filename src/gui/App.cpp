@@ -70,7 +70,7 @@ class Port;
 
 Gtk::Main* App::_main = nullptr;
 
-App::App(ingen::World* world)
+App::App(ingen::World& world)
 	: _style(new Style(*this))
 	, _about_dialog(nullptr)
 	, _window_factory(new WindowFactory(*this))
@@ -85,7 +85,7 @@ App::App(ingen::World* world)
 	, _requested_plugins(false)
 	, _is_plugin(false)
 {
-	_world->conf().load_default("ingen", "gui.ttl");
+	_world.conf().load_default("ingen", "gui.ttl");
 
 	WidgetFactory::get_widget_derived("connect_win", _connect_window);
 	WidgetFactory::get_widget_derived("messages_win", _messages_window);
@@ -97,11 +97,11 @@ App::App(ingen::World* world)
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 
-	PluginModel::set_rdf_world(*world->rdf_world());
-	PluginModel::set_lilv_world(world->lilv_world());
+	PluginModel::set_rdf_world(*world.rdf_world());
+	PluginModel::set_lilv_world(world.lilv_world());
 
 	using namespace std::placeholders;
-	world->log().set_sink(std::bind(&MessagesWindow::log, _messages_window, _1, _2, _3));
+	world.log().set_sink(std::bind(&MessagesWindow::log, _messages_window, _1, _2, _3));
 }
 
 App::~App()
@@ -111,9 +111,9 @@ App::~App()
 }
 
 SPtr<App>
-App::create(ingen::World* world)
+App::create(ingen::World& world)
 {
-	suil_init(&world->argc(), &world->argv(), SUIL_ARG_NONE);
+	suil_init(&world.argc(), &world.argv(), SUIL_ARG_NONE);
 
 	// Add RC file for embedded GUI Gtk style
 	const std::string rc_path = ingen::data_file_path("ingen_style.rc");
@@ -123,10 +123,10 @@ App::create(ingen::World* world)
 	if (!_main) {
 		Glib::set_application_name("Ingen");
 		gtk_window_set_default_icon_name("ingen");
-		_main = new Gtk::Main(&world->argc(), &world->argv());
+		_main = new Gtk::Main(&world.argc(), &world.argv());
 	}
 
-	App* app = new App(world);
+	auto app = SPtr<App>{new App(world)};
 
 	// Load configuration settings
 	app->style()->load_settings();
@@ -137,7 +137,7 @@ App::create(ingen::World* world)
 	app->_about_dialog->property_logo_icon_name() = "ingen";
 	gtk_window_set_default_icon_name("ingen");
 
-	return SPtr<App>(app);
+	return app;
 }
 
 void
@@ -164,20 +164,20 @@ App::attach(SPtr<ingen::Interface> client)
 	assert(!_store);
 	assert(!_loader);
 
-	if (_world->engine()) {
-		_world->engine()->register_client(client);
+	if (_world.engine()) {
+		_world.engine()->register_client(client);
 	}
 
 	_client = client;
-	_store  = SPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), sig_client()));
-	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
-	if (!_world->store()) {
-		_world->set_store(_store);
+	_store  = SPtr<ClientStore>(new ClientStore(_world.uris(), _world.log(), sig_client()));
+	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world.interface()));
+	if (!_world.store()) {
+		_world.set_store(_store);
 	}
 
-	if (_world->conf().option("dump").get<int32_t>()) {
-		_dumper = SPtr<StreamWriter>(new StreamWriter(_world->uri_map(),
-		                                              _world->uris(),
+	if (_world.conf().option("dump").get<int32_t>()) {
+		_dumper = SPtr<StreamWriter>(new StreamWriter(_world.uri_map(),
+		                                              _world.uris(),
 		                                              URI("ingen:/client"),
 		                                              stderr,
 		                                              ColorContext::Color::CYAN));
@@ -193,14 +193,14 @@ App::attach(SPtr<ingen::Interface> client)
 void
 App::detach()
 {
-	if (_world->interface()) {
+	if (_world.interface()) {
 		_window_factory->clear();
 		_store->clear();
 
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_world->set_interface(SPtr<Interface>());
+		_world.set_interface(SPtr<Interface>());
 	}
 }
 
@@ -208,7 +208,7 @@ void
 App::request_plugins_if_necessary()
 {
 	if (!_requested_plugins) {
-		_world->interface()->get(URI("ingen:/plugins"));
+		_world.interface()->get(URI("ingen:/plugins"));
 		_requested_plugins = true;
 	}
 }
@@ -226,7 +226,7 @@ App::sig_client()
 SPtr<Serialiser>
 App::serialiser()
 {
-	return _world->serialiser();
+	return _world.serialiser();
 }
 
 void
@@ -323,7 +323,7 @@ App::property_change(const URI&      subject,
 	} else if (key == uris().ingen_maxRunLoad && value.type() == forge().Float) {
 		_max_run_load = value.get<float>();
 	} else {
-		_world->log().warn(fmt("Unknown engine property %1%\n") % key);
+		_world.log().warn(fmt("Unknown engine property %1%\n") % key);
 		return;
 	}
 
@@ -421,8 +421,8 @@ App::gtk_main_iteration()
 	}
 
 	_enable_signal = false;
-	if (_world->engine()) {
-		if (!_world->engine()->main_iteration()) {
+	if (_world.engine()) {
+		if (!_world.engine()->main_iteration()) {
 			Gtk::Main::quit();
 			return false;
 		}
@@ -448,7 +448,7 @@ bool
 App::quit(Gtk::Window* dialog_parent)
 {
 	bool quit = true;
-	if (_world->engine() && _connect_window->attached()) {
+	if (_world.engine() && _connect_window->attached()) {
 		Gtk::MessageDialog d(
 			"The engine is running in this process.  Quitting will terminate Ingen."
 			"\n\n" "Are you sure you want to quit?",
@@ -468,8 +468,8 @@ App::quit(Gtk::Window* dialog_parent)
 	Gtk::Main::quit();
 
 	try {
-		const std::string path = _world->conf().save(
-			_world->uri_map(), "ingen", "gui.ttl", Configuration::GUI);
+		const std::string path = _world.conf().save(
+			_world.uri_map(), "ingen", "gui.ttl", Configuration::GUI);
 		std::cout << (fmt("Saved GUI settings to %1%\n") % path);
 	} catch (const std::exception& e) {
 		std::cerr << (fmt("Error saving GUI settings (%1%)\n")

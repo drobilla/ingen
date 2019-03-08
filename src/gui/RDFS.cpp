@@ -28,12 +28,12 @@ namespace gui {
 namespace rdfs {
 
 std::string
-label(World* world, const LilvNode* node)
+label(World& world, const LilvNode* node)
 {
 	LilvNode* rdfs_label = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "label");
+		world.lilv_world(), LILV_NS_RDFS "label");
 	LilvNodes* labels = lilv_world_find_nodes(
-		world->lilv_world(), node, rdfs_label, nullptr);
+		world.lilv_world(), node, rdfs_label, nullptr);
 
 	const LilvNode* first = lilv_nodes_get_first(labels);
 	std::string     label = first ? lilv_node_as_string(first) : "";
@@ -44,12 +44,12 @@ label(World* world, const LilvNode* node)
 }
 
 std::string
-comment(World* world, const LilvNode* node)
+comment(World& world, const LilvNode* node)
 {
 	LilvNode* rdfs_comment = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "comment");
+		world.lilv_world(), LILV_NS_RDFS "comment");
 	LilvNodes* comments = lilv_world_find_nodes(
-		world->lilv_world(), node, rdfs_comment, nullptr);
+		world.lilv_world(), node, rdfs_comment, nullptr);
 
 	const LilvNode* first   = lilv_nodes_get_first(comments);
 	std::string     comment = first ? lilv_node_as_string(first) : "";
@@ -60,19 +60,19 @@ comment(World* world, const LilvNode* node)
 }
 
 static void
-closure(World* world, const LilvNode* pred, URISet& types, bool super)
+closure(World& world, const LilvNode* pred, URISet& types, bool super)
 {
 	unsigned added = 0;
 	do {
 		added = 0;
 		URISet klasses;
 		for (const auto& t : types) {
-			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
+			LilvNode*  type    = lilv_new_uri(world.lilv_world(), t.c_str());
 			LilvNodes* matches = (super)
 				? lilv_world_find_nodes(
-					world->lilv_world(), type, pred, nullptr)
+					world.lilv_world(), type, pred, nullptr)
 				: lilv_world_find_nodes(
-					world->lilv_world(), nullptr, pred, type);
+					world.lilv_world(), nullptr, pred, type);
 			LILV_FOREACH(nodes, m, matches) {
 				const LilvNode* klass_node = lilv_nodes_get(matches, m);
 				if (lilv_node_is_uri(klass_node)) {
@@ -91,10 +91,10 @@ closure(World* world, const LilvNode* pred, URISet& types, bool super)
 }
 
 void
-classes(World* world, URISet& types, bool super)
+classes(World& world, URISet& types, bool super)
 {
 	LilvNode* rdfs_subClassOf = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "subClassOf");
+		world.lilv_world(), LILV_NS_RDFS "subClassOf");
 
 	closure(world, rdfs_subClassOf, types, super);
 
@@ -102,10 +102,10 @@ classes(World* world, URISet& types, bool super)
 }
 
 void
-datatypes(World* world, URISet& types, bool super)
+datatypes(World& world, URISet& types, bool super)
 {
 	LilvNode* owl_onDatatype = lilv_new_uri(
-		world->lilv_world(), LILV_NS_OWL "onDatatype");
+		world.lilv_world(), LILV_NS_OWL "onDatatype");
 
 	closure(world, owl_onDatatype, types, super);
 
@@ -113,7 +113,7 @@ datatypes(World* world, URISet& types, bool super)
 }
 
 URISet
-types(World* world, SPtr<const client::ObjectModel> model)
+types(World& world, SPtr<const client::ObjectModel> model)
 {
 	typedef Properties::const_iterator    PropIter;
 	typedef std::pair<PropIter, PropIter> PropRange;
@@ -121,18 +121,18 @@ types(World* world, SPtr<const client::ObjectModel> model)
 	// Start with every rdf:type
 	URISet types;
 	types.insert(URI(LILV_NS_RDFS "Resource"));
-	PropRange range = model->properties().equal_range(world->uris().rdf_type);
+	PropRange range = model->properties().equal_range(world.uris().rdf_type);
 	for (auto t = range.first; t != range.second; ++t) {
-		if (t->second.type() == world->forge().URI ||
-		    t->second.type() == world->forge().URID) {
-			const URI type(world->forge().str(t->second, false));
+		if (t->second.type() == world.forge().URI ||
+		    t->second.type() == world.forge().URID) {
+			const URI type(world.forge().str(t->second, false));
 			types.insert(type);
-			if (world->uris().ingen_Graph == type) {
+			if (world.uris().ingen_Graph == type) {
 				// Add lv2:Plugin as a type for graphs so plugin properties show up
-				types.insert(world->uris().lv2_Plugin);
+				types.insert(world.uris().lv2_Plugin);
 			}
 		} else {
-			world->log().error(fmt("<%1%> has non-URI type\n") % model->uri());
+			world.log().error(fmt("<%1%> has non-URI type\n") % model->uri());
 		}
 	}
 
@@ -143,25 +143,25 @@ types(World* world, SPtr<const client::ObjectModel> model)
 }
 
 URISet
-properties(World* world, SPtr<const client::ObjectModel> model)
+properties(World& world, SPtr<const client::ObjectModel> model)
 {
 	URISet properties;
 	URISet types = rdfs::types(world, model);
 
-	LilvNode* rdf_type = lilv_new_uri(world->lilv_world(),
+	LilvNode* rdf_type = lilv_new_uri(world.lilv_world(),
 	                                  LILV_NS_RDF "type");
-	LilvNode* rdf_Property = lilv_new_uri(world->lilv_world(),
+	LilvNode* rdf_Property = lilv_new_uri(world.lilv_world(),
 	                                      LILV_NS_RDF "Property");
-	LilvNode* rdfs_domain = lilv_new_uri(world->lilv_world(),
+	LilvNode* rdfs_domain = lilv_new_uri(world.lilv_world(),
 	                                     LILV_NS_RDFS "domain");
 
 	LilvNodes* props = lilv_world_find_nodes(
-		world->lilv_world(), nullptr, rdf_type, rdf_Property);
+		world.lilv_world(), nullptr, rdf_type, rdf_Property);
 	LILV_FOREACH(nodes, p, props) {
 		const LilvNode* prop = lilv_nodes_get(props, p);
 		if (lilv_node_is_uri(prop)) {
 			LilvNodes* domains = lilv_world_find_nodes(
-				world->lilv_world(), prop, rdfs_domain, nullptr);
+				world.lilv_world(), prop, rdfs_domain, nullptr);
 			unsigned n_matching_domains = 0;
 			LILV_FOREACH(nodes, d, domains) {
 				const LilvNode* domain_node = lilv_nodes_get(domains, d);
@@ -194,16 +194,16 @@ properties(World* world, SPtr<const client::ObjectModel> model)
 }
 
 Objects
-instances(World* world, const URISet& types)
+instances(World& world, const URISet& types)
 {
 	LilvNode* rdf_type = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDF "type");
+		world.lilv_world(), LILV_NS_RDF "type");
 
 	Objects result;
 	for (const auto& t : types) {
-		LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
+		LilvNode*  type    = lilv_new_uri(world.lilv_world(), t.c_str());
 		LilvNodes* objects = lilv_world_find_nodes(
-			world->lilv_world(), nullptr, rdf_type, type);
+			world.lilv_world(), nullptr, rdf_type, type);
 		LILV_FOREACH(nodes, o, objects) {
 			const LilvNode* object = lilv_nodes_get(objects, o);
 			if (!lilv_node_is_uri(object)) {
@@ -220,13 +220,13 @@ instances(World* world, const URISet& types)
 }
 
 URISet
-range(World* world, const LilvNode* prop, bool recursive)
+range(World& world, const LilvNode* prop, bool recursive)
 {
 	LilvNode* rdfs_range = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "range");
+		world.lilv_world(), LILV_NS_RDFS "range");
 
 	LilvNodes* nodes = lilv_world_find_nodes(
-		world->lilv_world(), prop, rdfs_range, nullptr);
+		world.lilv_world(), prop, rdfs_range, nullptr);
 
 	URISet ranges;
 	LILV_FOREACH(nodes, n, nodes) {
@@ -243,12 +243,12 @@ range(World* world, const LilvNode* prop, bool recursive)
 }
 
 bool
-is_a(World* world, const LilvNode* inst, const LilvNode* klass)
+is_a(World& world, const LilvNode* inst, const LilvNode* klass)
 {
-	LilvNode* rdf_type = lilv_new_uri(world->lilv_world(), LILV_NS_RDF "type");
+	LilvNode* rdf_type = lilv_new_uri(world.lilv_world(), LILV_NS_RDF "type");
 
 	const bool is_instance = lilv_world_ask(
-		world->lilv_world(), inst, rdf_type, klass);
+		world.lilv_world(), inst, rdf_type, klass);
 
 	lilv_node_free(rdf_type);
 	return is_instance;

@@ -102,16 +102,16 @@ PropertiesWindow::present(SPtr<const ObjectModel> model)
 void
 PropertiesWindow::add_property(const URI& key, const Atom& value)
 {
-	World* world = _app->world();
+	World& world = _app->world();
 
 	const unsigned n_rows = _table->property_n_rows() + 1;
 	_table->property_n_rows() = n_rows;
 
 	// Column 0: Property
-	LilvNode*   prop = lilv_new_uri(world->lilv_world(), key.c_str());
+	LilvNode*   prop = lilv_new_uri(world.lilv_world(), key.c_str());
 	std::string name = rdfs::label(world, prop);
 	if (name.empty()) {
-		name = world->rdf_world()->prefixes().qualify(key);
+		name = world.rdf_world()->prefixes().qualify(key);
 	}
 	Gtk::Label* label = new Gtk::Label(
 	        std::string("<a href=\"") + key.string() + "\">" + name + "</a>",
@@ -125,7 +125,7 @@ PropertiesWindow::add_property(const URI& key, const Atom& value)
 	// Column 1: Value
 	Gtk::Alignment*   align      = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 1.0));
 	Gtk::CheckButton* present    = manage(new Gtk::CheckButton());
-	const char*       type       = _app->world()->uri_map().unmap_uri(value.type());
+	const char*       type       = _app->world().uri_map().unmap_uri(value.type());
 	Gtk::Widget*      val_widget = create_value_widget(key, type, value);
 
 	present->set_active();
@@ -171,14 +171,13 @@ PropertiesWindow::datatype_supported(const rdfs::URISet& types,
 bool
 PropertiesWindow::class_supported(const rdfs::URISet& types)
 {
-	World*    world    = _app->world();
-	LilvNode* rdf_type = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDF "type");
+	World&    world    = _app->world();
+	LilvNode* rdf_type = lilv_new_uri(world.lilv_world(), LILV_NS_RDF "type");
 
 	for (const auto& t : types) {
-		LilvNode*   range     = lilv_new_uri(world->lilv_world(), t.c_str());
+		LilvNode*   range     = lilv_new_uri(world.lilv_world(), t.c_str());
 		LilvNodes*  instances = lilv_world_find_nodes(
-			world->lilv_world(), nullptr, rdf_type, range);
+			world.lilv_world(), nullptr, rdf_type, range);
 
 		const bool has_instance = (lilv_nodes_size(instances) > 0);
 
@@ -205,18 +204,18 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 
 	set_title(model->path() + " Properties - Ingen");
 
-	World* world = _app->world();
+	World& world = _app->world();
 
 	LilvNode* rdf_type = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDF "type");
+		world.lilv_world(), LILV_NS_RDF "type");
 	LilvNode* rdfs_DataType = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "Datatype");
+		world.lilv_world(), LILV_NS_RDFS "Datatype");
 
 	// Populate key combo
 	const URISet               props = rdfs::properties(world, model);
 	std::map<std::string, URI> entries;
 	for (const auto& p : props) {
-		LilvNode*         prop   = lilv_new_uri(world->lilv_world(), p.c_str());
+		LilvNode*         prop   = lilv_new_uri(world.lilv_world(), p.c_str());
 		const std::string label  = rdfs::label(world, prop);
 		URISet            ranges = rdfs::range(world, prop, true);
 
@@ -226,7 +225,7 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 			continue;
 		}
 
-		LilvNode* range = lilv_new_uri(world->lilv_world(), (*ranges.begin()).c_str());
+		LilvNode* range = lilv_new_uri(world.lilv_world(), (*ranges.begin()).c_str());
 		if (rdfs::is_a(world, range, rdfs_DataType)) {
 			// Range is a datatype, show if type or any subtype is supported
 			rdfs::datatypes(_app->world(), ranges, false);
@@ -274,18 +273,18 @@ PropertiesWindow::create_value_widget(const URI&  key,
 	}
 
 	URI     type(type_uri);
-	ingen::World* world  = _app->world();
-	LilvWorld*    lworld = world->lilv_world();
+	ingen::World& world  = _app->world();
+	LilvWorld*    lworld = world.lilv_world();
 
 	// See if type is a datatype we support
 	std::set<URI> types{type};
-	rdfs::datatypes(_app->world(), types, false);
+	rdfs::datatypes(world, types, false);
 
 	URI  widget_type("urn:nothing");
 	const bool supported = datatype_supported(types, &widget_type);
 	if (supported) {
 		type = widget_type;
-		_value_type = _app->world()->uri_map().map_uri(type);
+		_value_type = world.uri_map().map_uri(type);
 	}
 
 	if (type == _app->uris().atom_Int) {
@@ -329,7 +328,7 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		return widget;
 	} else if (type == _app->uris().atom_URID) {
 		const char* str = (value.is_valid()
-		                   ? world->uri_map().unmap_uri(value.get<int32_t>())
+		                   ? world.uri_map().unmap_uri(value.get<int32_t>())
 		                   : "");
 
 		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
@@ -402,7 +401,7 @@ PropertiesWindow::change_property(const URI& key, const Atom& value)
 	}
 
 	Record&      record     = r->second;
-	const char*  type       = _app->world()->uri_map().unmap_uri(value.type());
+	const char*  type       = _app->world().uri_map().unmap_uri(value.type());
 	Gtk::Widget* val_widget = create_value_widget(key, type, value);
 
 	if (val_widget) {
@@ -505,7 +504,7 @@ PropertiesWindow::key_changed()
 		return;
 	}
 
-	LilvWorld*                lworld  = _app->world()->lilv_world();
+	LilvWorld*                lworld  = _app->world().lilv_world();
 	const Gtk::ListStore::Row key_row = *(_key_combo->get_active());
 	const Glib::ustring       key_uri = key_row[_combo_columns.uri_col];
 	LilvNode*                 prop    = lilv_new_uri(lworld, key_uri.c_str());
