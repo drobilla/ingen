@@ -32,9 +32,9 @@ static SPtr<const PortModel>
 get_port(PluginUI* ui, uint32_t port_index)
 {
 	if (port_index >= ui->block()->ports().size()) {
-		ui->world().log().error(
-			fmt("%1% UI tried to access invalid port %2%\n")
-			% ui->block()->plugin()->uri().c_str() % port_index);
+		ui->world().log().error("%1% UI tried to access invalid port %2%\n",
+		                        ui->block()->plugin()->uri().c_str(),
+		                        port_index);
 		return SPtr<const PortModel>();
 	}
 	return ui->block()->ports()[port_index];
@@ -58,8 +58,8 @@ lv2_ui_write(SuilController controller,
 	if (format == 0) {
 		if (buffer_size != 4) {
 			ui->world().log().error(
-				fmt("%1% UI wrote corrupt float with bad size\n")
-				% ui->block()->plugin()->uri().c_str());
+				"%1% UI wrote corrupt float with bad size\n",
+				ui->block()->plugin()->uri().c_str());
 			return;
 		}
 		const float value = *(const float*)buffer;
@@ -83,9 +83,9 @@ lv2_ui_write(SuilController controller,
 		                              val,
 		                              Resource::Graph::DEFAULT);
 	} else {
-		ui->world().log().warn(
-			fmt("Unknown value format %1% from LV2 UI\n")
-			% format % ui->block()->plugin()->uri().c_str());
+		ui->world().log().warn("Unknown value format %1% from LV2 UI\n",
+		                       format,
+		                       ui->block()->plugin()->uri().c_str());
 	}
 }
 
@@ -238,14 +238,14 @@ PluginUI::instantiate()
 		const LilvNode* sym  = lilv_world_get(lworld, note, uris.lv2_symbol, nullptr);
 		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, nullptr);
 		if (!plug) {
-			_world.log().error(fmt("%1% UI %2% notification missing plugin\n")
-			                   % plugin_uri % lilv_node_as_string(_ui_node));
+			_world.log().error("%1% UI %2% notification missing plugin\n",
+			                   plugin_uri, lilv_node_as_string(_ui_node));
 		} else if (!sym) {
-			_world.log().error(fmt("%1% UI %2% notification missing symbol\n")
-			                   % plugin_uri % lilv_node_as_string(_ui_node));
+			_world.log().error("%1% UI %2% notification missing symbol\n",
+			                   plugin_uri, lilv_node_as_string(_ui_node));
 		} else if (!lilv_node_is_uri(plug)) {
-			_world.log().error(fmt("%1% UI %2% notification has non-URI plugin\n")
-			                   % plugin_uri % lilv_node_as_string(_ui_node));
+			_world.log().error("%1% UI %2% notification has non-URI plugin\n",
+			                   plugin_uri, lilv_node_as_string(_ui_node));
 		} else if (!strcmp(lilv_node_as_uri(plug), plugin_uri.c_str())) {
 			// Notification is valid and for this plugin
 			uint32_t index = lv2_ui_port_index(this, lilv_node_as_string(sym));

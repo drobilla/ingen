@@ -101,25 +101,26 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 			const pid_t       pid    = std::stoi(suffix);
 			if (!kill(pid, 0)) {
 				make_link = false;
-				world.log().warn(fmt("Another Ingen instance is running at %1% => %2%\n")
-				                 % link_path % old_path);
+				world.log().warn(
+				        "Another Ingen instance is running at %1% => %2%\n",
+				        link_path, old_path);
 			} else {
-				world.log().warn(fmt("Replacing old link %1% => %2%\n")
-				                 % link_path % old_path);
+				world.log().warn("Replacing old link %1% => %2%\n",
+				                 link_path, old_path);
 				unlink(link_path.c_str());
 			}
 		}
 
 		if (make_link) {
 			if (!symlink(unix_path.c_str(), link_path.c_str())) {
-				world.log().info(fmt("Listening on %1%\n") %
+				world.log().info("Listening on %1%\n",
 				                 (unix_scheme + link_path));
 			} else {
-				world.log().error(fmt("Failed to link %1% => %2% (%3%)\n")
-				                  % link_path % unix_path % strerror(errno));
+				world.log().error("Failed to link %1% => %2% (%3%)\n",
+				                  link_path, unix_path, strerror(errno));
 			}
 		} else {
-			world.log().info(fmt("Listening on %1%\n") % unix_uri);
+			world.log().info("Listening on %1%\n", unix_uri);
 		}
 	}
 
@@ -131,7 +132,7 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 		world.log().error("Failed to create TCP socket\n");
 		net_sock->close();
 	} else {
-		world.log().info(fmt("Listening on TCP port %1%\n") % port);
+		world.log().info("Listening on TCP port %1%\n", port);
 	}
 
 	if (unix_sock->fd() == -1 && net_sock->fd() == -1) {
@@ -157,7 +158,7 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 		// Wait for input to arrive at a socket
 		const int ret = poll(pfds, nfds, -1);
 		if (ret == -1) {
-			world.log().error(fmt("Poll error: %1%\n") % strerror(errno));
+			world.log().error("Poll error: %1%\n", strerror(errno));
 			break;
 		} else if (ret == 0) {
 			world.log().warn("Poll returned with no data\n");

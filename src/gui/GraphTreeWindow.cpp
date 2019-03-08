@@ -205,8 +205,7 @@ GraphTreeWindow::graph_property_changed(const URI&       key,
 			Gtk::TreeModel::Row row = *i;
 			row[_graph_tree_columns.enabled_col] = value.get<int32_t>();
 		} else {
-			_app->log().error(fmt("Unable to find graph %1%\n")
-			                  % graph->path());
+			_app->log().error("Unable to find graph %1%\n", graph->path());
 		}
 	}
 	_enable_signal = true;
@@ -224,8 +223,7 @@ GraphTreeWindow::graph_moved(SPtr<GraphModel> graph)
 		Gtk::TreeModel::Row row = *i;
 		row[_graph_tree_columns.name_col] = graph->symbol().c_str();
 	} else {
-		_app->log().error(fmt("Unable to find graph %1%\n")
-		                  % graph->path());
+		_app->log().error("Unable to find graph %1%\n", graph->path());
 	}
 
 	_enable_signal = true;

@@ -128,8 +128,8 @@ LV2Plugin::load_presets()
 				lilv_nodes_free(labels);
 			} else {
 				_world.log().error(
-					fmt("Preset <%1%> has no rdfs:label\n")
-					% lilv_node_as_string(lilv_nodes_get(presets, i)));
+					"Preset <%1%> has no rdfs:label\n",
+					lilv_node_as_string(lilv_nodes_get(presets, i)));
 			}
 		}
 

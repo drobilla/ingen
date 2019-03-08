@@ -244,7 +244,7 @@ ConnectWindow::connect(bool existing)
 		}
 
 		if (!URI::is_valid(uri_str)) {
-			error((fmt("Invalid socket URI %1%") % uri_str).str());
+			error(fmt("Invalid socket URI %1%", uri_str));
 			return;
 		}
 

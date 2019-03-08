@@ -86,12 +86,12 @@ ingen_load_library(Log& log, const string& name)
 	if (*library) {
 		return library;
 	} else if (!module_path) {
-		log.error(fmt("Unable to find %1% (%2%)\n")
-		          % name % Library::get_last_error());
+		log.error("Unable to find %1% (%2%)\n",
+		          name, Library::get_last_error());
 		return nullptr;
 	} else {
-		log.error(fmt("Unable to load %1% from %2% (%3%)\n")
-		          % name % module_path % Library::get_last_error());
+		log.error("Unable to load %1% from %2% (%3%)\n",
+		          name, module_path, Library::get_last_error());
 		return nullptr;
 	}
 }
@@ -229,7 +229,7 @@ World::load_configuration(int& argc, char**& argv)
 	// Parse default configuration files
 	const auto files = _impl->conf.load_default("ingen", "options.ttl");
 	for (const auto& f : files) {
-		_impl->log.info(fmt("Loaded configuration %1%\n") % f);
+		_impl->log.info("Loaded configuration %1%\n", f);
 	}
 
 	// Parse command line options, overriding configuration file values
@@ -270,7 +270,7 @@ World::load_module(const char* name)
 	if (i != _impl->modules.end()) {
 		return true;
 	}
-	log().info(fmt("Loading %1% module\n") % name);
+	log().info("Loading %1% module\n", name);
 	std::unique_ptr<ingen::Library> lib = ingen_load_library(log(), name);
 	ingen::Module* (*module_load)() =
 		lib ? (ingen::Module* (*)())lib->get_function("ingen_module_load")
@@ -285,7 +285,8 @@ World::load_module(const char* name)
 		}
 	}
 
-	log().error(fmt("Failed to load module `%1%' (%2%)\n") % name % lib->get_last_error());
+	log().error("Failed to load module `%1%' (%2%)\n",
+	            name, lib->get_last_error());
 	return false;
 }
 
@@ -294,7 +295,7 @@ World::run_module(const char* name)
 {
 	auto i = _impl->modules.find(name);
 	if (i == _impl->modules.end()) {
-		log().error(fmt("Attempt to run unloaded module `%1%'\n") % name);
+		log().error("Attempt to run unloaded module `%1%'\n", name);
 		return false;
 	}
 
@@ -310,7 +311,7 @@ World::new_interface(const URI& engine_uri, SPtr<Interface> respondee)
 	const Impl::InterfaceFactories::const_iterator i =
 	        _impl->interface_factories.find(std::string(engine_uri.scheme()));
 	if (i == _impl->interface_factories.end()) {
-		log().warn(fmt("Unknown URI scheme `%1%'\n") % engine_uri.scheme());
+		log().warn("Unknown URI scheme `%1%'\n", engine_uri.scheme());
 		return SPtr<Interface>();
 	}
 
@@ -323,7 +324,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 {
 	const Impl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
-		log().warn(fmt("Unknown script MIME type `%1%'\n") % mime_type);
+		log().warn("Unknown script MIME type `%1%'\n", mime_type);
 		return false;
 	}
 

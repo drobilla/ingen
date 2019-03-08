@@ -149,7 +149,7 @@ main(int argc, char** argv)
 	Sord::Node nil;
 	int n_events = 0;
 	for (;; ++n_events) {
-		std::string subject_str = (fmt("msg%1%") % n_events).str();
+		std::string subject_str = fmt("msg%1%", n_events);
 		Sord::URI subject(*world->rdf_world(), subject_str,
 		                  (const char*)cmds_file_uri.buf);
 		Sord::Iter iter = cmds->find(subject, nil, nil);

@@ -26,6 +26,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/fmt.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
@@ -220,9 +221,8 @@ GraphBox::init_box(App& app)
 	if (engine_uri == "ingen:/clients/event_writer") {
 		_status_bar->push("Running internal engine", STATUS_CONTEXT_ENGINE);
 	} else {
-		_status_bar->push(
-			(fmt("Connected to %1%") % engine_uri).str(),
-			STATUS_CONTEXT_ENGINE);
+		_status_bar->push(fmt("Connected to %1%", engine_uri),
+		                  STATUS_CONTEXT_ENGINE);
 	}
 
 	_menu_view_messages_window->signal_activate().connect(
@@ -428,7 +428,7 @@ GraphBox::show_status(const ObjectModel* model)
 	} else if ((block = dynamic_cast<const BlockModel*>(model))) {
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 		if (plugin) {
-			msg << ((boost::format(" (%1%)") % plugin->human_name()).str());
+			msg << fmt(" (%1%)", plugin->human_name());
 		}
 		_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
 	}
@@ -541,14 +541,12 @@ GraphBox::save_graph(const URI& uri)
 {
 	if (_app->interface()->uri().string().substr(0, 3) == "tcp") {
 		_status_bar->push(
-			(boost::format("Saved %1% to %2% on client")
-			 % _graph->path() % uri).str(),
+			fmt("Saved %1% to %2% on client", _graph->path(), uri),
 			STATUS_CONTEXT_GRAPH);
 		_app->loader()->save_graph(_graph, uri);
 	} else {
 		_status_bar->push(
-			(boost::format("Saved %1% to %2% on server")
-			 % _graph->path() % uri).str(),
+			fmt("Saved %1% to %2% on server", _graph->path(), uri),
 			STATUS_CONTEXT_GRAPH);
 		_app->interface()->copy(_graph->uri(), uri);
 	}
@@ -618,23 +616,22 @@ GraphBox::event_save_as()
 		if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
 			if (Glib::file_test(Glib::build_filename(filename, "manifest.ttl"),
 			                    Glib::FILE_TEST_EXISTS)) {
-				confirmed = confirm(
-					(boost::format("<b>The bundle \"%1%\" already exists."
-					               "  Replace it?</b>") % basename).str());
+				confirmed = confirm(fmt("<b>The bundle \"%1%\" already exists."
+				                        "  Replace it?</b>",
+				                        basename));
 			} else {
 				confirmed = confirm(
-					(boost::format("<b>A directory named \"%1%\" already exists,"
-					               "but is not an Ingen bundle.  "
-					               "Save into it anyway?</b>") % basename).str(),
+					fmt("<b>A directory named \"%1%\" already exists,"
+					    "but is not an Ingen bundle.  "
+					    "Save into it anyway?</b>", basename),
 					"This will create at least 2 .ttl files in this directory,"
 					"and possibly several more files and/or directories, recursively.  "
 					"Existing files will be overwritten.");
 			}
 		} else if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-			confirmed = confirm(
-				(boost::format("<b>A file named \"%1%\" already exists.  "
-				               "Replace it with an Ingen bundle?</b>")
-				 % basename).str());
+			confirmed = confirm(fmt("<b>A file named \"%1%\" already exists.  "
+			                        "Replace it with an Ingen bundle?</b>",
+			                        basename));
 			if (confirmed) {
 				::g_remove(filename.c_str());
 			}
@@ -703,8 +700,7 @@ GraphBox::event_export_image()
 			}
 		}
 		_view->canvas()->export_image(filename.c_str(), bg_but->get_active());
-		_status_bar->push((boost::format("Rendered %1% to %2%")
-		                   % _graph->path() % filename).str(),
+		_status_bar->push(fmt("Rendered %1% to %2%", _graph->path(), filename),
 		                  STATUS_CONTEXT_GRAPH);
 	}
 }

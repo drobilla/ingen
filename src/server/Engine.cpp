@@ -509,14 +509,14 @@ Engine::log() const
 void
 Engine::register_client(SPtr<Interface> client)
 {
-	log().info(fmt("Registering client <%1%>\n") % client->uri().c_str());
+	log().info("Registering client <%1%>\n", client->uri().c_str());
 	_broadcaster->register_client(client);
 }
 
 bool
 Engine::unregister_client(SPtr<Interface> client)
 {
-	log().info(fmt("Unregistering client <%1%>\n") % client->uri().c_str());
+	log().info("Unregistering client <%1%>\n", client->uri().c_str());
 	return _broadcaster->unregister_client(client);
 }
 

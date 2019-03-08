@@ -84,8 +84,8 @@ LV2Block::make_instance(URIs&      uris,
 		lplug, rate, _features->array());
 
 	if (!inst) {
-		engine.log().error(fmt("Failed to instantiate <%1%>\n")
-		                   % _lv2_plugin->uri().c_str());
+		engine.log().error("Failed to instantiate <%1%>\n",
+		                   _lv2_plugin->uri().c_str());
 		return SPtr<Instance>();
 	}
 
@@ -141,14 +141,15 @@ LV2Block::make_instance(URIs&      uris,
 						port->set_type(PortType::CV, 0);
 					} else {
 						parent_graph()->engine().log().error(
-							fmt("%1% auto-morphed to unknown type %2%\n")
-							% port->path().c_str() % type);
+							"%1% auto-morphed to unknown type %2%\n",
+							port->path().c_str(),
+							type);
 						return SPtr<Instance>();
 					}
 				} else {
 					parent_graph()->engine().log().error(
-						fmt("Failed to get auto-morphed type of %1%\n")
-						% port->path().c_str());
+						"Failed to get auto-morphed type of %1%\n",
+						port->path().c_str());
 				}
 			}
 		}
@@ -304,8 +305,8 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		uint32_t port_buffer_size = bufs.default_size(buffer_type);
 		if (port_buffer_size == 0 && !optional) {
 			parent_graph()->engine().log().error(
-				fmt("<%1%> port `%2%' has unknown buffer type\n")
-				% _lv2_plugin->uri().c_str() % port_sym.c_str());
+				"<%1%> port `%2%' has unknown buffer type\n",
+				_lv2_plugin->uri().c_str(), port_sym.c_str());
 			ret = false;
 			break;
 		}
@@ -355,8 +356,8 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		if ((port_type == PortType::UNKNOWN && !optional) ||
 		    direction == UNKNOWN) {
 			parent_graph()->engine().log().error(
-				fmt("<%1%> port `%2%' has unknown type or direction\n")
-				% _lv2_plugin->uri().c_str() % port_sym.c_str());
+				"<%1%> port `%2%' has unknown type or direction\n",
+				_lv2_plugin->uri().c_str(), port_sym.c_str());
 			ret = false;
 			break;
 		}
@@ -563,7 +564,7 @@ LV2Block::work(uint32_t size, const void* data)
 		LV2_Worker_Status st   = _worker_iface->work(inst, work_respond, this, size, data);
 		if (st) {
 			parent_graph()->engine().log().error(
-				fmt("Error calling %1% work method\n") % _path);
+				"Error calling %1% work method\n", _path);
 		}
 		return st;
 	}

@@ -57,8 +57,8 @@ public:
 
 		SPtr<Raul::Socket> sock(new Raul::Socket(type));
 		if (!sock->connect(uri)) {
-			world.log().error(fmt("Failed to connect <%1%> (%2%)\n")
-			                   % sock->uri() % strerror(errno));
+			world.log().error("Failed to connect <%1%> (%2%)\n",
+			                  sock->uri(), strerror(errno));
 			return SPtr<Interface>();
 		}
 		return SPtr<Interface>(new SocketClient(world, uri, sock, respondee));

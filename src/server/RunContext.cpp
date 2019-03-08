@@ -164,8 +164,8 @@ RunContext::set_priority(int priority)
 		sp.sched_priority = (priority > 0) ? priority : 0;
 		if (pthread_setschedparam(pthread, policy, &sp)) {
 			_engine.log().error(
-				fmt("Failed to set real-time priority of run thread (%s)\n")
-				% strerror(errno));
+				"Failed to set real-time priority of run thread (%s)\n",
+				strerror(errno));
 		}
 	}
 }

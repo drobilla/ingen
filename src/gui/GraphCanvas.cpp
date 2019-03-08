@@ -421,8 +421,8 @@ GraphCanvas::connection(SPtr<const ArcModel> arc)
 	if (tail && head) {
 		new gui::Arc(*this, arc, tail, head);
 	} else {
-		_app.log().error(fmt("Unable to find ports to connect %1% => %2%\n")
-		                 % arc->tail_path() % arc->head_path());
+		_app.log().error("Unable to find ports to connect %1% => %2%\n",
+		                 arc->tail_path(), arc->head_path());
 	}
 }
 
@@ -442,8 +442,8 @@ GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 			}
 		}
 	} else {
-		_app.log().error(fmt("Unable to find ports to disconnect %1% => %2%\n")
-		                 % arc->tail_path() % arc->head_path());
+		_app.log().error("Unable to find ports to disconnect %1% => %2%\n",
+		                 arc->tail_path(), arc->head_path());
 	}
 }
 

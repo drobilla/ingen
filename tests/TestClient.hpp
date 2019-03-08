@@ -35,14 +35,14 @@ public:
 	void message(const Message& msg) override {
 		if (const Response* const response = boost::get<Response>(&msg)) {
 			if (response->status != Status::SUCCESS) {
-				_log.error(fmt("error on message %1%: %2% (%3%)\n")
-				           % response->id
-				           % ingen_status_string(response->status)
-				           % response->subject);
+				_log.error("error on message %1%: %2% (%3%)\n",
+				           response->id,
+				           ingen_status_string(response->status),
+				           response->subject);
 				exit(EXIT_FAILURE);
 			}
 		} else if (const Error* const error = boost::get<Error>(&msg)) {
-			_log.error(fmt("error: %1%\n") % error->message);
+			_log.error("error: %1%\n", error->message);
 			exit(EXIT_FAILURE);
 		}
 	}

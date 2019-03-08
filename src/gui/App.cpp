@@ -323,7 +323,7 @@ App::property_change(const URI&      subject,
 	} else if (key == uris().ingen_maxRunLoad && value.type() == forge().Float) {
 		_max_run_load = value.get<float>();
 	} else {
-		_world.log().warn(fmt("Unknown engine property %1%\n") % key);
+		_world.log().warn("Unknown engine property %1%\n", key);
 		return;
 	}
 
@@ -343,19 +343,18 @@ fraction_label(float f)
 	char           col_str[8];
 	snprintf(col_str, sizeof(col_str), "%02X%02X%02X",
 	         RGBA_R(col), RGBA_G(col), RGBA_B(col));
-	return (fmt("<span color='#%s'>%d%%</span>") % col_str % (f * 100)).str();
+	return fmt("<span color='#%s'>%d%%</span>", col_str, (f * 100));
 }
 
 std::string
 App::status_text() const
 {
-	return (fmt("%2.1f kHz / %.1f ms, %s, %s DSP")
-	        % (_sample_rate / 1e3f)
-	        % (_block_length * 1e3f / (float)_sample_rate)
-	        % ((_n_threads == 1)
-	           ? "1 thread"
-	           : (fmt("%1% threads") % _n_threads).str())
-	        % fraction_label(_max_run_load)).str();
+	return fmt(
+		"%2.1f kHz / %.1f ms, %s, %s DSP",
+		(_sample_rate / 1e3f),
+		(_block_length * 1e3f / (float)_sample_rate),
+		((_n_threads == 1) ? "1 thread" : fmt("%1% threads", _n_threads)),
+		fraction_label(_max_run_load));
 }
 
 void
@@ -470,10 +469,9 @@ App::quit(Gtk::Window* dialog_parent)
 	try {
 		const std::string path = _world.conf().save(
 			_world.uri_map(), "ingen", "gui.ttl", Configuration::GUI);
-		std::cout << (fmt("Saved GUI settings to %1%\n") % path);
+		std::cout << fmt("Saved GUI settings to %1%\n", path);
 	} catch (const std::exception& e) {
-		std::cerr << (fmt("Error saving GUI settings (%1%)\n")
-		              % e.what());
+		std::cerr << fmt("Error saving GUI settings (%1%)\n", e.what());
 	}
 
 	return true;

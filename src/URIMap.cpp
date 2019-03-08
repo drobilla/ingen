@@ -64,7 +64,7 @@ LV2_URID
 URIMap::URIDMapFeature::map(const char* uri)
 {
 	if (!URI::is_valid(uri)) {
-		log.error(fmt("Attempt to map invalid URI <%1%>\n") % uri);
+		log.error("Attempt to map invalid URI <%1%>\n", uri);
 		return 0;
 	}
 	return urid_map.map(urid_map.handle, uri);

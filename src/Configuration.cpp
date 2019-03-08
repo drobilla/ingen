@@ -141,9 +141,8 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		if (endptr && *endptr == '\0') {
 			option.value = _forge.make(intval);
 		} else {
-			throw OptionError(
-				(fmt("Option `%1%' has non-integer value `%2%'")
-				 % option.name % value).str());
+			throw OptionError(fmt("Option `%1%' has non-integer value `%2%'",
+			                      option.name, value));
 		}
 	} else if (option.type == _forge.String) {
 		option.value = _forge.alloc(value.c_str());
@@ -152,8 +151,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		option.value = _forge.make(bool(!strcmp(value.c_str(), "true")));
 		assert(option.value.type() == _forge.Bool);
 	} else {
-		throw OptionError(
-			(fmt("Bad option type `%1%'") % option.name).str());
+		throw OptionError(fmt("Bad option type `%1%'", option.name));
 	}
 	return EXIT_SUCCESS;
 }
@@ -181,17 +179,15 @@ Configuration::parse(int argc, char** argv)
 
 			const Options::iterator o = _options.find(name);
 			if (o == _options.end()) {
-				throw OptionError(
-					(fmt("Unrecognized option `%1%'") % name).str());
-			} else if (o->second.type == _forge.Bool) {  // --flag
+				throw OptionError(fmt("Unrecognized option `%1%'", name));
+			} else if (o->second.type == _forge.Bool) { // --flag
 				o->second.value = _forge.make(true);
 			} else if (equals) {  // --opt=val
 				set_value_from_string(o->second, equals + 1);
 			} else if (++i < argc) {  // --opt val
 				set_value_from_string(o->second, argv[i]);
 			} else {
-				throw OptionError(
-					(fmt("Missing value for `%1%'") % name).str());
+				throw OptionError(fmt("Missing value for `%1%'", name));
 			}
 		} else {
 			// Short option
@@ -200,15 +196,14 @@ Configuration::parse(int argc, char** argv)
 				const char                 letter = argv[i][j];
 				const ShortNames::iterator n      = _short_names.find(letter);
 				if (n == _short_names.end()) {
-					throw OptionError(
-						(fmt("Unrecognized option `%1%'") % letter).str());
+					throw OptionError(fmt("Unrecognized option `%1%'", letter));
 				}
 
 				const Options::iterator o = _options.find(n->second);
 				if (j < len - 1) {  // Non-final POSIX style flag
 					if (o->second.type != _forge.Bool) {
 						throw OptionError(
-							(fmt("Missing value for `%1%'") % letter).str());
+							fmt("Missing value for `%1%'", letter));
 					}
 					o->second.value = _forge.make(true);
 				} else if (o->second.type == _forge.Bool) {  // -f
@@ -216,8 +211,7 @@ Configuration::parse(int argc, char** argv)
 				} else if (++i < argc) {  // -v val
 					set_value_from_string(o->second, argv[i]);
 				} else {
-					throw OptionError(
-						(fmt("Missing value for `%1%'") % letter).str());
+					throw OptionError(fmt("Missing value for `%1%'", letter));
 				}
 			}
 		}
@@ -275,16 +269,16 @@ Configuration::save(URIMap&            uri_map,
 	// Create parent directories if necessary
 	const FilePath dir = path.parent_path();
 	if (!filesystem::create_directories(dir)) {
-		throw FileError((fmt("Error creating directory %1% (%2%)")
-		                 % dir % strerror(errno)).str());
+		throw FileError(fmt("Error creating directory %1% (%2%)",
+		                    dir, strerror(errno)));
 	}
 
 	// Attempt to open file for writing
 	std::unique_ptr<FILE, decltype(&fclose)> file{fopen(path.c_str(), "w"),
 	                                              &fclose};
 	if (!file) {
-		throw FileError((fmt("Failed to open file %1% (%2%)")
-		                 % path % strerror(errno)).str());
+		throw FileError(fmt("Failed to open file %1% (%2%)",
+		                    path, strerror(errno)));
 	}
 
 	// Use the file's URI as the base URI

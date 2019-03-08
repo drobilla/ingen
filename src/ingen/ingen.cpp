@@ -143,11 +143,11 @@ main(int argc, char** argv)
 	if (!engine_interface) {
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(URI::is_valid(uri),
-		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
+		          fmt("Invalid URI <%1%>", uri).c_str());
 		engine_interface = world->new_interface(URI(uri), dummy_client);
 
 		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
-			cerr << (fmt("ingen: error: Failed to connect to `%1%'\n") % uri);
+			cerr << fmt("ingen: error: Failed to connect to `%1%'\n", uri);
 			return EXIT_FAILURE;
 		}
 
@@ -256,7 +256,7 @@ main(int argc, char** argv)
 	// Save configuration to restore preferences on next run
 	const std::string path = conf.save(
 		world->uri_map(), "ingen", "options.ttl", Configuration::GLOBAL);
-	std::cout << (fmt("Saved configuration to %1%") % path) << std::endl;
+	std::cout << fmt("Saved configuration to %1%\n", path);
 
 	engine_interface.reset();
 

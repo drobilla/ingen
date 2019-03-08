@@ -25,14 +25,18 @@
 #include <boost/format.hpp>
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/fmt.hpp"
 #include "ingen/ingen.h"
 #include "lv2/core/lv2.h"
 #include "lv2/log/log.h"
 #include "lv2/urid/urid.h"
 
-namespace ingen {
+#include <cstdarg>
+#include <cstdio>
+#include <functional>
+#include <string>
 
-typedef boost::basic_format<char> fmt;
+namespace ingen {
 
 class Node;
 class URIs;
@@ -63,11 +67,31 @@ public:
 	void warn(const std::string& msg);
 	void trace(const std::string& msg);
 
-	inline void error(const fmt& fmt) { error(fmt.str()); }
-	inline void info(const fmt& fmt)  { info(fmt.str()); }
-	inline void warn(const fmt& fmt)  { warn(fmt.str()); }
+	template <typename... Args>
+	void error(const char* format, Args&&... args)
+	{
+		error(fmt(format, std::forward<Args>(args)...));
+	}
 
-	int vtprintf(LV2_URID type, const char* fmt, va_list args);
+	template <typename... Args>
+	void info(const char* format, Args&&... args)
+	{
+		info(fmt(format, std::forward<Args>(args)...));
+	}
+
+	template <typename... Args>
+	void warn(const char* format, Args&&... args)
+	{
+		warn(fmt(format, std::forward<Args>(args)...));
+	}
+
+	template <typename... Args>
+	void trace(const char* format, Args&&... args)
+	{
+		trace(fmt(format, std::forward<Args>(args)...));
+	}
+
+	int vtprintf(LV2_URID type, const char* format, va_list args);
 
 	void set_flush(bool f) { _flush = f; }
 	void set_trace(bool f) { _trace = f; }

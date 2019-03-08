@@ -184,7 +184,7 @@ Serialiser::Impl::write_bundle(SPtr<const Node> graph, const URI& uri)
 		path = path.parent_path();
 	}
 
-	_world.log().info(fmt("Writing bundle %1%\n") % path);
+	_world.log().info("Writing bundle %1%\n", path);
 	filesystem::create_directories(path);
 
 	const FilePath   main_file     = path / "main.ttl";
@@ -250,8 +250,8 @@ Serialiser::Impl::finish()
 	if (_mode == Mode::TO_FILE) {
 		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {
-			_world.log().error(fmt("Error writing file %1% (%2%)\n")
-			                   % _base_uri % serd_strerror(st));
+			_world.log().error("Error writing file %1% (%2%)\n",
+			                   _base_uri, serd_strerror(st));
 		}
 	} else {
 		ret = _model->write_to_string(_base_uri, SERD_TURTLE);

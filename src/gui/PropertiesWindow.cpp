@@ -359,7 +359,7 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		return widget;
 	}
 
-	_app->log().error(fmt("No widget for value type %1%\n") % type);
+	_app->log().error("No widget for value type %1%\n", type);
 
 	return nullptr;
 }
@@ -453,7 +453,7 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 		if (uri_entry && URI::is_valid(uri_entry->get_text())) {
 			return _app->forge().make_urid(URI(uri_entry->get_text()));
 		} else {
-			_app->log().error(fmt("Invalid URI <%1%>\n") % uri_entry->get_text());
+			_app->log().error("Invalid URI <%1%>\n", uri_entry->get_text());
 		}
 	} else if (type == forge.String) {
 		Gtk::Entry* entry = dynamic_cast<Gtk::Entry*>(value_widget);
@@ -480,7 +480,7 @@ PropertiesWindow::on_change(const URI& key)
 	if (value.is_valid()) {
 		record.value = value;
 	} else {
-		_app->log().error(fmt("Failed to get `%1%' value from widget\n") % key);
+		_app->log().error("Failed to get `%1%' value from widget\n", key);
 	}
 }
 

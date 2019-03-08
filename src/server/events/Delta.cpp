@@ -127,7 +127,7 @@ Delta::add_set_event(const char* port_symbol,
 	BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
 	PortImpl*  port  = block->port_by_symbol(port_symbol);
 	if (!port) {
-		_engine.log().warn(fmt("Unknown port `%1%' in state") % port_symbol);
+		_engine.log().warn("Unknown port `%1%' in state", port_symbol);
 		return;
 	}
 
@@ -373,7 +373,7 @@ Delta::pre_process(PreProcessContext& ctx)
 							lilv_state_emit_port_values(
 								_state, s_add_set_event, this);
 						} else {
-							_engine.log().warn(fmt("Failed to load preset <%1%>\n") % uri);
+							_engine.log().warn("Failed to load preset <%1%>\n", uri);
 						}
 					} else {
 						_status = Status::BAD_VALUE;

@@ -538,8 +538,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	plugin->world->log().info(
-		fmt("Block: %1% frames, Sequence: %2% bytes\n")
-		% block_length % seq_size);
+		"Block: %1% frames, Sequence: %2% bytes\n",
+		block_length, seq_size);
 	plugin->world->conf().set(
 		"queue-size",
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));

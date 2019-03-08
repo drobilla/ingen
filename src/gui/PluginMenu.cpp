@@ -112,8 +112,8 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
 		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
-			_world.log().warn(fmt("Infinite LV2 class recursion: %1% <: %2%\n")
-			                  % class_uri_str % sub_uri_str);
+			_world.log().warn("Infinite LV2 class recursion: %1% <: %2%\n",
+			                  class_uri_str, sub_uri_str);
 			return 0;
 		}
 

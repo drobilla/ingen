@@ -45,7 +45,7 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 			if (uri) {
 				out = Atom(sizeof(int32_t), _uris.atom_URID, &urid->body);
 			} else {
-				_log.error(fmt("Unable to unmap URID %1%\n") % urid->body);
+				_log.error("Unable to unmap URID %1%\n", urid->body);
 			}
 		} else {
 			out = Atom(in->size, in->type, LV2_ATOM_BODY_CONST(in));
@@ -78,7 +78,7 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 		if (URI::is_valid(str)) {
 			return URI(str);
 		} else {
-			_log.warn(fmt("Invalid URI <%1%>\n") % str);
+			_log.warn("Invalid URI <%1%>\n", str);
 		}
 	} else if (atom->type == _uris.atom_Path) {
 		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
@@ -92,7 +92,7 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 		if (str) {
 			return URI(str);
 		} else {
-			_log.warn(fmt("Unknown URID %1%\n") % str);
+			_log.warn("Unknown URID %1%\n", str);
 		}
 	}
 	return boost::optional<URI>();
@@ -144,8 +144,7 @@ bool
 AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 {
 	if (msg->type != _uris.atom_Object) {
-		_log.warn(fmt("Unknown message type <%1%>\n")
-		          % _map.unmap_uri(msg->type));
+		_log.warn("Unknown message type <%1%>\n", _map.unmap_uri(msg->type));
 		return false;
 	}
 
@@ -374,8 +373,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
 		_iface(BundleEnd{seq});
 	} else {
-		_log.warn(fmt("Unknown object type <%1%>\n")
-		          % _map.unmap_uri(obj->body.otype));
+		_log.warn("Unknown object type <%1%>\n",
+		          _map.unmap_uri(obj->body.otype));
 	}
 
 	return true;

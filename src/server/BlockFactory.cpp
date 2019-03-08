@@ -165,9 +165,8 @@ BlockFactory::load_lv2_plugins()
 			const char* feature = lilv_node_as_uri(lilv_nodes_get(features, f));
 			if (!_world.lv2_features().is_supported(feature)) {
 				supported = false;
-				_world.log().warn(
-					fmt("Ignoring <%1%>; required feature <%2%>\n")
-					% uri % feature);
+				_world.log().warn("Ignoring <%1%>; required feature <%2%>\n",
+				                  uri, feature);
 				break;
 			}
 		}
@@ -178,8 +177,8 @@ BlockFactory::load_lv2_plugins()
 
 		// Ignore plugins that are missing ports
 		if (!lilv_plugin_get_port_by_index(lv2_plug, 0)) {
-			_world.log().warn(
-				fmt("Ignoring <%1%>; missing or corrupt ports\n") % uri);
+			_world.log().warn("Ignoring <%1%>; missing or corrupt ports\n",
+			                  uri);
 			continue;
 		}
 
@@ -197,10 +196,10 @@ BlockFactory::load_lv2_plugins()
 			    !lilv_port_has_property(lv2_plug,
 			                            port,
 			                            _world.uris().lv2_connectionOptional)) {
-				_world.log().warn(
-					fmt("Ignoring <%1%>; unsupported port <%2%>\n")
-					% uri % lilv_node_as_string(
-						lilv_port_get_symbol(lv2_plug, port)));
+				_world.log().warn("Ignoring <%1%>; unsupported port <%2%>\n",
+				                  uri,
+				                  lilv_node_as_string(
+					                  lilv_port_get_symbol(lv2_plug, port)));
 				break;
 			}
 		}
@@ -217,7 +216,7 @@ BlockFactory::load_lv2_plugins()
 		}
 	}
 
-	_world.log().info(fmt("Loaded %1% plugins\n") % _plugins.size());
+	_world.log().info("Loaded %1% plugins\n", _plugins.size());
 }
 
 } // namespace server

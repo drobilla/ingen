@@ -67,11 +67,10 @@ CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 	} catch (const FeedbackException& e) {
 		Log& log = graph.engine().log();
 		if (e.node && e.root) {
-			log.error(fmt("Feedback compiling %1% from %2%\n")
-			          % e.node->path() % e.root->path());
+			log.error("Feedback compiling %1% from %2%\n",
+			          e.node->path(), e.root->path());
 		} else {
-			log.error(fmt("Feedback compiling %1%\n")
-			          % e.node->path());
+			log.error("Feedback compiling %1%\n", e.node->path());
 		}
 		return MPtr<CompiledGraph>();
 	}

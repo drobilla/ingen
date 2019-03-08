@@ -334,8 +334,8 @@ NodeModule::delete_port_view(SPtr<const PortModel> model)
 	if (p) {
 		delete p;
 	} else {
-		app().log().warn(fmt("Failed to find port %1% on module %2%\n")
-		                 % model->path() % _block->path());
+		app().log().warn("Failed to find port %1% on module %2%\n",
+		                 model->path(), _block->path());
 	}
 }
 
@@ -381,7 +381,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			app().log().warn(fmt("No LV2 GUI for %1%\n") % _block->path());
+			app().log().warn("No LV2 GUI for %1%\n", _block->path());
 		}
 	}
 

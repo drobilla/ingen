@@ -132,7 +132,7 @@ types(World& world, SPtr<const client::ObjectModel> model)
 				types.insert(world.uris().lv2_Plugin);
 			}
 		} else {
-			world.log().error(fmt("<%1%> has non-URI type\n") % model->uri());
+			world.log().error("<%1%> has non-URI type\n", model->uri());
 		}
 	}
 

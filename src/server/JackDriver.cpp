@@ -22,7 +22,6 @@
 #include <jack/midiport.h>
 #ifdef INGEN_JACK_SESSION
 #include <jack/session.h>
-#include <boost/format.hpp>
 #include "ingen/Serialiser.hpp"
 #endif
 #ifdef HAVE_JACK_METADATA
@@ -36,6 +35,7 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
+#include "ingen/fmt.hpp"
 #include "lv2/atom/util.h"
 
 #include "Buffer.hpp"
@@ -89,8 +89,8 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 			                           JackSessionID, nullptr,
 			                           uuid.c_str());
-			_engine.log().info(fmt("Connected to Jack as `%1%' (UUID `%2%')\n")
-			                   % client_name.c_str() % uuid);
+			_engine.log().info("Connected to Jack as `%1%' (UUID `%2%')\n",
+			                   client_name.c_str(), uuid);
 		}
 #endif
 
@@ -99,8 +99,7 @@ JackDriver::attach(const std::string& server_name,
 			if ((_client = jack_client_open(client_name.c_str(),
 			                                JackServerName, nullptr,
 			                                server_name.c_str()))) {
-				_engine.log().info(fmt("Connected to Jack server `%1%'\n")
-				                   % server_name);
+				_engine.log().info("Connected to Jack server `%1%'\n", server_name);
 			}
 		}
 
@@ -171,7 +170,7 @@ JackDriver::activate()
 		_engine.log().error("Could not activate Jack client, aborting\n");
 		return false;
 	} else {
-		_engine.log().info(fmt("Activated Jack client `%1%'\n") %
+		_engine.log().info("Activated Jack client `%1%'\n",
 		                   world.conf().option("jack-name").ptr<char>());
 	}
 	return true;
@@ -545,12 +544,11 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 void
 JackDriver::_session_cb(jack_session_event_t* event)
 {
-	_engine.log().info(fmt("Jack session save to %1%\n") % event->session_dir);
+	_engine.log().info("Jack session save to %1%\n", event->session_dir);
 
-	const std::string cmd = (
-		boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
-		% jack_get_client_name(_client)
-		% event->client_uuid).str();
+	const std::string cmd = fmt("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}",
+	                            jack_get_client_name(_client),
+	                            event->client_uuid);
 
 	SPtr<Serialiser> serialiser = _engine.world().serialiser();
 	if (serialiser) {

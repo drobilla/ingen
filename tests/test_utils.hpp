@@ -14,27 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/fmt.hpp"
+
 #include <iostream>
 
-#include <boost/format.hpp>
-
-typedef boost::basic_format<char> fmt;
+using ingen::fmt;
 
 #define EXPECT_TRUE(value) \
 	if (!(value)) { \
-		std::cerr << (fmt("error: %1%:%2%: !%3%\n") % __FILE__ % \
-		              __LINE__ % (#value)); \
+		std::cerr << fmt("error: %1%:%2%: !%3%\n", \
+		                 __FILE__, __LINE__, (#value)); \
 	}
 
 #define EXPECT_FALSE(value) \
 	if ((value)) { \
-		std::cerr << (fmt("error: %1%:%2%: !%3%\n") % __FILE__ % \
-		              __LINE__ % (#value)); \
+		std::cerr << (fmt("error: %1%:%2%: !%3%\n", \
+		                  __FILE__, __LINE__, (#value))); \
 	}
 
 #define EXPECT_EQ(value, expected) \
 	if (!((value) == (expected))) { \
-		std::cerr << (fmt("error: %1%:%2%: %3% != %4%\n") % __FILE__ % \
-		              __LINE__ % (#value) % (#expected)); \
+		std::cerr << fmt("error: %1%:%2%: %3% != %4%\n", \
+		                 __FILE__, __LINE__, (#value), (#expected)); \
 		std::cerr << "note: actual value: " << value << std::endl; \
 	}

@@ -97,8 +97,8 @@ SocketReader::run()
 	std::unique_ptr<FILE, decltype(&fclose)> f{fdopen(_socket->fd(), "r"),
 	                                           &fclose};
 	if (!f) {
-		_world.log().error(fmt("Failed to open connection (%1%)\n")
-		                   % strerror(errno));
+		_world.log().error("Failed to open connection (%1%)\n",
+		                   strerror(errno));
 		// Connection gone, exit
 		_socket.reset();
 		return;
@@ -168,8 +168,7 @@ SocketReader::run()
 		if (st == SERD_FAILURE || !_msg_node) {
 			continue;  // Read nothing, e.g. just whitespace
 		} else if (st) {
-			_world.log().error(fmt("Read error: %1%\n")
-			                   % serd_strerror(st));
+			_world.log().error("Read error: %1%\n", serd_strerror(st));
 			continue;
 		}
 
