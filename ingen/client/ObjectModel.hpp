@@ -21,25 +21,20 @@
 #ifndef INGEN_CLIENT_OBJECTMODEL_HPP
 #define INGEN_CLIENT_OBJECTMODEL_HPP
 
-#include <algorithm>
-#include <cassert>
-#include <cstdlib>
-
-#include "ingen/types.hpp"
-#include "raul/Path.hpp"
-
 #include "ingen/Node.hpp"
-#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
+#include "ingen/types.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 namespace ingen {
 
-class URIs;
+class Atom;
 
 namespace client {
-
-class ClientStore;
 
 /** Base class for all Node models (BlockModel, GraphModel, PortModel).
  *

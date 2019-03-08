@@ -14,17 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include "JackDriver.hpp"
+#include "Engine.hpp"
 
 #include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
 
-#include "JackDriver.hpp"
-#include "Engine.hpp"
+#include <string>
 
 using namespace ingen;
 

@@ -17,11 +17,11 @@
 #ifndef INGEN_PATHS_HPP
 #define INGEN_PATHS_HPP
 
-#include <cstddef>
-#include <string>
-
 #include "ingen/URI.hpp"
 #include "raul/Path.hpp"
+
+#include <cstddef>
+#include <string>
 
 namespace ingen {
 

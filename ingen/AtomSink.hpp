@@ -17,10 +17,10 @@
 #ifndef INGEN_ATOMSINK_HPP
 #define INGEN_ATOMSINK_HPP
 
-#include <cstdint>
-
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
+
+#include <cstdint>
 
 namespace ingen {
 

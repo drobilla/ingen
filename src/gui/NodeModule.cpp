@@ -14,12 +14,19 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <string>
+#include "NodeModule.hpp"
 
-#include <gtkmm/eventbox.h>
-
-#include "lv2/atom/util.h"
+#include "App.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphWindow.hpp"
+#include "NodeMenu.hpp"
+#include "Port.hpp"
+#include "RenameWindow.hpp"
+#include "Style.hpp"
+#include "SubgraphModule.hpp"
+#include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
+#include "ingen_config.h"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
@@ -29,19 +36,12 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
+#include "lv2/atom/util.h"
 
-#include "App.hpp"
-#include "GraphCanvas.hpp"
-#include "GraphWindow.hpp"
-#include "NodeMenu.hpp"
-#include "NodeModule.hpp"
-#include "Port.hpp"
-#include "RenameWindow.hpp"
-#include "Style.hpp"
-#include "SubgraphModule.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
-#include "ingen_config.h"
+#include <gtkmm/eventbox.h>
+
+#include <cassert>
+#include <string>
 
 namespace ingen {
 

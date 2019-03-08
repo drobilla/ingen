@@ -17,10 +17,13 @@
 #ifndef INGEN_ENGINE_JACKAUDIODRIVER_HPP
 #define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
+#include "Driver.hpp"
+#include "EnginePort.hpp"
 #include "ingen_config.h"
 
-#include <string>
-#include <atomic>
+#include "ingen/types.hpp"
+#include "lv2/atom/forge.h"
+#include "raul/Semaphore.hpp"
 
 #include <jack/jack.h>
 #include <jack/thread.h>
@@ -29,12 +32,10 @@
 #include <jack/session.h>
 #endif
 
-#include "ingen/types.hpp"
-#include "lv2/atom/forge.h"
-#include "raul/Semaphore.hpp"
-
-#include "Driver.hpp"
-#include "EnginePort.hpp"
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <string>
 
 namespace Raul { class Path; }
 

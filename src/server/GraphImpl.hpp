@@ -17,21 +17,20 @@
 #ifndef INGEN_ENGINE_GRAPHIMPL_HPP
 #define INGEN_ENGINE_GRAPHIMPL_HPP
 
-#include <cstdlib>
-
-#include "ingen/ingen.h"
-
 #include "BlockImpl.hpp"
-#include "CompiledGraph.hpp"
 #include "DuplexPort.hpp"
-#include "PluginImpl.hpp"
-#include "PortType.hpp"
 #include "ThreadManager.hpp"
 
+#include "ingen/types.hpp"
+
+#include <cassert>
+#include <cstdint>
+#include <memory>
+#include <utility>
+
+namespace raul { class Maid; }
+
 namespace ingen {
-
-class Arc;
-
 namespace server {
 
 class ArcImpl;

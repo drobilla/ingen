@@ -14,16 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <utility>
+#include "ObjectMenu.hpp"
+
+#include "App.hpp"
+#include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
 
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/ObjectModel.hpp"
 
-#include "App.hpp"
-#include "ObjectMenu.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
+#include <cstdint>
 
 namespace ingen {
 

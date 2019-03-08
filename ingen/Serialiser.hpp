@@ -17,13 +17,12 @@
 #ifndef INGEN_SERIALISER_HPP
 #define INGEN_SERIALISER_HPP
 
-#include <stdexcept>
-#include <string>
-
 #include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "sord/sordmm.hpp"
+
+#include <string>
 
 namespace Raul { class Path; }
 

@@ -17,10 +17,11 @@
 #ifndef INGEN_GUI_WINDOWFACTORY_HPP
 #define INGEN_GUI_WINDOWFACTORY_HPP
 
-#include <map>
-
 #include "ingen/Node.hpp"
 #include "ingen/types.hpp"
+
+#include <cstddef>
+#include <map>
 
 namespace ingen {
 

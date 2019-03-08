@@ -14,15 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <limits>
-#include <sstream>
-#include <string>
+#include "ConnectWindow.hpp"
 
-#include <boost/variant/get.hpp>
-#include <gtkmm/stock.h>
-
-#include "raul/Process.hpp"
+#include "App.hpp"
+#include "WindowFactory.hpp"
 
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
@@ -36,10 +31,15 @@
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/client/SocketClient.hpp"
 #include "ingen_config.h"
+#include "raul/Process.hpp"
 
-#include "App.hpp"
-#include "ConnectWindow.hpp"
-#include "WindowFactory.hpp"
+#include <boost/variant/get.hpp>
+#include <glib.h>
+#include <gtkmm/stock.h>
+
+#include <limits>
+#include <string>
+#include <utility>
 
 using namespace ingen::client;
 

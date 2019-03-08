@@ -17,10 +17,10 @@
 #ifndef INGEN_TYPES_HPP
 #define INGEN_TYPES_HPP
 
+#include "raul/Maid.hpp"
+
 #include <cstdlib>
 #include <memory>
-
-#include "raul/Maid.hpp"
 
 namespace ingen {
 

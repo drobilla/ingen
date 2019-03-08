@@ -14,18 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <signal.h>
-
-#include <cstdlib>
-#include <chrono>
-#include <iostream>
-#include <memory>
-#include <string>
-
-#include "raul/Path.hpp"
-
-#include "ingen_config.h"
-
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
@@ -35,9 +23,23 @@
 #include "ingen/paths.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
+#include "ingen_config.h"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
 #ifdef HAVE_SOCKET
 #include "ingen/client/SocketClient.hpp"
 #endif
+
+#include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <signal.h>
+#include <string>
+#include <thread>
 
 using namespace std;
 using namespace ingen;

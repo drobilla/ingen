@@ -20,14 +20,7 @@
 #define _BSD_SOURCE     1
 #define _DEFAULT_SOURCE 1
 
-#include <cerrno>
-#include <climits>
-#include <cstdlib>
-#include <memory>
-#include <vector>
-
-#include <sys/stat.h>
-#include <sys/types.h>
+#include "ingen/FilePath.hpp"
 
 #ifdef _WIN32
 #    include <windows.h>
@@ -36,7 +29,13 @@
 #    define mkdir(path, flags) _mkdir(path)
 #endif
 
-#include "ingen/FilePath.hpp"
+#include <cerrno>
+#include <climits>
+#include <cstdlib>
+#include <memory>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <vector>
 
 /* A minimal subset of the std::filesystem API from C++17. */
 

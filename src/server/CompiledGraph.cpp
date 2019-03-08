@@ -14,17 +14,22 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
+#include "CompiledGraph.hpp"
+
+#include "Engine.hpp"
+#include "GraphImpl.hpp"
+#include "ThreadManager.hpp"
 
 #include "ingen/ColorContext.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 
-#include "CompiledGraph.hpp"
-#include "Engine.hpp"
-#include "GraphImpl.hpp"
-#include "ThreadManager.hpp"
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
+#include <utility>
 
 namespace ingen {
 namespace server {

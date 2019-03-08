@@ -14,23 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <unordered_map>
-
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "raul/Maid.hpp"
+#include "GraphImpl.hpp"
 
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
+#include "CompiledGraph.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
-#include "GraphImpl.hpp"
 #include "GraphPlugin.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
+
+#include "ingen/Forge.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "raul/Maid.hpp"
+
+#include <cassert>
+#include <cstddef>
+#include <map>
+#include <unordered_map>
 
 namespace ingen {
 namespace server {

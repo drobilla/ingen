@@ -14,16 +14,20 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ctime>
+#include "UndoStack.hpp"
 
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
+#include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
 #include "lv2/patch/patch.h"
+#include "lv2/urid/urid.h"
 #include "serd/serd.h"
 #include "sratom/sratom.h"
 
-#include "UndoStack.hpp"
+#include <ctime>
+#include <iterator>
+#include <memory>
 
 #define NS_RDF (const uint8_t*)"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 

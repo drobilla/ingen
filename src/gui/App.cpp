@@ -14,33 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <fstream>
-#include <string>
-#include <utility>
-
-#include <boost/variant/get.hpp>
-#include <gtk/gtkwindow.h>
-#include <gtkmm/stock.h>
-
-#include "ganv/Edge.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/QueuedInterface.hpp"
-#include "ingen/StreamWriter.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/GraphModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/SigClientInterface.hpp"
-#include "ingen/runtime_paths.hpp"
-#include "lilv/lilv.h"
-#include "raul/Path.hpp"
-#include "suil/suil.h"
-
 #include "App.hpp"
+
 #include "ConnectWindow.hpp"
 #include "GraphTreeWindow.hpp"
 #include "GraphWindow.hpp"
@@ -55,6 +30,33 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 #include "rgba.hpp"
+
+#include "ganv/Edge.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/EngineBase.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/QueuedInterface.hpp"
+#include "ingen/StreamWriter.hpp"
+#include "ingen/World.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/GraphModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "ingen/client/SigClientInterface.hpp"
+#include "ingen/runtime_paths.hpp"
+#include "lilv/lilv.h"
+#include "raul/Path.hpp"
+#include "suil/suil.h"
+
+#include <boost/variant/get.hpp>
+#include <gtk/gtkwindow.h>
+#include <gtkmm/stock.h>
+
+#include <cassert>
+#include <fstream>
+#include <string>
+#include <utility>
 
 namespace Raul { class Deletable; }
 

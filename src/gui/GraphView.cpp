@@ -14,12 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <fstream>
-
-#include "ingen/Interface.hpp"
-#include "ingen/client/GraphModel.hpp"
-
 #include "App.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubgraphWindow.hpp"
@@ -27,6 +21,12 @@
 #include "GraphTreeWindow.hpp"
 #include "GraphView.hpp"
 #include "WidgetFactory.hpp"
+
+#include "ingen/Interface.hpp"
+#include "ingen/client/GraphModel.hpp"
+
+#include <cassert>
+#include <fstream>
 
 namespace ingen {
 

@@ -17,6 +17,8 @@
 #ifndef INGEN_GUI_GRAPHVIEW_HPP
 #define INGEN_GUI_GRAPHVIEW_HPP
 
+#include "ingen/types.hpp"
+
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/scrolledwindow.h>
@@ -26,11 +28,12 @@
 #include <gtkmm/toolitem.h>
 #include <gtkmm/toolitem.h>
 
-#include "ingen/types.hpp"
-
 namespace Raul { class Atom; }
 
 namespace ingen {
+
+class Atom;
+class URI;
 
 namespace client {
 class PortModel;

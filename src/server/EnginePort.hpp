@@ -17,12 +17,12 @@
 #ifndef INGEN_ENGINE_ENGINE_PORT_HPP
 #define INGEN_ENGINE_ENGINE_PORT_HPP
 
+#include "DuplexPort.hpp"
+
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 
 #include <boost/intrusive/slist.hpp>
-
-#include "DuplexPort.hpp"
 
 namespace ingen {
 namespace server {

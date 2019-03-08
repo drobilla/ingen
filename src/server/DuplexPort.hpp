@@ -17,15 +17,32 @@
 #ifndef INGEN_ENGINE_DUPLEXPORT_HPP
 #define INGEN_ENGINE_DUPLEXPORT_HPP
 
-#include <boost/intrusive/slist.hpp>
-
-#include "BufferRef.hpp"
 #include "InputPort.hpp"
+#include "PortImpl.hpp"
+#include "PortType.hpp"
+#include "types.hpp"
+
+#include "ingen/URI.hpp"
+#include "lv2/urid/urid.h"
+
+#include <boost/intrusive/slist_hook.hpp>
+
+#include <cstddef>
+#include <cstdint>
+
+namespace Raul { class Symbol; }
 
 namespace ingen {
+
+class Atom;
+class Properties;
+
 namespace server {
 
-class BlockImpl;
+class BufferFactory;
+class Engine;
+class GraphImpl;
+class RunContext;
 
 /** A duplex Port (both an input and output port on a Graph)
  *

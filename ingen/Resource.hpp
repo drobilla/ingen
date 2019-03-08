@@ -17,14 +17,13 @@
 #ifndef INGEN_RESOURCE_HPP
 #define INGEN_RESOURCE_HPP
 
-#include <cassert>
-#include <string>
-
 #include "ingen/Properties.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
+
+#include <cassert>
 
 namespace ingen {
 

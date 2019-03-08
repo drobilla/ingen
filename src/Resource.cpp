@@ -14,13 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <utility>
+#include "ingen/Resource.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
-#include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
+
+#include <map>
+#include <utility>
 
 namespace ingen {
 

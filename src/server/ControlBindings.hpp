@@ -17,24 +17,30 @@
 #ifndef INGEN_ENGINE_CONTROLBINDINGS_HPP
 #define INGEN_ENGINE_CONTROLBINDINGS_HPP
 
-#include <atomic>
-#include <cstdint>
-#include <vector>
+#include "BufferRef.hpp"
 
-#include <boost/intrusive/options.hpp>
-#include <boost/intrusive/set.hpp>
-
-#include "ingen/Atom.hpp"
 #include "ingen/types.hpp"
 #include "lv2/atom/forge.h"
 #include "raul/Maid.hpp"
-#include "raul/Path.hpp"
 
-#include "BufferFactory.hpp"
+#include <boost/intrusive/options.hpp>
+#include <boost/intrusive/set.hpp>
+#include <boost/intrusive/set_hook.hpp>
+
+#include <atomic>
+#include <cstdint>
+#include <utility>
+#include <vector>
+
+namespace Raul { class Path; }
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
+class Buffer;
 class Engine;
 class RunContext;
 class PortImpl;

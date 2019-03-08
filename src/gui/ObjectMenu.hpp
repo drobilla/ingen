@@ -17,17 +17,18 @@
 #ifndef INGEN_GUI_OBJECTMENU_HPP
 #define INGEN_GUI_OBJECTMENU_HPP
 
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/types.hpp"
+
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
 
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/types.hpp"
-
 namespace ingen {
 namespace gui {
 
+class App;
 class ObjectControlWindow;
 class ObjectPropertiesWindow;
 class GraphCanvas;

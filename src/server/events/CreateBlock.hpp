@@ -17,11 +17,11 @@
 #ifndef INGEN_EVENTS_CREATEBLOCK_HPP
 #define INGEN_EVENTS_CREATEBLOCK_HPP
 
-#include "ingen/Resource.hpp"
-
 #include "ClientUpdate.hpp"
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
+
+#include <cstdint>
 
 namespace ingen {
 namespace server {

@@ -14,19 +14,20 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <utility>
-
-#include "ingen/Interface.hpp"
-#include "ingen/client/GraphModel.hpp"
+#include "SubgraphModule.hpp"
 
 #include "App.hpp"
 #include "NodeModule.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphWindow.hpp"
 #include "Port.hpp"
-#include "SubgraphModule.hpp"
 #include "WindowFactory.hpp"
+
+#include "ingen/Interface.hpp"
+#include "ingen/client/GraphModel.hpp"
+
+#include <cassert>
+#include <utility>
 
 namespace ingen {
 

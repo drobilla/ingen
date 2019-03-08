@@ -22,7 +22,8 @@
 #include <deque>
 #include <functional>
 #include <memory>
-#include <ostream>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace server {

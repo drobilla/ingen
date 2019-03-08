@@ -21,15 +21,15 @@
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
-#include <cstdint>
-#include <string>
-
 #include "ingen/Message.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
+
+#include <cstdint>
+#include <string>
 
 namespace Raul {
 class Path;

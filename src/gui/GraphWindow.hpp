@@ -17,14 +17,14 @@
 #ifndef INGEN_GUI_GRAPH_WINDOW_HPP
 #define INGEN_GUI_GRAPH_WINDOW_HPP
 
-#include <string>
-
-#include <gtkmm/builder.h>
+#include "GraphBox.hpp"
+#include "Window.hpp"
 
 #include "ingen/types.hpp"
 
-#include "GraphBox.hpp"
-#include "Window.hpp"
+#include <gtkmm/builder.h>
+
+#include <string>
 
 namespace ingen {
 

@@ -14,8 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <string>
+#include "RenameWindow.hpp"
+
+#include "App.hpp"
 
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
@@ -23,8 +24,7 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "lv2/core/lv2.h"
 
-#include "App.hpp"
-#include "RenameWindow.hpp"
+#include <string>
 
 namespace ingen {
 

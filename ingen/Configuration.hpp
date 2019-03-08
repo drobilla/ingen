@@ -17,20 +17,20 @@
 #ifndef INGEN_CONFIGURATION_HPP
 #define INGEN_CONFIGURATION_HPP
 
-#include <cstdlib>
+#include "ingen/Atom.hpp"
+#include "ingen/FilePath.hpp"
+#include "ingen/ingen.h"
+#include "lv2/urid/urid.h"
+#include "raul/Exception.hpp"
+
+#include <cstdio>
 #include <list>
 #include <map>
 #include <ostream>
 #include <string>
 
-#include "ingen/Atom.hpp"
-#include "ingen/ingen.h"
-#include "lv2/urid/urid.h"
-#include "raul/Exception.hpp"
-
 namespace ingen {
 
-class FilePath;
 class Forge;
 class URIMap;
 

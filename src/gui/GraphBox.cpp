@@ -14,22 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <sstream>
-#include <string>
-
-#include <boost/format.hpp>
-#include <glib/gstdio.h>
-#include <glibmm/fileutils.h>
-#include <gtkmm/stock.h>
-
-#include "ingen/Configuration.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/fmt.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/GraphModel.hpp"
-
 #include "App.hpp"
 #include "BreadCrumbs.hpp"
 #include "ConnectWindow.hpp"
@@ -47,9 +31,24 @@
 #include "WindowFactory.hpp"
 #include "ingen_config.h"
 
+#include "ingen/Configuration.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/GraphModel.hpp"
+#include "ingen/fmt.hpp"
+
+#include <boost/format.hpp>
+#include <glib/gstdio.h>
+#include <glibmm/fileutils.h>
+#include <gtkmm/stock.h>
 #ifdef HAVE_WEBKIT
 #include <webkit/webkit.h>
 #endif
+
+#include <cassert>
+#include <sstream>
+#include <string>
 
 namespace ingen {
 

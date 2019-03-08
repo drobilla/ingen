@@ -17,11 +17,11 @@
 #ifndef INGEN_STREAMWRITER_HPP
 #define INGEN_STREAMWRITER_HPP
 
-#include <cstdio>
-
 #include "ingen/ingen.h"
 #include "ingen/ColorContext.hpp"
 #include "ingen/TurtleWriter.hpp"
+
+#include <cstdio>
 
 namespace ingen {
 

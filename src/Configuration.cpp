@@ -14,22 +14,28 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <cerrno>
-#include <cstring>
-#include <iostream>
-#include <memory>
-#include <thread>
-
 #include "ingen/Configuration.hpp"
 #include "ingen/Forge.hpp"
-#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/filesystem.hpp"
+#include "ingen/fmt.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
+#include "serd/serd.h"
+#include "sord/sord.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
+
+#include <algorithm>
+#include <cassert>
+#include <cerrno>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace ingen {
 

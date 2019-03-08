@@ -17,20 +17,19 @@
 #ifndef INGEN_GUI_GRAPHCANVAS_HPP
 #define INGEN_GUI_GRAPHCANVAS_HPP
 
-#include <string>
-#include <map>
-#include <set>
-
-#include "lilv/lilv.h"
+#include "NodeModule.hpp"
 
 #include "ganv/Canvas.hpp"
 #include "ganv/Module.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/types.hpp"
+#include "lilv/lilv.h"
 #include "raul/Path.hpp"
 
-#include "NodeModule.hpp"
+#include <string>
+#include <map>
+#include <set>
 
 namespace ingen {
 

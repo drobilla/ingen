@@ -17,13 +17,13 @@
 #ifndef INGEN_EVENTS_DISCONNECTALL_HPP
 #define INGEN_EVENTS_DISCONNECTALL_HPP
 
-#include <list>
-
-#include "raul/Path.hpp"
-
 #include "CompiledGraph.hpp"
 #include "Disconnect.hpp"
 #include "Event.hpp"
+
+#include "raul/Path.hpp"
+
+#include <list>
 
 namespace ingen {
 namespace server {

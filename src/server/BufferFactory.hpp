@@ -17,29 +17,26 @@
 #ifndef INGEN_ENGINE_BUFFERFACTORY_HPP
 #define INGEN_ENGINE_BUFFERFACTORY_HPP
 
-#include <atomic>
-#include <map>
-#include <mutex>
-
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
-#include "raul/RingBuffer.hpp"
+#include "lv2/urid/urid.h"
 
 #include "BufferRef.hpp"
-#include "PortType.hpp"
 #include "types.hpp"
+
+#include <atomic>
+#include <mutex>
+#include <cstdint>
 
 namespace Raul { class Maid; }
 
 namespace ingen {
 
-class URIs;
+class Forge;
 
 namespace server {
 
+class Buffer;
 class Engine;
 
 class INGEN_API BufferFactory {

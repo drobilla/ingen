@@ -14,15 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
+#include "PostProcessor.hpp"
 
 #include "Engine.hpp"
 #include "Event.hpp"
-#include "PostProcessor.hpp"
-#include "RunContext.hpp"
+
+#include <cassert>
 
 namespace ingen {
 namespace server {
+
+class PreProcessContext;
 
 class Sentinel : public Event {
 public:

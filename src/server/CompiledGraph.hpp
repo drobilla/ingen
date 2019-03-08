@@ -17,15 +17,15 @@
 #ifndef INGEN_ENGINE_COMPILEDGRAPH_HPP
 #define INGEN_ENGINE_COMPILEDGRAPH_HPP
 
-#include <functional>
-#include <set>
-#include <vector>
+#include "Task.hpp"
 
 #include "ingen/types.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 
-#include "Task.hpp"
+#include <cstddef>
+#include <set>
+#include <string>
 
 namespace ingen {
 namespace server {

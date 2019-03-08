@@ -14,29 +14,23 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen_config.h"
-
-#include <cstdlib>
-#include <string>
+#include "DuplexPort.hpp"
+#include "Engine.hpp"
+#include "FrameTimer.hpp"
+#include "PortAudioDriver.hpp"
+#include "PortType.hpp"
+#include "RunContext.hpp"
+#include "ingen/Atom.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "raul/Path.hpp"
 
 #include <portaudio.h>
 
-#include "ingen/Configuration.hpp"
-#include "ingen/LV2Features.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/World.hpp"
-#include "lv2/atom/util.h"
-
-#include "Buffer.hpp"
-#include "DuplexPort.hpp"
-#include "Engine.hpp"
-#include "GraphImpl.hpp"
-#include "PortAudioDriver.hpp"
-#include "PortImpl.hpp"
-#include "FrameTimer.hpp"
-#include "ThreadManager.hpp"
-#include "util.hpp"
+#include <cstdio>
+#include <cstring>
+#include <string>
 
 namespace ingen {
 namespace server {

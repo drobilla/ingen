@@ -17,23 +17,22 @@
 #ifndef INGEN_EVENTS_DELTA_HPP
 #define INGEN_EVENTS_DELTA_HPP
 
-#include <vector>
-
-#include <boost/optional.hpp>
+#include "ClientUpdate.hpp"
+#include "ControlBindings.hpp"
+#include "Event.hpp"
 
 #include "lilv/lilv.h"
 
-#include "CompiledGraph.hpp"
-#include "ControlBindings.hpp"
-#include "Event.hpp"
-#include "PluginImpl.hpp"
+#include <boost/optional/optional.hpp>
+
+#include <algorithm>
+#include <cstdint>
+#include <vector>
 
 namespace ingen {
-
-class Resource;
-
 namespace server {
 
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class RunContext;

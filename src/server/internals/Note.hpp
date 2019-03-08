@@ -20,6 +20,8 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
+#include <cstdint>
+
 namespace ingen {
 namespace server {
 

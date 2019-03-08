@@ -17,10 +17,10 @@
 #ifndef INGEN_ENGINE_PLUGINIMPL_HPP
 #define INGEN_ENGINE_PLUGINIMPL_HPP
 
-#include <cstdlib>
-
 #include "ingen/Resource.hpp"
 #include "raul/Symbol.hpp"
+
+#include <cstdlib>
 
 namespace ingen {
 

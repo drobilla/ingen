@@ -17,10 +17,10 @@
 #ifndef INGEN_TESTCLIENT_HPP
 #define INGEN_TESTCLIENT_HPP
 
-#include <boost/variant/get.hpp>
-
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+
+#include <boost/variant/get.hpp>
 
 using namespace ingen;
 

@@ -14,10 +14,25 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen_config.h"
+#include "JackDriver.hpp"
 
-#include <cstdlib>
-#include <string>
+#include "Buffer.hpp"
+#include "DuplexPort.hpp"
+#include "Engine.hpp"
+#include "GraphImpl.hpp"
+#include "PortImpl.hpp"
+#include "ThreadManager.hpp"
+#include "ingen_config.h"
+#include "util.hpp"
+
+#include "ingen/Configuration.hpp"
+#include "ingen/LV2Features.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/World.hpp"
+#include "ingen/fmt.hpp"
+#include "lv2/atom/util.h"
 
 #include <jack/midiport.h>
 #ifdef INGEN_JACK_SESSION
@@ -29,23 +44,13 @@
 #include "jackey.h"
 #endif
 
-#include "ingen/Configuration.hpp"
-#include "ingen/LV2Features.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/World.hpp"
-#include "ingen/fmt.hpp"
-#include "lv2/atom/util.h"
-
-#include "Buffer.hpp"
-#include "DuplexPort.hpp"
-#include "Engine.hpp"
-#include "GraphImpl.hpp"
-#include "JackDriver.hpp"
-#include "PortImpl.hpp"
-#include "ThreadManager.hpp"
-#include "util.hpp"
+#include <cassert>
+#include <chrono>
+#include <cstdlib>
+#include <cstring>
+#include <mutex>
+#include <string>
+#include <utility>
 
 typedef jack_default_audio_sample_t jack_sample_t;
 

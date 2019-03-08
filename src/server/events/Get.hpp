@@ -17,8 +17,6 @@
 #ifndef INGEN_EVENTS_GET_HPP
 #define INGEN_EVENTS_GET_HPP
 
-#include <vector>
-
 #include "BlockFactory.hpp"
 #include "ClientUpdate.hpp"
 #include "Event.hpp"

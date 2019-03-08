@@ -14,19 +14,21 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-#include <algorithm>
-
-#include <boost/optional.hpp>
-
-#include "raul/Path.hpp"
+#include "ingen/client/PluginModel.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/client/GraphModel.hpp"
-#include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
-
+#include "raul/Path.hpp"
 #include "ingen_config.h"
+
+#include <boost/optional/optional.hpp>
+
+#include <cctype>
+#include <cstring>
+#include <iosfwd>
+#include <string>
+#include <utility>
 
 using std::string;
 

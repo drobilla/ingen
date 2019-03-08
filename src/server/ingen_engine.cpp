@@ -14,11 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Module.hpp"
-#include "ingen/World.hpp"
 #include "Engine.hpp"
 #include "EventWriter.hpp"
 #include "util.hpp"
+
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 
 using namespace ingen;
 

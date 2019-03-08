@@ -17,27 +17,23 @@
 #ifndef INGEN_EVENTS_DELETE_HPP
 #define INGEN_EVENTS_DELETE_HPP
 
-#include <map>
-#include <vector>
-
-#include "ingen/Store.hpp"
-
-#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "GraphImpl.hpp"
 
-namespace Raul {
-template<typename T> class Array;
-}
+#include "ingen/Store.hpp"
+
+#include <cstdint>
+#include <map>
+#include <utility>
+#include <vector>
 
 namespace ingen {
 namespace server {
 
-class BlockImpl;
+class CompiledGraph;
 class DuplexPort;
 class EnginePort;
-class PortImpl;
 
 namespace events {
 

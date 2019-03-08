@@ -14,21 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cerrno>
-#include <memory>
-
-#include <poll.h>
+#include "ingen/SocketReader.hpp"
 
 #include "ingen/AtomForgeSink.hpp"
 #include "ingen/AtomReader.hpp"
-#include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/SocketReader.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
+#include "lv2/atom/forge.h"
+#include "lv2/urid/urid.h"
 #include "raul/Socket.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
+
+#include <cerrno>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <memory>
+#include <mutex>
+#include <poll.h>
+#include <utility>
 
 namespace ingen {
 

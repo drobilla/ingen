@@ -14,21 +14,23 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdexcept>
-
-#include "ingen/AtomSink.hpp"
-#include "ingen/AtomWriter.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/World.hpp"
+#include "PreProcessor.hpp"
 
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessContext.hpp"
-#include "PreProcessor.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 #include "UndoStack.hpp"
+
+#include "ingen/AtomWriter.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/World.hpp"
+
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
 
 namespace ingen {
 namespace server {

@@ -14,23 +14,23 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <climits>
-
-#include <cmath>
-
-#include "ingen/URIs.hpp"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
+#include "internals/BlockDelay.hpp"
 
 #include "Buffer.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "RunContext.hpp"
-#include "internals/BlockDelay.hpp"
+
+#include "ingen/Forge.hpp"
+#include "ingen/URIs.hpp"
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 
 namespace ingen {
 namespace server {
+
+class RunContext;
+
 namespace internals {
 
 InternalPlugin* BlockDelayNode::internal_plugin(URIs& uris) {

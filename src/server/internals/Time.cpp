@@ -14,9 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/URIs.hpp"
-#include "lv2/atom/util.h"
-#include "lv2/midi/midi.h"
+#include "internals/Time.hpp"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
@@ -24,8 +22,12 @@
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
 #include "RunContext.hpp"
-#include "internals/Time.hpp"
 #include "util.hpp"
+
+#include "ingen/Forge.hpp"
+#include "ingen/URIs.hpp"
+#include "lv2/atom/util.h"
+#include "lv2/midi/midi.h"
 
 namespace ingen {
 namespace server {

@@ -14,11 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdint>
+#include "ingen/URIMap.hpp"
 
 #include "ingen/Log.hpp"
 #include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
+#include "lv2/urid/urid.h"
+
+#include <cassert>
+#include <cstdint>
+#include <utility>
 
 namespace ingen {
 

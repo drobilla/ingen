@@ -43,7 +43,7 @@ def options(ctx):
 
 def configure(conf):
     autowaf.display_header('Ingen Configuration')
-    autowaf.set_line_just(conf, 45)
+    autowaf.set_line_just(conf, 47)
     conf.load('compiler_cxx', cache=True)
     conf.load('lv2', cache=True)
     if not Options.options.no_python:
@@ -55,7 +55,7 @@ def configure(conf):
     conf.check_cxx(header_name='boost/format.hpp')
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
     conf.check_cxx(header_name='boost/intrusive_ptr.hpp')
-    conf.check_cxx(header_name='boost/optional.hpp')
+    conf.check_cxx(header_name='boost/optional/optional.hpp')
     conf.check_cxx(header_name='boost/variant.hpp')
     conf.check_cxx(msg='Checking for thread_local keyword',
                    mandatory=False,

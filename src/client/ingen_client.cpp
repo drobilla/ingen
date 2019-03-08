@@ -16,7 +16,6 @@
 
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-
 #include "ingen_config.h"
 
 struct IngenClientModule : public ingen::Module {

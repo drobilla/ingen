@@ -17,12 +17,11 @@
 #ifndef INGEN_ENGINE_LV2PLUGIN_HPP
 #define INGEN_ENGINE_LV2PLUGIN_HPP
 
-#include <cstdlib>
-
-#include "ingen/types.hpp"
-#include "lilv/lilv.h"
-
 #include "PluginImpl.hpp"
+
+#include "ingen/URI.hpp"
+#include "lilv/lilv.h"
+#include "raul/Symbol.hpp"
 
 namespace ingen {
 
@@ -30,8 +29,10 @@ class World;
 
 namespace server {
 
-class GraphImpl;
 class BlockImpl;
+class BufferFactory;
+class Engine;
+class GraphImpl;
 
 /** Implementation of an LV2 plugin (loaded shared library).
  */

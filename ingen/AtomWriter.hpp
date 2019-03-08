@@ -17,8 +17,6 @@
 #ifndef INGEN_ATOMWRITER_HPP
 #define INGEN_ATOMWRITER_HPP
 
-#include <cstdint>
-
 #include "ingen/AtomForgeSink.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
@@ -27,6 +25,8 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/forge.h"
 #include "lv2/urid/urid.h"
+
+#include <cstdint>
 
 namespace Raul { class Path; }
 

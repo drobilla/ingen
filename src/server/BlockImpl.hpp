@@ -17,30 +17,32 @@
 #ifndef INGEN_ENGINE_BLOCKIMPL_HPP
 #define INGEN_ENGINE_BLOCKIMPL_HPP
 
-#include <set>
-
-#include <boost/intrusive/slist.hpp>
-#include <boost/optional.hpp>
-
-#include "lilv/lilv.h"
-
-#include "raul/Array.hpp"
-
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
-#include "PluginImpl.hpp"
 #include "PortType.hpp"
-#include "RunContext.hpp"
 #include "types.hpp"
 
+#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
+#include "lilv/lilv.h"
+#include "lv2/urid/urid.h"
+#include "raul/Array.hpp"
+
+#include <boost/intrusive/slist_hook.hpp>
+#include <boost/optional/optional.hpp>
+
+#include <cstdint>
+#include <set>
+
 namespace Raul {
-class Maid;
+class Symbol;
 }
 
 namespace ingen {
 namespace server {
 
-class Buffer;
 class BufferFactory;
 class Engine;
 class GraphImpl;

@@ -18,6 +18,8 @@
 #include "ingen/Log.hpp"
 #include "ingen/client/PluginModel.hpp"
 
+#include <utility>
+
 namespace ingen {
 namespace gui {
 

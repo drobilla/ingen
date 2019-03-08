@@ -14,10 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "raul/Socket.hpp"
+
 #include <memory>
 #include <thread>
-
-#include "raul/Socket.hpp"
 
 namespace ingen {
 namespace server {

@@ -47,18 +47,29 @@
  * manipulating data in this model which resemble HTTP methods.
  */
 
-#include <cassert>
-#include <cstdlib>
-#include <string>
+#include "ingen/Atom.hpp"
+#include "ingen/AtomForgeSink.hpp"
+#include "ingen/AtomSink.hpp"
+#include "ingen/AtomWriter.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/paths.hpp"
+#include "lv2/atom/forge.h"
+#include "lv2/urid/urid.h"
+#include "raul/Path.hpp"
+#include "serd/serd.h"
 
 #include <boost/variant/apply_visitor.hpp>
 
-#include "ingen/AtomSink.hpp"
-#include "ingen/AtomWriter.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/URIMap.hpp"
-#include "raul/Path.hpp"
-#include "serd/serd.h"
+#include <cassert>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utility>
 
 namespace ingen {
 

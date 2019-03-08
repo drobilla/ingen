@@ -17,32 +17,35 @@
 #ifndef INGEN_ENGINE_PORTAUDIODRIVER_HPP
 #define INGEN_ENGINE_PORTAUDIODRIVER_HPP
 
+#include "Driver.hpp"
+#include "EnginePort.hpp"
 #include "ingen_config.h"
+#include "types.hpp"
 
-#include <atomic>
-#include <memory>
-#include <string>
+#include "ingen/URI.hpp"
+#include "lv2/atom/forge.h"
+#include "raul/Semaphore.hpp"
 
 #include <portaudio.h>
 
-#include "raul/Semaphore.hpp"
-
-#include "lv2/atom/forge.h"
-
-#include "Driver.hpp"
-#include "EnginePort.hpp"
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 
 namespace Raul { class Path; }
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
+class Buffer;
 class DuplexPort;
 class Engine;
-class GraphImpl;
-class PortAudioDriver;
-class PortImpl;
 class FrameTimer;
+class RunContext;
 
 class PortAudioDriver : public Driver
 {

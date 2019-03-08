@@ -14,13 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <utility>
+#include "Broadcaster.hpp"
+
+#include "PluginImpl.hpp"
+#include "BlockFactory.hpp"
 
 #include "ingen/Interface.hpp"
 
-#include "Broadcaster.hpp"
-#include "PluginImpl.hpp"
-#include "BlockFactory.hpp"
+#include <cstddef>
+#include <utility>
 
 namespace ingen {
 namespace server {

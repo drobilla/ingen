@@ -17,11 +17,12 @@
 #ifndef INGEN_SOCKET_WRITER_HPP
 #define INGEN_SOCKET_WRITER_HPP
 
-#include <cstddef>
-#include <cstdint>
-
+#include "ingen/Message.hpp"
 #include "ingen/TurtleWriter.hpp"
 #include "ingen/ingen.h"
+#include "ingen/types.hpp"
+
+#include <cstddef>
 
 namespace Raul {
 class Socket;

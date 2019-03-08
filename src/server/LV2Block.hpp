@@ -17,16 +17,23 @@
 #ifndef INGEN_ENGINE_LV2BLOCK_HPP
 #define INGEN_ENGINE_LV2BLOCK_HPP
 
-#include <mutex>
-
-#include "lilv/lilv.h"
-#include "lv2/worker/worker.h"
-#include "raul/Maid.hpp"
-
 #include "BufferRef.hpp"
 #include "BlockImpl.hpp"
-#include "ingen/LV2Features.hpp"
 #include "types.hpp"
+
+#include "ingen/LV2Features.hpp"
+#include "lilv/lilv.h"
+#include "lv2/worker/worker.h"
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
+#include "raul/Noncopyable.hpp"
+
+#include <boost/intrusive/slist.hpp>
+
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <mutex>
 
 namespace ingen {
 namespace server {

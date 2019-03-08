@@ -17,8 +17,9 @@
 #ifndef INGEN_ENGINE_GRAPHPLUGIN_HPP
 #define INGEN_ENGINE_GRAPHPLUGIN_HPP
 
-#include <string>
 #include "PluginImpl.hpp"
+
+#include <string>
 
 namespace ingen {
 namespace server {

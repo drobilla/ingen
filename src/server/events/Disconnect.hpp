@@ -17,23 +17,16 @@
 #ifndef INGEN_EVENTS_DISCONNECT_HPP
 #define INGEN_EVENTS_DISCONNECT_HPP
 
-#include "raul/Path.hpp"
-
-#include "BufferFactory.hpp"
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
-#include "GraphImpl.hpp"
+#include "PortImpl.hpp"
 #include "types.hpp"
-
-namespace Raul {
-template <typename T> class Array;
-}
 
 namespace ingen {
 namespace server {
 
+class ArcImpl;
 class InputPort;
-class PortImpl;
 
 namespace events {
 

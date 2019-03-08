@@ -14,10 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "events/Mark.hpp"
+
 #include "Engine.hpp"
 #include "PreProcessContext.hpp"
 #include "UndoStack.hpp"
-#include "events/Mark.hpp"
+
+#include <utility>
 
 namespace ingen {
 namespace server {

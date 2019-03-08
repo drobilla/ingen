@@ -17,14 +17,14 @@
 #ifndef INGEN_CLIENT_PORTMODEL_HPP
 #define INGEN_CLIENT_PORTMODEL_HPP
 
-#include <cstdlib>
-#include <string>
-
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/port-props/port-props.h"
+
+#include <cstdlib>
+#include <string>
 
 namespace Raul { class Path; }
 

@@ -15,7 +15,9 @@
 */
 
 #include "ingen/TurtleWriter.hpp"
+
 #include "ingen/URIMap.hpp"
+#include "lv2/atom/atom.h"
 
 #define USTR(s) ((const uint8_t*)(s))
 

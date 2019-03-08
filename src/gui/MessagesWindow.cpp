@@ -14,12 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include "MessagesWindow.hpp"
+
+#include "App.hpp"
 
 #include "ingen/URIs.hpp"
 
-#include "App.hpp"
-#include "MessagesWindow.hpp"
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace gui {

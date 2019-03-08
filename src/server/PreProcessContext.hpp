@@ -17,9 +17,10 @@
 #ifndef INGEN_ENGINE_PREPROCESSCONTEXT_HPP
 #define INGEN_ENGINE_PREPROCESSCONTEXT_HPP
 
-#include <unordered_set>
-
+#include "CompiledGraph.hpp"
 #include "GraphImpl.hpp"
+
+#include <unordered_set>
 
 namespace Raul { class Maid; }
 

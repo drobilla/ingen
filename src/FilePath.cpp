@@ -16,6 +16,10 @@
 
 #include "ingen/FilePath.hpp"
 
+#include <algorithm>
+#include <string>
+#include <utility>
+
 namespace ingen {
 
 template <typename Char>

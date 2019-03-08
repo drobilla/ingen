@@ -17,14 +17,14 @@
 #ifndef INGEN_ATOMREADER_HPP
 #define INGEN_ATOMREADER_HPP
 
-#include <cstdint>
-
-#include <boost/optional/optional.hpp>
-
 #include "ingen/AtomSink.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
+
+#include <boost/optional/optional.hpp>
+
+#include <cstdint>
 
 namespace Raul {
 class Path;

@@ -14,21 +14,31 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
-
-#include "ingen/Log.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/atom/util.h"
-#include "lv2/midi/midi.h"
+#include "ControlBindings.hpp"
 
 #include "Buffer.hpp"
-#include "ControlBindings.hpp"
+#include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "lv2/atom/atom.h"
+#include "lv2/atom/forge.h"
+#include "lv2/atom/util.h"
+#include "lv2/midi/midi.h"
+#include "lv2/urid/urid.h"
+#include "raul/Path.hpp"
+
+#include <cmath>
+#include <cstring>
+#include <string>
 
 namespace ingen {
 namespace server {

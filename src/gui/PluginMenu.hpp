@@ -17,15 +17,16 @@
 #ifndef INGEN_GUI_PLUGINMENU_HPP
 #define INGEN_GUI_PLUGINMENU_HPP
 
-#include <map>
-#include <set>
-#include <string>
-
-#include <gtkmm/menu.h>
-
 #include "ingen/World.hpp"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
+
+#include <gtkmm/menu.h>
+
+#include <cstddef>
+#include <map>
+#include <set>
+#include <string>
 
 namespace ingen {
 

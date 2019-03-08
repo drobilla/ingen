@@ -17,16 +17,10 @@
 #ifndef INGEN_LOG_HPP
 #define INGEN_LOG_HPP
 
-#include <cstdarg>
-#include <cstdio>
-#include <functional>
-#include <string>
-
-#include <boost/format.hpp>
-
 #include "ingen/LV2Features.hpp"
 #include "ingen/fmt.hpp"
 #include "ingen/ingen.h"
+#include "ingen/types.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/log/log.h"
 #include "lv2/urid/urid.h"
@@ -35,6 +29,7 @@
 #include <cstdio>
 #include <functional>
 #include <string>
+#include <utility>
 
 namespace ingen {
 
@@ -107,6 +102,6 @@ private:
 	bool         _trace;
 };
 
-}  // namespace ingen
+} // namespace ingen
 
 #endif  // INGEN_LOG_HPP

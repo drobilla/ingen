@@ -14,30 +14,38 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <vector>
-#include <thread>
-
-#include "ingen/Log.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/URIs.hpp"
-#include "raul/Maid.hpp"
+#include "Delta.hpp"
 
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreateBlock.hpp"
 #include "CreateGraph.hpp"
 #include "CreatePort.hpp"
-#include "Delta.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "SetPortValue.hpp"
-#include "events/Get.hpp"
+
+#include "ingen/Forge.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/Store.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "raul/Maid.hpp"
+
+#include <mutex>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace ingen {
 namespace server {
+
+class PreProcessContext;
+
 namespace events {
 
 Delta::Delta(Engine&           engine,

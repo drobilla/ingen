@@ -17,18 +17,20 @@
 #ifndef INGEN_GUI_BREADCRUMBS_HPP
 #define INGEN_GUI_BREADCRUMBS_HPP
 
-#include <list>
+#include "GraphView.hpp"
+
+#include "ingen/Message.hpp"
+#include "ingen/client/GraphModel.hpp"
+#include "ingen/types.hpp"
+#include "raul/Path.hpp"
 
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/togglebutton.h>
 
-#include "raul/Path.hpp"
-
-#include "ingen/client/GraphModel.hpp"
-#include "ingen/types.hpp"
-
-#include "GraphView.hpp"
+#include <cassert>
+#include <list>
+#include <string>
 
 namespace ingen {
 namespace gui {

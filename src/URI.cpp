@@ -14,10 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
+#include "ingen/URI.hpp"
 
 #include "ingen/FilePath.hpp"
-#include "ingen/URI.hpp"
+
+#include <cassert>
 
 namespace ingen {
 

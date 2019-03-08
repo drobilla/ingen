@@ -17,11 +17,11 @@
 #ifndef INGEN_GUI_GRAPHPORTMODULE_HPP
 #define INGEN_GUI_GRAPHPORTMODULE_HPP
 
-#include <string>
+#include "Port.hpp"
 
 #include "ganv/Module.hpp"
 
-#include "Port.hpp"
+#include <string>
 
 namespace Raul { class Atom; }
 

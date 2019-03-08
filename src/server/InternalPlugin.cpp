@@ -14,15 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/URIs.hpp"
-#include "internals/Controller.hpp"
+#include "InternalPlugin.hpp"
+
+#include "Engine.hpp"
 #include "internals/BlockDelay.hpp"
+#include "internals/Controller.hpp"
 #include "internals/Note.hpp"
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
 
-#include "Engine.hpp"
-#include "InternalPlugin.hpp"
+#include "ingen/URIs.hpp"
 
 namespace ingen {
 namespace server {

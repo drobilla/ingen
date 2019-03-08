@@ -17,13 +17,17 @@
 #ifndef INGEN_SERVER_SOCKET_SERVER_HPP
 #define INGEN_SERVER_SOCKET_SERVER_HPP
 
+#include "EventWriter.hpp"
+
+#include "Engine.hpp"
+
+#include "ingen/Configuration.hpp"
 #include "ingen/SocketReader.hpp"
 #include "ingen/SocketWriter.hpp"
 #include "ingen/StreamWriter.hpp"
 #include "ingen/Tee.hpp"
+#include "ingen/World.hpp"
 #include "raul/Socket.hpp"
-
-#include "EventWriter.hpp"
 
 namespace ingen {
 namespace server {

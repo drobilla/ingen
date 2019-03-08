@@ -14,9 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/client/ObjectModel.hpp"
+
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/client/ObjectModel.hpp"
+
+#include <cassert>
+#include <cstdint>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace client {

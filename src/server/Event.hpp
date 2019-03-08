@@ -17,18 +17,17 @@
 #ifndef INGEN_ENGINE_EVENT_HPP
 #define INGEN_ENGINE_EVENT_HPP
 
-#include <atomic>
-
-#include "raul/Deletable.hpp"
-#include "raul/Noncopyable.hpp"
-#include "raul/Path.hpp"
+#include "types.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/types.hpp"
+#include "raul/Deletable.hpp"
+#include "raul/Noncopyable.hpp"
+#include "raul/Path.hpp"
 
-#include "types.hpp"
+#include <atomic>
 
 namespace ingen {
 namespace server {

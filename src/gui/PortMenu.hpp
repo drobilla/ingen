@@ -17,14 +17,14 @@
 #ifndef INGEN_GUI_PORTMENU_HPP
 #define INGEN_GUI_PORTMENU_HPP
 
-#include <gtkmm/builder.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/menushell.h>
+#include "ObjectMenu.hpp"
 
 #include "ingen/client/PortModel.hpp"
 #include "ingen/types.hpp"
 
-#include "ObjectMenu.hpp"
+#include <gtkmm/builder.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menushell.h>
 
 namespace ingen {
 namespace gui {

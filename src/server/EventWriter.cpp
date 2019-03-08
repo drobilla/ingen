@@ -14,13 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/variant/apply_visitor.hpp>
-
-#include "ingen/URIs.hpp"
+#include "EventWriter.hpp"
 
 #include "Engine.hpp"
-#include "EventWriter.hpp"
 #include "events.hpp"
+
+#include <boost/variant/apply_visitor.hpp>
 
 namespace ingen {
 namespace server {

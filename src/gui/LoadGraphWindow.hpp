@@ -17,6 +17,9 @@
 #ifndef INGEN_GUI_LOADGRAPHWINDOW_HPP
 #define INGEN_GUI_LOADGRAPHWINDOW_HPP
 
+#include "ingen/Node.hpp"
+#include "ingen/types.hpp"
+
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/entry.h>
@@ -25,14 +28,13 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/spinbutton.h>
 
-#include "ingen/Node.hpp"
-#include "ingen/types.hpp"
-
 namespace ingen {
 
 namespace client { class GraphModel; }
 
 namespace gui {
+
+class App;
 
 /** 'Load Graph' Window.
  *

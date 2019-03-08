@@ -14,12 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <set>
-
-#include "ingen/Store.hpp"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include "events/DisconnectAll.hpp"
 
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
@@ -30,8 +25,16 @@
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "events/Disconnect.hpp"
-#include "events/DisconnectAll.hpp"
 #include "util.hpp"
+
+#include "ingen/Store.hpp"
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
+#include "raul/Path.hpp"
+
+#include <mutex>
+#include <set>
+#include <utility>
 
 namespace ingen {
 namespace server {

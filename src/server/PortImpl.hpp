@@ -17,25 +17,23 @@
 #ifndef INGEN_ENGINE_PORTIMPL_HPP
 #define INGEN_ENGINE_PORTIMPL_HPP
 
-#include <cstdlib>
-
-#include "ingen/Atom.hpp"
-#include "raul/Array.hpp"
-
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
 #include "RunContext.hpp"
 #include "types.hpp"
 
-namespace Raul { class Maid; }
+#include "ingen/Atom.hpp"
+#include "raul/Array.hpp"
+
+#include <atomic>
+#include <cstdint>
+#include <cstdlib>
 
 namespace ingen {
 namespace server {
 
 class BlockImpl;
-class BufferFactory;
-class RunContext;
 
 /** A port (input or output) on a Block.
  *

@@ -17,17 +17,17 @@
 #ifndef INGEN_ENGINE_UTIL_HPP
 #define INGEN_ENGINE_UTIL_HPP
 
-#include <cstdlib>
+#include "ingen_config.h"
 
 #include "ingen/Log.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen_config.h"
-
-#include <fenv.h>
 #ifdef __SSE__
 #include <xmmintrin.h>
 #endif
+
+#include <fenv.h>
+#include <cstdlib>
 
 #ifdef __clang__
 #    define REALTIME __attribute__((annotate("realtime")))

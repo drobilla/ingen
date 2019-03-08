@@ -17,10 +17,10 @@
 #ifndef INGEN_GUI_ARC_HPP
 #define INGEN_GUI_ARC_HPP
 
-#include <cassert>
-
 #include "ganv/Edge.hpp"
 #include "ingen/types.hpp"
+
+#include <cassert>
 
 namespace ingen {
 

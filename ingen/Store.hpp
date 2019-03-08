@@ -17,16 +17,15 @@
 #ifndef INGEN_STORE_HPP
 #define INGEN_STORE_HPP
 
-#include <cstddef>
-#include <map>
-#include <mutex>
-#include <utility>
-
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"
+
+#include <map>
+#include <mutex>
+#include <utility>
 
 namespace Raul { class Symbol; }
 

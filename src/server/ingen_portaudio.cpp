@@ -14,17 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include "PortAudioDriver.hpp"
+#include "Engine.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
+#include "ingen/types.hpp"
 
-#include "PortAudioDriver.hpp"
-#include "Engine.hpp"
+namespace ingen { namespace server { class Driver; } }
 
 using namespace ingen;
 

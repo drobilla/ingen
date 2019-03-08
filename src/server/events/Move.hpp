@@ -17,10 +17,10 @@
 #ifndef INGEN_EVENTS_MOVE_HPP
 #define INGEN_EVENTS_MOVE_HPP
 
+#include "Event.hpp"
+
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
-
-#include "Event.hpp"
 
 namespace ingen {
 namespace server {

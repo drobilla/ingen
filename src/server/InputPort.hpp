@@ -17,21 +17,30 @@
 #ifndef INGEN_ENGINE_INPUTPORT_HPP
 #define INGEN_ENGINE_INPUTPORT_HPP
 
-#include <cassert>
-#include <cstdlib>
-
-#include <boost/intrusive/slist.hpp>
-
-#include "ingen/types.hpp"
-
 #include "ArcImpl.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
+#include "types.hpp"
+
+#include "ingen/types.hpp"
+#include "lv2/urid/urid.h"
+
+#include <boost/intrusive/options.hpp>
+#include <boost/intrusive/slist.hpp>
+
+#include <cstdint>
+#include <cstdlib>
+
+namespace Raul { class Symbol; }
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
-class ArcImpl;
 class BlockImpl;
+class BufferFactory;
 class RunContext;
 
 /** An input port on a Block or Graph.

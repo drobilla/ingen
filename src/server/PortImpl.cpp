@@ -14,19 +14,26 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "PortImpl.hpp"
+
+#include "BlockImpl.hpp"
+#include "Buffer.hpp"
+#include "BufferFactory.hpp"
+#include "Engine.hpp"
+#include "PortType.hpp"
+#include "ThreadManager.hpp"
+
+#include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "lv2/atom/util.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
-#include "BlockImpl.hpp"
-#include "Buffer.hpp"
-#include "BufferFactory.hpp"
-#include "Engine.hpp"
-#include "PortImpl.hpp"
-#include "PortType.hpp"
-#include "ThreadManager.hpp"
+#include <algorithm>
+#include <cassert>
+#include <cstdio>
+#include <utility>
 
 namespace ingen {
 namespace server {

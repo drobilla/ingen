@@ -17,10 +17,8 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
-#include <chrono>
-#include <condition_variable>
-#include <mutex>
-#include <random>
+#include "Event.hpp"
+#include "Load.hpp"
 
 #include "ingen/Clock.hpp"
 #include "ingen/EngineBase.hpp"
@@ -28,8 +26,13 @@
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
-#include "Event.hpp"
-#include "Load.hpp"
+#include <chrono>
+#include <condition_variable>
+#include <cstddef>
+#include <cstdint>
+#include <mutex>
+#include <random>
+#include <vector>
 
 namespace Raul {
 class Maid;

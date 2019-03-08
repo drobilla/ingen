@@ -14,17 +14,18 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include "LV2Plugin.hpp"
+
+#include "Engine.hpp"
+#include "LV2Block.hpp"
 
 #include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "lv2/presets/presets.h"
 
-#include "Engine.hpp"
-#include "LV2Block.hpp"
-#include "LV2Plugin.hpp"
+#include <cstdlib>
+#include <string>
 
 namespace ingen {
 namespace server {

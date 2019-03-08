@@ -17,16 +17,16 @@
 #ifndef INGEN_NODE_HPP
 #define INGEN_NODE_HPP
 
-#include <cstdint>
-#include <map>
-#include <string>
-#include <utility>
-
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
 #include "ingen/paths.hpp"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
+
+#include <cstdint>
+#include <map>
+#include <string>
+#include <utility>
 
 namespace Raul {
 class Path;

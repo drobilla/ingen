@@ -14,14 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Interface.hpp"
-#include "ingen/URIs.hpp"
+#include "ClientUpdate.hpp"
 
 #include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
-#include "ClientUpdate.hpp"
 #include "GraphImpl.hpp"
+#include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
+
+#include "ingen/Arc.hpp"
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/types.hpp"
+
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <utility>
 
 namespace ingen {
 namespace server {

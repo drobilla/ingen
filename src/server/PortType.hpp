@@ -17,10 +17,10 @@
 #ifndef INGEN_INTERFACE_PORTTYPE_HPP
 #define INGEN_INTERFACE_PORTTYPE_HPP
 
-#include <cassert>
-
 #include "lv2/atom/atom.h"
 #include "lv2/core/lv2.h"
+
+#include <cassert>
 
 namespace ingen {
 

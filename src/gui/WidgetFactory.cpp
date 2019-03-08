@@ -14,13 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <fstream>
-#include <string>
+#include "WidgetFactory.hpp"
 
 #include "ingen/Log.hpp"
 #include "ingen/runtime_paths.hpp"
 
-#include "WidgetFactory.hpp"
+#include <cstdlib>
+#include <fstream>
+#include <stdexcept>
+#include <string>
 
 namespace ingen {
 namespace gui {

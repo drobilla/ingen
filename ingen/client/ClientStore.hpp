@@ -17,23 +17,28 @@
 #ifndef INGEN_CLIENT_CLIENTSTORE_HPP
 #define INGEN_CLIENT_CLIENTSTORE_HPP
 
-#include <cassert>
-#include <list>
-#include <string>
-
 #include "ingen/Interface.hpp"
+#include "ingen/Message.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Path.hpp"
 
-namespace Raul { class Atom; }
+#include <map>
+
+namespace Raul {
+class Path;
+class Atom;
+}
 
 namespace ingen {
 
+class Atom;
 class Log;
 class Node;
+class Resource;
 class URIs;
 
 namespace client {

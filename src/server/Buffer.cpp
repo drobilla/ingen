@@ -16,26 +16,29 @@
 
 #define __STDC_LIMIT_MACROS 1
 
-#include <cmath>
+#include "Buffer.hpp"
+
+#include "BufferFactory.hpp"
+#include "Engine.hpp"
+#include "RunContext.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen_config.h"
+#include "lv2/atom/atom.h"
+#include "lv2/atom/util.h"
+
+#include <algorithm>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <new>
 
 #ifdef __SSE__
 #    include <xmmintrin.h>
 #endif
-
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen_config.h"
-#include "lv2/atom/util.h"
-#include "ingen/Log.hpp"
-
-#include "Buffer.hpp"
-#include "BufferFactory.hpp"
-#include "Engine.hpp"
-#include "RunContext.hpp"
 
 namespace ingen {
 namespace server {

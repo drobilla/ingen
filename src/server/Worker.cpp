@@ -14,14 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/Log.hpp"
-#include "lv2/worker/worker.h"
+#include "Worker.hpp"
 
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "LV2Block.hpp"
-#include "Worker.hpp"
+
+#include "ingen/Log.hpp"
+#include "lv2/worker/worker.h"
+
+#include <cstdlib>
 
 namespace ingen {
 namespace server {

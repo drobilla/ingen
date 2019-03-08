@@ -17,8 +17,12 @@
 #ifndef INGEN_GUI_LOADPLUGINWINDOW_HPP
 #define INGEN_GUI_LOADPLUGINWINDOW_HPP
 
-#include <map>
-#include <string>
+#include "Window.hpp"
+
+#include "ingen/Node.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/types.hpp"
+#include "ingen_config.h"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/combobox.h>
@@ -26,12 +30,8 @@
 #include <gtkmm/treemodel.h>
 #include <gtkmm/treeview.h>
 
-#include "ingen/Node.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/types.hpp"
-#include "ingen_config.h"
-
-#include "Window.hpp"
+#include <map>
+#include <string>
 
 namespace ingen {
 

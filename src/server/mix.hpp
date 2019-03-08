@@ -20,9 +20,6 @@
 #include <cstdint>
 
 namespace ingen {
-
-class URIs;
-
 namespace server {
 
 class Buffer;

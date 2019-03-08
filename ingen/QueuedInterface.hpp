@@ -17,11 +17,11 @@
 #ifndef INGEN_ENGINE_QUEUEDINTERFACE_HPP
 #define INGEN_ENGINE_QUEUEDINTERFACE_HPP
 
-#include <mutex>
-#include <vector>
-
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
+
+#include <mutex>
+#include <vector>
 
 namespace ingen {
 

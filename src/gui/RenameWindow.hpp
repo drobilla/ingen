@@ -17,15 +17,15 @@
 #ifndef INGEN_GUI_RENAMEWINDOW_HPP
 #define INGEN_GUI_RENAMEWINDOW_HPP
 
-#include <gtkmm/builder.h>
-#include <gtkmm/button.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/label.h>
+#include "Window.hpp"
 
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/types.hpp"
 
-#include "Window.hpp"
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/label.h>
 
 namespace ingen {
 namespace gui {

@@ -17,12 +17,16 @@
 #ifndef INGEN_GUI_URI_ENTRY_HPP
 #define INGEN_GUI_URI_ENTRY_HPP
 
+#include "ingen/URI.hpp"
+#include "lilv/lilv.h"
+
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/menu.h>
 
-#include "lilv/lilv.h"
+#include <set>
+#include <string>
 
 namespace ingen {
 namespace gui {

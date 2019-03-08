@@ -17,15 +17,17 @@
 #ifndef INGEN_URI_HPP
 #define INGEN_URI_HPP
 
-#include <iosfwd>
-#include <string>
-
-#include <boost/utility/string_view.hpp>
-
 #include "ingen/FilePath.hpp"
 #include "ingen/ingen.h"
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
+
+#include <boost/utility/string_view.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <ostream>
+#include <string>
 
 namespace ingen {
 

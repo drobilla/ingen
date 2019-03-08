@@ -17,10 +17,10 @@
 #ifndef INGEN_ENGINE_DIRECT_DRIVER_HPP
 #define INGEN_ENGINE_DIRECT_DRIVER_HPP
 
-#include <boost/intrusive/slist.hpp>
-
 #include "Driver.hpp"
 #include "Engine.hpp"
+
+#include <boost/intrusive/slist.hpp>
 
 namespace ingen {
 namespace server {

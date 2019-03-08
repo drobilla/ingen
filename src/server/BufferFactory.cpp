@@ -14,13 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "BufferFactory.hpp"
+
+#include "Buffer.hpp"
+#include "Engine.hpp"
+
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "lv2/atom/atom.h"
 
-#include "Buffer.hpp"
-#include "BufferFactory.hpp"
-#include "Engine.hpp"
+#include <algorithm>
 
 namespace ingen {
 namespace server {

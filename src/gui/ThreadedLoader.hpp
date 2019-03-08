@@ -17,26 +17,29 @@
 #ifndef INGEN_GUI_THREADEDLOADER_HPP
 #define INGEN_GUI_THREADEDLOADER_HPP
 
-#include <thread>
-
-#include <cassert>
-#include <list>
-#include <mutex>
-#include <string>
-
-#include <boost/optional.hpp>
-
 #include "ingen/FilePath.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
 #include "raul/Semaphore.hpp"
 
+#include <boost/optional/optional.hpp>
+#include <sigc++/sigc++.h>
+
+#include <list>
+#include <mutex>
+#include <thread>
+#include <utility>
+
 namespace ingen {
 
 class URI;
 
+namespace client { class GraphModel; }
+
 namespace gui {
+
+class App;
 
 /** Thread for loading graph files.
  *

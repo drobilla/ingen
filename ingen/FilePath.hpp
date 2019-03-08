@@ -17,11 +17,11 @@
 #ifndef INGEN_FILE_PATH_HPP
 #define INGEN_FILE_PATH_HPP
 
-#include <iosfwd>
-#include <type_traits>
-#include <utility>
-
 #include <boost/utility/string_view.hpp>
+
+#include <ostream>
+#include <string>
+#include <utility>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #define USE_WINDOWS_FILE_PATHS 1

@@ -19,10 +19,14 @@
 
 #include "Event.hpp"
 
+#include <map>
+
 namespace ingen {
 namespace server {
 
+class CompiledGraph;
 class Engine;
+class GraphImpl;
 
 namespace events {
 

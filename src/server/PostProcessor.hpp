@@ -17,11 +17,11 @@
 #ifndef INGEN_ENGINE_POSTPROCESSOR_HPP
 #define INGEN_ENGINE_POSTPROCESSOR_HPP
 
-#include <atomic>
+#include "types.hpp"
 
 #include "ingen/ingen.h"
 
-#include "types.hpp"
+#include <atomic>
 
 namespace ingen {
 namespace server {

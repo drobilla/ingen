@@ -17,6 +17,9 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
+#include <cstdint>
+#include <utility>
+
 namespace ingen {
 namespace client {
 

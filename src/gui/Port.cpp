@@ -14,8 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <string>
+#include "Port.hpp"
+
+#include "App.hpp"
+#include "GraphWindow.hpp"
+#include "PortMenu.hpp"
+#include "RDFS.hpp"
+#include "Style.hpp"
+#include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
+#include "ingen_config.h"
+#include "rgba.hpp"
 
 #include "ganv/Module.hpp"
 #include "ingen/Configuration.hpp"
@@ -25,16 +34,8 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
-#include "App.hpp"
-#include "GraphWindow.hpp"
-#include "Port.hpp"
-#include "PortMenu.hpp"
-#include "RDFS.hpp"
-#include "Style.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
-#include "ingen_config.h"
-#include "rgba.hpp"
+#include <cassert>
+#include <string>
 
 using namespace ingen::client;
 

@@ -17,16 +17,19 @@
 #ifndef INGEN_GUI_MESSAGESWINDOW_HPP
 #define INGEN_GUI_MESSAGESWINDOW_HPP
 
-#include <mutex>
-#include <sstream>
-#include <string>
+#include "Window.hpp"
+
+#include "lv2/log/log.h"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/textview.h>
-#include "lv2/log/log.h"
 
-#include "Window.hpp"
+#include <cstdarg>
+#include <map>
+#include <mutex>
+#include <sstream>
+#include <string>
 
 namespace ingen {
 namespace gui {

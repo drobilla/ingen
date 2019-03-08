@@ -17,14 +17,14 @@
 #ifndef INGEN_ATOMFORGESINK_HPP
 #define INGEN_ATOMFORGESINK_HPP
 
+#include "lv2/atom/atom.h"
+#include "lv2/atom/forge.h"
+#include "lv2/atom/util.h"
+
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
-
-#include "lv2/atom/atom.h"
-#include "lv2/atom/forge.h"
-#include "lv2/atom/util.h"
 
 namespace ingen {
 

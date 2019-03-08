@@ -23,6 +23,8 @@
 
 #include "RDFS.hpp"
 
+#include <utility>
+
 namespace ingen {
 namespace gui {
 namespace rdfs {

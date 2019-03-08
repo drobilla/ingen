@@ -17,9 +17,14 @@
 #ifndef INGEN_CLIENT_GRAPHMODEL_HPP
 #define INGEN_CLIENT_GRAPHMODEL_HPP
 
+#include "ingen/Node.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/BlockModel.hpp"
+#include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
+
+#include <cstdint>
 
 namespace ingen {
 namespace client {

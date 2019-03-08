@@ -17,14 +17,14 @@
 #ifndef INGEN_ENGINE_TEE_HPP
 #define INGEN_ENGINE_TEE_HPP
 
+#include "ingen/Interface.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/types.hpp"
+
 #include <cstddef>
 #include <mutex>
 #include <set>
 #include <utility>
-
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/types.hpp"
 
 namespace ingen {
 

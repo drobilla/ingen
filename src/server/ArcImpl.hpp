@@ -17,22 +17,22 @@
 #ifndef INGEN_ENGINE_ARC_IMPL_HPP
 #define INGEN_ENGINE_ARC_IMPL_HPP
 
-#include <cstdlib>
-
-#include <boost/intrusive/slist.hpp>
+#include "BufferRef.hpp"
 
 #include "ingen/Arc.hpp"
-#include "lv2/atom/atom.h"
-#include "raul/Deletable.hpp"
+#include "raul/Noncopyable.hpp"
+#include "raul/Path.hpp"
 
-#include "BufferRef.hpp"
-#include "RunContext.hpp"
+#include <boost/intrusive/slist_hook.hpp>
+
+#include <cstdint>
 
 namespace ingen {
 namespace server {
 
-class PortImpl;
 class InputPort;
+class PortImpl;
+class RunContext;
 
 /** Represents a single inbound connection for an InputPort.
  *

@@ -17,6 +17,12 @@
 #ifndef INGEN_GUI_CONNECTWINDOW_HPP
 #define INGEN_GUI_CONNECTWINDOW_HPP
 
+#include "Window.hpp"
+
+#include "ingen/Message.hpp"
+#include "ingen/types.hpp"
+#include "lilv/lilv.h"
+
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/entry.h>
@@ -26,12 +32,14 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/spinbutton.h>
 
-#include "ingen/types.hpp"
-#include "lilv/lilv.h"
-
-#include "Window.hpp"
+#include <cstdint>
+#include <string>
 
 namespace ingen {
+
+class Interface;
+class World;
+
 namespace gui {
 
 class App;

@@ -14,24 +14,21 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-
-#include <stddef.h>
-
-#include <cassert>
-#include <algorithm>
+#include "App.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphView.hpp"
+#include "GraphWindow.hpp"
+#include "LoadPluginWindow.hpp"
+#include "ingen_config.h"
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
-#include "App.hpp"
-#include "LoadPluginWindow.hpp"
-#include "GraphCanvas.hpp"
-#include "GraphView.hpp"
-#include "GraphWindow.hpp"
-
-#include "ingen_config.h"
+#include <string>
+#include <cstddef>
+#include <cassert>
+#include <algorithm>
 
 using std::string;
 

@@ -14,11 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <unordered_map>
+#include "URIEntry.hpp"
 
 #include "App.hpp"
 #include "RDFS.hpp"
-#include "URIEntry.hpp"
+
+#include <map>
+#include <utility>
 
 namespace ingen {
 namespace gui {

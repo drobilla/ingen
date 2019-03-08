@@ -14,14 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Store.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include "Connect.hpp"
 
 #include "ArcImpl.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
-#include "Connect.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -29,6 +26,13 @@
 #include "PreProcessContext.hpp"
 #include "internals/BlockDelay.hpp"
 #include "types.hpp"
+
+#include "ingen/Store.hpp"
+#include "raul/Maid.hpp"
+
+#include <cassert>
+#include <mutex>
+#include <utility>
 
 namespace ingen {
 namespace server {

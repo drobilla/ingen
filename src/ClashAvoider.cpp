@@ -14,18 +14,22 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/ClashAvoider.hpp"
+#include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/paths.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
+#include <boost/optional/optional.hpp>
+
 #include <cassert>
 #include <cctype>
 #include <cstdio>
+#include <cstdlib>
 #include <sstream>
 #include <string>
 #include <utility>
-
-#include <boost/optional.hpp>
-
-#include "ingen/ClashAvoider.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/paths.hpp"
 
 namespace ingen {
 

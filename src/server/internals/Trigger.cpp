@@ -14,11 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
-
-#include "ingen/URIs.hpp"
-#include "lv2/atom/util.h"
-#include "lv2/midi/midi.h"
+#include "internals/Trigger.hpp"
 
 #include "Buffer.hpp"
 #include "Engine.hpp"
@@ -27,8 +23,15 @@
 #include "OutputPort.hpp"
 #include "RunContext.hpp"
 #include "ingen_config.h"
-#include "internals/Trigger.hpp"
 #include "util.hpp"
+
+#include "ingen/Forge.hpp"
+#include "ingen/URIs.hpp"
+#include "lv2/atom/util.h"
+#include "lv2/midi/midi.h"
+
+#include <cassert>
+#include <cmath>
 
 namespace ingen {
 namespace server {

@@ -17,13 +17,13 @@
 #ifndef INGEN_FORGE_HPP
 #define INGEN_FORGE_HPP
 
-#include <cstdint>
-#include <cstring>
-#include <string>
-
 #include "ingen/Atom.hpp"
 #include "ingen/ingen.h"
 #include "lv2/atom/forge.h"
+
+#include <cstdint>
+#include <cstring>
+#include <string>
 
 namespace ingen {
 

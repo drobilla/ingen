@@ -17,16 +17,10 @@
 #ifndef INGEN_EVENTS_CONNECT_HPP
 #define INGEN_EVENTS_CONNECT_HPP
 
-#include "raul/Path.hpp"
-
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
-
-namespace Raul {
-template <typename T> class Array;
-}
 
 namespace ingen {
 namespace server {

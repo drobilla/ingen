@@ -14,18 +14,22 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Forge.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/URIs.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include "events/CreateGraph.hpp"
 
 #include "Broadcaster.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
-#include "events/CreateGraph.hpp"
 #include "events/CreatePort.hpp"
+
+#include "ingen/Forge.hpp"
+#include "ingen/Store.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "raul/Maid.hpp"
+#include "raul/Path.hpp"
+
+#include <utility>
 
 namespace ingen {
 namespace server {

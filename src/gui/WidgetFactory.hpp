@@ -17,10 +17,13 @@
 #ifndef INGEN_GUI_GLADEFACTORY_HPP
 #define INGEN_GUI_GLADEFACTORY_HPP
 
+#include <glibmm/refptr.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/builder.h>
+
 #include <string>
 
-#include <glibmm.h>
-#include <gtkmm/builder.h>
+namespace Gtk { class Builder; }
 
 namespace ingen {
 namespace gui {

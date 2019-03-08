@@ -14,13 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/URIs.hpp"
+#include "DuplexPort.hpp"
 
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
+#include "BufferRef.hpp"
 #include "Driver.hpp"
-#include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
+#include "NodeImpl.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/types.hpp"
+#include "raul/Array.hpp"
+
+#include <algorithm>
+#include <map>
+#include <utility>
 
 namespace ingen {
 namespace server {

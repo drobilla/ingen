@@ -17,12 +17,12 @@
 #ifndef INGEN_ENGINEBASE_HPP
 #define INGEN_ENGINEBASE_HPP
 
+#include "ingen/ingen.h"
+#include "ingen/types.hpp"
+
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-
-#include "ingen/ingen.h"
-#include "ingen/types.hpp"
 
 namespace ingen {
 

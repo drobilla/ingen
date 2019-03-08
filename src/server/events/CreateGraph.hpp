@@ -17,14 +17,14 @@
 #ifndef INGEN_EVENTS_CREATEGRAPH_HPP
 #define INGEN_EVENTS_CREATEGRAPH_HPP
 
-#include <list>
-
-#include "ingen/Resource.hpp"
-#include "ingen/types.hpp"
-
+#include "ClientUpdate.hpp"
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
-#include "events/Get.hpp"
+
+#include "ingen/types.hpp"
+
+#include <cstdint>
+#include <list>
 
 namespace ingen {
 namespace server {

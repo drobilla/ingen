@@ -14,13 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <cmath>
-#include <string>
-
 #include "ingen/client/BlockModel.hpp"
+
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/client/PortModel.hpp"
+
+#include <cassert>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <string>
 
 namespace ingen {
 namespace client {

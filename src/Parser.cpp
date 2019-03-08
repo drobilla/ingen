@@ -14,17 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <map>
-#include <set>
-#include <string>
-#include <utility>
+#include "ingen/Parser.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/AtomForgeSink.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/Parser.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
@@ -32,9 +30,23 @@
 #include "ingen/filesystem.hpp"
 #include "ingen/paths.hpp"
 #include "lv2/atom/atom.h"
+#include "lv2/atom/forge.h"
+#include "lv2/core/lv2.h"
+#include "lv2/urid/urid.h"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 #include "serd/serd.h"
+#include "sord/sord.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
+
+#include <cassert>
+#include <cstdint>
+#include <cstring>
+#include <map>
+#include <set>
+#include <string>
+#include <utility>
 
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"

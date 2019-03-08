@@ -17,16 +17,16 @@
 #ifndef INGEN_EVENTS_CREATEPORT_HPP
 #define INGEN_EVENTS_CREATEPORT_HPP
 
-#include <boost/optional.hpp>
-
-#include "ingen/Resource.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/Array.hpp"
-#include "raul/Path.hpp"
-
 #include "BlockImpl.hpp"
 #include "Event.hpp"
 #include "PortType.hpp"
+
+#include "lv2/urid/urid.h"
+#include "raul/Path.hpp"
+
+#include <boost/optional/optional.hpp>
+
+#include <cstdint>
 
 namespace ingen {
 namespace server {
@@ -34,7 +34,6 @@ namespace server {
 class DuplexPort;
 class EnginePort;
 class GraphImpl;
-class PortImpl;
 
 namespace events {
 

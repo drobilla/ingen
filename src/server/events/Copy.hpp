@@ -17,11 +17,6 @@
 #ifndef INGEN_EVENTS_COPY_HPP
 #define INGEN_EVENTS_COPY_HPP
 
-#include <list>
-
-#include "ingen/Store.hpp"
-#include "raul/Path.hpp"
-
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
@@ -29,6 +24,7 @@ namespace ingen {
 namespace server {
 
 class BlockImpl;
+class Engine;
 class GraphImpl;
 
 namespace events {

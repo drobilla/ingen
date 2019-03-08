@@ -14,14 +14,19 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/client/PluginUI.hpp"
+
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "lv2/atom/atom.h"
 #include "lv2/ui/ui.h"
+
+#include <cstring>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace client {

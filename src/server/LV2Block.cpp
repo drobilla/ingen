@@ -14,26 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <cmath>
-#include <cstdint>
-
-#include "lv2/morph/morph.h"
-#include "lv2/presets/presets.h"
-#include "lv2/options/options.h"
-#include "lv2/resize-port/resize-port.h"
-#include "lv2/state/state.h"
-
-#include "raul/Maid.hpp"
-#include "raul/Array.hpp"
-
-#include "ingen/FilePath.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-
 #include "Buffer.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
@@ -44,6 +24,25 @@
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
 #include "Worker.hpp"
+
+#include "ingen/FilePath.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "lv2/options/options.h"
+#include "lv2/state/state.h"
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
+
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstdint>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace server {

@@ -17,14 +17,13 @@
 #ifndef INGEN_CLIENT_ARCMODEL_HPP
 #define INGEN_CLIENT_ARCMODEL_HPP
 
-#include <cassert>
-
-#include "ingen/types.hpp"
-#include "raul/Path.hpp"
-
 #include "ingen/Arc.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/ingen.h"
+#include "ingen/types.hpp"
+#include "raul/Path.hpp"
+
+#include <cassert>
 
 namespace ingen {
 namespace client {

@@ -17,7 +17,10 @@
 #ifndef INGEN_GUI_PROPERTIES_WINDOW_HPP
 #define INGEN_GUI_PROPERTIES_WINDOW_HPP
 
-#include <map>
+#include "Window.hpp"
+
+#include "ingen/client/BlockModel.hpp"
+#include "ingen/types.hpp"
 
 #include <gtkmm/alignment.h>
 #include <gtkmm/box.h>
@@ -29,10 +32,9 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/table.h>
 
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/types.hpp"
-
-#include "Window.hpp"
+#include <map>
+#include <set>
+#include <string>
 
 namespace ingen {
 

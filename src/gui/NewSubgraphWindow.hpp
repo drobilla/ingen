@@ -17,16 +17,16 @@
 #ifndef INGEN_GUI_NEWSUBGRAPHWINDOW_HPP
 #define INGEN_GUI_NEWSUBGRAPHWINDOW_HPP
 
+#include "Window.hpp"
+
+#include "ingen/Node.hpp"
+#include "ingen/types.hpp"
+
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
-
-#include "ingen/Node.hpp"
-#include "ingen/types.hpp"
-
-#include "Window.hpp"
 
 namespace ingen {
 

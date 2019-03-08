@@ -14,16 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
+#include "PortMenu.hpp"
+
+#include "App.hpp"
+#include "WindowFactory.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/types.hpp"
 
-#include "App.hpp"
-#include "PortMenu.hpp"
-#include "WindowFactory.hpp"
+#include <string>
 
 namespace ingen {
 

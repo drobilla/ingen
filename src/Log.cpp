@@ -14,13 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdio>
-
 #include "ingen/Log.hpp"
+
+#include "ingen/ColorContext.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/ColorContext.hpp"
+#include "lv2/log/log.h"
+#include "raul/Path.hpp"
+
+#include <cstdio>
+#include <cstdlib>
 
 namespace ingen {
 

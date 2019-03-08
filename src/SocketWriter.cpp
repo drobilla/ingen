@@ -14,14 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+#include "ingen/SocketWriter.hpp"
+
+#include "ingen/URI.hpp"
+#include "raul/Socket.hpp"
 
 #include <boost/variant/get.hpp>
 
-#include "ingen/SocketWriter.hpp"
-#include "raul/Socket.hpp"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <utility>
 
 #ifndef MSG_NOSIGNAL
 #    define MSG_NOSIGNAL 0

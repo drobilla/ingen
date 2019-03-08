@@ -25,6 +25,8 @@
 #include "GraphImpl.hpp"
 #include "events/Move.hpp"
 
+#include <mutex>
+
 namespace ingen {
 namespace server {
 namespace events {

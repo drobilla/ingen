@@ -17,14 +17,17 @@
 #ifndef INGEN_ENGINE_BLOCKFACTORY_HPP
 #define INGEN_ENGINE_BLOCKFACTORY_HPP
 
-#include <map>
-#include <set>
-
-#include "ingen/World.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/types.hpp"
 #include "raul/Noncopyable.hpp"
 
+#include <map>
+#include <set>
+
 namespace ingen {
+
+class World;
+
 namespace server {
 
 class PluginImpl;

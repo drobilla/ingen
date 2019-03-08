@@ -14,11 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lv2/atom/util.h"
+#include "mix.hpp"
 
 #include "Buffer.hpp"
 #include "RunContext.hpp"
-#include "mix.hpp"
+
+#include "lv2/atom/util.h"
 
 namespace ingen {
 namespace server {

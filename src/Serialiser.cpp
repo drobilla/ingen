@@ -14,22 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
-#include <set>
-#include <string>
-#include <utility>
+#include "ingen/Serialiser.hpp"
 
 #include "ingen/Arc.hpp"
+#include "ingen/Atom.hpp"
 #include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Resource.hpp"
-#include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
@@ -37,11 +30,26 @@
 #include "ingen/World.hpp"
 #include "ingen/filesystem.hpp"
 #include "ingen/runtime_paths.hpp"
+#include "ingen/types.hpp"
+#include "lv2/core/lv2.h"
 #include "lv2/state/state.h"
 #include "lv2/ui/ui.h"
+#include "lv2/urid/urid.h"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+#include "serd/serd.h"
+#include "sord/sord.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
+
+#include <cassert>
+#include <cstdint>
+#include <cstring>
+#include <map>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace ingen {
 

@@ -14,12 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdexcept>
-#include <string>
-
-#include "ingen/Log.hpp"
-#include "ingen/client/GraphModel.hpp"
-
 #include "App.hpp"
 #include "LoadGraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
@@ -30,6 +24,14 @@
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+
+#include "ingen/Log.hpp"
+#include "ingen/client/GraphModel.hpp"
+
+#include <cassert>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace ingen {
 

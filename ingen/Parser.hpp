@@ -17,12 +17,6 @@
 #ifndef INGEN_PARSER_HPP
 #define INGEN_PARSER_HPP
 
-#include <set>
-#include <string>
-#include <utility>
-
-#include <boost/optional/optional.hpp>
-
 #include "ingen/FilePath.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/URI.hpp"
@@ -30,6 +24,14 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
+#include <boost/optional/optional.hpp>
+
+#include <set>
+#include <string>
+#include <utility>
+
+namespace Raul { class Path; }
+namespace Raul { class Symbol; }
 namespace Sord { class World; }
 
 namespace ingen {

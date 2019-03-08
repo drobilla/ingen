@@ -14,14 +14,20 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
-#include <cassert>
-#include <map>
-#include <set>
-#include <string>
-
-#include <boost/optional.hpp>
-#include <gtkmm/stock.h>
+#include "App.hpp"
+#include "Arc.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphPortModule.hpp"
+#include "GraphWindow.hpp"
+#include "LoadPluginWindow.hpp"
+#include "NewSubgraphWindow.hpp"
+#include "NodeModule.hpp"
+#include "PluginMenu.hpp"
+#include "Port.hpp"
+#include "SubgraphModule.hpp"
+#include "ThreadedLoader.hpp"
+#include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
 
 #include "ganv/Canvas.hpp"
 #include "ganv/Circle.hpp"
@@ -38,20 +44,14 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 
-#include "App.hpp"
-#include "Arc.hpp"
-#include "GraphCanvas.hpp"
-#include "GraphPortModule.hpp"
-#include "GraphWindow.hpp"
-#include "LoadPluginWindow.hpp"
-#include "NewSubgraphWindow.hpp"
-#include "NodeModule.hpp"
-#include "PluginMenu.hpp"
-#include "Port.hpp"
-#include "SubgraphModule.hpp"
-#include "ThreadedLoader.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
+#include <boost/optional/optional.hpp>
+#include <gtkmm/stock.h>
+
+#include <algorithm>
+#include <cassert>
+#include <map>
+#include <set>
+#include <string>
 
 using std::string;
 

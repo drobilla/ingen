@@ -14,8 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BlockImpl.hpp"
 #include "Task.hpp"
+
+#include "BlockImpl.hpp"
+#include "RunContext.hpp"
+
+#include "raul/Path.hpp"
+
+#include <cstddef>
 
 namespace ingen {
 namespace server {

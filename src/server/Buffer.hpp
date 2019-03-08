@@ -17,24 +17,29 @@
 #ifndef INGEN_ENGINE_BUFFER_HPP
 #define INGEN_ENGINE_BUFFER_HPP
 
-#include <atomic>
-#include <cassert>
-
-#include "ingen/types.hpp"
-#include "ingen/ingen.h"
-#include "lv2/atom/atom.h"
-#include "lv2/urid/urid.h"
-#include "raul/Deletable.hpp"
-
 #include "BufferFactory.hpp"
+#include "BufferRef.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
+#include "ingen/types.hpp"
+#include "lv2/atom/atom.h"
+#include "lv2/urid/urid.h"
+
+#include <atomic>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
-class BufferFactory;
-class Engine;
 class RunContext;
 
 class INGEN_API Buffer

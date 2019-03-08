@@ -14,11 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "InternalBlock.hpp"
+
 #include "Buffer.hpp"
 #include "Engine.hpp"
-#include "InternalBlock.hpp"
 #include "InternalPlugin.hpp"
 #include "PortImpl.hpp"
+
+#include <cstddef>
+#include <cstdint>
 
 namespace ingen {
 namespace server {

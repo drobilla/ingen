@@ -17,12 +17,12 @@
 #ifndef INGEN_GUI_GRAPHTREEWINDOW_HPP
 #define INGEN_GUI_GRAPHTREEWINDOW_HPP
 
+#include "Window.hpp"
+
 #include <gtkmm/builder.h>
 #include <gtkmm/treemodel.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeview.h>
-
-#include "Window.hpp"
 
 namespace Raul { class Path; }
 

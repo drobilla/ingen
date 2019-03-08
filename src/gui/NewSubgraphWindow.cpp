@@ -14,15 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include "NewSubgraphWindow.hpp"
+
+#include "App.hpp"
+#include "GraphView.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
-#include "App.hpp"
-#include "NewSubgraphWindow.hpp"
-#include "GraphView.hpp"
+#include <cstdint>
+#include <string>
 
 namespace ingen {
 namespace gui {

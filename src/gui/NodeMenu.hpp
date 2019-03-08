@@ -17,15 +17,16 @@
 #ifndef INGEN_GUI_NODEMENU_HPP
 #define INGEN_GUI_NODEMENU_HPP
 
-#include <string>
+#include "ObjectMenu.hpp"
+
+#include "ingen/client/BlockModel.hpp"
+#include "ingen/types.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menushell.h>
 
-#include "ObjectMenu.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/types.hpp"
+#include <string>
 
 namespace ingen {
 namespace gui {

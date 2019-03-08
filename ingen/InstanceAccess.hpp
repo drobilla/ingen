@@ -17,16 +17,15 @@
 #ifndef INGEN_ENGINE_INSTANCEACCESS_HPP
 #define INGEN_ENGINE_INSTANCEACCESS_HPP
 
-#include <utility>
-
 #include "ingen/LV2Features.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
-
 #include "lv2/core/lv2.h"
+
+#include <utility>
 
 namespace ingen {
 

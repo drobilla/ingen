@@ -17,6 +17,8 @@
 #ifndef INGEN_ENGINE_INTERNALPLUGIN_HPP
 #define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
+#include "ingen/URI.hpp"
+#include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
 
 #include "PluginImpl.hpp"
@@ -24,10 +26,15 @@
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 namespace ingen {
+
+class URIs;
+
 namespace server {
 
 class BlockImpl;
 class BufferFactory;
+class Engine;
+class GraphImpl;
 
 /** Implementation of an Internal plugin.
  */

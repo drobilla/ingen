@@ -17,6 +17,10 @@
 #ifndef INGEN_ENGINE_LOAD_HPP
 #define INGEN_ENGINE_LOAD_HPP
 
+#include <cmath>
+#include <cstdint>
+#include <limits>
+
 namespace ingen {
 namespace server {
 

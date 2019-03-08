@@ -14,9 +14,20 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GraphImpl.hpp"
 #include "NodeImpl.hpp"
+
+#include "BlockImpl.hpp"
+#include "GraphImpl.hpp"
 #include "ThreadManager.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Properties.hpp"
+#include "raul/Path.hpp"
+
+#include <map>
+#include <utility>
+
+namespace Raul { class Symbol; }
 
 namespace ingen {
 namespace server {

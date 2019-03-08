@@ -14,11 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <cstdlib>
-#include <fstream>
-#include <map>
-#include <string>
+#include "Style.hpp"
+
+#include "App.hpp"
+#include "Port.hpp"
 
 #include "ganv/Port.hpp"
 #include "ingen/Log.hpp"
@@ -26,9 +25,11 @@
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
-#include "App.hpp"
-#include "Style.hpp"
-#include "Port.hpp"
+#include <cassert>
+#include <cstdlib>
+#include <fstream>
+#include <map>
+#include <string>
 
 namespace ingen {
 namespace gui {

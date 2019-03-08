@@ -17,14 +17,13 @@
 #ifndef INGEN_LV2FEATURES_HPP
 #define INGEN_LV2FEATURES_HPP
 
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "lv2/core/lv2.h"
 #include "raul/Noncopyable.hpp"
+
+#include <string>
+#include <vector>
 
 namespace ingen {
 

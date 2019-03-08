@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_CLOCK_HPP
 #define INGEN_ENGINE_CLOCK_HPP
 
-#include <cstdint>
-
 #ifdef __MACH__
 #    include <mach/mach.h>
 #    include <mach/mach_time.h>
@@ -26,6 +24,8 @@
 #    include <time.h>
 #    include <sys/time.h>
 #endif
+
+#include <cstdint>
 
 namespace ingen {
 

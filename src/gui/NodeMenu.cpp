@@ -14,24 +14,29 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
+#include "NodeMenu.hpp"
 
-#include <gtkmm/entry.h>
-#include <gtkmm/filechooserdialog.h>
-#include <gtkmm/image.h>
-#include <gtkmm/stock.h>
+#include "App.hpp"
+#include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PortModel.hpp"
 #include "lv2/presets/presets.h"
 
-#include "App.hpp"
-#include "NodeMenu.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
+#include <glib.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/filechooserdialog.h>
+#include <gtkmm/image.h>
+#include <gtkmm/stock.h>
+
+#include <cstdint>
+#include <string>
+#include <utility>
 
 namespace ingen {
 

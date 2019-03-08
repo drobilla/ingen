@@ -17,11 +17,11 @@
 #ifndef INGEN_ENGINE_THREADMANAGER_HPP
 #define INGEN_ENGINE_THREADMANAGER_HPP
 
-#include <cassert>
+#include "util.hpp"
 
 #include "ingen/ingen.h"
 
-#include "util.hpp"
+#include <cassert>
 
 namespace ingen {
 namespace server {

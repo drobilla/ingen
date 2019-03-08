@@ -17,11 +17,6 @@
 #ifndef INGEN_CLIENT_PLUGINMODEL_HPP
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
-#include <list>
-#include <map>
-#include <string>
-#include <utility>
-
 #include "ingen/Forge.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"
@@ -31,6 +26,10 @@
 #include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
+
+#include <cstdint>
+#include <map>
+#include <string>
 
 namespace ingen {
 

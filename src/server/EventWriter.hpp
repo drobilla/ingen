@@ -17,15 +17,13 @@
 #ifndef INGEN_ENGINE_EVENTWRITER_HPP
 #define INGEN_ENGINE_EVENTWRITER_HPP
 
-#include <memory>
-#include <string>
-
-#include "ingen/Interface.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/types.hpp"
-
 #include "Event.hpp"
 #include "types.hpp"
+
+#include "ingen/Interface.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/types.hpp"
 
 namespace ingen {
 namespace server {

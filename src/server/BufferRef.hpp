@@ -17,9 +17,9 @@
 #ifndef INGEN_ENGINE_BUFFER_REF_HPP
 #define INGEN_ENGINE_BUFFER_REF_HPP
 
-#include <boost/intrusive_ptr.hpp>
-
 #include "ingen/ingen.h"
+
+#include <boost/intrusive_ptr.hpp>
 
 namespace ingen {
 namespace server {

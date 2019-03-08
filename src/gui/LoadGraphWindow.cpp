@@ -14,12 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <list>
-#include <string>
+#include "LoadGraphWindow.hpp"
 
-#include <boost/optional.hpp>
-#include <glibmm/miscutils.h>
+#include "App.hpp"
+#include "GraphView.hpp"
+#include "Style.hpp"
+#include "ThreadedLoader.hpp"
 
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
@@ -28,11 +28,13 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/runtime_paths.hpp"
 
-#include "App.hpp"
-#include "GraphView.hpp"
-#include "LoadGraphWindow.hpp"
-#include "Style.hpp"
-#include "ThreadedLoader.hpp"
+#include <boost/optional/optional.hpp>
+#include <glibmm/miscutils.h>
+
+#include <list>
+#include <ostream>
+#include <string>
+#include <utility>
 
 namespace ingen {
 

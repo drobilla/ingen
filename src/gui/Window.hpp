@@ -17,6 +17,7 @@
 #ifndef INGEN_GUI_WINDOW_HPP
 #define INGEN_GUI_WINDOW_HPP
 
+#include <gdk/gdkkeysyms.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/window.h>
 

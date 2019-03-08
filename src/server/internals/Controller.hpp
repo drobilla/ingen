@@ -19,6 +19,8 @@
 
 #include "InternalBlock.hpp"
 
+#include <cstdint>
+
 namespace ingen {
 namespace server {
 

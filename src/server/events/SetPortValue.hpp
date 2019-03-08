@@ -17,12 +17,14 @@
 #ifndef INGEN_EVENTS_SETPORTVALUE_HPP
 #define INGEN_EVENTS_SETPORTVALUE_HPP
 
-#include "ingen/Atom.hpp"
-
 #include "BufferRef.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "types.hpp"
+
+#include "ingen/Atom.hpp"
+
+#include <cstdint>
 
 namespace ingen {
 namespace server {

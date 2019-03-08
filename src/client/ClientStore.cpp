@@ -14,17 +14,23 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/variant/apply_visitor.hpp>
+#include "ingen/client/ClientStore.hpp"
 
 #include "ingen/Log.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+
+#include <boost/variant/apply_visitor.hpp>
+
+#include <cassert>
+#include <cstdint>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace client {

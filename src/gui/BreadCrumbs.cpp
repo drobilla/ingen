@@ -14,15 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <list>
-#include <string>
+#include "BreadCrumbs.hpp"
 
-#include <boost/variant/get.hpp>
+#include "App.hpp"
 
 #include "ingen/client/SigClientInterface.hpp"
 
-#include "App.hpp"
-#include "BreadCrumbs.hpp"
+#include <boost/variant/get.hpp>
+
+#include <string>
 
 namespace ingen {
 namespace gui {

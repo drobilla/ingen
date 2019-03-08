@@ -14,23 +14,24 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
+#include "internals/Note.hpp"
 
+#include "Buffer.hpp"
+#include "InputPort.hpp"
+#include "InternalPlugin.hpp"
+#include "OutputPort.hpp"
+#include "RunContext.hpp"
+
+#include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "lv2/atom/util.h"
 #include "lv2/midi/midi.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
-#include "Buffer.hpp"
-#include "GraphImpl.hpp"
-#include "InputPort.hpp"
-#include "InternalPlugin.hpp"
-#include "OutputPort.hpp"
-#include "RunContext.hpp"
-#include "ingen_config.h"
-#include "internals/Note.hpp"
-#include "util.hpp"
+#include <cassert>
+#include <cmath>
+#include <utility>
 
 // #define NOTE_DEBUG 1
 

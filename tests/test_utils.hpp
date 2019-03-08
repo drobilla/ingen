@@ -18,8 +18,6 @@
 
 #include <iostream>
 
-using ingen::fmt;
-
 #define EXPECT_TRUE(value) \
 	if (!(value)) { \
 		std::cerr << fmt("error: %1%:%2%: !%3%\n", \

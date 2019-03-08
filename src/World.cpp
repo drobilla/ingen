@@ -14,39 +14,45 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <map>
-#include <memory>
-#include <string>
-#include <utility>
+#include "ingen/World.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/DataAccess.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/InstanceAccess.hpp"
 #include "ingen/LV2Features.hpp"
+#include "ingen/Library.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
 #include "ingen/filesystem.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
+#include "lv2/log/log.h"
 #include "sord/sordmm.hpp"
+
+#include <cstdint>
+#include <cstdlib>
+#include <list>
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <utility>
 
 using std::string;
 
 namespace ingen {
 
-class EngineBase;
 class Interface;
-class Parser;
-class Serialiser;
 class Store;
 
 /** Load a dynamic module from the default path.

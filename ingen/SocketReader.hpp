@@ -17,12 +17,12 @@
 #ifndef INGEN_SOCKET_READER_HPP
 #define INGEN_SOCKET_READER_HPP
 
-#include <thread>
-
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "serd/serd.h"
 #include "sord/sord.h"
+
+#include <thread>
 
 namespace Raul { class Socket; }
 

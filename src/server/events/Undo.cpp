@@ -14,11 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/AtomReader.hpp"
+#include "Undo.hpp"
 
 #include "Engine.hpp"
 #include "EventWriter.hpp"
-#include "Undo.hpp"
+
+#include "ingen/AtomReader.hpp"
+
+#include <deque>
 
 namespace ingen {
 namespace server {

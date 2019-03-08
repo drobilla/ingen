@@ -17,19 +17,18 @@
 #ifndef INGEN_URIMAP_HPP
 #define INGEN_URIMAP_HPP
 
-#include <cstdint>
-#include <mutex>
-#include <string>
-#include <unordered_map>
-#include <utility>
-#include <vector>
-
 #include "ingen/LV2Features.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/urid/urid.h"
 #include "raul/Noncopyable.hpp"
+
+#include <cstdint>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace ingen {
 

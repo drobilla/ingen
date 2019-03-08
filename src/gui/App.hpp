@@ -17,13 +17,6 @@
 #ifndef INGEN_GUI_APP_HPP
 #define INGEN_GUI_APP_HPP
 
-#include <unordered_map>
-#include <string>
-
-#include <gtkmm/aboutdialog.h>
-#include <gtkmm/main.h>
-#include <gtkmm/window.h>
-
 #include "ingen/Atom.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/Resource.hpp"
@@ -33,6 +26,13 @@
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 #include "raul/Deletable.hpp"
+
+#include <gtkmm/aboutdialog.h>
+#include <gtkmm/main.h>
+#include <gtkmm/window.h>
+
+#include <unordered_map>
+#include <string>
 
 namespace ingen {
 

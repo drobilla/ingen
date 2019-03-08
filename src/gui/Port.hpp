@@ -17,13 +17,13 @@
 #ifndef INGEN_GUI_PORT_HPP
 #define INGEN_GUI_PORT_HPP
 
-#include <cassert>
-#include <string>
+#include "ganv/Port.hpp"
+#include "ingen/types.hpp"
 
 #include <gtkmm/menu.h>
 
-#include "ganv/Port.hpp"
-#include "ingen/types.hpp"
+#include <cassert>
+#include <string>
 
 namespace Raul {
 class Atom;
@@ -32,6 +32,7 @@ class Atom;
 namespace ingen {
 
 class URI;
+class Atom;
 
 namespace client { class PortModel; }
 

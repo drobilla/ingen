@@ -17,11 +17,11 @@
 #ifndef INGEN_RUNTIME_PATHS_HPP
 #define INGEN_RUNTIME_PATHS_HPP
 
-#include <string>
-#include <vector>
-
 #include "ingen/ingen.h"
 #include "ingen/FilePath.hpp"
+
+#include <string>
+#include <vector>
 
 namespace ingen {
 

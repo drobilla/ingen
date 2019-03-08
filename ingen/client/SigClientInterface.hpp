@@ -17,14 +17,13 @@
 #ifndef INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 #define INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 
-#include <cstdint>
-#include <string>
-
-#include "raul/Path.hpp"
-
 #include "ingen/Interface.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
+#include "raul/Path.hpp"
+
+#include <cstdint>
+#include <string>
 
 namespace ingen {
 namespace client {

@@ -14,12 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/utility/string_view.hpp>
-
-#include "ingen/FilePath.hpp"
 #include "test_utils.hpp"
 
+#include "ingen/FilePath.hpp"
+#include "ingen/fmt.hpp"
+
+#include <boost/utility/string_view.hpp>
+
+#include <string>
+
 using ingen::FilePath;
+using ingen::fmt;
 
 int
 main(int, char**)

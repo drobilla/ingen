@@ -17,19 +17,17 @@
 #ifndef INGEN_ENGINE_NODEIMPL_HPP
 #define INGEN_ENGINE_NODEIMPL_HPP
 
-#include <cassert>
-#include <cstddef>
-#include <map>
-
 #include "ingen/Node.hpp"
-#include "ingen/Resource.hpp"
-#include "raul/Deletable.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/paths.hpp"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
-namespace Raul { class Maid; }
+#include <cstdint>
 
 namespace ingen {
 
+class Atom;
 class URIs;
 
 namespace server {

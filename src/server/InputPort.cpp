@@ -14,21 +14,25 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <cassert>
-
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
+#include "InputPort.hpp"
 
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "Engine.hpp"
+#include "BufferRef.hpp"
 #include "GraphImpl.hpp"
-#include "InputPort.hpp"
+#include "NodeImpl.hpp"
 #include "RunContext.hpp"
 #include "mix.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/URIs.hpp"
+#include "raul/Array.hpp"
+
+#include <cstdlib>
+#include <cassert>
 
 namespace ingen {
 namespace server {

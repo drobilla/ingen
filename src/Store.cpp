@@ -14,10 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sstream>
+#include "ingen/Store.hpp"
 
 #include "ingen/Node.hpp"
-#include "ingen/Store.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
+#include <cassert>
+#include <cstdint>
+#include <sstream>
+#include <string>
 
 namespace ingen {
 

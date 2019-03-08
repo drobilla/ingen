@@ -14,12 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
-#include <cassert>
-#include <set>
-
-#include <gtkmm/label.h>
-#include <gtkmm/spinbutton.h>
+#include "App.hpp"
+#include "PropertiesWindow.hpp"
+#include "RDFS.hpp"
+#include "URIEntry.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
@@ -28,10 +26,15 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 
-#include "App.hpp"
-#include "PropertiesWindow.hpp"
-#include "RDFS.hpp"
-#include "URIEntry.hpp"
+#include <gtkmm/label.h>
+#include <gtkmm/spinbutton.h>
+
+#include <algorithm>
+#include <cfloat>
+#include <climits>
+#include <cstdint>
+#include <set>
+#include <utility>
 
 namespace ingen {
 

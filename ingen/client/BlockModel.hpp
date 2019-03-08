@@ -17,16 +17,16 @@
 #ifndef INGEN_CLIENT_BLOCKMODEL_HPP
 #define INGEN_CLIENT_BLOCKMODEL_HPP
 
-#include <cstdlib>
-#include <string>
-#include <vector>
-
 #include "ingen/Node.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
-#include "ingen/client/PortModel.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
+
+#include <algorithm>
+#include <cstdint>
+#include <string>
+#include <vector>
 
 namespace Raul { class Path; }
 
@@ -36,8 +36,7 @@ class URIs;
 
 namespace client {
 
-class PluginModel;
-class ClientStore;
+class PortModel;
 
 /** Block model class, used by the client to store engine's state.
  *

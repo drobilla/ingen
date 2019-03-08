@@ -17,12 +17,12 @@
 #ifndef INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 #define INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 
-#include "ingen/LV2Features.hpp"
-#include "lv2/resize-port/resize-port.h"
-
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "PortImpl.hpp"
+
+#include "ingen/LV2Features.hpp"
+#include "lv2/resize-port/resize-port.h"
 
 namespace ingen {
 namespace server {

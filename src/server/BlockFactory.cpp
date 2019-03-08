@@ -14,23 +14,29 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
+#include "BlockFactory.hpp"
 
-#include "lilv/lilv.h"
+#include "InternalPlugin.hpp"
+#include "LV2Plugin.hpp"
+#include "PluginImpl.hpp"
+#include "PortType.hpp"
+#include "ThreadManager.hpp"
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "internals/BlockDelay.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Note.hpp"
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
+#include "lilv/lilv.h"
 
-#include "BlockFactory.hpp"
-#include "InternalPlugin.hpp"
-#include "LV2Plugin.hpp"
-#include "ThreadManager.hpp"
+#include <algorithm>
+#include <cstdint>
+#include <utility>
+#include <vector>
 
 namespace ingen {
 namespace server {

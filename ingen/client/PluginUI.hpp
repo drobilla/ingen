@@ -17,17 +17,22 @@
 #ifndef INGEN_CLIENT_PLUGINUI_HPP
 #define INGEN_CLIENT_PLUGINUI_HPP
 
-#include <set>
+#include "signal.hpp"
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 #include "suil/suil.h"
 
+#include <cstdint>
+#include <set>
+
 namespace ingen {
 
-class Interface;
+class Atom;
+class URI;
 class World;
 
 namespace client {

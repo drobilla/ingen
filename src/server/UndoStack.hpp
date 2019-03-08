@@ -17,14 +17,19 @@
 #ifndef INGEN_ENGINE_UNDOSTACK_HPP
 #define INGEN_ENGINE_UNDOSTACK_HPP
 
-#include <ctime>
-#include <deque>
-
 #include "ingen/AtomSink.hpp"
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
+#include "lv2/atom/util.h"
 #include "serd/serd.h"
 #include "sratom/sratom.h"
+
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <deque>
 
 namespace ingen {
 

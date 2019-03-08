@@ -14,16 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <string>
+#include "ThreadedLoader.hpp"
+
+#include "App.hpp"
 
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/GraphModel.hpp"
 
-#include "App.hpp"
-#include "ThreadedLoader.hpp"
+#include <cassert>
+#include <string>
 
 using boost::optional;
 

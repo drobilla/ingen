@@ -14,9 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-
 #include "ingen/LV2Features.hpp"
+
+#include <cstdlib>
 
 namespace ingen {
 

@@ -14,15 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <string>
-#include <utility>
-
-#include "ingen/Configuration.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp"
-
 #include "App.hpp"
 #include "Style.hpp"
 #include "GraphCanvas.hpp"
@@ -33,6 +24,15 @@
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+
+#include "ingen/Configuration.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/client/BlockModel.hpp"
+#include "ingen/client/GraphModel.hpp"
+
+#include <cassert>
+#include <string>
+#include <utility>
 
 namespace ingen {
 

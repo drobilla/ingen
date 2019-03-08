@@ -14,19 +14,23 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <cstdint>
-
-#include "raul/Array.hpp"
+#include "BlockImpl.hpp"
 
 #include "Buffer.hpp"
-#include "Engine.hpp"
-#include "BlockImpl.hpp"
 #include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
+
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
+#include "raul/Symbol.hpp"
+
+#include <cassert>
+#include <cstdint>
+#include <initializer_list>
+#include <string>
 
 namespace ingen {
 namespace server {

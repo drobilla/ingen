@@ -17,10 +17,10 @@
 #ifndef INGEN_ENGINE_DRIVER_HPP
 #define INGEN_ENGINE_DRIVER_HPP
 
-#include "raul/Noncopyable.hpp"
-
 #include "DuplexPort.hpp"
 #include "EnginePort.hpp"
+
+#include "raul/Noncopyable.hpp"
 
 namespace Raul { class Path; }
 

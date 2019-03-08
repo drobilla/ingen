@@ -17,14 +17,14 @@
 #ifndef INGEN_ENGINE_RUNCONTEXT_HPP
 #define INGEN_ENGINE_RUNCONTEXT_HPP
 
-#include <cstdint>
-#include <thread>
+#include "ingen/types.hpp"
+#include "types.hpp"
 
 #include "lv2/urid/urid.h"
 #include "raul/RingBuffer.hpp"
 
-#include "ingen/types.hpp"
-#include "types.hpp"
+#include <cstdint>
+#include <thread>
 
 namespace ingen {
 namespace server {

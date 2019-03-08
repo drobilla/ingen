@@ -17,12 +17,13 @@
 #ifndef INGEN_GUI_RDF_HPP
 #define INGEN_GUI_RDF_HPP
 
+#include "ingen/URI.hpp"
+#include "ingen/types.hpp"
+#include "lilv/lilv.h"
+
 #include <map>
 #include <set>
 #include <string>
-
-#include "ingen/types.hpp"
-#include "lilv/lilv.h"
 
 namespace ingen {
 

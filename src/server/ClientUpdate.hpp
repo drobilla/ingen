@@ -17,11 +17,13 @@
 #ifndef INGEN_ENGINE_CLIENTUPDATE_HPP
 #define INGEN_ENGINE_CLIENTUPDATE_HPP
 
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
+#include "raul/Path.hpp"
+
 #include <string>
 #include <vector>
-
-#include "ingen/Resource.hpp"
-#include "raul/Path.hpp"
 
 namespace ingen {
 

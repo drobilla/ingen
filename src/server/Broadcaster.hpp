@@ -17,16 +17,17 @@
 #ifndef INGEN_ENGINE_BROADCASTER_HPP
 #define INGEN_ENGINE_BROADCASTER_HPP
 
-#include <atomic>
-#include <list>
-#include <mutex>
-#include <set>
-#include <string>
+#include "BlockFactory.hpp"
 
 #include "ingen/Interface.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/types.hpp"
+#include "raul/Noncopyable.hpp"
 
-#include "BlockFactory.hpp"
+#include <atomic>
+#include <mutex>
+#include <set>
 
 namespace ingen {
 namespace server {
