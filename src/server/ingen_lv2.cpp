@@ -720,7 +720,8 @@ ingen_save(LV2_Handle                instance,
 	{
 		std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 
-		plugin->world->serialiser()->start_to_file(root->second->path(), real_path);
+		plugin->world->serialiser()->start_to_file(
+			root->second->path(), FilePath{real_path});
 		plugin->world->serialiser()->serialise(root->second);
 		plugin->world->serialiser()->finish();
 	}

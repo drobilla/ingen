@@ -138,7 +138,7 @@ ThreadedLoader::save_graph_event(SPtr<const client::GraphModel> model,
 		if (uri.string().find(".ingen") != std::string::npos) {
 			_app.serialiser()->write_bundle(model, uri);
 		} else {
-			_app.serialiser()->start_to_file(model->path(), std::string(uri.path()));
+			_app.serialiser()->start_to_file(model->path(), uri.file_path());
 			_app.serialiser()->serialise(model);
 			_app.serialiser()->finish();
 		}

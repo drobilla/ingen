@@ -240,7 +240,7 @@ Serialiser::start_to_string(const Raul::Path& root, const URI& base_uri)
 }
 
 void
-Serialiser::start_to_file(const Raul::Path& root, const std::string& filename)
+Serialiser::start_to_file(const Raul::Path& root, const FilePath& filename)
 {
 	me->start_to_file(root, filename);
 }

@@ -157,7 +157,8 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 	if (ends_with(_msg.new_uri, ".ingen") || ends_with(_msg.new_uri, ".ingen/")) {
 		_engine.world().serialiser()->write_bundle(graph, URI(_msg.new_uri));
 	} else {
-		_engine.world().serialiser()->start_to_file(graph->path(), _msg.new_uri);
+		_engine.world().serialiser()->start_to_file(graph->path(),
+		                                            _msg.new_uri.file_path());
 		_engine.world().serialiser()->serialise(graph);
 		_engine.world().serialiser()->finish();
 	}

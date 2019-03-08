@@ -68,8 +68,8 @@ public:
 	 * All serialized paths will have the root path chopped from their prefix
 	 * (therefore all serialized paths must be descendants of the root)
 	 */
-	virtual void start_to_file(const Raul::Path&  root,
-	                           const std::string& filename);
+	virtual void start_to_file(const Raul::Path& root,
+	                           const FilePath&   filename);
 
 	/** Serialize an object (graph, block, or port).
 	 *
