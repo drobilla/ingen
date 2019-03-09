@@ -53,7 +53,7 @@ def build(bld):
             mix.cpp
     '''
 
-    core_libs = 'LV2 LILV RAUL SERD SORD SRATOM'
+    core_libs = 'LV2 LILV RAUL SERD SRATOM'
 
     bld(features        = 'cxx cxxshlib',
         source          = core_source,

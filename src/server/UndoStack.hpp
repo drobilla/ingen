@@ -21,8 +21,7 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
-#include "serd/serd.h"
-#include "sratom/sratom.h"
+#include "serd/serd.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -30,6 +29,9 @@
 #include <cstring>
 #include <ctime>
 #include <deque>
+#include <iosfwd>
+
+namespace sratom { class Streamer; }
 
 namespace ingen {
 
@@ -80,7 +82,10 @@ public:
 		std::deque<LV2_Atom*> events;
 	};
 
-	UndoStack(URIs& uris, URIMap& map) : _uris(uris), _map(map), _depth(0) {}
+	UndoStack(serd::World& world, URIs& uris, URIMap& map)
+		: _world(world), _uris(uris), _map(map), _depth(0)
+	{
+	}
 
 	int  start_entry();
 	bool write(const LV2_Atom* msg, int32_t default_id=0) override;
@@ -89,17 +94,18 @@ public:
 	bool  empty() const { return _stack.empty(); }
 	Entry pop();
 
-	void save(FILE* stream, const char* name="undo");
+	void save(std::ofstream& stream, const char* name="undo");
 
 private:
 	bool ignore_later_event(const LV2_Atom* first,
 	                        const LV2_Atom* second) const;
 
-	void write_entry(Sratom*         sratom,
-	                 SerdWriter*     writer,
-	                 const SerdNode* subject,
-	                 const Entry&    entry);
+	void write_entry(sratom::Streamer& streamer,
+	                 serd::Writer&     writer,
+	                 const serd::Node& subject,
+	                 const Entry&      entry);
 
+	serd::World&      _world;
 	URIs&             _uris;
 	URIMap&           _map;
 	std::deque<Entry> _stack;

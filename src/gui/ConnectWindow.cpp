@@ -228,7 +228,7 @@ ConnectWindow::connect(bool existing)
 	if (_mode == Mode::CONNECT_REMOTE) {
 		std::string uri_str = world.conf().option("connect").ptr<char>();
 		if (existing) {
-			uri_str = world.interface()->uri();
+			uri_str = world.interface()->uri().str();
 			_connect_stage = 1;
 			SPtr<client::SocketClient> client = dynamic_ptr_cast<client::SocketClient>(
 				world.interface());

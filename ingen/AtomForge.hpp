@@ -21,8 +21,8 @@
 #include "lv2/atom/atom.h"
 #include "lv2/atom/forge.h"
 #include "lv2/atom/util.h"
-#include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
+#include "serd/serd.hpp"
+#include "sratom/sratom.hpp"
 
 #include <cassert>
 #include <cstdint>
@@ -31,14 +31,19 @@
 
 namespace ingen {
 
-/// An atom forge that writes to an automatically-resized memory buffer
+/** An atom forge that writes to an automatically-resized memory buffer.
+ *
+ * Can be used to easily forge a complete atom from a node using read(), or
+ * manually to forge more complex atoms using clear(), atom(), and the
+ * LV2_Atom_Forge interface.
+ */
 class AtomForge : public LV2_Atom_Forge
 {
 public:
-	explicit AtomForge(LV2_URID_Map& map)
+	explicit AtomForge(serd::World& world, LV2_URID_Map& map)
 	    : _size{0}
 	    , _capacity{8 * sizeof(LV2_Atom)}
-	    , _sratom{sratom_new(&map)}
+	    , _forger{world, map}
 	    , _buf{(LV2_Atom*)calloc(8, sizeof(LV2_Atom))}
 	{
 		lv2_atom_forge_init(this, &map);
@@ -46,13 +51,14 @@ public:
 	}
 
 	/// Forge an atom from `node` in `model`
-	void read(Sord::World& world, SordModel* model, const SordNode* node)
+	const LV2_Atom* read(serd::Model&        model,
+	                     const serd::Node&   node,
+	                     const sratom::Flags flags = {})
 	{
-		sratom_read(_sratom.get(), this, world.c_obj(), model, node);
+		clear();
+		_forger.read(serd::make_uri("file:///"), *this, model, node, flags);
+		return atom();
 	}
-
-	/// Return the top-level atom that has been forged
-	const LV2_Atom* atom() const { return _buf.get(); }
 
 	/// Clear the atom buffer and reset the forge
 	void clear()
@@ -62,14 +68,11 @@ public:
 		*_buf = {0U, 0U};
 	}
 
-	/// Return the internal atom serialiser
-	Sratom& sratom() { return *_sratom; }
+	/// Return the top-level atom that has been forged
+	const LV2_Atom* atom() const { return _buf.get(); }
 
 private:
-	struct SratomDeleter { void operator()(Sratom* s) { sratom_free(s); } };
-
 	using AtomPtr = UPtr<LV2_Atom, FreeDeleter<LV2_Atom>>;
-	using SratomPtr = UPtr<Sratom, SratomDeleter>;
 
 	/// Append some data and return a reference to its start
 	intptr_t append(const void* buf, uint32_t len) {
@@ -110,10 +113,10 @@ private:
 		return ((AtomForge*)handle)->deref(ref);
 	}
 
-	size_t    _size;     ///< Current atom size
-	size_t    _capacity; ///< Allocated size of atom buffer
-	SratomPtr _sratom;   ///< Atom serialiser
-	AtomPtr   _buf;      ///< Atom buffer
+	size_t         _size;     ///< Current atom size
+	size_t         _capacity; ///< Allocated size of atom buffer
+	sratom::Forger _forger;   ///< Atom forger
+	AtomPtr        _buf;      ///< Atom buffer
 };
 
 }  // namespace ingen

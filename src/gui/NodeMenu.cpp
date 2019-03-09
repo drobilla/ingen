@@ -235,11 +235,11 @@ NodeMenu::on_save_preset_activated()
 }
 
 void
-NodeMenu::on_preset_activated(const std::string& uri)
+NodeMenu::on_preset_activated(const URI& uri)
 {
 	_app->set_property(block()->uri(),
 	                   _app->uris().pset_preset,
-	                   _app->forge().make_urid(URI(uri)));
+	                   _app->forge().make_urid(uri));
 }
 
 bool

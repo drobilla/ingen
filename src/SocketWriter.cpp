@@ -31,12 +31,13 @@
 
 namespace ingen {
 
-SocketWriter::SocketWriter(URIMap&            map,
+SocketWriter::SocketWriter(serd::World&       world,
+                           URIMap&            map,
                            URIs&              uris,
                            const URI&         uri,
                            SPtr<Raul::Socket> sock)
-	: TurtleWriter(map, uris, uri)
-	, _socket(std::move(sock))
+	: TurtleWriter(world, map, uris, uri)
+    , _socket(std::move(sock))
 {}
 
 void

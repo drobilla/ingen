@@ -37,7 +37,7 @@
 #include "lilv/lilv.h"
 #include "lv2/log/log.h"
 #include "lv2/urid/urid.h"
-#include "sord/sordmm.hpp"
+#include "serd/serd.hpp"
 
 #include <cstdint>
 #include <list>
@@ -90,7 +90,6 @@ public:
 		: argc(nullptr)
 		, argv(nullptr)
 		, lv2_features(nullptr)
-		, rdf_world(new Sord::World())
 		, lilv_world(lilv_world_new(), lilv_world_free)
 		, uri_map(log, map, unmap)
 		, forge(uri_map)
@@ -108,16 +107,16 @@ public:
 		lilv_world_load_all(lilv_world.get());
 
 		// Set up RDF namespaces
-		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
-		rdf_world->add_prefix("doap",  "http://usefulinc.com/ns/doap#");
-		rdf_world->add_prefix("ingen", INGEN_NS);
-		rdf_world->add_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
-		rdf_world->add_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
-		rdf_world->add_prefix("owl",   "http://www.w3.org/2002/07/owl#");
-		rdf_world->add_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
-		rdf_world->add_prefix("rdf",   "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		rdf_world->add_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
-		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
+		env.set_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
+		env.set_prefix("doap",  "http://usefulinc.com/ns/doap#");
+		env.set_prefix("ingen", INGEN_NS);
+		env.set_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
+		env.set_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
+		env.set_prefix("owl",   "http://www.w3.org/2002/07/owl#");
+		env.set_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
+		env.set_prefix("rdf",   "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		env.set_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
+		env.set_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
 
 		// Load internal 'plugin' information into lilv world
 		LilvNode* rdf_type = lilv_new_uri(
@@ -183,7 +182,8 @@ public:
 	int*              argc;
 	char***           argv;
 	LV2Features*      lv2_features;
-	UPtr<Sord::World> rdf_world;
+	serd::World       rdf_world;
+	serd::Env         env;
 	LilvWorldUPtr     lilv_world;
 	URIMap            uri_map;
 	Forge             forge;
@@ -219,7 +219,8 @@ World::load_configuration(int& argc, char**& argv)
 	_impl->argv = &argv;
 
 	// Parse default configuration files
-	const auto files = _impl->conf.load_default("ingen", "options.ttl");
+	const auto files =
+		_impl->conf.load_default(rdf_world(), "ingen", "options.ttl");
 	for (const auto& f : files) {
 		_impl->log.info("Loaded configuration %1%\n", f);
 	}
@@ -247,7 +248,8 @@ Log&           World::log()  { return _impl->log; }
 
 std::mutex& World::rdf_mutex() { return _impl->rdf_mutex; }
 
-Sord::World* World::rdf_world()  { return _impl->rdf_world.get(); }
+serd::World& World::rdf_world()  { return _impl->rdf_world; }
+serd::Env&   World::env()        { return _impl->env; }
 LilvWorld*   World::lilv_world() { return _impl->lilv_world.get(); }
 
 LV2Features& World::lv2_features() { return *_impl->lv2_features; }

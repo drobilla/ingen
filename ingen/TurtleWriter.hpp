@@ -23,7 +23,7 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 #include "serd/serd.h"
-#include "sratom/sratom.h"
+#include "sratom/sratom.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -41,7 +41,7 @@ class URIs;
 class INGEN_API TurtleWriter : public AtomWriter, public AtomSink
 {
 public:
-	TurtleWriter(URIMap& map, URIs& uris, URI uri);
+	TurtleWriter(serd::World& world, URIMap& map, URIs& uris, const URI& uri);
 
 	~TurtleWriter() override;
 
@@ -54,14 +54,13 @@ public:
 	URI uri() const override { return _uri; }
 
 protected:
-	URIMap&     _map;
-	Sratom*     _sratom;
-	SerdNode    _base;
-	SerdURI     _base_uri;
-	SerdEnv*    _env;
-	SerdWriter* _writer;
-	URI         _uri;
-	bool        _wrote_prefixes;
+	URIMap&          _map;
+	sratom::Streamer _streamer;
+	serd::Node       _base;
+	serd::Env        _env;
+	serd::Writer     _writer;
+	URI              _uri;
+	bool             _wrote_prefixes;
 };
 
 }  // namespace ingen

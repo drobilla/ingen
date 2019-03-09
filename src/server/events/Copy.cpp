@@ -131,9 +131,10 @@ Copy::engine_to_engine(PreProcessContext& ctx)
 }
 
 static bool
-ends_with(const std::string& str, const std::string& end)
+ends_with(const URI& uri, const std::string& end)
 {
-    if (str.length() >= end.length()) {
+	const auto& str = uri.str();
+	if (str.length() >= end.length()) {
         return !str.compare(str.length() - end.length(), end.length(), end);
     }
     return false;

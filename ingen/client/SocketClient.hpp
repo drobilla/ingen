@@ -33,9 +33,13 @@ public:
 	             const URI&         uri,
 	             SPtr<Raul::Socket> sock,
 	             SPtr<Interface>    respondee)
-		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
-		, _respondee(respondee)
-		, _reader(world, *respondee.get(), sock)
+	    : SocketWriter(world.rdf_world(),
+	                   world.uri_map(),
+	                   world.uris(),
+	                   uri,
+	                   sock)
+	    , _respondee(respondee)
+	    , _reader(world, *respondee.get(), sock)
 	{}
 
 	SPtr<Interface> respondee() const override {
@@ -56,7 +60,7 @@ public:
 		                                 : Raul::Socket::Type::TCP);
 
 		SPtr<Raul::Socket> sock(new Raul::Socket(type));
-		if (!sock->connect(uri)) {
+		if (!sock->connect(uri.str())) {
 			world.log().error("Failed to connect <%1%> (%2%)\n",
 			                  sock->uri(), strerror(errno));
 			return SPtr<Interface>();

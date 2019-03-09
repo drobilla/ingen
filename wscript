@@ -6,7 +6,7 @@ from waflib import Logs, Options, Utils
 from waflib.extras import autowaf
 
 # Package version
-INGEN_VERSION       = '0.5.1'
+INGEN_VERSION       = '1.0.0'
 INGEN_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
@@ -67,10 +67,9 @@ def configure(conf):
     conf.check_pkg('lv2 >= 1.16.0', uselib_store='LV2')
     conf.check_pkg('lilv-0 >= 0.21.5', uselib_store='LILV')
     conf.check_pkg('suil-0 >= 0.8.7', uselib_store='SUIL')
-    conf.check_pkg('sratom-0 >= 0.4.6', uselib_store='SRATOM')
+    conf.check_pkg('sratom-1 >= 1.0.0', uselib_store='SRATOM')
     conf.check_pkg('raul-1 >= 1.0.0', uselib_store='RAUL')
-    conf.check_pkg('serd-0 >= 0.30.3', uselib_store='SERD', mandatory=False)
-    conf.check_pkg('sord-0 >= 0.12.0', uselib_store='SORD', mandatory=False)
+    conf.check_pkg('serd-1 >= 1.0.0', uselib_store='SERD', mandatory=False)
     conf.check_pkg('portaudio-2.0', uselib_store='PORTAUDIO', mandatory=False)
     conf.check_pkg('sigc++-2.0', uselib_store='SIGCPP', mandatory=False)
 
@@ -91,7 +90,6 @@ def configure(conf):
                         defines     = '_GNU_SOURCE=1',
                         define_name = 'HAVE_VASPRINTF',
                         mandatory   = False)
-
     conf.check(define_name = 'HAVE_LIBDL',
                lib         = 'dl',
                mandatory   = False)
@@ -216,7 +214,7 @@ def build(bld):
         target       = 'ingen',
         includes     = ['.'],
         use          = 'libingen',
-        uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
+        uselib       = 'SERD SRATOM RAUL LILV LV2',
         install_path = '${BINDIR}')
 
     # Test program
@@ -227,7 +225,7 @@ def build(bld):
                 target       = 'tests/%s' % i,
                 includes     = ['.'],
                 use          = 'libingen',
-                uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
+                uselib       = 'SERD SRATOM RAUL LILV LV2',
                 install_path = '',
                 cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
                 linkflags    = bld.env.INGEN_TEST_LINKFLAGS)

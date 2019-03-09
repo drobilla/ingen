@@ -47,17 +47,12 @@ public:
 		      LilvWorld*    lworld,
 		      const char*   str);
 
-		Quark(const Quark& copy);
-
-		~Quark();
-
 		operator LV2_URID()        const { return urid.get<LV2_URID>(); }
 		explicit operator Atom()   const { return urid; }
-		operator const LilvNode*() const { return lnode; }
+		operator const LilvNode*() const { return cobj(); }
 
-		Atom      urid;
-		Atom      uri;
-		LilvNode* lnode;
+		Atom urid;
+		Atom uri;
 	};
 
 	ingen::Forge& forge;

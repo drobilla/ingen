@@ -74,11 +74,14 @@
 
 namespace ingen {
 
-AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
-	: _map(map)
-	, _uris(uris)
-	, _sink(sink)
-	, _forge(map.urid_map_feature()->urid_map)
+AtomWriter::AtomWriter(serd::World& world,
+                       URIMap&      map,
+                       URIs&        uris,
+                       AtomSink&    sink)
+    : _map(map)
+    , _uris(uris)
+    , _sink(sink)
+    , _forge(world, map.urid_map_feature()->urid_map)
 {
 }
 
@@ -135,7 +138,7 @@ AtomWriter::operator()(const BundleEnd& message)
 void
 AtomWriter::forge_uri(const URI& uri)
 {
-	if (serd_uri_string_has_scheme((const uint8_t*)uri.c_str())) {
+	if (serd_uri_string_has_scheme(uri.c_str())) {
 		lv2_atom_forge_urid(&_forge, _map.map_uri(uri.c_str()));
 	} else {
 		lv2_atom_forge_uri(&_forge, uri.c_str(), uri.length());

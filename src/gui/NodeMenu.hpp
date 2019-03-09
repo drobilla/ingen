@@ -60,7 +60,7 @@ protected:
 	void on_menu_enabled();
 	void on_menu_randomize();
 	void on_save_preset_activated();
-	void on_preset_activated(const std::string& uri);
+	void on_preset_activated(const URI& uri);
 
 	Gtk::MenuItem*      _popup_gui_menuitem;
 	Gtk::CheckMenuItem* _embed_gui_menuitem;

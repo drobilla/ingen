@@ -114,7 +114,8 @@ PropertiesWindow::add_property(const URI& key, const Atom& value)
 	LilvNode*   prop = lilv_new_uri(world.lilv_world(), key.c_str());
 	std::string name = rdfs::label(world, prop);
 	if (name.empty()) {
-		name = world.rdf_world()->prefixes().qualify(key);
+		const auto qname = world.env().qualify(key);
+		name = qname ? std::string(*qname) : key.str();
 	}
 	Gtk::Label* label = new Gtk::Label(
 	        std::string("<a href=\"") + key.string() + "\">" + name + "</a>",

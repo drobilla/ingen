@@ -176,8 +176,10 @@ PreProcessor::run()
 	UndoStack& undo_stack = *_engine.undo_stack();
 	UndoStack& redo_stack = *_engine.redo_stack();
 	AtomWriter undo_writer(
+		_engine.world().rdf_world(),
 		_engine.world().uri_map(), _engine.world().uris(), undo_stack);
 	AtomWriter redo_writer(
+		_engine.world().rdf_world(),
 		_engine.world().uri_map(), _engine.world().uris(), redo_stack);
 
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);

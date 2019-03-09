@@ -27,6 +27,8 @@
 #    include <io.h>
 #    define F_OK 0
 #    define mkdir(path, flags) _mkdir(path)
+#else
+#    include <unistd.h>
 #endif
 
 #include <cerrno>

@@ -59,6 +59,7 @@ ClientStore::clear()
 void
 ClientStore::add_object(SPtr<ObjectModel> object)
 {
+	_log.info("Add object %1%\n", object->path());
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
 	auto existing = find(object->path());

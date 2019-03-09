@@ -38,8 +38,6 @@ namespace client {
 LilvWorld*         PluginModel::_lilv_world   = nullptr;
 const LilvPlugins* PluginModel::_lilv_plugins = nullptr;
 
-Sord::World* PluginModel::_rdf_world = nullptr;
-
 PluginModel::PluginModel(URIs&             uris,
                          const URI&        uri,
                          const Atom&       type,
@@ -65,7 +63,7 @@ PluginModel::PluginModel(URIs&             uris,
 
 	if (uris.ingen_Internal == _type) {
 		set_property(uris.doap_name,
-		             uris.forge.alloc(std::string(uri.fragment().substr(1))));
+		             uris.forge.alloc(uri.fragment().substr(1)));
 	}
 }
 
@@ -103,7 +101,7 @@ PluginModel::get_property(const URI& key) const
 
 	// No lv2:symbol from data or engine, invent one
 	if (key == _uris.lv2_symbol) {
-		string str        = this->uri();
+		string str        = this->uri().str();
 		size_t last_delim = last_uri_delim(str);
 		while (last_delim != string::npos &&
 		       !contains_alpha_after(str, last_delim)) {
@@ -264,12 +262,13 @@ heading(const std::string& text, bool html, unsigned level)
 }
 
 static std::string
-link(const std::string& addr, bool html)
+link(const URI& addr, bool html)
 {
 	if (html) {
-		return std::string("<a href=\"") + addr + "\">" + addr + "</a>";
+		return std::string("<a href=\"") + addr.str() + "\">" + addr.str() +
+		       "</a>";
 	} else {
-		return addr;
+		return addr.str();
 	}
 }
 

@@ -23,15 +23,14 @@
 #include "lv2/patch/patch.h"
 #include "lv2/urid/urid.h"
 #include "serd/serd.h"
-#include "sratom/sratom.h"
+#include "sratom/sratom.hpp"
 
 #include <ctime>
+#include <fstream>
 #include <iterator>
 #include <memory>
 
-#define NS_RDF (const uint8_t*)"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-
-#define USTR(s) ((const uint8_t*)(s))
+#define NS_RDF "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
 namespace ingen {
 namespace server {
@@ -120,9 +119,9 @@ UndoStack::pop()
 struct BlankIDs {
 	explicit BlankIDs(char c='b') : c(c) {}
 
-	SerdNode get() {
+	serd::Node get() {
 		snprintf(buf, sizeof(buf), "%c%u", c, n++);
-		return serd_node_from_string(SERD_BLANK, USTR(buf));
+		return serd::make_blank(buf);
 	}
 
 	char       buf[16]{};
@@ -131,126 +130,120 @@ struct BlankIDs {
 };
 
 struct ListContext {
-	explicit ListContext(BlankIDs& ids, unsigned flags, const SerdNode* s, const SerdNode* p)
-		: ids(ids)
-		, s(*s)
-		, p(*p)
-		, flags(flags | SERD_LIST_O_BEGIN)
+	explicit ListContext(BlankIDs&            ids,
+	                     serd::StatementFlags flags,
+	                     const serd::Node&    s,
+	                     const serd::Node&    p)
+	    : ids(ids)
+	    , s(s)
+	    , p(p)
+	    , flags(flags | serd::StatementFlag::list_O)
 	{}
 
-	SerdNode start_node(SerdWriter* writer) {
-		const SerdNode node = ids.get();
-		serd_writer_write_statement(writer, flags, nullptr, &s, &p, &node, nullptr, nullptr);
+	serd::Node start_node(serd::Writer& writer) {
+		const serd::Node node = ids.get();
+		writer.sink().write(flags, s, p, node);
 		return node;
 	}
 
-	void append(SerdWriter* writer, unsigned oflags, const SerdNode* value) {
+	void append(serd::Writer&        writer,
+	            serd::StatementFlags oflags,
+	            const serd::Node&    value)
+	{
 		// s p node
-		const SerdNode node = start_node(writer);
+		const serd::Node node = start_node(writer);
 
 		// node rdf:first value
-		p     = serd_node_from_string(SERD_URI, NS_RDF "first");
-		flags = SERD_LIST_CONT;
-		serd_writer_write_statement(writer, flags|oflags, nullptr, &node, &p, value, nullptr, nullptr);
+		p     = serd::make_uri(NS_RDF "first");
+		flags = {};
+		writer.sink().write(flags | oflags, node, p, value);
 
-		end_node(writer, &node);
+		end_node(writer, node);
 	}
 
-	void end_node(SerdWriter*, const SerdNode* node) {
+	void end_node(serd::Writer&, const serd::Node& node) {
 		// Prepare for next call: node rdf:rest ...
-		s = *node;
-		p = serd_node_from_string(SERD_URI, NS_RDF "rest");
+		s = node;
+		p = serd::make_uri(NS_RDF "rest");
 	}
 
-	void end(SerdWriter* writer) {
-		const SerdNode nil = serd_node_from_string(SERD_URI, NS_RDF "nil");
-		serd_writer_write_statement(writer, flags, nullptr, &s, &p, &nil, nullptr, nullptr);
+	void end(serd::Writer& writer) {
+		const serd::Node nil = serd::make_uri(NS_RDF "nil");
+		writer.sink().write(flags, s, p, nil);
 	}
 
-	BlankIDs& ids;
-	SerdNode  s;
-	SerdNode  p;
-	unsigned  flags;
+	BlankIDs&            ids;
+	serd::Node           s;
+	serd::Node           p;
+	serd::StatementFlags flags;
 };
 
 void
-UndoStack::write_entry(Sratom*                 sratom,
-                       SerdWriter*             writer,
-                       const SerdNode* const   subject,
+UndoStack::write_entry(sratom::Streamer&       streamer,
+                       serd::Writer&           writer,
+                       const serd::Node&       subject,
                        const UndoStack::Entry& entry)
 {
 	char time_str[24];
 	strftime(time_str, sizeof(time_str), "%FT%T", gmtime(&entry.time));
 
-	// entry rdf:type ingen:UndoEntry
-	SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "time"));
-	SerdNode o = serd_node_from_string(SERD_LITERAL, USTR(time_str));
-	serd_writer_write_statement(writer, SERD_ANON_CONT, nullptr, subject, &p, &o, nullptr, nullptr);
+	writer.sink().write({},
+	                    subject,
+	                    serd::make_uri(INGEN_NS "time"),
+	                    serd::make_string(time_str));
 
-	p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "events"));
+	serd::Node p = serd::make_uri(INGEN_NS "events");
 
 	BlankIDs    ids('e');
-	ListContext ctx(ids, SERD_ANON_CONT, subject, &p);
+	ListContext ctx(ids, {}, subject, p);
 
 	for (const LV2_Atom* atom : entry.events) {
-		const SerdNode node = ctx.start_node(writer);
+		const serd::Node node = ctx.start_node(writer);
 
-		p         = serd_node_from_string(SERD_URI, NS_RDF "first");
-		ctx.flags = SERD_LIST_CONT;
-		sratom_write(sratom, &_map.urid_unmap_feature()->urid_unmap, SERD_LIST_CONT,
-		             &node, &p,
-		             atom->type, atom->size, LV2_ATOM_BODY_CONST(atom));
-
-		ctx.end_node(writer, &node);
+		p         = serd::make_uri(NS_RDF "first");
+		ctx.flags = {};
+		streamer.write(writer.sink(), node, p, *atom);
+		ctx.end_node(writer, node);
 	}
 
 	ctx.end(writer);
 }
 
 void
-UndoStack::save(FILE* stream, const char* name)
+UndoStack::save(std::ofstream& stream, const char* name)
 {
-	SerdEnv* env = serd_env_new(nullptr);
-	serd_env_set_prefix_from_strings(env, USTR("atom"),  USTR(LV2_ATOM_PREFIX));
-	serd_env_set_prefix_from_strings(env, USTR("ingen"), USTR(INGEN_NS));
-	serd_env_set_prefix_from_strings(env, USTR("patch"), USTR(LV2_PATCH_PREFIX));
+	serd::Env env;
+	env.set_prefix("atom",  LV2_ATOM_PREFIX);
+	env.set_prefix("ingen", INGEN_NS);
+	env.set_prefix("patch", LV2_PATCH_PREFIX);
 
-	const SerdNode base = serd_node_from_string(SERD_URI, USTR("ingen:/"));
-	SerdURI        base_uri;
-	serd_uri_parse(base.buf, &base_uri);
+	const serd::Node base = serd::make_uri("ingen:/");
 
-	SerdWriter* writer = serd_writer_new(
-		SERD_TURTLE,
-		(SerdStyle)(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED|SERD_STYLE_CURIED),
-		env,
-		&base_uri,
-		serd_file_sink,
-		stream);
+	serd::Writer writer(_world,
+	                    serd::Syntax::Turtle,
+	                    {},
+	                    env,
+	                    stream);
 
 	// Configure sratom to write directly to the writer (and thus the socket)
-	Sratom* sratom = sratom_new(&_map.urid_map_feature()->urid_map);
-	sratom_set_sink(sratom,
-	                (const char*)base.buf,
-	                (SerdStatementSink)serd_writer_write_statement,
-	                (SerdEndSink)serd_writer_end_anon,
-	                writer);
+	sratom::Streamer streamer{_world,
+	                          _map.urid_map_feature()->urid_map,
+	                          _map.urid_unmap_feature()->urid_unmap};
 
-	SerdNode s = serd_node_from_string(SERD_BLANK, (const uint8_t*)name);
-	SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "entries"));
+	serd::Node s = serd::make_blank(name);
+	serd::Node p = serd::make_uri(INGEN_NS "entries");
 
 	BlankIDs    ids('u');
-	ListContext ctx(ids, 0, &s, &p);
+	ListContext ctx(ids, {}, s, p);
 	for (const Entry& e : _stack) {
-		const SerdNode entry = ids.get();
-		ctx.append(writer, SERD_ANON_O_BEGIN, &entry);
-		write_entry(sratom, writer, &entry, e);
-		serd_writer_end_anon(writer, &entry);
+		const serd::Node entry = ids.get();
+		ctx.append(writer, serd::StatementFlag::anon_O, entry);
+		write_entry(streamer, writer, entry, e);
+		writer.sink().end(entry);
 	}
 	ctx.end(writer);
 
-	sratom_free(sratom);
-	serd_writer_finish(writer);
-	serd_writer_free(writer);
+	writer.finish();
 }
 
 } // namespace server

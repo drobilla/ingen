@@ -224,9 +224,9 @@ PluginUI::create(ingen::World&          world,
 bool
 PluginUI::instantiate()
 {
-	const URIs&       uris       = _world.uris();
-	const std::string plugin_uri = _block->plugin()->uri();
-	LilvWorld*        lworld     = _world.lilv_world();
+	const URIs& uris       = _world.uris();
+	const URI&  plugin_uri = _block->plugin()->uri();
+	LilvWorld*  lworld     = _world.lilv_world();
 
 	// Load seeAlso files to access data like portNotification descriptions
 	lilv_world_load_resource(lworld, lilv_ui_get_uri(_ui));

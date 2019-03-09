@@ -200,31 +200,26 @@ main(int argc, char** argv)
 			*world, *engine_interface, graph, parent, symbol);
 	} else if (conf.option("server-load").is_valid()) {
 		const char* path = conf.option("server-load").ptr<char>();
-		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
+		if (serd_uri_string_has_scheme(path)) {
 			std::cout << "Loading " << path << " (server side)" << std::endl;
 			engine_interface->copy(URI(path), main_uri());
 		} else {
-			SerdNode uri = serd_node_new_file_uri(
-				(const uint8_t*)path, nullptr, nullptr, true);
-			std::cout << "Loading " << (const char*)uri.buf
-			          << " (server side)" << std::endl;
-			engine_interface->copy(URI((const char*)uri.buf), main_uri());
-			serd_node_free(&uri);
+			serd::Node uri = serd::make_file_uri(path);
+			std::cout << "Loading " << uri << " (server side)" << std::endl;
+			engine_interface->copy(URI(uri), main_uri());
 		}
 	}
 
 	// Save the currently loaded graph
 	if (conf.option("save").is_valid()) {
 		const char* path = conf.option("save").ptr<char>();
-		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
+		if (serd_uri_string_has_scheme(path)) {
 			std::cout << "Saving to " << path << std::endl;
 			engine_interface->copy(main_uri(), URI(path));
 		} else {
-			SerdNode uri = serd_node_new_file_uri(
-				(const uint8_t*)path, nullptr, nullptr, true);
-			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
-			engine_interface->copy(main_uri(), URI((const char*)uri.buf));
-			serd_node_free(&uri);
+			serd::Node uri = serd::make_file_uri(path);
+			std::cout << "Saving to " << uri << std::endl;
+			engine_interface->copy(main_uri(), URI(uri));
 		}
 	}
 
@@ -256,8 +251,12 @@ main(int argc, char** argv)
 	}
 
 	// Save configuration to restore preferences on next run
-	const std::string path = conf.save(
-		world->uri_map(), "ingen", "options.ttl", Configuration::GLOBAL);
+	const std::string path = conf.save(world->rdf_world(),
+	                                   world->uri_map(),
+	                                   "ingen",
+	                                   "options.ttl",
+	                                   Configuration::GLOBAL);
+
 	std::cout << fmt("Saved configuration to %1%\n", path);
 
 	engine_interface.reset();

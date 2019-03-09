@@ -15,6 +15,7 @@
 */
 
 #include "TestClient.hpp"
+
 #include "ingen_config.h"
 
 #include "ingen/Atom.hpp"
@@ -37,14 +38,14 @@
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
 #include "raul/Path.hpp"
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
+#include "serd/serd.hpp"
+#include "sratom/sratom.hpp"
 
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <string>
 #include <string>
 #include <utility>
 
@@ -124,9 +125,8 @@ main(int argc, char** argv)
 
 	// Read commands
 
-	AtomForge forge(world->uri_map().urid_map_feature()->urid_map);
-
-	sratom_set_object_mode(&forge.sratom(), SRATOM_OBJECT_MODE_BLANK_SUBJECT);
+	AtomForge forge(world->rdf_world(),
+	                world->uri_map().urid_map_feature()->urid_map);
 
 	// AtomReader to read commands from a file and send them to engine
 	AtomReader atom_reader(world->uri_map(),
@@ -140,46 +140,45 @@ main(int argc, char** argv)
 	world->interface()->set_respondee(client);
 	world->engine()->register_client(client);
 
-	SerdURI cmds_base;
-	SerdNode cmds_file_uri = serd_node_new_file_uri(
-		(const uint8_t*)run_path.c_str(),
-		nullptr, &cmds_base, true);
-	Sord::Model* cmds = new Sord::Model(*world->rdf_world(),
-	                                    (const char*)cmds_file_uri.buf);
-	SerdEnv* env = serd_env_new(&cmds_file_uri);
-	cmds->load_file(env, SERD_TURTLE, run_path);
-	Sord::Node nil;
+	serd::Node  run_uri = serd::make_file_uri(run_path.string());
+	serd::Model cmds(world->rdf_world(),
+	                 serd::ModelFlag::index_SPO | serd::ModelFlag::index_OPS);
+
+	serd::Env      env(run_uri);
+	serd::Inserter inserter(cmds, env);
+	serd::Reader   reader(
+		world->rdf_world(), serd::Syntax::Turtle, {}, inserter.sink(), 4096);
+
+	reader.start_file(run_path.string());
+	reader.read_document();
+	reader.finish();
+
 	int n_events = 0;
 	for (;; ++n_events) {
-		std::string subject_str = fmt("msg%1%", n_events);
-		Sord::URI subject(*world->rdf_world(), subject_str,
-		                  (const char*)cmds_file_uri.buf);
-		Sord::Iter iter = cmds->find(subject, nil, nil);
-		if (iter.end()) {
+		const auto subject = serd::make_resolved_uri(
+			std::string("msg") + std::to_string(n_events), run_uri);
+		if (!cmds.ask(subject, {}, {})) {
 			break;
 		}
 
-		forge.clear();
-		forge.read(*world->rdf_world(), cmds->c_obj(), subject.c_obj());
+		auto atom = forge.read(cmds, subject);
 
 #if 0
-		const LV2_Atom* atom = forge.atom();
-		cerr << "READ " << atom->size << " BYTES" << endl;
-		cerr << sratom_to_turtle(
-			sratom,
-			&world->uri_map().urid_unmap_feature()->urid_unmap,
-			(const char*)cmds_file_uri.buf,
-			nullptr, nullptr, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
+		sratom::Streamer streamer{
+		        world->rdf_world(),
+		        world->uri_map().urid_map_feature()->urid_map,
+		        world->uri_map().urid_unmap_feature()->urid_unmap};
+
+		auto str = streamer.to_string(env, *atom);
+		cerr << "Read " << atom->size << " bytes:\n" << str << endl;
 #endif
 
-		if (!atom_reader.write(forge.atom(), n_events + 1)) {
+		if (!atom_reader.write(atom, n_events + 1)) {
 			return EXIT_FAILURE;
 		}
 
 		world->engine()->flush_events(std::chrono::milliseconds(20));
 	}
-
-	delete cmds;
 
 	// Save resulting graph
 	auto              r        = world->store()->find(Raul::Path("/"));
@@ -211,9 +210,6 @@ main(int argc, char** argv)
 	const std::string redo_name = base.substr(0, base.find('.')) + ".redo.ingen";
 	const FilePath    redo_path = filesystem::current_path() / redo_name;
 	world->serialiser()->write_bundle(r->second, URI(redo_path));
-
-	serd_env_free(env);
-	serd_node_free(&cmds_file_uri);
 
 	// Shut down
 	world->engine()->deactivate();

@@ -21,14 +21,15 @@
 
 namespace ingen {
 
-StreamWriter::StreamWriter(URIMap&             map,
+StreamWriter::StreamWriter(serd::World&        world,
+                           URIMap&             map,
                            URIs&               uris,
                            const URI&          uri,
                            FILE*               stream,
                            ColorContext::Color color)
-	: TurtleWriter(map, uris, uri)
-	, _stream(stream)
-	, _color(color)
+	: TurtleWriter(world, map, uris, uri)
+    , _stream(stream)
+    , _color(color)
 {}
 
 size_t

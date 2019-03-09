@@ -41,7 +41,7 @@ def build(bld):
         vnum            = bld.env.INGEN_VERSION,
         install_path    = '${LIBDIR}',
         lib             = lib,
-        uselib          = 'LV2 LILV RAUL SERD SORD SRATOM',
+        uselib          = 'LV2 LILV RAUL SERD SRATOM',
         cxxflags        = (['-fvisibility=hidden'] +
                            bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS),
         linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)

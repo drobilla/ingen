@@ -43,20 +43,7 @@ URIs::Quark::Quark(Forge&      forge,
 	: URI(str)
 	, urid(forge.make_urid(URI(str)))
 	, uri(forge.alloc_uri(str))
-	, lnode(lilv_new_uri(lworld, str))
 {}
-
-URIs::Quark::Quark(const Quark& copy)
-	: URI(copy)
-	, urid(copy.urid)
-	, uri(copy.uri)
-	, lnode(lilv_node_duplicate(copy.lnode))
-{}
-
-URIs::Quark::~Quark()
-{
-	lilv_node_free(lnode);
-}
 
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"

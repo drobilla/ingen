@@ -35,7 +35,7 @@ Forge::Forge(URIMap& map)
 Atom
 Forge::make_urid(const ingen::URI& u)
 {
-	const LV2_URID urid = _map.map_uri(u.string());
+	const LV2_URID urid = _map.map_uri(u.c_str());
 	return Atom(sizeof(int32_t), URID, &urid);
 }
 

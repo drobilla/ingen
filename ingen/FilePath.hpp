@@ -19,7 +19,7 @@
 
 #include "ingen/ingen.h"
 
-#include <boost/utility/string_view.hpp>
+#include "serd/serd.hpp"
 
 #include <ostream>
 #include <string>
@@ -57,7 +57,7 @@ public:
 	FilePath(string_type&& str) : _str(std::move(str)) {}
 	FilePath(const string_type& str) : _str(str) {}
 	FilePath(const value_type* str) : _str(str) {}
-	FilePath(const boost::basic_string_view<value_type>& sv)
+	FilePath(const serd::StringView& sv)
 		: _str(sv.data(), sv.length())
 	{}
 
@@ -73,7 +73,7 @@ public:
 	FilePath& operator+=(const string_type& str);
 	FilePath& operator+=(const value_type* str);
 	FilePath& operator+=(value_type chr);
-	FilePath& operator+=(boost::basic_string_view<value_type> sv);
+	FilePath& operator+=(serd::StringView sv);
 
 	void clear() noexcept { _str.clear(); }
 

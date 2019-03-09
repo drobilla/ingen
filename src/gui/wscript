@@ -57,11 +57,10 @@ def build(bld):
             LILV
             LV2
             RAUL
-            SIGCPP
             SERD
-            SORD
-            SRATOM
+            SIGCPP
             SOUP
+            SRATOM
             SUIL
             WEBKIT
     ''')
@@ -124,4 +123,4 @@ def build(bld):
               target       = 'ingen_gui_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
               use          = 'libingen libingen_gui',
-              uselib       = 'LV2 SERD SORD SRATOM LILV RAUL GLIBMM GTKMM')
+              uselib       = 'LV2 SERD SRATOM LILV RAUL GLIBMM GTKMM')

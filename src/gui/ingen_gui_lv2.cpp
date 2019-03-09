@@ -143,6 +143,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	// Set up an engine interface that writes LV2 atoms
 	ui->engine = SPtr<ingen::Interface>(
 		new ingen::AtomWriter(
+			ui->world->rdf_world(),
 			ui->world->uri_map(), ui->world->uris(), *ui->sink));
 
 	ui->world->set_interface(ui->engine);

@@ -19,7 +19,9 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/ingen.h"
+#include "lv2/atom/atom.h"
 #include "lv2/atom/forge.h"
+#include "serd/serd.hpp"
 
 #include <cstdint>
 #include <cstring>
@@ -59,8 +61,12 @@ public:
 		return Atom(size, type, val);
 	}
 
+	Atom alloc(const LV2_Atom* atom) {
+		return Atom(atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
+	}
+
 	Atom alloc(const char* v) {
-		const size_t len = strlen(v);
+		const auto len = strlen(v);
 		return Atom(len + 1, String, v);
 	}
 
@@ -68,12 +74,11 @@ public:
 		return Atom(v.length() + 1, String, v.c_str());
 	}
 
-	Atom alloc_uri(const char* v) {
-		const size_t len = strlen(v);
-		return Atom(len + 1, URI, v);
+	Atom alloc(serd::StringView v) {
+		return Atom(v.length() + 1, String, v.c_str());
 	}
 
-	Atom alloc_uri(const std::string& v) {
+	Atom alloc_uri(serd::StringView v) {
 		return Atom(v.length() + 1, URI, v.c_str());
 	}
 

@@ -18,8 +18,7 @@
 
 #include "ingen/FilePath.hpp"
 #include "ingen/fmt.hpp"
-
-#include <boost/utility/string_view.hpp>
+#include "serd/serd.hpp"
 
 #include <string>
 
@@ -91,7 +90,7 @@ main(int, char**)
 	path += 'r';
 	EXPECT_EQ(path, "/a/bar/car");
 
-	path += boost::string_view("/d");
+	path += serd::StringView("/d");
 	EXPECT_EQ(path, "/a/bar/car/d");
 
 	const FilePath apple("apple");

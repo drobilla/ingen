@@ -21,7 +21,7 @@
 #include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
-#include "sord/sordmm.hpp"
+#include "serd/serd.hpp"
 
 #include <string>
 
@@ -30,6 +30,7 @@ namespace Raul { class Path; }
 namespace ingen {
 
 class Arc;
+class FilePath;
 class Node;
 class URI;
 class World;
@@ -84,8 +85,8 @@ public:
 	 *
 	 * @throw std::logic_error
 	 */
-	virtual void serialise_arc(const Sord::Node&      parent,
-	                           const SPtr<const Arc>& arc);
+	virtual void serialise_arc(const serd::Optional<serd::Node>& parent,
+	                           const SPtr<const Arc>&            arc);
 
 	/** Finish serialization.
 	 *

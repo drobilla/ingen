@@ -29,12 +29,12 @@ inline URI main_uri() { return URI("ingen:/main"); }
 
 inline bool uri_is_path(const URI& uri)
 {
-	const size_t root_len = main_uri().string().length();
+	const size_t root_len = main_uri().length();
 	if (uri == main_uri()) {
 		return true;
 	} else {
-		return uri.string().substr(0, root_len + 1) ==
-		       main_uri().string() + "/";
+		return uri.str().substr(0, root_len + 1) ==
+		       main_uri().str() + "/";
 	}
 }
 

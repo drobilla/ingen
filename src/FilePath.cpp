@@ -89,7 +89,7 @@ FilePath::operator+=(value_type chr)
 }
 
 FilePath&
-FilePath::operator+=(boost::basic_string_view<value_type> sv)
+FilePath::operator+=(serd::StringView sv)
 {
 	_str.append(sv.data(), sv.size());
 	return *this;

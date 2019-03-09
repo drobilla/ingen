@@ -35,6 +35,8 @@
 #include "ingen/World.hpp"
 #include "raul/Maid.hpp"
 
+#include <boost/optional/optional_io.hpp>
+
 #include <mutex>
 #include <set>
 #include <string>
@@ -364,7 +366,7 @@ Delta::pre_process(PreProcessContext& ctx)
 						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.pset_preset) {
-					URI uri;
+					boost::optional<URI> uri;
 					if (uris.forge.is_uri(value)) {
 						const std::string uri_str = uris.forge.str(value, false);
 						if (URI::is_valid(uri_str)) {
@@ -374,9 +376,9 @@ Delta::pre_process(PreProcessContext& ctx)
 						uri = URI(FilePath(value.ptr<char>()));
 					}
 
-					if (!uri.empty()) {
+					if (uri) {
 						op = SpecialType::PRESET;
-						if ((_state = block->load_preset(uri))) {
+						if ((_state = block->load_preset(*uri))) {
 							lilv_state_emit_port_values(
 								_state, s_add_set_event, this);
 						} else {

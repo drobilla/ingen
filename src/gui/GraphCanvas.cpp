@@ -636,7 +636,7 @@ serialise_arc(GanvEdge* arc, void* data)
 
 	gui::Arc* garc = dynamic_cast<gui::Arc*>(Glib::wrap(GANV_EDGE(arc)));
 	if (garc) {
-		serialiser->serialise_arc(Sord::Node(), garc->model());
+		serialiser->serialise_arc({}, garc->model());
 	}
 }
 
@@ -690,7 +690,7 @@ GraphCanvas::paste()
 	// Figure out the copy graph base path
 	Raul::Path copy_root("/");
 	if (base_uri) {
-		std::string base = *base_uri;
+		std::string base = base_uri->str();
 		if (base[base.size() - 1] == '/') {
 			base = base.substr(0, base.size() - 1);
 		}

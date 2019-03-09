@@ -30,8 +30,6 @@
 #include <string>
 #include <utility>
 
-namespace Sord { class World; }
-
 namespace ingen {
 
 class Interface;
@@ -63,9 +61,8 @@ public:
 	};
 
 	/** Find all resources of a given type listed in a manifest file. */
-	virtual std::set<ResourceRecord> find_resources(Sord::World& world,
-	                                                const URI&   manifest_uri,
-	                                                const URI&   type_uri);
+	virtual std::set<ResourceRecord> find_resources(const URI& manifest_uri,
+	                                                const URI& type_uri);
 
 	/** Parse a graph from RDF into a Interface (engine or client).
 	 *

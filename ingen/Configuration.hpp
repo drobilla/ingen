@@ -22,6 +22,7 @@
 #include "ingen/ingen.h"
 #include "lv2/urid/urid.h"
 #include "raul/Exception.hpp"
+#include "serd/serd.hpp"
 
 #include <cstdio>
 #include <list>
@@ -86,7 +87,7 @@ public:
 	void parse(int argc, char **argv);
 
 	/** Load a specific file. */
-	bool load(const FilePath& path);
+	bool load(serd::World& world, const FilePath& path);
 
 	/** Save configuration to a file.
 	 *
@@ -103,7 +104,8 @@ public:
 	 *
 	 * @return The absolute path of the saved configuration file.
 	 */
-	FilePath save(URIMap&            uri_map,
+	FilePath save(serd::World&       world,
+	              URIMap&            uri_map,
 	              const std::string& app,
 	              const FilePath&    filename,
 	              unsigned           scopes);
@@ -114,7 +116,8 @@ public:
 	 * will be loaded before the user's, e.g. ~/.config/appname/filename,
 	 * so the user options will override the system options.
 	 */
-	std::list<FilePath> load_default(const std::string& app,
+	std::list<FilePath> load_default(serd::World&       world,
+	                                 const std::string& app,
 	                                 const FilePath&    filename);
 
 	const Atom& option(const std::string& long_name) const;

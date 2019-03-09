@@ -39,7 +39,8 @@ class URIs;
 class INGEN_API SocketWriter : public TurtleWriter
 {
 public:
-	SocketWriter(URIMap&            map,
+	SocketWriter(serd::World&       world,
+	             URIMap&            map,
 	             URIs&              uris,
 	             const URI&         uri,
 	             SPtr<Raul::Socket> sock);

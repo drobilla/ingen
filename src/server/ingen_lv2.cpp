@@ -60,8 +60,7 @@
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Symbol.hpp"
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
+#include "serd/serd.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -123,7 +122,8 @@ public:
 		          engine.world().uris(),
 		          engine.world().log(),
 		          *engine.world().interface().get())
-		, _writer(engine.world().uri_map(),
+		, _writer(engine.world().rdf_world(),
+		          engine.world().uri_map(),
 		          engine.world().uris(),
 		          *this)
 		, _from_ui(ui_ring_size(block_length))
@@ -460,11 +460,10 @@ struct IngenPlugin {
 static Lib::Graphs
 find_graphs(const URI& manifest_uri)
 {
-	Sord::World world;
+	serd::World world;
 	Parser      parser;
 
 	const std::set<Parser::ResourceRecord> resources = parser.find_resources(
-		world,
 		manifest_uri,
 		URI(INGEN__Graph));
 
@@ -512,11 +511,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	set_bundle_path(bundle_path);
 	const std::string manifest_path = ingen::bundle_file_path("manifest.ttl");
-	SerdNode          manifest_node = serd_node_new_file_uri(
-		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
-
-	Lib::Graphs graphs = find_graphs(URI((const char*)manifest_node.buf));
-	serd_node_free(&manifest_node);
+	serd::Node        manifest_node = serd::make_file_uri(manifest_path);
+	Lib::Graphs       graphs        = find_graphs(URI(manifest_node));
 
 	const LV2Graph* graph = nullptr;
 	for (const auto& g : graphs) {
@@ -823,13 +819,9 @@ LV2Graph::LV2Graph(Parser::ResourceRecord record)
 Lib::Lib(const char* bundle_path)
 {
 	ingen::set_bundle_path(bundle_path);
-	const std::string manifest_path = ingen::bundle_file_path("manifest.ttl");
-	SerdNode          manifest_node = serd_node_new_file_uri(
-		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 
-	graphs = find_graphs(URI((const char*)manifest_node.buf));
-
-	serd_node_free(&manifest_node);
+	const auto manifest_path = ingen::bundle_file_path("manifest.ttl");
+	graphs = find_graphs(serd::make_file_uri(manifest_path.string()));
 }
 
 static void

@@ -38,15 +38,16 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 #include "serd/serd.h"
-#include "sord/sord.h"
-#include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
+#include "serd/serd.hpp"
+#include "sratom/sratom.hpp"
 
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <fstream>
 #include <map>
 #include <set>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -55,15 +56,14 @@ namespace ingen {
 
 struct Serialiser::Impl {
 	explicit Impl(World& world)
-		: _root_path("/")
-		, _mode(Mode::TO_FILE)
-		, _world(world)
-		, _model(nullptr)
-		, _sratom(sratom_new(&_world.uri_map().urid_map_feature()->urid_map))
-	{}
-
-	~Impl() {
-		sratom_free(_sratom);
+	    : _root_path("/")
+	    , _mode(Mode::TO_STRING)
+	    , _base_uri("ingen:")
+	    , _world(world)
+	    , _streamer(_world.rdf_world(),
+	                _world.uri_map().urid_map_feature()->urid_map,
+	                _world.uri_map().urid_unmap_feature()->urid_unmap)
+	{
 	}
 
 	Impl(const Impl&) = delete;
@@ -77,22 +77,22 @@ struct Serialiser::Impl {
 	                   const FilePath&   filename);
 
 	std::set<const Resource*> serialise_graph(const SPtr<const Node>& graph,
-	                                          const Sord::Node&       graph_id);
+	                                          const serd::Node&       graph_id);
 
 	void serialise_block(const SPtr<const Node>& block,
-	                     const Sord::Node&       class_id,
-	                     const Sord::Node&       block_id);
+	                     const serd::Node&       class_id,
+	                     const serd::Node&       block_id);
 
 	void serialise_port(const Node*       port,
 	                    Resource::Graph   context,
-	                    const Sord::Node& port_id);
+	                    const serd::Node& port_id);
 
-	void serialise_properties(Sord::Node        id,
+	void serialise_properties(serd::Node        id,
 	                          const Properties& props);
 
 	void write_bundle(const SPtr<const Node>& graph, const URI& uri);
 
-	Sord::Node path_rdf_node(const Raul::Path& path);
+	serd::Node path_rdf_node(const Raul::Path& path);
 
 	void write_manifest(const FilePath&         bundle_path,
 	                    const SPtr<const Node>& graph);
@@ -100,18 +100,18 @@ struct Serialiser::Impl {
 	void write_plugins(const FilePath&                  bundle_path,
 	                   const std::set<const Resource*>& plugins);
 
-	void serialise_arc(const Sord::Node&      parent,
-	                   const SPtr<const Arc>& arc);
+	void serialise_arc(const serd::Optional<serd::Node>& parent,
+	                   const SPtr<const Arc>&            arc);
 
 	std::string finish();
 
-	Raul::Path   _root_path;
-	Mode         _mode;
-	URI          _base_uri;
-	FilePath     _basename;
-	World&       _world;
-	Sord::Model* _model;
-	Sratom*      _sratom;
+	Raul::Path        _root_path;
+	Mode              _mode;
+	URI               _base_uri;
+	FilePath          _basename;
+	World&            _world;
+	UPtr<serd::Model> _model;
+	sratom::Streamer  _streamer;
 };
 
 Serialiser::Serialiser(World& world)
@@ -129,24 +129,17 @@ Serialiser::Impl::write_manifest(const FilePath& bundle_path,
 
 	start_to_file(Raul::Path("/"), manifest_path);
 
-	Sord::World& world = _model->world();
-	const URIs&  uris  = _world.uris();
+	const URIs& uris  = _world.uris();
 
 	const std::string filename("main.ttl");
-	const Sord::URI   subject(world, filename, _base_uri);
+	const serd::Node  subject = serd::make_resolved_uri(filename, _base_uri);
 
-	_model->add_statement(subject,
-	                      Sord::URI(world, uris.rdf_type),
-	                      Sord::URI(world, uris.ingen_Graph));
-	_model->add_statement(subject,
-	                      Sord::URI(world, uris.rdf_type),
-	                      Sord::URI(world, uris.lv2_Plugin));
-	_model->add_statement(subject,
-	                      Sord::URI(world, uris.rdfs_seeAlso),
-	                      Sord::URI(world, filename, _base_uri));
-	_model->add_statement(subject,
-	                      Sord::URI(world, uris.lv2_prototype),
-	                      Sord::URI(world, uris.ingen_GraphPrototype));
+	_model->insert(subject, uris.rdf_type, uris.ingen_Graph);
+	_model->insert(subject, uris.rdf_type, uris.lv2_Plugin);
+	_model->insert(subject, uris.lv2_prototype, uris.ingen_GraphPrototype);
+	_model->insert(subject,
+	               uris.rdfs_seeAlso,
+	               serd::make_resolved_uri(filename, _base_uri));
 
 	finish();
 }
@@ -159,24 +152,21 @@ Serialiser::Impl::write_plugins(const FilePath&                  bundle_path,
 
 	start_to_file(Raul::Path("/"), plugins_path);
 
-	Sord::World& world = _model->world();
-	const URIs&  uris  = _world.uris();
+	const URIs& uris  = _world.uris();
 
 	for (const auto& p : plugins) {
 		const Atom& minor = p->get_property(uris.lv2_minorVersion);
 		const Atom& micro = p->get_property(uris.lv2_microVersion);
 
-		_model->add_statement(Sord::URI(world, p->uri()),
-		                      Sord::URI(world, uris.rdf_type),
-		                      Sord::URI(world, uris.lv2_Plugin));
+		_model->insert(p->uri(), uris.rdf_type, uris.lv2_Plugin);
 
 		if (minor.is_valid() && micro.is_valid()) {
-			_model->add_statement(Sord::URI(world, p->uri()),
-			                      Sord::URI(world, uris.lv2_minorVersion),
-			                      Sord::Literal::integer(world, minor.get<int32_t>()));
-			_model->add_statement(Sord::URI(world, p->uri()),
-			                      Sord::URI(world, uris.lv2_microVersion),
-			                      Sord::Literal::integer(world, micro.get<int32_t>()));
+			_model->insert(p->uri(),
+			               uris.lv2_minorVersion,
+			               serd::make_integer(minor.get<int32_t>()));
+			_model->insert(p->uri(),
+			               uris.lv2_microVersion,
+			               serd::make_integer(micro.get<int32_t>()));
 		}
 	}
 
@@ -207,7 +197,7 @@ Serialiser::Impl::write_bundle(const SPtr<const Node>& graph, const URI& uri)
 
 	std::set<const Resource*> plugins = serialise_graph(
 		graph,
-		Sord::URI(_model->world(), main_file, _base_uri));
+		serd::make_resolved_uri(main_file.c_str(), _base_uri));
 
 	finish();
 	write_manifest(path, graph);
@@ -230,9 +220,11 @@ Serialiser::Impl::start_to_file(const Raul::Path& root,
 		_basename = filename.parent_path().stem();
 	}
 
-	_model     = new Sord::Model(*_world.rdf_world(), _base_uri);
-	_mode      = Mode::TO_FILE;
 	_root_path = root;
+	_mode      = Mode::TO_FILE;
+	_model     = make_unique<serd::Model>(_world.rdf_world(),
+	                                      serd::ModelFlag::index_SPO |
+	                                      serd::ModelFlag::index_OPS);
 }
 
 void
@@ -240,8 +232,10 @@ Serialiser::start_to_string(const Raul::Path& root, const URI& base_uri)
 {
 	me->_root_path = root;
 	me->_base_uri  = base_uri;
-	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri);
 	me->_mode      = Impl::Mode::TO_STRING;
+	me->_model     = make_unique<serd::Model>(me->_world.rdf_world(),
+	                                          serd::ModelFlag::index_SPO |
+	                                          serd::ModelFlag::index_OPS);
 }
 
 void
@@ -259,32 +253,54 @@ Serialiser::finish()
 std::string
 Serialiser::Impl::finish()
 {
-	std::string ret;
+	std::string ret{};
+	serd::Env   env{_world.env()};
+
+	env.set_base_uri(_base_uri);
+
 	if (_mode == Mode::TO_FILE) {
-		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
-		if (st) {
-			_world.log().error("Error writing file %1% (%2%)\n",
-			                   _base_uri, serd_strerror(st));
+		const std::string path = serd::file_uri_parse(_base_uri.string());
+		std::ofstream     file(path);
+		serd::Writer      writer(
+			_world.rdf_world(), serd::Syntax::Turtle, {}, env, file);
+
+		env.write_prefixes(writer.sink());
+		const serd::Status st = _model->all().serialise(writer.sink());
+
+		if (st != serd::Status::success) {
+			_world.log().error(fmt("Error writing file %1% (%2%)\n",
+			                       _base_uri, serd::strerror(st)));
 		}
 	} else {
-		ret = _model->write_to_string(_base_uri, SERD_TURTLE);
+		std::stringstream ss;
+		serd::Writer      writer(
+                _world.rdf_world(), serd::Syntax::Turtle, {}, env, ss);
+
+		env.write_prefixes(writer.sink());
+		const serd::Status st = _model->all().serialise(writer.sink());
+
+		writer.finish();
+		ret = ss.str();
+
+		if (st != serd::Status::success) {
+			_world.log().error(fmt("Error writing string (%2%)\n",
+			                       serd::strerror(st)));
+		}
 	}
 
-	delete _model;
-	_model    = nullptr;
-	_base_uri = URI();
+	_model.reset();
+	_base_uri = URI("ingen:");
 
 	return ret;
 }
 
-Sord::Node
+serd::Node
 Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));
-	return Sord::URI(_model->world(),
-	                 path.substr(_root_path.base().length()),
-	                 _base_uri);
+	return serd::make_resolved_uri(path.substr(_root_path.base().length()),
+	                               _base_uri);
 }
 
 void
@@ -297,8 +313,9 @@ Serialiser::serialise(const SPtr<const Node>& object, Resource::Graph context)
 	if (object->graph_type() == Node::GraphType::GRAPH) {
 		me->serialise_graph(object, me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == Node::GraphType::BLOCK) {
-		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri());
-		me->serialise_block(object, plugin_id, me->path_rdf_node(object->path()));
+		me->serialise_block(object,
+		                    object->plugin()->uri(),
+		                    me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == Node::GraphType::PORT) {
 		me->serialise_port(
 			object.get(), context, me->path_rdf_node(object->path()));
@@ -310,32 +327,27 @@ Serialiser::serialise(const SPtr<const Node>& object, Resource::Graph context)
 
 std::set<const Resource*>
 Serialiser::Impl::serialise_graph(const SPtr<const Node>& graph,
-                                  const Sord::Node&       graph_id)
+                                  const serd::Node&       graph_id)
 {
-	Sord::World& world = _model->world();
-	const URIs&  uris  = _world.uris();
+	const URIs& uris = _world.uris();
 
-	_model->add_statement(graph_id,
-	                      Sord::URI(world, uris.rdf_type),
-	                      Sord::URI(world, uris.ingen_Graph));
+	_model->insert(graph_id, uris.rdf_type, uris.ingen_Graph);
 
-	_model->add_statement(graph_id,
-	                      Sord::URI(world, uris.rdf_type),
-	                      Sord::URI(world, uris.lv2_Plugin));
+	_model->insert(graph_id, uris.rdf_type, uris.lv2_Plugin);
 
-	_model->add_statement(graph_id,
-	                      Sord::URI(world, uris.lv2_extensionData),
-	                      Sord::URI(world, LV2_STATE__interface));
+	_model->insert(graph_id,
+	               uris.lv2_extensionData,
+	               serd::make_uri(LV2_STATE__interface));
 
-	_model->add_statement(graph_id,
-	                      Sord::URI(world, LV2_UI__ui),
-	                      Sord::URI(world, "http://drobilla.net/ns/ingen#GraphUIGtk2"));
+	_model->insert(graph_id,
+	               serd::make_uri(LV2_UI__ui),
+	               serd::make_uri("http://drobilla.net/ns/ingen#GraphUIGtk2"));
 
 	// If the graph has no doap:name (required by LV2), use the basename
 	if (graph->properties().find(uris.doap_name) == graph->properties().end()) {
-		_model->add_statement(graph_id,
-		                      Sord::URI(world, uris.doap_name),
-		                      Sord::Literal(world, _basename));
+		_model->insert(graph_id,
+		               uris.doap_name,
+		               serd::make_string((std::string)_basename));
 	}
 
 	const Properties props = graph->properties(Resource::Graph::INTERNAL);
@@ -352,45 +364,33 @@ Serialiser::Impl::serialise_graph(const SPtr<const Node>& graph,
 		if (n->second->graph_type() == Node::GraphType::GRAPH) {
 			SPtr<Node> subgraph = n->second;
 
-			SerdURI base_uri;
-			serd_uri_parse((const uint8_t*)_base_uri.c_str(), &base_uri);
-
 			const std::string sub_bundle_path = subgraph->path().substr(1) + ".ingen";
 
-			SerdURI  subgraph_uri;
-			SerdNode subgraph_node = serd_node_new_uri_from_string(
-				(const uint8_t*)sub_bundle_path.c_str(),
-				&base_uri,
-				&subgraph_uri);
-
-			const Sord::URI subgraph_id(world, (const char*)subgraph_node.buf);
+			serd::Node subgraph_node = serd::make_resolved_uri(
+				sub_bundle_path,
+				_base_uri);
 
 			// Save our state
-			URI          my_base_uri = _base_uri;
-			Sord::Model* my_model    = _model;
+			URI  my_base_uri = _base_uri;
+			auto my_model    = std::move(_model);
 
 			// Write child bundle within this bundle
-			write_bundle(subgraph, subgraph_id);
+			write_bundle(subgraph, subgraph_node);
 
 			// Restore our state
 			_base_uri = my_base_uri;
-			_model    = my_model;
+			_model    = std::move(my_model);
 
 			// Serialise reference to graph block
-			const Sord::Node block_id(path_rdf_node(subgraph->path()));
-			_model->add_statement(graph_id,
-			                      Sord::URI(world, uris.ingen_block),
-			                      block_id);
-			serialise_block(subgraph, subgraph_id, block_id);
+			const serd::Node block_id(path_rdf_node(subgraph->path()));
+			_model->insert(graph_id, uris.ingen_block, block_id);
+			serialise_block(subgraph, subgraph_node, block_id);
 		} else if (n->second->graph_type() == Node::GraphType::BLOCK) {
 			SPtr<const Node> block = n->second;
 
-			const Sord::URI  class_id(world, block->plugin()->uri());
-			const Sord::Node block_id(path_rdf_node(n->second->path()));
-			_model->add_statement(graph_id,
-			                      Sord::URI(world, uris.ingen_block),
-			                      block_id);
-			serialise_block(block, class_id, block_id);
+			const serd::Node block_id(path_rdf_node(n->second->path()));
+			_model->insert(graph_id, uris.ingen_block, block_id);
+			serialise_block(block, block->plugin()->uri(), block_id);
 
 			plugins.insert(block->plugin());
 		}
@@ -398,7 +398,7 @@ Serialiser::Impl::serialise_graph(const SPtr<const Node>& graph,
 
 	for (uint32_t i = 0; i < graph->num_ports(); ++i) {
 		Node* p = graph->port(i);
-		const Sord::Node port_id = path_rdf_node(p->path());
+		const serd::Node port_id = path_rdf_node(p->path());
 
 		// Ensure lv2:name always exists so Graph is a valid LV2 plugin
 		if (p->properties().find(uris.lv2_name) == p->properties().end()) {
@@ -406,9 +406,7 @@ Serialiser::Impl::serialise_graph(const SPtr<const Node>& graph,
 			                _world.forge().alloc(p->symbol().c_str()));
 		}
 
-		_model->add_statement(graph_id,
-		                      Sord::URI(world, LV2_CORE__port),
-		                      port_id);
+		_model->insert(graph_id, serd::make_uri(LV2_CORE__port), port_id);
 		serialise_port(p, Resource::Graph::DEFAULT, port_id);
 		serialise_port(p, Resource::Graph::INTERNAL, port_id);
 	}
@@ -422,17 +420,13 @@ Serialiser::Impl::serialise_graph(const SPtr<const Node>& graph,
 
 void
 Serialiser::Impl::serialise_block(const SPtr<const Node>& block,
-                                  const Sord::Node&       class_id,
-                                  const Sord::Node&       block_id)
+                                  const serd::Node&       class_id,
+                                  const serd::Node&       block_id)
 {
 	const URIs& uris = _world.uris();
 
-	_model->add_statement(block_id,
-	                      Sord::URI(_model->world(), uris.rdf_type),
-	                      Sord::URI(_model->world(), uris.ingen_Block));
-	_model->add_statement(block_id,
-	                      Sord::URI(_model->world(), uris.lv2_prototype),
-	                      class_id);
+	_model->insert(block_id, uris.rdf_type, uris.ingen_Block);
+	_model->insert(block_id, uris.lv2_prototype, class_id);
 
 	// Serialise properties, but remove possibly stale state:state (set again below)
 	Properties props = block->properties();
@@ -445,36 +439,33 @@ Serialiser::Impl::serialise_block(const SPtr<const Node>& block,
 		const FilePath state_dir  = graph_dir / block->symbol();
 		const FilePath state_file = state_dir / "state.ttl";
 		if (block->save_state(state_dir)) {
-			_model->add_statement(block_id,
-			                      Sord::URI(_model->world(), uris.state_state),
-			                      Sord::URI(_model->world(), URI(state_file)));
+			_model->insert(block_id,
+			               uris.state_state,
+			               serd::make_uri((std::string)state_file));
 		}
 	}
 
 	for (uint32_t i = 0; i < block->num_ports(); ++i) {
 		Node* const      p       = block->port(i);
-		const Sord::Node port_id = path_rdf_node(p->path());
+		const serd::Node port_id = path_rdf_node(p->path());
 		serialise_port(p, Resource::Graph::DEFAULT, port_id);
-		_model->add_statement(block_id,
-		                      Sord::URI(_model->world(), uris.lv2_port),
-		                      port_id);
+		_model->insert(block_id, uris.lv2_port, port_id);
 	}
 }
 
 void
 Serialiser::Impl::serialise_port(const Node*       port,
                                  Resource::Graph   context,
-                                 const Sord::Node& port_id)
+                                 const serd::Node& port_id)
 {
-	URIs&            uris  = _world.uris();
-	Sord::World&     world = _model->world();
+	URIs&      uris  = _world.uris();
 	Properties props = port->properties(context);
 
 	if (context == Resource::Graph::INTERNAL) {
 		// Always write lv2:symbol for Graph ports (required for lv2:Plugin)
-		_model->add_statement(port_id,
-		                      Sord::URI(world, uris.lv2_symbol),
-		                      Sord::Literal(world, port->path().symbol()));
+		_model->insert(port_id,
+		               uris.lv2_symbol,
+		               serd::make_string(port->path().symbol()));
 	} else if (context == Resource::Graph::EXTERNAL) {
 		// Never write lv2:index for plugin instances (not persistent/stable)
 		props.erase(uris.lv2_index);
@@ -500,47 +491,38 @@ Serialiser::Impl::serialise_port(const Node*       port,
 }
 
 void
-Serialiser::serialise_arc(const Sord::Node&      parent,
-                          const SPtr<const Arc>& arc)
+Serialiser::serialise_arc(const serd::Optional<serd::Node>& parent,
+                          const SPtr<const Arc>&            arc)
 {
 	return me->serialise_arc(parent, arc);
 }
 
 void
-Serialiser::Impl::serialise_arc(const Sord::Node&      parent,
-                                const SPtr<const Arc>& arc)
+Serialiser::Impl::serialise_arc(const serd::Optional<serd::Node>& parent,
+                                const SPtr<const Arc>&            arc)
 {
 	if (!_model) {
 		throw std::logic_error(
 			"serialise_arc called without serialisation in progress");
 	}
 
-	Sord::World& world = _model->world();
-	const URIs&  uris  = _world.uris();
+	const URIs& uris = _world.uris();
 
-	const Sord::Node src    = path_rdf_node(arc->tail_path());
-	const Sord::Node dst    = path_rdf_node(arc->head_path());
-	const Sord::Node arc_id = Sord::Node::blank_id(*_world.rdf_world());
-	_model->add_statement(arc_id,
-	                      Sord::URI(world, uris.ingen_tail),
-	                      src);
-	_model->add_statement(arc_id,
-	                      Sord::URI(world, uris.ingen_head),
-	                      dst);
+	const serd::Node src    = path_rdf_node(arc->tail_path());
+	const serd::Node dst    = path_rdf_node(arc->head_path());
+	const serd::Node arc_id = _world.rdf_world().get_blank();
+	_model->insert(arc_id, uris.ingen_tail, src);
+	_model->insert(arc_id, uris.ingen_head, dst);
 
-	if (parent.is_valid()) {
-		_model->add_statement(parent,
-		                      Sord::URI(world, uris.ingen_arc),
-		                      arc_id);
+	if (parent) {
+		_model->insert(*parent, uris.ingen_arc, arc_id);
 	} else {
-		_model->add_statement(arc_id,
-		                      Sord::URI(world, uris.rdf_type),
-		                      Sord::URI(world, uris.ingen_Arc));
+		_model->insert(arc_id, uris.rdf_type, uris.ingen_Arc);
 	}
 }
 
 static bool
-skip_property(ingen::URIs& uris, const Sord::Node& predicate)
+skip_property(ingen::URIs& uris, const serd::Node& predicate)
 {
 	return (predicate == INGEN__file ||
 	        predicate == uris.ingen_arc ||
@@ -549,45 +531,37 @@ skip_property(ingen::URIs& uris, const Sord::Node& predicate)
 }
 
 void
-Serialiser::Impl::serialise_properties(Sord::Node        id,
+Serialiser::Impl::serialise_properties(serd::Node        id,
                                        const Properties& props)
 {
-	LV2_URID_Unmap* unmap    = &_world.uri_map().urid_unmap_feature()->urid_unmap;
-	SerdNode        base     = serd_node_from_string(SERD_URI,
-	                                                 (const uint8_t*)_base_uri.c_str());
-	SerdEnv*        env      = serd_env_new(&base);
-	SordInserter*   inserter = sord_inserter_new(_model->c_obj(), env);
-
-	sratom_set_sink(_sratom, _base_uri.c_str(),
-	                (SerdStatementSink)sord_inserter_write_statement, nullptr,
-	                inserter);
-
-	sratom_set_pretty_numbers(_sratom, true);
+	serd::Env      env{_base_uri};
+	serd::Inserter inserter{*_model, env, {}};
 
 	for (const auto& p : props) {
-		const Sord::URI key(_model->world(), p.first);
+		const serd::Node key = serd::make_uri(p.first.c_str());
 		if (!skip_property(_world.uris(), key)) {
 			if (p.second.type() == _world.uris().atom_URI &&
-			    !strncmp((const char*)p.second.get_body(), "ingen:/main/", 13)) {
+			    !strncmp(
+			            (const char*)p.second.get_body(), "ingen:/main/", 13)) {
 				/* Value is a graph URI relative to the running engine.
 				   Chop the prefix and save the path relative to the graph file.
 				   This allows saving references to bundle resources. */
-				sratom_write(_sratom, unmap, 0,
-				             sord_node_to_serd_node(id.c_obj()),
-				             sord_node_to_serd_node(key.c_obj()),
-				             p.second.type(), p.second.size(),
-				             (const char*)p.second.get_body() + 13);
+				_streamer.write(inserter.sink(),
+				                id,
+				                key,
+				                p.second.type(),
+				                p.second.size(),
+				                (const char*)p.second.get_body() + 13,
+				                sratom::Flag::pretty_numbers);
 			} else {
-				sratom_write(_sratom, unmap, 0,
-				             sord_node_to_serd_node(id.c_obj()),
-				             sord_node_to_serd_node(key.c_obj()),
-				             p.second.type(), p.second.size(), p.second.get_body());
+				_streamer.write(inserter.sink(),
+				                id,
+				                key,
+				                *p.second.atom(),
+				                sratom::Flag::pretty_numbers);
 			}
 		}
 	}
-
-	sord_inserter_free(inserter);
-	serd_env_free(env);
 }
 
 } // namespace ingen

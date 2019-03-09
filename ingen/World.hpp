@@ -28,7 +28,7 @@
 
 typedef struct LilvWorldImpl LilvWorld;
 
-namespace Sord { class World; }
+namespace serd { class World; class Env; }
 
 namespace ingen {
 
@@ -49,7 +49,7 @@ class URIs;
  *
  * This is the root to which all components of Ingen are connected.  It
  * contains all necessary shared data (including the world for libraries like
- * Sord and Lilv) and holds references to components.
+ * Serd and Lilv) and holds references to components.
  *
  * Some functionality in Ingen is implemented in dynamically loaded modules,
  * which are loaded using this interface.  When loaded, those modules add
@@ -126,7 +126,8 @@ public:
 	/** Lock for rdf_world() or lilv_world(). */
 	virtual std::mutex& rdf_mutex();
 
-	virtual Sord::World* rdf_world();
+	virtual serd::World& rdf_world();
+	virtual serd::Env&   env();
 	virtual LilvWorld*   lilv_world();
 
 	virtual LV2Features&  lv2_features();

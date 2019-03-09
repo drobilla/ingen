@@ -43,7 +43,7 @@ class INGEN_API AtomWriter : public Interface
 public:
 	using result_type = void; ///< For boost::apply_visitor
 
-	AtomWriter(URIMap& map, URIs& uris, AtomSink& sink);
+	AtomWriter(serd::World& world, URIMap& map, URIs& uris, AtomSink& sink);
 
 	URI uri() const override { return URI("ingen:/clients/atom_writer"); }
 

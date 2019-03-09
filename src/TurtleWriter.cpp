@@ -19,72 +19,43 @@
 #include "ingen/URIMap.hpp"
 #include "lv2/atom/atom.h"
 
-#define USTR(s) ((const uint8_t*)(s))
-
 namespace ingen {
 
-static size_t
-c_text_sink(const void* buf, size_t len, void* stream)
-{
-	auto* writer = static_cast<TurtleWriter*>(stream);
-	return writer->text_sink(buf, len);
-}
-
-static SerdStatus
-write_prefix(void* handle, const SerdNode* name, const SerdNode* uri)
-{
-	serd_writer_set_prefix((SerdWriter*)handle, name, uri);
-	return SERD_SUCCESS;
-}
-
-TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
-    : AtomWriter(map, uris, *this)
+TurtleWriter::TurtleWriter(serd::World& world,
+                           URIMap&      map,
+                           URIs&        uris,
+                           const URI&   uri)
+    : AtomWriter(world, map, uris, *this)
     , _map(map)
-    , _sratom(sratom_new(&map.urid_map_feature()->urid_map))
-    , _base(SERD_NODE_NULL)
-    , _base_uri(SERD_URI_NULL)
-    , _uri(std::move(uri))
+    , _streamer(world,
+                map.urid_map_feature()->urid_map,
+                map.urid_unmap_feature()->urid_unmap)
+    , _base(serd::make_uri("ingen:/")) // Make relative URIs like bundle paths
+    , _env(_base)
+    , _writer(world,
+              serd::Syntax::Turtle,
+              {},
+              _env,
+              [&](const char* str, size_t len) { return text_sink(str, len); })
+    , _uri(uri)
     , _wrote_prefixes(false)
 {
-	// Use <ingen:/> as base URI, so relative URIs are like bundle paths
-	_base = serd_node_from_string(SERD_URI, (const uint8_t*)"ingen:/");
-	serd_uri_parse(_base.buf, &_base_uri);
-
-	// Set up serialisation environment
-	_env = serd_env_new(&_base);
-	serd_env_set_prefix_from_strings(_env, USTR("atom"),  USTR("http://lv2plug.in/ns/ext/atom#"));
-	serd_env_set_prefix_from_strings(_env, USTR("doap"),  USTR("http://usefulinc.com/ns/doap#"));
-	serd_env_set_prefix_from_strings(_env, USTR("ingen"), USTR(INGEN_NS));
-	serd_env_set_prefix_from_strings(_env, USTR("lv2"),   USTR("http://lv2plug.in/ns/lv2core#"));
-	serd_env_set_prefix_from_strings(_env, USTR("midi"),  USTR("http://lv2plug.in/ns/ext/midi#"));
-	serd_env_set_prefix_from_strings(_env, USTR("owl"),   USTR("http://www.w3.org/2002/07/owl#"));
-	serd_env_set_prefix_from_strings(_env, USTR("patch"), USTR("http://lv2plug.in/ns/ext/patch#"));
-	serd_env_set_prefix_from_strings(_env, USTR("rdf"),   USTR("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-	serd_env_set_prefix_from_strings(_env, USTR("rdfs"),  USTR("http://www.w3.org/2000/01/rdf-schema#"));
-	serd_env_set_prefix_from_strings(_env, USTR("xsd"),   USTR("http://www.w3.org/2001/XMLSchema#"));
-
-	// Make a Turtle writer that writes to text_sink
-	_writer = serd_writer_new(
-		SERD_TURTLE,
-		(SerdStyle)(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED|SERD_STYLE_CURIED),
-		_env,
-		&_base_uri,
-		c_text_sink,
-		this);
-
-	// Configure sratom to write directly to the writer (and thus text_sink)
-	sratom_set_sink(_sratom,
-	                (const char*)_base.buf,
-	                (SerdStatementSink)serd_writer_write_statement,
-	                (SerdEndSink)serd_writer_end_anon,
-	                _writer);
+	// Set namespace prefixes
+	_env.set_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
+	_env.set_prefix("doap",  "http://usefulinc.com/ns/doap#");
+	_env.set_prefix("ingen", INGEN_NS);
+	_env.set_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
+	_env.set_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
+	_env.set_prefix("owl",   "http://www.w3.org/2002/07/owl#");
+	_env.set_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
+	_env.set_prefix("rdf",   "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+	_env.set_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
+	_env.set_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
 }
 
 TurtleWriter::~TurtleWriter()
 {
-	sratom_free(_sratom);
-	serd_writer_free(_writer);
-	serd_env_free(_env);
+	_writer.finish();
 }
 
 bool
@@ -92,13 +63,13 @@ TurtleWriter::write(const LV2_Atom* msg, int32_t)
 {
 	if (!_wrote_prefixes) {
 		// Write namespace prefixes once to reduce traffic
-		serd_env_foreach(_env, write_prefix, _writer);
+		_env.write_prefixes(_writer.sink());
+		_writer.finish();
 		_wrote_prefixes = true;
 	}
 
-	sratom_write(_sratom, &_map.urid_unmap_feature()->urid_unmap, 0,
-	             nullptr, nullptr, msg->type, msg->size, LV2_ATOM_BODY_CONST(msg));
-	serd_writer_finish(_writer);
+	_streamer.write(_writer.sink(), *msg);
+	_writer.finish();
 	return true;
 }
 

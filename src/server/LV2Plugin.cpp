@@ -68,7 +68,7 @@ LV2Plugin::update_properties()
 Raul::Symbol
 LV2Plugin::symbol() const
 {
-	std::string working = uri();
+	std::string working(uri());
 	if (working.back() == '/') {
 		working = working.substr(0, working.length() - 1);
 	}

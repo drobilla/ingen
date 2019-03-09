@@ -34,7 +34,8 @@ class URIs;
 class INGEN_API StreamWriter : public TurtleWriter
 {
 public:
-	StreamWriter(URIMap&             map,
+	StreamWriter(serd::World&        world,
+	             URIMap&             map,
 	             URIs&               uris,
 	             const URI&          uri,
 	             FILE*               stream,

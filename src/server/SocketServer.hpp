@@ -43,14 +43,16 @@ public:
 		, _sink(world.conf().option("dump").get<int32_t>()
 		        ? SPtr<Interface>(
 			        new Tee({SPtr<Interface>(new EventWriter(engine)),
-					         SPtr<Interface>(new StreamWriter(world.uri_map(),
+					         SPtr<Interface>(new StreamWriter(world.rdf_world(),
+					                                          world.uri_map(),
 					                                          world.uris(),
 					                                          URI("ingen:/engine"),
 					                                          stderr,
 					                                          ColorContext::Color::CYAN))}))
 		        : SPtr<Interface>(new EventWriter(engine)))
 		, _reader(new SocketReader(world, *_sink.get(), sock))
-		, _writer(new SocketWriter(world.uri_map(),
+		, _writer(new SocketWriter(world.rdf_world(),
+		                           world.uri_map(),
 		                           world.uris(),
 		                           URI(sock->uri()),
 		                           sock))

@@ -459,7 +459,7 @@ LoadPluginWindow::filter_changed()
 			field = get_author_name(plugin);
 			break;
 		case CriteriaColumns::Criteria::URI:
-			field = plugin->uri();
+			field = plugin->uri().str();
 			break;
 		}
 

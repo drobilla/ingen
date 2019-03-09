@@ -133,7 +133,7 @@ protected:
 	}
 
 	inline bool pre_process_done(Status st, const URI& subject) {
-		_err_subject = subject;
+		_err_subject = std::string{subject};
 		return pre_process_done(st);
 	}
 

@@ -87,7 +87,7 @@ App::App(ingen::World& world)
 	, _requested_plugins(false)
 	, _is_plugin(false)
 {
-	_world.conf().load_default("ingen", "gui.ttl");
+	_world.conf().load_default(_world.rdf_world(), "ingen", "gui.ttl");
 
 	WidgetFactory::get_widget_derived("connect_win", _connect_window);
 	WidgetFactory::get_widget_derived("messages_win", _messages_window);
@@ -99,7 +99,6 @@ App::App(ingen::World& world)
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 
-	PluginModel::set_rdf_world(*world.rdf_world());
 	PluginModel::set_lilv_world(world.lilv_world());
 
 	using namespace std::placeholders;
@@ -178,7 +177,8 @@ App::attach(SPtr<ingen::Interface> client)
 	}
 
 	if (_world.conf().option("dump").get<int32_t>()) {
-		_dumper = SPtr<StreamWriter>(new StreamWriter(_world.uri_map(),
+		_dumper = SPtr<StreamWriter>(new StreamWriter(_world.rdf_world(),
+		                                              _world.uri_map(),
 		                                              _world.uris(),
 		                                              URI("ingen:/client"),
 		                                              stderr,
@@ -469,8 +469,11 @@ App::quit(Gtk::Window* dialog_parent)
 	Gtk::Main::quit();
 
 	try {
-		const std::string path = _world.conf().save(
-			_world.uri_map(), "ingen", "gui.ttl", Configuration::GUI);
+		const std::string path = _world.conf().save(_world.rdf_world(),
+		                                             _world.uri_map(),
+		                                             "ingen",
+		                                             "gui.ttl",
+		                                             Configuration::GUI);
 		std::cout << fmt("Saved GUI settings to %1%\n", path);
 	} catch (const std::exception& e) {
 		std::cerr << fmt("Error saving GUI settings (%1%)\n", e.what());

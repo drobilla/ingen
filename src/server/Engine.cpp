@@ -68,31 +68,37 @@ INGEN_THREAD_LOCAL unsigned ThreadManager::flags(0);
 bool               ThreadManager::single_threaded(true);
 
 Engine::Engine(ingen::World& world)
-	: _world(world)
-	, _options(new LV2Options(world.uris()))
-	, _buffer_factory(new BufferFactory(*this, world.uris()))
-	, _maid(new Raul::Maid)
-	, _worker(new Worker(world.log(), event_queue_size()))
-	, _sync_worker(new Worker(world.log(), event_queue_size(), true))
-	, _broadcaster(new Broadcaster())
-	, _control_bindings(new ControlBindings(*this))
-	, _block_factory(new BlockFactory(world))
-	, _undo_stack(new UndoStack(world.uris(), world.uri_map()))
-	, _redo_stack(new UndoStack(world.uris(), world.uri_map()))
-	, _post_processor(new PostProcessor(*this))
-	, _pre_processor(new PreProcessor(*this))
-	, _event_writer(new EventWriter(*this))
-	, _interface(_event_writer)
-	, _atom_interface(
-		new AtomReader(world.uri_map(), world.uris(), world.log(), *_interface))
-	, _root_graph(nullptr)
-	, _cycle_start_time(0)
-	, _rand_engine(reinterpret_cast<uintptr_t>(this))
-	, _uniform_dist(0.0f, 1.0f)
-	, _quit_flag(false)
-	, _reset_load_flag(false)
-	, _atomic_bundles(world.conf().option("atomic-bundles").get<int32_t>())
-	, _activated(false)
+    : _world(world)
+    , _options(new LV2Options(world.uris()))
+    , _buffer_factory(new BufferFactory(*this, world.uris()))
+    , _maid(new Raul::Maid)
+    , _worker(new Worker(world.log(), event_queue_size()))
+    , _sync_worker(new Worker(world.log(), event_queue_size(), true))
+    , _broadcaster(new Broadcaster())
+    , _control_bindings(new ControlBindings(*this))
+    , _block_factory(new BlockFactory(world))
+    , _undo_stack(new UndoStack(world.rdf_world(),
+                                world.uris(),
+                                world.uri_map()))
+    , _redo_stack(new UndoStack(world.rdf_world(),
+                                world.uris(),
+                                world.uri_map()))
+    , _post_processor(new PostProcessor(*this))
+    , _pre_processor(new PreProcessor(*this))
+    , _event_writer(new EventWriter(*this))
+    , _interface(_event_writer)
+    , _atom_interface(new AtomReader(world.uri_map(),
+                                     world.uris(),
+                                     world.log(),
+                                     *_interface))
+    , _root_graph(nullptr)
+    , _cycle_start_time(0)
+    , _rand_engine(reinterpret_cast<uintptr_t>(this))
+    , _uniform_dist(0.0f, 1.0f)
+    , _quit_flag(false)
+    , _reset_load_flag(false)
+    , _atomic_bundles(world.conf().option("atomic-bundles").get<int32_t>())
+    , _activated(false)
 {
 	if (!world.store()) {
 		world.set_store(std::make_shared<ingen::Store>());
@@ -125,7 +131,8 @@ Engine::Engine(ingen::World& world)
 		_interface = std::make_shared<Tee>(
 			Tee::Sinks{
 				_event_writer,
-				std::make_shared<StreamWriter>(world.uri_map(),
+				std::make_shared<StreamWriter>(world.rdf_world(),
+				                               world.uri_map(),
 				                               world.uris(),
 				                               URI("ingen:/engine"),
 				                               stderr,

@@ -19,8 +19,6 @@
 
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
-#include "serd/serd.h"
-#include "sord/sord.h"
 
 #include <thread>
 
@@ -47,29 +45,11 @@ protected:
 private:
 	void run();
 
-	static SerdStatus set_base_uri(SocketReader*   iface,
-	                               const SerdNode* uri_node);
-
-	static SerdStatus set_prefix(SocketReader*   iface,
-	                             const SerdNode* name,
-	                             const SerdNode* uri_node);
-
-	static SerdStatus write_statement(SocketReader*      iface,
-	                                  SerdStatementFlags flags,
-	                                  const SerdNode*    graph,
-	                                  const SerdNode*    subject,
-	                                  const SerdNode*    predicate,
-	                                  const SerdNode*    object,
-	                                  const SerdNode*    object_datatype,
-	                                  const SerdNode*    object_lang);
-
 	World&             _world;
 	Interface&         _iface;
-	SerdEnv*           _env;
-	SordInserter*      _inserter;
-	SordNode*          _msg_node;
 	SPtr<Raul::Socket> _socket;
 	bool               _exit_flag;
+
 	std::thread        _thread;
 };
 

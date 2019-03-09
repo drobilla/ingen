@@ -22,10 +22,8 @@
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "lv2/urid/urid.h"
-#include "serd/serd.h"
-#include "sord/sord.h"
-#include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
+#include "serd/serd.hpp"
+#include "sratom/sratom.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -33,6 +31,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <memory>
 #include <thread>
 #include <utility>
@@ -226,43 +225,40 @@ Configuration::parse(int argc, char** argv)
 }
 
 bool
-Configuration::load(const FilePath& path)
+Configuration::load(serd::World& world, const FilePath& path)
 {
 	if (!filesystem::exists(path)) {
 		return false;
 	}
 
-	SerdNode node = serd_node_new_file_uri(
-		(const uint8_t*)path.c_str(), nullptr, nullptr, true);
-	const std::string uri((const char*)node.buf);
+	const serd::Node uri(serd::make_file_uri(path.c_str(), nullptr));
+	serd::Env        env(uri);
+	serd::Model      model(world, serd::ModelFlag::index_SPO);
+	serd::Inserter   inserter(model, env);
+	serd::Reader     reader(world, serd::Syntax::Turtle, {}, inserter.sink(), 4096);
+	reader.start_file(uri);
+	reader.read_document();
+	reader.finish();
 
-	Sord::World world;
-	Sord::Model model(world, uri, SORD_SPO, false);
-	SerdEnv*    env = serd_env_new(&node);
-	model.load_file(env, SERD_TURTLE, uri, uri);
-
-	Sord::Node nodemm(world, Sord::Node::URI, (const char*)node.buf);
-	Sord::Node nil;
-	for (Sord::Iter i = model.find(nodemm, nil, nil); !i.end(); ++i) {
-		const Sord::Node& pred = i.get_predicate();
-		const Sord::Node& obj  = i.get_object();
-		if (pred.to_string().substr(0, sizeof(INGEN_NS) - 1) == INGEN_NS) {
-			const std::string key = pred.to_string().substr(sizeof(INGEN_NS) - 1);
-			const Keys::iterator k = _keys.find(key);
-			if (k != _keys.end() && obj.type() == Sord::Node::LITERAL) {
+	for (const auto& s : model.range(uri, {}, {})) {
+		const auto& pred = s.predicate();
+		const auto& obj  = s.object();
+		if (pred.str().substr(0, sizeof(INGEN_NS) - 1) == INGEN_NS) {
+			const auto key = pred.str().substr(sizeof(INGEN_NS) - 1);
+			const Keys::iterator k = _keys.find(key.str());
+			if (k != _keys.end() && obj.type() == serd::NodeType::literal) {
 				set_value_from_string(_options.find(k->second)->second,
-				                      obj.to_string());
+				                      std::string(obj));
 			}
 		}
 	}
 
-	serd_node_free(&node);
-	serd_env_free(env);
 	return true;
 }
 
 FilePath
-Configuration::save(URIMap&            uri_map,
+Configuration::save(serd::World&       world,
+                    URIMap&            uri_map,
                     const std::string& app,
                     const FilePath&    filename,
                     unsigned           scopes)
@@ -281,41 +277,33 @@ Configuration::save(URIMap&            uri_map,
 	}
 
 	// Attempt to open file for writing
-	std::unique_ptr<FILE, decltype(&fclose)> file{fopen(path.c_str(), "w"),
-	                                              &fclose};
-	if (!file) {
+	std::ofstream file(path);
+	if (!file.good()) {
 		throw FileError(fmt("Failed to open file %1% (%2%)",
 		                    path, strerror(errno)));
 	}
 
 	// Use the file's URI as the base URI
-	SerdURI  base_uri;
-	SerdNode base = serd_node_new_file_uri(
-		(const uint8_t*)path.c_str(), nullptr, &base_uri, true);
+	serd::Node base = serd::make_file_uri(path.c_str());
 
 	// Create environment with ingen prefix
-	SerdEnv* env = serd_env_new(&base);
-	serd_env_set_prefix_from_strings(
-		env, (const uint8_t*)"ingen", (const uint8_t*)INGEN_NS);
+	serd::Env env(base);
+	env.set_prefix("ingen", INGEN_NS);
 
 	// Create Turtle writer
-	SerdWriter* writer = serd_writer_new(
-		SERD_TURTLE,
-		(SerdStyle)(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED),
-		env,
-		&base_uri,
-		serd_file_sink,
-		file.get());
+	serd::Writer writer(world,
+	                    serd::Syntax::Turtle,
+	                    {},
+	                    env,
+	                    file);
 
 	// Write a prefix directive for each prefix in the environment
-	serd_env_foreach(env, (SerdPrefixSink)serd_writer_set_prefix, writer);
+	env.write_prefixes(writer.sink());
 
 	// Create an atom serialiser and connect it to the Turtle writer
-	Sratom* sratom = sratom_new(&uri_map.urid_map_feature()->urid_map);
-	sratom_set_pretty_numbers(sratom, true);
-	sratom_set_sink(sratom, (const char*)base.buf,
-	                (SerdStatementSink)serd_writer_write_statement, nullptr,
-	                writer);
+	sratom::Streamer streamer{world,
+	                          uri_map.urid_map_feature()->urid_map,
+	                          uri_map.urid_unmap_feature()->urid_unmap};
 
 	// Write a statement for each valid option
 	for (const auto& o : _options) {
@@ -327,35 +315,31 @@ Configuration::save(URIMap&            uri_map,
 		}
 
 		const std::string key(std::string("ingen:") + o.second.key);
-		SerdNode pred = serd_node_from_string(
-			SERD_CURIE, (const uint8_t*)key.c_str());
-		sratom_write(sratom, &uri_map.urid_unmap_feature()->urid_unmap, 0,
-		             &base, &pred, value.type(), value.size(), value.get_body());
+		const serd::Node  pred = serd::make_curie(key);
+		streamer.write(
+			writer.sink(), base, pred, *value.atom(), sratom::Flag::pretty_numbers);
 	}
-
-	sratom_free(sratom);
-	serd_writer_free(writer);
-	serd_env_free(env);
-	serd_node_free(&base);
 
 	return path;
 }
 
 std::list<FilePath>
-Configuration::load_default(const std::string& app, const FilePath& filename)
+Configuration::load_default(serd::World&       world,
+                            const std::string& app,
+                            const FilePath&    filename)
 {
 	std::list<FilePath> loaded;
 
 	const std::vector<FilePath> dirs = system_config_dirs();
 	for (const auto& d : dirs) {
 		const FilePath path = d / app / filename;
-		if (load(path)) {
+		if (load(world, path)) {
 			loaded.push_back(path);
 		}
 	}
 
 	const FilePath path = user_config_dir() / app / filename;
-	if (load(path)) {
+	if (load(world, path)) {
 		loaded.push_back(path);
 	}
 

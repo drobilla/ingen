@@ -25,7 +25,7 @@
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
-#include "sord/sordmm.hpp"
+#include "serd/serd.hpp"
 
 #include <cstdint>
 #include <map>
@@ -88,12 +88,6 @@ public:
 	std::string documentation(bool html) const;
 	std::string port_documentation(uint32_t index, bool html) const;
 
-	static void set_rdf_world(Sord::World& world) {
-		_rdf_world = &world;
-	}
-
-	static Sord::World* rdf_world() { return _rdf_world; }
-
 	// Signals
 	INGEN_SIGNAL(changed, void);
 	INGEN_SIGNAL(property, void, const URI&, const Atom&);
@@ -111,7 +105,6 @@ protected:
 private:
 	std::string get_documentation(const LilvNode* subject, bool html) const;
 
-	static Sord::World*       _rdf_world;
 	static LilvWorld*         _lilv_world;
 	static const LilvPlugins* _lilv_plugins;
 

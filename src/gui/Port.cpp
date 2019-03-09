@@ -289,8 +289,8 @@ Port::build_uri_menu()
 	// Add a menu item for each such class
 	for (const auto& v : values) {
 		if (!v.first.empty()) {
-			const std::string qname = world.rdf_world()->prefixes().qualify(v.second);
-			const std::string label = qname + " - " + v.first;
+			const auto        qname = world.env().qualify(v.second);
+			const std::string label = std::string(*qname) + " - " + v.first;
 			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
 			Gtk::MenuItem* menu_item = &(menu->items().back());
 			menu_item->signal_activate().connect(
