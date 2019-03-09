@@ -18,7 +18,7 @@
 #include "ingen_config.h"
 
 #include "ingen/Atom.hpp"
-#include "ingen/AtomForgeSink.hpp"
+#include "ingen/AtomForge.hpp"
 #include "ingen/AtomReader.hpp"
 #include "ingen/AtomWriter.hpp"
 #include "ingen/Configuration.hpp"
@@ -116,15 +116,9 @@ main(int argc, char** argv)
 
 	// Read commands
 
-	LV2_URID_Map* map    = &world->uri_map().urid_map_feature()->urid_map;
-	Sratom*       sratom = sratom_new(map);
+	AtomForge forge(world->uri_map().urid_map_feature()->urid_map);
 
-	sratom_set_object_mode(sratom, SRATOM_OBJECT_MODE_BLANK_SUBJECT);
-
-	LV2_Atom_Forge forge;
-	lv2_atom_forge_init(&forge, map);
-
-	AtomForgeSink out(&forge);
+	sratom_set_object_mode(&forge.sratom(), SRATOM_OBJECT_MODE_BLANK_SUBJECT);
 
 	// AtomReader to read commands from a file and send them to engine
 	AtomReader atom_reader(world->uri_map(),
@@ -157,12 +151,11 @@ main(int argc, char** argv)
 			break;
 		}
 
-		out.clear();
-		sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
-		            cmds->c_obj(), subject.c_obj());
+		forge.clear();
+		forge.read(*world->rdf_world(), cmds->c_obj(), subject.c_obj());
 
 #if 0
-		const LV2_Atom* atom = out.atom();
+		const LV2_Atom* atom = forge.atom();
 		cerr << "READ " << atom->size << " BYTES" << endl;
 		cerr << sratom_to_turtle(
 			sratom,
@@ -171,7 +164,7 @@ main(int argc, char** argv)
 			nullptr, nullptr, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
 #endif
 
-		if (!atom_reader.write(out.atom(), n_events + 1)) {
+		if (!atom_reader.write(forge.atom(), n_events + 1)) {
 			return EXIT_FAILURE;
 		}
 
@@ -212,7 +205,6 @@ main(int argc, char** argv)
 	world->serialiser()->write_bundle(r->second, URI(redo_path));
 
 	serd_env_free(env);
-	sratom_free(sratom);
 	serd_node_free(&cmds_file_uri);
 
 	// Shut down

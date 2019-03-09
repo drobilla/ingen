@@ -16,7 +16,7 @@
 
 #include "ingen/SocketReader.hpp"
 
-#include "ingen/AtomForgeSink.hpp"
+#include "ingen/AtomForge.hpp"
 #include "ingen/AtomReader.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
@@ -25,7 +25,6 @@
 #include "lv2/urid/urid.h"
 #include "raul/Socket.hpp"
 #include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
 
 #include <cerrno>
 #include <cstdint>
@@ -97,7 +96,7 @@ void
 SocketReader::run()
 {
 	Sord::World*  world = _world.rdf_world();
-	LV2_URID_Map* map   = &_world.uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Map& map   = _world.uri_map().urid_map_feature()->urid_map;
 
 	// Open socket as a FILE for reading directly with serd
 	std::unique_ptr<FILE, decltype(&fclose)> f{fdopen(_socket->fd(), "r"),
@@ -110,15 +109,10 @@ SocketReader::run()
 		return;
 	}
 
-	// Set up sratom and a forge to build LV2 atoms from model
-	Sratom*        sratom = sratom_new(map);
-	LV2_Atom_Forge forge;
-	lv2_atom_forge_init(&forge, map);
-
-	AtomForgeSink buffer(&forge);
-
+	// Set up a forge to build LV2 atoms from model
 	SordNode*  base_uri = nullptr;
 	SordModel* model    = nullptr;
+	AtomForge  forge(map);
 	{
 		// Lock RDF world
 		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
@@ -179,13 +173,13 @@ SocketReader::run()
 		}
 
 		// Build an LV2_Atom at chunk.buf from the message
-		sratom_read(sratom, &forge, world->c_obj(), model, _msg_node);
+		forge.read(*world, model, _msg_node);
 
 		// Call _iface methods based on atom content
-		ar.write(buffer.atom());
+		ar.write(forge.atom());
 
 		// Reset everything for the next iteration
-		buffer.clear();
+		forge.clear();
 		sord_node_free(world->c_obj(), _msg_node);
 		_msg_node = nullptr;
 	}
@@ -197,7 +191,6 @@ SocketReader::run()
 	f.reset();
 	sord_inserter_free(_inserter);
 	serd_reader_end_stream(reader);
-	sratom_free(sratom);
 	serd_reader_free(reader);
 	sord_free(model);
 	_socket.reset();

@@ -17,7 +17,7 @@
 #ifndef INGEN_ATOMWRITER_HPP
 #define INGEN_ATOMWRITER_HPP
 
-#include "ingen/AtomForgeSink.hpp"
+#include "ingen/AtomForge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/Properties.hpp"
@@ -74,11 +74,10 @@ private:
 
 	void finish_msg();
 
-	URIMap&        _map;
-	URIs&          _uris;
-	AtomSink&      _sink;
-	AtomForgeSink  _out;
-	LV2_Atom_Forge _forge;
+	URIMap&   _map;
+	URIs&     _uris;
+	AtomSink& _sink;
+	AtomForge _forge;
 };
 
 } // namespace ingen

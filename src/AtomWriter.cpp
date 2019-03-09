@@ -47,10 +47,11 @@
  * manipulating data in this model which resemble HTTP methods.
  */
 
-#include "ingen/Atom.hpp"
-#include "ingen/AtomForgeSink.hpp"
-#include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/AtomForge.hpp"
+#include "ingen/AtomSink.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
@@ -77,17 +78,16 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
 	, _sink(sink)
+	, _forge(map.urid_map_feature()->urid_map)
 {
-	lv2_atom_forge_init(&_forge, &map.urid_map_feature()->urid_map);
-	_out.set_forge_sink(&_forge);
 }
 
 void
 AtomWriter::finish_msg()
 {
 	assert(!_forge.stack);
-	_sink.write(_out.atom());
-	_out.clear();
+	_sink.write(_forge.atom());
+	_forge.clear();
 }
 
 void

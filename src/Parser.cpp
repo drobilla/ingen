@@ -17,7 +17,7 @@
 #include "ingen/Parser.hpp"
 
 #include "ingen/Atom.hpp"
-#include "ingen/AtomForgeSink.hpp"
+#include "ingen/AtomForge.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
@@ -38,7 +38,6 @@
 #include "serd/serd.h"
 #include "sord/sord.h"
 #include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
 
 #include <cassert>
 #include <cstdint>
@@ -111,30 +110,22 @@ get_properties(ingen::World&               world,
                Resource::Graph             ctx,
                boost::optional<Properties> data = {})
 {
-	LV2_URID_Map* map    = &world.uri_map().urid_map_feature()->urid_map;
-	Sratom*       sratom = sratom_new(map);
-
-	LV2_Atom_Forge forge;
-	lv2_atom_forge_init(&forge, map);
-
-	AtomForgeSink out(&forge);
+	AtomForge forge(world.uri_map().urid_map_feature()->urid_map);
 
 	const Sord::Node nil;
 	Properties       props;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
 		if (!skip_property(world.uris(), i.get_predicate())) {
-			out.clear();
-			sratom_read(sratom, &forge, world.rdf_world()->c_obj(),
-			            model.c_obj(), i.get_object().c_obj());
-			const LV2_Atom* atom = out.atom();
+			forge.clear();
+			forge.read(
+				*world.rdf_world(), model.c_obj(), i.get_object().c_obj());
+			const LV2_Atom* atom = forge.atom();
 			Atom            atomm;
 			atomm = world.forge().alloc(
 				atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 			props.emplace(i.get_predicate(), Property(atomm, ctx));
 		}
 	}
-
-	sratom_free(sratom);
 
 	// Replace any properties given in `data`
 	if (data) {
