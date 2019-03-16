@@ -108,34 +108,30 @@ bundle_file_path(const std::string& name)
 	return bundle_path / name;
 }
 
-/** Return the absolute path of a 'resource' file.
- */
 FilePath
 data_file_path(const std::string& name)
 {
-#ifdef BUNDLE
-	return bundle_path / INGEN_DATA_DIR / name;
-#else
 	return find_in_search_path(name, data_dirs());
-#endif
 }
 
-/** Return the absolute path of a module (dynamically loaded shared library).
- */
-FilePath
-ingen_module_path(const std::string& name, FilePath dir)
+std::vector<FilePath>
+ingen_module_dirs()
 {
-	FilePath ret;
-	if (dir.empty()) {
 #ifdef BUNDLE
-		dir = FilePath(bundle_path) / INGEN_MODULE_DIR;
+	const FilePath default_dir = FilePath(bundle_path) / INGEN_MODULE_DIR;
 #else
-		dir = FilePath(INGEN_MODULE_DIR);
+	const FilePath default_dir = INGEN_MODULE_DIR;
 #endif
-	}
 
-	return dir /
-	       (std::string(library_prefix) + "ingen_" + name + library_suffix);
+	return parse_search_path(getenv("INGEN_MODULE_PATH"), {default_dir});
+}
+
+FilePath
+ingen_module_path(const std::string& name)
+{
+	return find_in_search_path(
+		std::string(library_prefix) + "ingen_" + name + library_suffix,
+		ingen_module_dirs());
 }
 
 FilePath
@@ -189,9 +185,15 @@ data_dirs()
 {
 	std::vector<FilePath> paths    = system_data_dirs();
 	const FilePath        user_dir = user_data_dir();
+
+#ifdef BUNDLE
+	paths.insert(paths.begin(), bundle_path / INGEN_DATA_DIR);
+#endif
+
 	if (!user_dir.empty()) {
 		paths.insert(paths.begin(), user_dir);
 	}
+
 	return paths;
 }
 

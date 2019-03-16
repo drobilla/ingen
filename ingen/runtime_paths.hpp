@@ -36,7 +36,7 @@ find_in_search_path(const std::string&           name,
 
 INGEN_API FilePath bundle_file_path(const std::string& name);
 INGEN_API FilePath data_file_path(const std::string& name);
-INGEN_API FilePath ingen_module_path(const std::string& name, FilePath dir={});
+INGEN_API FilePath ingen_module_path(const std::string& name);
 
 INGEN_API FilePath              user_config_dir();
 INGEN_API FilePath              user_data_dir();
@@ -44,6 +44,7 @@ INGEN_API std::vector<FilePath> system_config_dirs();
 INGEN_API std::vector<FilePath> system_data_dirs();
 INGEN_API std::vector<FilePath> config_dirs();
 INGEN_API std::vector<FilePath> data_dirs();
+INGEN_API std::vector<FilePath> ingen_module_dirs();
 
 } // namespace ingen
 

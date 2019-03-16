@@ -66,40 +66,21 @@ class Store;
 static std::unique_ptr<Library>
 ingen_load_library(Log& log, const string& name)
 {
-	std::unique_ptr<Library> library;
-
-	// Search INGEN_MODULE_PATH first
-	const char* const module_path = getenv("INGEN_MODULE_PATH");
-	if (module_path) {
-		string dir;
-		std::istringstream iss(module_path);
-		while (getline(iss, dir, search_path_separator)) {
-			FilePath filename = ingen::ingen_module_path(name, FilePath(dir));
-			if (filesystem::exists(filename)) {
-				library = std::unique_ptr<Library>(new Library(filename));
-				if (*library) {
-					return library;
-				} else {
-					log.error(Library::get_last_error());
-				}
-			}
-		}
-	}
-
-	// Try default directory if not found
-	library = std::unique_ptr<Library>(new Library(ingen::ingen_module_path(name)));
-
-	if (*library) {
-		return library;
-	} else if (!module_path) {
-		log.error("Unable to find %1% (%2%)\n",
+	const auto path = ingen_module_path(name);
+	if (path.empty()) {
+		log.error("Failed to find %1% (%2%)\n",
 		          name, Library::get_last_error());
 		return nullptr;
-	} else {
-		log.error("Unable to load %1% from %2% (%3%)\n",
-		          name, module_path, Library::get_last_error());
-		return nullptr;
 	}
+
+	UPtr<Library> library = make_unique<Library>(path);
+	if (*library) {
+		return library;
+	}
+
+	log.error("Unable to load %1% from %2% (%3%)\n",
+	          name, path, Library::get_last_error());
+	return nullptr;
 }
 
 class World::Impl {
