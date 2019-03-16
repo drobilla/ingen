@@ -63,6 +63,14 @@ ingen_try(bool cond, const char* msg)
 	}
 }
 
+static FilePath
+real_file_path(const char* path)
+{
+	UPtr<char, FreeDeleter<char>> real_path{realpath(path, nullptr)};
+
+	return FilePath{real_path.get()};
+}
+
 int
 main(int argc, char** argv)
 {
@@ -86,16 +94,16 @@ main(int argc, char** argv)
 	}
 
 	// Get start graph and commands file options
-	const char* load_path        = (const char*)load.get_body();
-	char*       real_start_graph = realpath(load_path, nullptr);
-	if (!real_start_graph) {
+	const FilePath load_path = real_file_path((const char*)load.get_body());
+	const FilePath run_path  = real_file_path((const char*)execute.get_body());
+
+	if (load_path.empty()) {
 		cerr << "error: initial graph '" << load_path << "' does not exist" << endl;
 		return EXIT_FAILURE;
+	} else if (run_path.empty()) {
+		cerr << "error: command file '" << run_path << "' does not exist" << endl;
+		return EXIT_FAILURE;
 	}
-
-	const std::string start_graph    = real_start_graph;
-	const FilePath    cmds_file_path = (const char*)execute.get_body();
-	free(real_start_graph);
 
 	// Load modules
 	ingen_try(world->load_module("server"),
@@ -108,8 +116,8 @@ main(int argc, char** argv)
 	world->engine()->activate();
 
 	// Load graph
-	if (!world->parser()->parse_file(*world, *world->interface(), start_graph)) {
-		cerr << "error: failed to load initial graph " << start_graph << endl;
+	if (!world->parser()->parse_file(*world, *world->interface(), load_path)) {
+		cerr << "error: failed to load initial graph " << load_path << endl;
 		return EXIT_FAILURE;
 	}
 	world->engine()->flush_events(std::chrono::milliseconds(20));
@@ -134,12 +142,12 @@ main(int argc, char** argv)
 
 	SerdURI cmds_base;
 	SerdNode cmds_file_uri = serd_node_new_file_uri(
-		(const uint8_t*)cmds_file_path.c_str(),
+		(const uint8_t*)run_path.c_str(),
 		nullptr, &cmds_base, true);
 	Sord::Model* cmds = new Sord::Model(*world->rdf_world(),
 	                                    (const char*)cmds_file_uri.buf);
 	SerdEnv* env = serd_env_new(&cmds_file_uri);
-	cmds->load_file(env, SERD_TURTLE, cmds_file_path);
+	cmds->load_file(env, SERD_TURTLE, run_path);
 	Sord::Node nil;
 	int n_events = 0;
 	for (;; ++n_events) {
@@ -175,7 +183,7 @@ main(int argc, char** argv)
 
 	// Save resulting graph
 	auto              r        = world->store()->find(Raul::Path("/"));
-	const std::string base     = cmds_file_path.stem();
+	const std::string base     = run_path.stem();
 	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
 	const FilePath    out_path = filesystem::current_path() / out_name;
 	world->serialiser()->write_bundle(r->second, URI(out_path));
