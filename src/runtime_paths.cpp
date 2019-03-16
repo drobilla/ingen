@@ -17,6 +17,7 @@
 #include "ingen/runtime_paths.hpp"
 
 #include "ingen/FilePath.hpp"
+#include "ingen/filesystem.hpp"
 #include "ingen_config.h"
 
 #include <algorithm>
@@ -42,6 +43,22 @@ const char               search_path_separator = ':';
 static const char* const library_prefix        = "lib";
 static const char* const library_suffix        = ".so";
 #endif
+
+static std::vector<FilePath>
+parse_search_path(const char* search_path, std::vector<FilePath> defaults)
+{
+	if (!search_path) {
+		return std::move(defaults);
+	}
+
+	std::vector<FilePath> paths;
+	std::istringstream    ss{search_path};
+	std::string           entry;
+	while (std::getline(ss, entry, search_path_separator)) {
+		paths.emplace_back(entry);
+	}
+	return paths;
+}
 
 /** Must be called once at startup, and passed a pointer to a function
  * that lives in the 'top level' of the bundle (e.g. the executable).
@@ -69,6 +86,20 @@ set_bundle_path(const char* path)
 	bundle_path = FilePath(path);
 }
 
+FilePath
+find_in_search_path(const std::string&           name,
+                    const std::vector<FilePath>& search_path)
+{
+	for (const auto& dir : search_path) {
+		FilePath path = dir / name;
+		if (filesystem::exists(path)) {
+			return path;
+		}
+	}
+
+	return FilePath{};
+}
+
 /** Return the absolute path of a file in an Ingen LV2 bundle
  */
 FilePath
@@ -85,7 +116,7 @@ data_file_path(const std::string& name)
 #ifdef BUNDLE
 	return bundle_path / INGEN_DATA_DIR / name;
 #else
-	return FilePath(INGEN_DATA_DIR) / name;
+	return find_in_search_path(name, data_dirs());
 #endif
 }
 
@@ -110,34 +141,57 @@ ingen_module_path(const std::string& name, FilePath dir)
 FilePath
 user_config_dir()
 {
-	const char* const xdg_config_home = getenv("XDG_CONFIG_HOME");
-	const char* const home            = getenv("HOME");
-
-	if (xdg_config_home) {
+	if (const char* xdg_config_home = getenv("XDG_CONFIG_HOME")) {
 		return FilePath(xdg_config_home);
-	} else if (home) {
+	} else if (const char* home = getenv("HOME")) {
 		return FilePath(home) / ".config";
 	}
+	return FilePath();
+}
 
+FilePath
+user_data_dir()
+{
+	if (const char* xdg_data_home = getenv("XDG_DATA_HOME")) {
+		return FilePath(xdg_data_home);
+	} else if (const char* home = getenv("HOME")) {
+		return FilePath(home) / ".local/share";
+	}
 	return FilePath();
 }
 
 std::vector<FilePath>
 system_config_dirs()
 {
-	const char* const xdg_config_dirs = getenv("XDG_CONFIG_DIRS");
+	return parse_search_path(getenv("XDG_CONFIG_DIRS"), {"/etc/xdg"});
+}
 
-	std::vector<FilePath> paths;
-	if (xdg_config_dirs) {
-		std::istringstream ss(xdg_config_dirs);
-		std::string entry;
-		while (std::getline(ss, entry, search_path_separator)) {
-			paths.emplace_back(entry);
-		}
-	} else {
-		paths.emplace_back("/etc/xdg");
+std::vector<FilePath>
+config_dirs()
+{
+	std::vector<FilePath> paths    = system_config_dirs();
+	const FilePath        user_dir = user_config_dir();
+	if (!user_dir.empty()) {
+		paths.insert(paths.begin(), user_dir);
 	}
+	return paths;
+}
 
+std::vector<FilePath>
+system_data_dirs()
+{
+	return parse_search_path(getenv("XDG_DATA_DIRS"),
+	                         {"/usr/local/share", "/usr/share"});
+}
+
+std::vector<FilePath>
+data_dirs()
+{
+	std::vector<FilePath> paths    = system_data_dirs();
+	const FilePath        user_dir = user_data_dir();
+	if (!user_dir.empty()) {
+		paths.insert(paths.begin(), user_dir);
+	}
 	return paths;
 }
 

@@ -30,12 +30,20 @@ extern const char search_path_separator;
 INGEN_API void set_bundle_path(const char* path);
 INGEN_API void set_bundle_path_from_code(void* function);
 
+INGEN_API FilePath
+find_in_search_path(const std::string&           name,
+                    const std::vector<FilePath>& search_path);
+
 INGEN_API FilePath bundle_file_path(const std::string& name);
 INGEN_API FilePath data_file_path(const std::string& name);
 INGEN_API FilePath ingen_module_path(const std::string& name, FilePath dir={});
 
 INGEN_API FilePath              user_config_dir();
+INGEN_API FilePath              user_data_dir();
 INGEN_API std::vector<FilePath> system_config_dirs();
+INGEN_API std::vector<FilePath> system_data_dirs();
+INGEN_API std::vector<FilePath> config_dirs();
+INGEN_API std::vector<FilePath> data_dirs();
 
 } // namespace ingen
 
