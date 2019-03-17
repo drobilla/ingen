@@ -4,7 +4,7 @@ import waflib.Utils as Utils
 import waflib.Options as Options
 
 def options(ctx):
-    opt = ctx.get_option_group('Configuration options')
+    opt = ctx.configuration_options()
     opt.add_option('--light-theme', action='store_true', dest='light_theme',
                    help='use light coloured theme')
 

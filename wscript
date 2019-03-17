@@ -7,7 +7,8 @@ from waflib import Logs, Options, Utils
 from waflib.extras import autowaf
 
 # Package version
-INGEN_VERSION = '0.5.1'
+INGEN_VERSION       = '0.5.1'
+INGEN_MAJOR_VERSION = '0'
 
 # Mandatory waf variables
 APPNAME = 'ingen'        # Package name for waf dist
@@ -15,20 +16,21 @@ VERSION = INGEN_VERSION  # Package version for waf dist
 top     = '.'            # Source directory
 out     = 'build'        # Build directory
 
+line_just = 47
+
 def options(ctx):
     ctx.load('compiler_cxx')
     ctx.load('python')
     ctx.load('lv2')
     ctx.recurse('src/gui')
-    autowaf.set_options(ctx, test=True)
-    opt = ctx.get_option_group('Configuration options')
+    opt = ctx.configuration_options()
 
     opt.add_option('--data-dir', type='string', dest='datadir',
                    help='ingen data install directory [default: PREFIX/share/ingen]')
     opt.add_option('--module-dir', type='string', dest='moduledir',
                    help='ingen module install directory [default: PREFIX/lib/ingen]')
 
-    autowaf.add_flags(
+    ctx.add_flags(
         opt,
         {'no-gui':          'do not build GUI',
          'no-client':       'do not build client library (or GUI)',
@@ -42,8 +44,6 @@ def options(ctx):
          'portaudio':       'build PortAudio backend'})
 
 def configure(conf):
-    autowaf.display_header('Ingen Configuration')
-    autowaf.set_line_just(conf, 47)
     conf.load('compiler_cxx', cache=True)
     conf.load('lv2', cache=True)
     if not Options.options.no_python:
@@ -52,11 +52,7 @@ def configure(conf):
     conf.load('autowaf', cache=True)
     autowaf.set_cxx_lang(conf, 'c++11')
 
-    conf.check_cxx(header_name='boost/format.hpp')
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
-    conf.check_cxx(header_name='boost/intrusive_ptr.hpp')
-    conf.check_cxx(header_name='boost/optional/optional.hpp')
-    conf.check_cxx(header_name='boost/variant.hpp')
     conf.check_cxx(msg='Checking for thread_local keyword',
                    mandatory=False,
                    fragment='thread_local int i = 0; int main() {}',
@@ -168,12 +164,20 @@ def configure(conf):
     if conf.env.HAVE_JACK:
         autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
 
+    autowaf.define(conf, 'INGEN_MAJOR_VERSION', INGEN_MAJOR_VERSION)
     autowaf.define(conf, 'INGEN_DATA_DIR',
                    os.path.join(conf.env.DATADIR, 'ingen'))
     autowaf.define(conf, 'INGEN_MODULE_DIR',
                    conf.env.LIBDIR)
     autowaf.define(conf, 'INGEN_BUNDLE_DIR',
                    os.path.join(conf.env.LV2DIR, 'ingen.lv2'))
+
+    autowaf.set_lib_env(conf, 'ingen', INGEN_VERSION)
+    conf.run_env.append_unique('XDG_DATA_DIRS', conf.build_path())
+    for i in ['src', 'modules']:
+        conf.run_env.append_unique(autowaf.lib_path_name, conf.build_path(i))
+    for i in ['src/client', 'src/server', 'src/gui']:
+        conf.run_env.append_unique('INGEN_MODULE_PATH', conf.build_path(i))
 
     conf.write_config_header('ingen_config.h', remove=False)
 
@@ -219,7 +223,7 @@ def build(bld):
     # Program
     obj = bld(features     = 'c cxx cxxprogram',
               source       = 'src/ingen/ingen.cpp',
-              target       = 'src/ingen/ingen',
+              target       = 'ingen',
               includes     = ['.'],
               use          = 'libingen',
               install_path = '${BINDIR}')
@@ -310,50 +314,25 @@ def upload_docs(ctx):
     # Doxygen documentation
     os.system('rsync -ravz --delete -e ssh build/doc/html/* drobilla@drobilla.net:~/drobilla.net/docs/ingen/')
 
-
-def test(ctx):
-    import difflib
-    import sys
-
-    def test_file_equals(path1, path2):
-        diff = list(difflib.unified_diff(open(path1).readlines(),
-                                         open(path2).readlines(),
-                                         path1,
-                                         path2))
-        autowaf.run_test(ctx, APPNAME, [path2, len(diff) != 0])
-        if len(diff) > 0:
-            for line in diff:
-                sys.stdout.write(line)
-
-    os.environ['PATH'] = 'tests' + os.pathsep + os.getenv('PATH')
-    os.environ['LD_LIBRARY_PATH'] = os.path.join('src')
-    os.environ['INGEN_MODULE_PATH'] = os.pathsep.join([
-            os.path.join('src', 'server')])
-
-    autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
-
-    with autowaf.begin_tests(ctx, APPNAME, 'unit'):
+def test(tst):
+    with tst.group('unit') as check:
         for i in unit_tests:
-            autowaf.run_test(ctx, APPNAME, 'tests/' + i)
+            check(['./tests/' + i])
 
-    with autowaf.begin_tests(ctx, APPNAME, 'system'):
-        empty      = ctx.path.find_node('tests/empty.ingen')
-        empty_path = os.path.join(empty.abspath(), 'main.ttl')
-        for i in ctx.path.ant_glob('tests/*.ttl'):
+    with tst.group('integration') as check:
+        empty      = tst.src_path('tests/empty.ingen')
+        empty_main = os.path.join(empty, 'main.ttl')
+        for i in tst.path.ant_glob('tests/*.ttl'):
+            base = os.path.basename(i.abspath().replace('.ttl', ''))
+
             # Run test
-            autowaf.run_test(ctx, APPNAME,
-                             'ingen_test --load %s --execute %s' % (empty.abspath(), i.abspath()),
-                             dirs=['.', 'src', 'tests'])
+            check(['./tests/ingen_test',
+                   '--load', empty,
+                   '--execute', os.path.relpath(i.abspath(), os.getcwd())])
 
             # Check undo output for changes
-            base = os.path.basename(i.abspath().replace('.ttl', ''))
-            undone_path = base + '.undo.ingen/main.ttl'
-            test_file_equals(empty_path, os.path.abspath(undone_path))
+            check.file_equals(empty_main, base + '.undo.ingen/main.ttl')
 
             # Check redo output for changes
-            out_path = base + '.out.ingen/main.ttl'
-            redone_path = base + '.redo.ingen/main.ttl'
-            test_file_equals(out_path, os.path.abspath(redone_path))
-
-    autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'],
-                      remove=['/usr*'])
+            check.file_equals(base + '.out.ingen/main.ttl',
+                              base + '.redo.ingen/main.ttl')
