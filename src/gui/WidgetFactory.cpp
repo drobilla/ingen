@@ -60,8 +60,7 @@ WidgetFactory::find_ui_file()
 		return;
 	}
 
-	throw std::runtime_error(fmt("Unable to find ingen_gui.ui in %1%\n",
-	                             INGEN_DATA_DIR));
+	throw std::runtime_error("Unable to find ingen_gui.ui\n");
 }
 
 Glib::RefPtr<Gtk::Builder>

@@ -111,7 +111,7 @@ bundle_file_path(const std::string& name)
 FilePath
 data_file_path(const std::string& name)
 {
-	return find_in_search_path(name, data_dirs());
+	return find_in_search_path(FilePath("ingen") / name, data_dirs());
 }
 
 std::vector<FilePath>
