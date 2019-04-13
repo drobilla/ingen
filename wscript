@@ -227,7 +227,7 @@ def build(bld):
               includes     = ['.'],
               use          = 'libingen',
               install_path = '${BINDIR}')
-    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
+    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV LV2')
 
     # Test program
     if bld.env.BUILD_TESTS:
@@ -240,7 +240,7 @@ def build(bld):
                       install_path = '',
                       cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
                       linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
-            autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
+            autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV LV2 SRATOM')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
