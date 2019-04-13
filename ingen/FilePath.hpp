@@ -17,6 +17,8 @@
 #ifndef INGEN_FILE_PATH_HPP
 #define INGEN_FILE_PATH_HPP
 
+#include "ingen/ingen.h"
+
 #include <boost/utility/string_view.hpp>
 
 #include <ostream>
@@ -35,7 +37,7 @@ namespace ingen {
  * Support for Windows paths is only partial and there is no support for
  * character encoding conversion at all.
  */
-class FilePath
+class INGEN_API FilePath
 {
 public:
 #ifdef USE_WINDOWS_FILE_PATHS
@@ -102,14 +104,14 @@ private:
 	string_type _str;
 };
 
-bool operator==(const FilePath& lhs, const FilePath& rhs) noexcept;
-bool operator!=(const FilePath& lhs, const FilePath& rhs) noexcept;
-bool operator<(const FilePath& lhs, const FilePath& rhs) noexcept;
-bool operator<=(const FilePath& lhs, const FilePath& rhs) noexcept;
-bool operator>(const FilePath& lhs, const FilePath& rhs) noexcept;
-bool operator>=(const FilePath& lhs, const FilePath& rhs) noexcept;
+INGEN_API bool operator==(const FilePath& lhs, const FilePath& rhs) noexcept;
+INGEN_API bool operator!=(const FilePath& lhs, const FilePath& rhs) noexcept;
+INGEN_API bool operator<(const FilePath& lhs, const FilePath& rhs) noexcept;
+INGEN_API bool operator<=(const FilePath& lhs, const FilePath& rhs) noexcept;
+INGEN_API bool operator>(const FilePath& lhs, const FilePath& rhs) noexcept;
+INGEN_API bool operator>=(const FilePath& lhs, const FilePath& rhs) noexcept;
 
-FilePath operator/(const FilePath& lhs, const FilePath& rhs);
+INGEN_API FilePath operator/(const FilePath& lhs, const FilePath& rhs);
 
 template <typename Char, typename Traits>
 std::basic_ostream<Char, Traits>&

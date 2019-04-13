@@ -17,11 +17,13 @@
 #ifndef INGEN_COLORCONTEXT_HPP
 #define INGEN_COLORCONTEXT_HPP
 
+#include "ingen/ingen.h"
+
 #include <cstdio>
 
 namespace ingen {
 
-class ColorContext {
+class INGEN_API ColorContext {
 public:
 	enum class Color { RED = 31, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 

@@ -43,7 +43,7 @@ class BlockImpl;
  *
  * \ingroup engine
  */
-class PortImpl : public NodeImpl
+class INGEN_API PortImpl : public NodeImpl
 {
 public:
 	struct SetState {

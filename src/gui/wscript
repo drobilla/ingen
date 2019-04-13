@@ -29,6 +29,7 @@ def configure(conf):
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
+              cflags          = ['-fvisibility=hidden'],
               export_includes = ['../..'],
               includes        = ['../..'],
               name            = 'libingen_gui',
@@ -102,6 +103,7 @@ def build(bld):
 
     # LV2 UI
     obj = bld(features     = 'cxx cxxshlib',
+              cflags       = ['-fvisibility=hidden'],
               source       = 'ingen_gui_lv2.cpp',
               includes     = ['.', '../..'],
               name         = 'ingen_gui_lv2',
