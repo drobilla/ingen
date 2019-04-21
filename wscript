@@ -71,8 +71,8 @@ def configure(conf):
                       atleast_version='0.8.7', mandatory=True)
     autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
                       atleast_version='0.4.6', mandatory=True)
-    autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
-                      atleast_version='0.8.10', mandatory=True)
+    autowaf.check_pkg(conf, 'raul-1', uselib_store='RAUL',
+                      atleast_version='1.0.0', mandatory=True)
     autowaf.check_pkg(conf, 'serd-0', uselib_store='SERD',
                       atleast_version='0.30.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
@@ -173,11 +173,11 @@ def configure(conf):
                    os.path.join(conf.env.LV2DIR, 'ingen.lv2'))
 
     autowaf.set_lib_env(conf, 'ingen', INGEN_VERSION)
-    conf.run_env.append_unique('XDG_DATA_DIRS', conf.build_path())
+    conf.run_env.append_unique('XDG_DATA_DIRS', [str(conf.path.get_bld())])
     for i in ['src', 'modules']:
-        conf.run_env.append_unique(autowaf.lib_path_name, conf.build_path(i))
+        conf.run_env.append_unique(autowaf.lib_path_name, [str(conf.build_path(i))])
     for i in ['src/client', 'src/server', 'src/gui']:
-        conf.run_env.append_unique('INGEN_MODULE_PATH', conf.build_path(i))
+        conf.run_env.append_unique('INGEN_MODULE_PATH', [str(conf.build_path(i))])
 
     conf.write_config_header('ingen_config.h', remove=False)
 
@@ -226,8 +226,8 @@ def build(bld):
               target       = 'ingen',
               includes     = ['.'],
               use          = 'libingen',
+              uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
               install_path = '${BINDIR}')
-    autowaf.use_lib(bld, obj, 'SORD RAUL LILV LV2')
 
     # Test program
     if bld.env.BUILD_TESTS:
@@ -237,10 +237,10 @@ def build(bld):
                       target       = 'tests/%s' % i,
                       includes     = ['.'],
                       use          = 'libingen',
+                      uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
                       install_path = '',
                       cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
                       linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
-            autowaf.use_lib(bld, obj, 'SORD RAUL LILV LV2 SRATOM')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
