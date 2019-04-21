@@ -79,6 +79,8 @@ def configure(conf):
                       atleast_version='0.12.0', mandatory=False)
     autowaf.check_pkg(conf, 'portaudio-2.0', uselib_store='PORTAUDIO',
                       atleast_version='2.0.0', mandatory=False)
+    autowaf.check_pkg(conf, 'sigc++-2.0', uselib_store='SIGCPP',
+                      atleast_version='2.0.0', mandatory=False)
 
     autowaf.check_function(conf, 'cxx',  'posix_memalign',
                            defines     = '_POSIX_C_SOURCE=200809L',
@@ -153,7 +155,7 @@ def configure(conf):
     conf.define('INGEN_SHARED', 1);
     conf.define('INGEN_VERSION', INGEN_VERSION)
 
-    if not Options.options.no_client:
+    if conf.env.HAVE_SIGCPP and not Options.options.no_client:
         autowaf.define(conf, 'INGEN_BUILD_CLIENT', 1)
     else:
         Options.options.no_gui = True
