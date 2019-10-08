@@ -344,8 +344,8 @@ NodeModule::popup_gui()
 {
 	if (_block->plugin() && app().uris().lv2_Plugin == _block->plugin_model()->type()) {
 		if (_plugin_ui) {
-			app().log().warn("LV2 GUI already embedded, cannot pop up\n");
-			return false;
+			_gui_window->present();
+			return true;
 		}
 
 		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_block->plugin());
