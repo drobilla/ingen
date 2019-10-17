@@ -99,7 +99,8 @@ class Remote(Interface):
         self.ns_manager  = rdflib.namespace.NamespaceManager(self.model)
         self.ns_manager.bind('server', self.server_base)
         for (k, v) in NS.__dict__.items():
-            self.ns_manager.bind(k, v)
+            if not k.startswith('_'):
+                self.ns_manager.bind(k, v)
         if uri.startswith('unix://'):
             self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             self.sock.connect(uri[len('unix://'):])
