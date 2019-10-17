@@ -63,52 +63,43 @@ def configure(conf):
                        fragment='__thread int i = 0; int main() {}',
                        define_name='INGEN_HAVE_THREAD_BUILTIN')
 
-    autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
-                      atleast_version='1.16.0', mandatory=True)
-    autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
-                      atleast_version='0.21.5', mandatory=True)
-    autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
-                      atleast_version='0.8.7', mandatory=True)
-    autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
-                      atleast_version='0.4.6', mandatory=True)
-    autowaf.check_pkg(conf, 'raul-1', uselib_store='RAUL',
-                      atleast_version='1.0.0', mandatory=True)
-    autowaf.check_pkg(conf, 'serd-0', uselib_store='SERD',
-                      atleast_version='0.30.0', mandatory=False)
-    autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
-                      atleast_version='0.12.0', mandatory=False)
-    autowaf.check_pkg(conf, 'portaudio-2.0', uselib_store='PORTAUDIO',
-                      atleast_version='2.0.0', mandatory=False)
-    autowaf.check_pkg(conf, 'sigc++-2.0', uselib_store='SIGCPP',
-                      atleast_version='2.0.0', mandatory=False)
+    conf.check_pkg('lv2 >= 1.16.0', uselib_store='LV2')
+    conf.check_pkg('lilv-0 >= 0.21.5', uselib_store='LILV')
+    conf.check_pkg('suil-0 >= 0.8.7', uselib_store='SUIL')
+    conf.check_pkg('sratom-0 >= 0.4.6', uselib_store='SRATOM')
+    conf.check_pkg('raul-1 >= 1.0.0', uselib_store='RAUL')
+    conf.check_pkg('serd-0 >= 0.30.0', uselib_store='SERD', mandatory=False)
+    conf.check_pkg('sord-0 >= 0.12.0', uselib_store='SORD', mandatory=False)
+    conf.check_pkg('portaudio-2.0', uselib_store='PORTAUDIO', mandatory=False)
+    conf.check_pkg('sigc++-2.0', uselib_store='SIGCPP', mandatory=False)
 
-    autowaf.check_function(conf, 'cxx',  'posix_memalign',
-                           defines     = '_POSIX_C_SOURCE=200809L',
-                           header_name = 'stdlib.h',
-                           define_name = 'HAVE_POSIX_MEMALIGN',
-                           mandatory   = False)
+    conf.check_function('cxx',  'posix_memalign',
+                        defines     = '_POSIX_C_SOURCE=200809L',
+                        header_name = 'stdlib.h',
+                        define_name = 'HAVE_POSIX_MEMALIGN',
+                        mandatory   = False)
 
-    autowaf.check_function(conf, 'cxx',  'isatty',
-                           header_name = 'unistd.h',
-                           defines     = '_POSIX_C_SOURCE=200809L',
-                           define_name = 'HAVE_ISATTY',
-                           mandatory   = False)
+    conf.check_function('cxx',  'isatty',
+                        header_name = 'unistd.h',
+                        defines     = '_POSIX_C_SOURCE=200809L',
+                        define_name = 'HAVE_ISATTY',
+                        mandatory   = False)
 
-    autowaf.check_function(conf, 'cxx',  'vasprintf',
-                           header_name = 'stdio.h',
-                           defines     = '_GNU_SOURCE=1',
-                           define_name = 'HAVE_VASPRINTF',
-                           mandatory   = False)
+    conf.check_function('cxx',  'vasprintf',
+                        header_name = 'stdio.h',
+                        defines     = '_GNU_SOURCE=1',
+                        define_name = 'HAVE_VASPRINTF',
+                        mandatory   = False)
 
     conf.check(define_name = 'HAVE_LIBDL',
                lib         = 'dl',
                mandatory   = False)
 
     if not Options.options.no_socket:
-        autowaf.check_function(conf, 'cxx',  'socket',
-                   header_name   = 'sys/socket.h',
-                   define_name   = 'HAVE_SOCKET',
-                   mandatory     = False)
+        conf.check_function('cxx',  'socket',
+                            header_name   = 'sys/socket.h',
+                            define_name   = 'HAVE_SOCKET',
+                            mandatory     = False)
 
     if not Options.options.no_python:
         conf.check_python_version((2,4,0), mandatory=False)
@@ -117,18 +108,17 @@ def configure(conf):
         conf.env.INGEN_BUILD_LV2 = 1
 
     if not Options.options.no_jack:
-        autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
-                          atleast_version='0.120.0', mandatory=False)
-        autowaf.check_function(conf, 'cxx',  'jack_set_property',
-                   header_name   = 'jack/metadata.h',
-                   define_name   = 'HAVE_JACK_METADATA',
-                   uselib        = 'JACK',
-                   mandatory     = False)
-        autowaf.check_function(conf, 'cxx',  'jack_port_rename',
-                   header_name   = 'jack/jack.h',
-                   define_name   = 'HAVE_JACK_PORT_RENAME',
-                   uselib        = 'JACK',
-                   mandatory     = False)
+        conf.check_pkg('jack >= 0.120.0', uselib_store='JACK', mandatory=False)
+        conf.check_function('cxx',  'jack_set_property',
+                            header_name   = 'jack/metadata.h',
+                            define_name   = 'HAVE_JACK_METADATA',
+                            uselib        = 'JACK',
+                            mandatory     = False)
+        conf.check_function('cxx',  'jack_port_rename',
+                            header_name   = 'jack/jack.h',
+                            define_name   = 'HAVE_JACK_PORT_RENAME',
+                            uselib        = 'JACK',
+                            mandatory     = False)
         if not Options.options.no_jack_session:
             conf.define('INGEN_JACK_SESSION', 1)
 

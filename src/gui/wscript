@@ -9,17 +9,26 @@ def options(ctx):
                    help='use light coloured theme')
 
 def configure(conf):
-    autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
-                      atleast_version='2.14.0', system=True, mandatory=False)
-    autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
-                      atleast_version='2.14.0', system=True, mandatory=False)
-    autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
-                      atleast_version='2.14.0', system=True, mandatory=False)
-    autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
-                      atleast_version='1.5.4', mandatory=False)
+    conf.check_pkg('glibmm-2.4 >= 2.14.0',
+                   uselib_store='GLIBMM',
+                   system=True,
+                   mandatory=False)
+    conf.check_pkg('gthread-2.0 >= 2.14.0',
+                   uselib_store='GTHREAD',
+                   system=True,
+                   mandatory=False)
+    conf.check_pkg('gtkmm-2.4 >= 2.14.0',
+                   uselib_store='GTKMM',
+                   system=True,
+                   mandatory=False)
+    conf.check_pkg('ganv-1 >= 1.5.4',
+                   uselib_store='GANV',
+                   mandatory=False)
     if not Options.options.no_webkit:
-        autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
-                          atleast_version='1.4.0', system=True, mandatory=False)
+        conf.check_pkg('webkit-1.0 >= 1.4.0',
+                       uselib_store='WEBKIT',
+                       system=True,
+                       mandatory=False)
 
     if conf.env.HAVE_GANV and conf.env.HAVE_GTKMM:
         conf.env.INGEN_BUILD_GUI = 1
