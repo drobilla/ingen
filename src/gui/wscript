@@ -22,10 +22,10 @@ def configure(conf):
                           atleast_version='1.4.0', system=True, mandatory=False)
 
     if conf.env.HAVE_GANV and conf.env.HAVE_GTKMM:
-        autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
+        conf.env.INGEN_BUILD_GUI = 1
 
     if Options.options.light_theme:
-        autowaf.define(conf, 'INGEN_USE_LIGHT_THEME', 1)
+        conf.define('INGEN_USE_LIGHT_THEME', 1)
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',

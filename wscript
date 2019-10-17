@@ -114,7 +114,7 @@ def configure(conf):
         conf.check_python_version((2,4,0), mandatory=False)
 
     if not Options.options.no_plugin:
-        autowaf.define(conf, 'INGEN_BUILD_LV2', 1)
+        conf.env.INGEN_BUILD_LV2 = 1
 
     if not Options.options.no_jack:
         autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
@@ -130,10 +130,10 @@ def configure(conf):
                    uselib        = 'JACK',
                    mandatory     = False)
         if not Options.options.no_jack_session:
-            autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
+            conf.define('INGEN_JACK_SESSION', 1)
 
     if Options.options.debug_urids:
-        autowaf.define(conf, 'INGEN_DEBUG_URIDS', 1)
+        conf.define('INGEN_DEBUG_URIDS', 1)
 
     conf.env.INGEN_TEST_LINKFLAGS = []
     conf.env.INGEN_TEST_CXXFLAGS  = []
@@ -156,23 +156,18 @@ def configure(conf):
     conf.define('INGEN_VERSION', INGEN_VERSION)
 
     if conf.env.HAVE_SIGCPP and not Options.options.no_client:
-        autowaf.define(conf, 'INGEN_BUILD_CLIENT', 1)
+        conf.env.INGEN_BUILD_CLIENT = 1
     else:
         Options.options.no_gui = True
 
     if not Options.options.no_gui:
         conf.recurse('src/gui')
 
-    if conf.env.HAVE_JACK:
-        autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
+    conf.env.INGEN_MAJOR_VERSION = INGEN_MAJOR_VERSION
 
-    autowaf.define(conf, 'INGEN_MAJOR_VERSION', INGEN_MAJOR_VERSION)
-    autowaf.define(conf, 'INGEN_DATA_DIR',
-                   os.path.join(conf.env.DATADIR, 'ingen'))
-    autowaf.define(conf, 'INGEN_MODULE_DIR',
-                   conf.env.LIBDIR)
-    autowaf.define(conf, 'INGEN_BUNDLE_DIR',
-                   os.path.join(conf.env.LV2DIR, 'ingen.lv2'))
+    conf.define('INGEN_DATA_DIR', os.path.join(conf.env.DATADIR, 'ingen'))
+    conf.define('INGEN_MODULE_DIR', conf.env.LIBDIR)
+    conf.define('INGEN_BUNDLE_DIR', os.path.join(conf.env.LV2DIR, 'ingen.lv2'))
 
     autowaf.set_lib_env(conf, 'ingen', INGEN_VERSION)
     conf.run_env.append_unique('XDG_DATA_DIRS', [str(conf.path.get_bld())])
@@ -189,7 +184,7 @@ def configure(conf):
          'HTML plugin doc support': bool(conf.env.HAVE_WEBKIT),
          'PortAudio driver':        bool(conf.env.HAVE_PORTAUDIO),
          'Jack driver':             bool(conf.env.HAVE_JACK),
-         'Jack session support':    bool(conf.env.INGEN_JACK_SESSION),
+         'Jack session support':    conf.is_defined('INGEN_JACK_SESSION'),
          'Jack metadata support':   conf.is_defined('HAVE_JACK_METADATA'),
          'LV2 plugin driver':       bool(conf.env.INGEN_BUILD_LV2),
          'LV2 bundle':              conf.env.INGEN_BUNDLE_DIR,
