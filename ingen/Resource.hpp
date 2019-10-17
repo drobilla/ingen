@@ -46,6 +46,8 @@ public:
 		, _uri(uri)
 	{}
 
+	Resource(const Resource& resource) = default;
+
 	Resource& operator=(const Resource& rhs) {
 		assert(&rhs._uris == &_uris);
 		if (&rhs != this) {
