@@ -48,7 +48,7 @@ static std::vector<FilePath>
 parse_search_path(const char* search_path, std::vector<FilePath> defaults)
 {
 	if (!search_path) {
-		return std::move(defaults);
+		return defaults;
 	}
 
 	std::vector<FilePath> paths;
