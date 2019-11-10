@@ -268,7 +268,6 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 			if (port_type == PortType::UNKNOWN) {
 				port_type   = PortType::CONTROL;
 				buffer_type = uris.atom_Sequence;
-				val         = forge.make(def_values[j]);
 			}
 		} else if (lilv_port_is_a(plug, id, uris.lv2_CVPort)) {
 			port_type   = PortType::CV;
@@ -362,8 +361,16 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		}
 
 		if (!val.type() && (port_type != PortType::ATOM)) {
-			// Ensure numeric ports have a value, use 0 by default
-			val = forge.make(std::isnan(def_values[j]) ? 0.0f : def_values[j]);
+			// Ensure numeric ports have a value
+			if (!std::isnan(def_values[j])) {
+				val = forge.make(def_values[j]);
+			} else if (!std::isnan(min_values[j])) {
+				val = forge.make(min_values[j]);
+			} else if (!std::isnan(max_values[j])) {
+				val = forge.make(max_values[j]);
+			} else {
+				val = forge.make(0.0f);
+			}
 		}
 
 		PortImpl* port = (direction == INPUT)
