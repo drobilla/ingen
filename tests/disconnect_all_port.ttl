@@ -15,7 +15,7 @@
 	patch:subject <ingen:/main/node> ;
 	patch:body [
 		a ingen:Block ;
-		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
+		lv2:prototype <http://lv2plug.in/plugins/eg-amp>
 	] .
 
 <msg2>
@@ -24,7 +24,7 @@
 	patch:body [
 		a ingen:Arc ;
 		ingen:tail <ingen:/main/audio_in> ;
-		ingen:head <ingen:/main/node/left_in>
+		ingen:head <ingen:/main/node/in>
 	] .
 
 <msg3>

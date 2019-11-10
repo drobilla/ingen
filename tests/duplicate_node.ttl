@@ -7,12 +7,12 @@
 	patch:subject <ingen:/main/node> ;
 	patch:body [
 		a ingen:Block ;
-		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
+		lv2:prototype <http://lv2plug.in/plugins/eg-amp>
 	] .
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/main/deprecatednode> ;
+	patch:subject <ingen:/main/duplicatednode> ;
 	patch:body [
 		a ingen:Block ;
 		lv2:prototype <ingen:/main/node>

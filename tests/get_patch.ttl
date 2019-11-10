@@ -14,7 +14,7 @@
 	patch:subject <ingen:/main/sub/node1> ;
 	patch:body [
 		a ingen:Block ;
-		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
+		lv2:prototype <http://lv2plug.in/plugins/eg-amp>
 	] .
 
 <msg2>
@@ -22,7 +22,7 @@
 	patch:subject <ingen:/main/sub/node2> ;
 	patch:body [
 		a ingen:Block ;
-		lv2:prototype <http://drobilla.net/plugins/mda/Combo>
+		lv2:prototype <http://lv2plug.in/plugins/eg-amp>
 	] .
 
 <msg3>
@@ -30,8 +30,8 @@
 	patch:subject <ingen:/main/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/main/sub/node1/left_out> ;
-		ingen:head <ingen:/main/sub/node2/left_in>
+		ingen:tail <ingen:/main/sub/node1/out> ;
+		ingen:head <ingen:/main/sub/node2/in>
 	] .
 
 <msg4>
