@@ -78,8 +78,7 @@ ControlBindings::binding_key(const Atom& binding) const
 	Key       key;
 	LV2_Atom* num = nullptr;
 	if (binding.type() == uris.atom_Object) {
-		const LV2_Atom_Object_Body* obj = (const LV2_Atom_Object_Body*)
-			binding.get_body();
+		const auto* obj = (const LV2_Atom_Object_Body*)binding.get_body();
 		if (obj->otype == uris.midi_Bender) {
 			key = Key(Type::MIDI_BENDER);
 		} else if (obj->otype == uris.midi_ChannelPressure) {
@@ -406,11 +405,11 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 		return;  // Don't bother reading input
 	}
 
-	LV2_Atom_Sequence* seq = buffer->get<LV2_Atom_Sequence>();
+	auto* seq = buffer->get<LV2_Atom_Sequence>();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->body.type == uris.midi_MidiEvent) {
-			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
-			const Key      key = midi_event_key(ev->body.size, buf, value);
+			const auto* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+			const Key   key = midi_event_key(ev->body.size, buf, value);
 
 			if (_learn_binding && !!key) {
 				finish_learn(ctx, key);  // Learn new binding

@@ -63,8 +63,8 @@ Connect::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::NOT_FOUND, _msg.head);
 	}
 
-	PortImpl* tail_output = dynamic_cast<PortImpl*>(tail);
-	_head                 = dynamic_cast<InputPort*>(head);
+	auto* tail_output = dynamic_cast<PortImpl*>(tail);
+	_head             = dynamic_cast<InputPort*>(head);
 	if (!tail_output || !_head) {
 		return Event::pre_process_done(Status::BAD_REQUEST, _msg.head);
 	}

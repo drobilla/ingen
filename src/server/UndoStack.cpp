@@ -62,8 +62,8 @@ UndoStack::ignore_later_event(const LV2_Atom* first,
 		return false;
 	}
 
-	const LV2_Atom_Object* f = (const LV2_Atom_Object*)first;
-	const LV2_Atom_Object* s = (const LV2_Atom_Object*)second;
+	const auto* f = (const LV2_Atom_Object*)first;
+	const auto* s = (const LV2_Atom_Object*)second;
 	if (f->body.otype == _uris.patch_Set && f->body.otype == s->body.otype) {
 		const LV2_Atom* f_subject  = nullptr;
 		const LV2_Atom* f_property = nullptr;

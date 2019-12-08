@@ -69,7 +69,7 @@ Buffer::Buffer(BufferFactory& bufs,
 		   array which is already silent since the buffer is zeroed.  All other
 		   buffers are atoms. */
 		if (_buf) {
-			LV2_Atom* atom = get<LV2_Atom>();
+			auto* atom = get<LV2_Atom>();
 			atom->size = capacity - sizeof(LV2_Atom);
 			atom->type = type;
 
@@ -119,7 +119,7 @@ Buffer::clear()
 	} else if (is_control()) {
 		get<LV2_Atom_Float>()->body = 0;
 	} else if (is_sequence()) {
-		LV2_Atom_Sequence* seq = get<LV2_Atom_Sequence>();
+		auto* seq = get<LV2_Atom_Sequence>();
 		seq->atom.type = _factory.uris().atom_Sequence;
 		seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
 		seq->body.unit = 0;
@@ -131,11 +131,12 @@ Buffer::clear()
 void
 Buffer::render_sequence(const RunContext& context, const Buffer* src, bool add)
 {
-	const LV2_URID           atom_Float = _factory.uris().atom_Float;
-	const LV2_Atom_Sequence* seq        = src->get<const LV2_Atom_Sequence>();
-	const LV2_Atom_Float*    init       = (const LV2_Atom_Float*)src->value();
-	float                    value      = init ? init->body : 0.0f;
-	SampleCount              offset     = context.offset();
+	const LV2_URID atom_Float = _factory.uris().atom_Float;
+	const auto*    seq        = src->get<const LV2_Atom_Sequence>();
+	const auto*    init       = (const LV2_Atom_Float*)src->value();
+	float          value      = init ? init->body : 0.0f;
+	SampleCount    offset     = context.offset();
+
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames >= offset && ev->body.type == atom_Float) {
 			write_block(value, offset, ev->time.frames, add);
@@ -226,9 +227,9 @@ float
 Buffer::peak(const RunContext& context) const
 {
 #ifdef __SSE__
-	const __m128* const vbuf    = (const __m128*)samples();
-	__m128              vpeak   = mm_abs_ps(vbuf[0]);
-	const SampleCount   nblocks = context.nframes() / 4;
+	const auto* const vbuf    = (const __m128*)samples();
+	__m128            vpeak   = mm_abs_ps(vbuf[0]);
+	const SampleCount nblocks = context.nframes() / 4;
 
 	// First, find the vector absolute max of the buffer
 	for (SampleCount i = 1; i < nblocks; ++i) {
@@ -238,7 +239,7 @@ Buffer::peak(const RunContext& context) const
 	// Now we need the single max of vpeak
 	// vpeak = ABCD
 	// tmp   = CDAB
-	__m128 tmp = _mm_shuffle_ps(vpeak, vpeak, _MM_SHUFFLE(2, 3, 0, 1));
+	auto tmp = _mm_shuffle_ps(vpeak, vpeak, _MM_SHUFFLE(2, 3, 0, 1));
 
 	// vpeak = MAX(A,C) MAX(B,D) MAX(C,A) MAX(D,B)
 	vpeak = _mm_max_ps(vpeak, tmp);
@@ -269,7 +270,7 @@ void
 Buffer::prepare_write(RunContext& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
-		LV2_Atom* atom = get<LV2_Atom>();
+		auto* atom = get<LV2_Atom>();
 
 		atom->type    = (LV2_URID)_factory.uris().atom_Sequence;
 		atom->size    = sizeof(LV2_Atom_Sequence_Body);
@@ -281,7 +282,7 @@ void
 Buffer::prepare_output_write(RunContext& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
-		LV2_Atom* atom = get<LV2_Atom>();
+		auto* atom = get<LV2_Atom>();
 
 		atom->type    = (LV2_URID)_factory.uris().atom_Chunk;
 		atom->size    = _capacity - sizeof(LV2_Atom);
@@ -297,7 +298,7 @@ Buffer::append_event(int64_t        frames,
 {
 	assert(frames >= _latest_event);
 
-	LV2_Atom* atom = get<LV2_Atom>();
+	auto* atom = get<LV2_Atom>();
 	if (atom->type == _factory.uris().atom_Chunk) {
 		clear();  // Chunk initialized with prepare_output_write(), clear
 	}
@@ -306,8 +307,8 @@ Buffer::append_event(int64_t        frames,
 		return false;
 	}
 
-	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)atom;
-	LV2_Atom_Event*    ev  = (LV2_Atom_Event*)(
+	auto* seq = (LV2_Atom_Sequence*)atom;
+	auto* ev  = (LV2_Atom_Event*)(
 		(uint8_t*)seq + lv2_atom_total_size(&seq->atom));
 
 	ev->time.frames = frames;
@@ -331,8 +332,8 @@ Buffer::append_event(int64_t frames, const LV2_Atom* body)
 bool
 Buffer::append_event_buffer(const Buffer* buf)
 {
-	LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)get<LV2_Atom>();
-	LV2_Atom_Sequence* bseq = (LV2_Atom_Sequence*)buf->get<LV2_Atom>();
+	auto* seq  = (LV2_Atom_Sequence*)get<LV2_Atom>();
+	auto* bseq = (LV2_Atom_Sequence*)buf->get<LV2_Atom>();
 	if (seq->atom.type == _factory.uris().atom_Chunk) {
 		clear();  // Chunk initialized with prepare_output_write(), clear
 	}
@@ -356,7 +357,7 @@ SampleCount
 Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 {
 	if (_type == _factory.uris().atom_Sequence && _value_type) {
-		const LV2_Atom_Sequence* seq = get<const LV2_Atom_Sequence>();
+		const auto* seq = get<const LV2_Atom_Sequence>();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 			if (ev->time.frames >  offset   &&
 			    ev->time.frames <  end &&
@@ -408,8 +409,8 @@ Buffer::update_value_buffer(SampleCount offset)
 		return;
 	}
 
-	LV2_Atom_Sequence* seq    = get<LV2_Atom_Sequence>();
-	LV2_Atom_Event*    latest = nullptr;
+	auto*           seq    = get<LV2_Atom_Sequence>();
+	LV2_Atom_Event* latest = nullptr;
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames > offset) {
 			break;

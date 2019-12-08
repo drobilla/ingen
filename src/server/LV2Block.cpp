@@ -230,9 +230,9 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 
 	bool ret = true;
 
-	float* min_values = new float[num_ports];
-	float* max_values = new float[num_ports];
-	float* def_values = new float[num_ports];
+	auto* min_values = new float[num_ports];
+	auto* max_values = new float[num_ports];
+	auto* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 	uint32_t max_sequence_size = 0;
 
@@ -510,7 +510,7 @@ LV2Block::duplicate(Engine&             engine,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, LV2_STATE_IS_NATIVE, nullptr);
 
 	// Duplicate and instantiate block
-	LV2Block* dup = new LV2Block(_lv2_plugin, symbol, _polyphonic, parent, rate);
+	auto* dup = new LV2Block(_lv2_plugin, symbol, _polyphonic, parent, rate);
 	if (!dup->instantiate(*engine.buffer_factory(), state)) {
 		delete dup;
 		return nullptr;
@@ -554,8 +554,8 @@ LV2Block::work_respond(LV2_Worker_Respond_Handle handle,
                        uint32_t                  size,
                        const void*               data)
 {
-	LV2Block* block = (LV2Block*)handle;
-	LV2Block::Response* r = new LV2Block::Response(size, data);
+	auto* block = (LV2Block*)handle;
+	auto* r     = new LV2Block::Response(size, data);
 	block->_responses.push_back(*r);
 	return LV2_WORKER_SUCCESS;
 }
@@ -669,8 +669,8 @@ get_port_value(const char* port_symbol,
                uint32_t*   size,
                uint32_t*   type)
 {
-	LV2Block* const block = (LV2Block*)user_data;
-	PortImpl* const port  = block->port_by_symbol(port_symbol);
+	auto* const block = (LV2Block*)user_data;
+	auto* const port  = block->port_by_symbol(port_symbol);
 
 	if (port && port->is_input() && port->value().is_valid()) {
 		*size = port->value().size();

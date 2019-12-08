@@ -153,7 +153,7 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 		}
 #endif
 
-		Event* next = (Event*)last->next();
+		auto* next = (Event*)last->next();
 		last->next(nullptr);
 		dest.append(context, head, last);
 

@@ -138,7 +138,7 @@ BlockFactory::load_plugin(const URI& uri)
 	const LilvPlugins* plugs = lilv_world_get_all_plugins(_world.lilv_world());
 	const LilvPlugin*  plug  = lilv_plugins_get_by_uri(plugs, node);
 	if (plug) {
-		LV2Plugin* const ingen_plugin = new LV2Plugin(_world, plug);
+		auto* const ingen_plugin = new LV2Plugin(_world, plug);
 		_plugins.emplace(uri, ingen_plugin);
 	}
 	lilv_node_free(node);
@@ -215,7 +215,7 @@ BlockFactory::load_lv2_plugins()
 
 		auto p = _plugins.find(uri);
 		if (p == _plugins.end()) {
-			LV2Plugin* const plugin = new LV2Plugin(_world, lv2_plug);
+			auto* const plugin = new LV2Plugin(_world, lv2_plug);
 			_plugins.emplace(uri, plugin);
 		} else if (lilv_plugin_verify(lv2_plug)) {
 			p->second->set_is_zombie(false);

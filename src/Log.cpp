@@ -120,8 +120,8 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 static int
 log_vprintf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, va_list args)
 {
-	Log::Feature::Handle* f = (Log::Feature::Handle*)handle;
-	va_list               noargs;
+	auto*   f      = static_cast<Log::Feature::Handle*>(handle);
+	va_list noargs = {};
 
 	int ret  = f->log->vtprintf(type, f->node->path().c_str(), noargs);
 	ret     += f->log->vtprintf(type, ": ", noargs);
@@ -143,7 +143,7 @@ log_printf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, ...)
 
 static void
 free_log_feature(LV2_Feature* feature) {
-	LV2_Log_Log* lv2_log = (LV2_Log_Log*)feature->data;
+	auto* lv2_log = static_cast<LV2_Log_Log*>(feature->data);
 	free(lv2_log->handle);
 	free(feature);
 }
@@ -151,14 +151,14 @@ free_log_feature(LV2_Feature* feature) {
 SPtr<LV2_Feature>
 Log::Feature::feature(World& world, Node* block)
 {
-	Handle* handle = (Handle*)calloc(1, sizeof(Handle));
+	auto* handle = static_cast<Handle*>(calloc(1, sizeof(Handle)));
 	handle->lv2_log.handle  = handle;
 	handle->lv2_log.printf  = log_printf;
 	handle->lv2_log.vprintf = log_vprintf;
 	handle->log             = &world.log();
 	handle->node            = block;
 
-	LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	auto* f = static_cast<LV2_Feature*>(malloc(sizeof(LV2_Feature)));
 	f->URI  = LV2_LOG__log;
 	f->data = &handle->lv2_log;
 

@@ -42,7 +42,7 @@ Library::get_function(const char* name)
 	return (VoidFuncPtr)GetProcAddress((HMODULE)_lib, name);
 #else
 	using VoidFuncGetter = VoidFuncPtr (*)(void*, const char*);
-	VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
+	auto dlfunc = reinterpret_cast<VoidFuncGetter>(dlsym);
 	return dlfunc(_lib, name);
 #endif
 }

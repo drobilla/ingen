@@ -112,7 +112,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 	// Find set of arcs to remove
 	std::set<ArcImpl*> to_remove;
 	for (const auto& a : _parent->arcs()) {
-		ArcImpl* const arc = (ArcImpl*)a.second.get();
+		auto* const arc = static_cast<ArcImpl*>(a.second.get());
 		if (_block) {
 			if (arc->tail()->parent_block() == _block
 			    || arc->head()->parent_block() == _block) {

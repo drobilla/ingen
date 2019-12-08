@@ -132,8 +132,8 @@ Delta::add_set_event(const char* port_symbol,
                      uint32_t    size,
                      uint32_t    type)
 {
-	BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
-	PortImpl*  port  = block->port_by_symbol(port_symbol);
+	auto* block = dynamic_cast<BlockImpl*>(_object);
+	auto* port  = block->port_by_symbol(port_symbol);
 	if (!port) {
 		_engine.log().warn("Unknown port `%1%' in state", port_symbol);
 		return;
@@ -204,7 +204,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			return Event::pre_process_done(Status::NOT_FOUND, prot);
 		}
 
-		BlockImpl* block = dynamic_cast<BlockImpl*>(node);
+		auto* block = dynamic_cast<BlockImpl*>(node);
 		if (!block) {
 			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, prot);
 		}
@@ -256,14 +256,14 @@ Delta::pre_process(PreProcessContext& ctx)
 
 	_types.reserve(_properties.size());
 
-	NodeImpl* obj = dynamic_cast<NodeImpl*>(_object);
+	auto* obj = dynamic_cast<NodeImpl*>(_object);
 
 	// Remove any properties removed in delta
 	for (const auto& r : _remove) {
 		const URI&  key   = r.first;
 		const Atom& value = r.second;
 		if (key == uris.midi_binding && value == uris.patch_wildcard) {
-			PortImpl* port = dynamic_cast<PortImpl*>(_object);
+			auto* port = dynamic_cast<PortImpl*>(_object);
 			if (port) {
 				_engine.control_bindings()->get_all(port->path(), _removed_bindings);
 			}
@@ -325,7 +325,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			}
 
 			BlockImpl* block = nullptr;
-			PortImpl*  port  = dynamic_cast<PortImpl*>(_object);
+			auto*      port  = dynamic_cast<PortImpl*>(_object);
 			if (port) {
 				if (key == uris.ingen_broadcast) {
 					if (value.type() == uris.forge.Bool) {
@@ -418,7 +418,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			}
 
 			if (!_create_event && key == uris.ingen_polyphonic) {
-				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
+				auto* parent = dynamic_cast<GraphImpl*>(obj->parent());
 				if (!parent) {
 					_status = Status::BAD_OBJECT_TYPE;
 				} else if (value.type() != uris.forge.Bool) {
@@ -426,7 +426,7 @@ Delta::pre_process(PreProcessContext& ctx)
 				} else {
 					op     = SpecialType::POLYPHONIC;
 					obj->set_property(key, value, value.context());
-					BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
+					auto* block = dynamic_cast<BlockImpl*>(obj);
 					if (block) {
 						block->set_polyphonic(value.get<int32_t>());
 					}
@@ -497,9 +497,9 @@ Delta::execute(RunContext& context)
 		_engine.control_bindings()->remove(context, _removed_bindings);
 	}
 
-	NodeImpl* const  object = dynamic_cast<NodeImpl*>(_object);
-	BlockImpl* const block  = dynamic_cast<BlockImpl*>(_object);
-	PortImpl* const  port   = dynamic_cast<PortImpl*>(_object);
+	auto* const object = dynamic_cast<NodeImpl*>(_object);
+	auto* const block  = dynamic_cast<BlockImpl*>(_object);
+	auto* const port   = dynamic_cast<PortImpl*>(_object);
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (const auto& p : _properties) {
@@ -578,7 +578,7 @@ void
 Delta::post_process()
 {
 	if (_state) {
-		BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
+		auto* block = dynamic_cast<BlockImpl*>(_object);
 		if (block) {
 			block->apply_state(_engine.sync_worker(), _state);
 			block->set_enabled(true);

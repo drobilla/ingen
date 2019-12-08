@@ -40,8 +40,8 @@ schedule(LV2_Worker_Schedule_Handle handle,
          uint32_t                   size,
          const void*                data)
 {
-	LV2Block* block  = (LV2Block*)handle;
-	Engine&   engine = block->parent_graph()->engine();
+	auto*   block  = (LV2Block*)handle;
+	Engine& engine = block->parent_graph()->engine();
 
 	return engine.worker()->request(block, size, data);
 }
@@ -51,8 +51,8 @@ schedule_sync(LV2_Worker_Schedule_Handle handle,
               uint32_t                   size,
               const void*                data)
 {
-	LV2Block* block  = (LV2Block*)handle;
-	Engine&   engine = block->parent_graph()->engine();
+	auto*   block  = (LV2Block*)handle;
+	Engine& engine = block->parent_graph()->engine();
 
 	return engine.sync_worker()->request(block, size, data);
 }
@@ -90,17 +90,16 @@ Worker::request(LV2Block*   block,
 SPtr<LV2_Feature>
 Worker::Schedule::feature(World& world, Node* n)
 {
-	LV2Block* block = dynamic_cast<LV2Block*>(n);
+	auto* block = dynamic_cast<LV2Block*>(n);
 	if (!block) {
 		return SPtr<LV2_Feature>();
 	}
 
-	LV2_Worker_Schedule* data = (LV2_Worker_Schedule*)malloc(
-		sizeof(LV2_Worker_Schedule));
+	auto* data = (LV2_Worker_Schedule*)malloc(sizeof(LV2_Worker_Schedule));
 	data->handle        = block;
 	data->schedule_work = synchronous ? schedule_sync : schedule;
 
-	LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	auto* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 	f->URI  = LV2_WORKER__schedule;
 	f->data = data;
 

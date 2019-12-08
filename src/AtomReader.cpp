@@ -51,8 +51,8 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 {
 	if (in) {
 		if (in->type == _uris.atom_URID) {
-			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
-			const char*          uri  = _map.unmap_uri(urid->body);
+			const auto* const urid = reinterpret_cast<const LV2_Atom_URID*>(in);
+			const char* const uri  = _map.unmap_uri(urid->body);
 			if (uri) {
 				out = Atom(sizeof(int32_t), _uris.atom_URID, &urid->body);
 			} else {
@@ -141,7 +141,7 @@ AtomReader::is_message(const URIs& uris, const LV2_Atom* msg)
 		return false;
 	}
 
-	const LV2_Atom_Object* obj = (const LV2_Atom_Object*)msg;
+	const auto* obj = (const LV2_Atom_Object*)msg;
 	return (obj->body.otype == uris.patch_Get ||
 	        obj->body.otype == uris.patch_Delete ||
 	        obj->body.otype == uris.patch_Put ||
@@ -159,9 +159,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		return false;
 	}
 
-	const LV2_Atom_Object* obj     = (const LV2_Atom_Object*)msg;
-	const LV2_Atom*        subject = nullptr;
-	const LV2_Atom*        number  = nullptr;
+	const auto*     obj     = (const LV2_Atom_Object*)msg;
+	const LV2_Atom* subject = nullptr;
+	const LV2_Atom* number  = nullptr;
 
 	lv2_atom_object_get(obj,
 	                    (LV2_URID)_uris.patch_subject,        &subject,

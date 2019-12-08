@@ -475,14 +475,14 @@ PortImpl::monitor(RunContext& context, bool send_now)
 		break;
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
-			const LV2_Atom* atom  = buffer(0)->get<const LV2_Atom>();
-			const LV2_Atom* value = buffer(0)->value();
+			const auto* atom  = buffer(0)->get<const LV2_Atom>();
+			const auto* value = buffer(0)->value();
 			if (atom->type != _bufs.uris().atom_Sequence) {
 				/* Buffer contents are not actually a Sequence.  Probably an
 				   uninitialized Chunk, so do nothing. */
 			} else if (_monitored) {
 				/* Sequence explicitly monitored, send everything. */
-				const LV2_Atom_Sequence* seq = (const LV2_Atom_Sequence*)atom;
+				const auto* seq = (const LV2_Atom_Sequence*)atom;
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 					context.notify(uris.ingen_activity,
 					               context.start() + ev->time.frames,

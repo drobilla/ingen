@@ -95,7 +95,7 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
                        Engine&             engine,
                        const LilvState*    state)
 {
-	LV2Block* b = new LV2Block(
+	auto* b = new LV2Block(
 		this, symbol, polyphonic, parent, engine.sample_rate());
 
 	if (!b->instantiate(bufs, state)) {

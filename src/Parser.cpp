@@ -274,7 +274,7 @@ parse_block(ingen::World&                      world,
 		return boost::optional<Raul::Path>();
 	}
 
-	const uint8_t* type_uri = (const uint8_t*)prototype.to_c_string();
+	const auto* type_uri = (const uint8_t*)prototype.to_c_string();
 	if (!serd_uri_string_has_scheme(type_uri) ||
 	    !strncmp((const char*)type_uri, "file:", 5)) {
 		// Prototype is a file, subgraph
@@ -631,10 +631,10 @@ Parser::parse_file(ingen::World&                        world,
 	}
 
 	// Initialise parsing environment
-	const URI      file_uri  = URI(file_path);
-	const uint8_t* uri_c_str = (const uint8_t*)uri.c_str();
-	SerdNode       base_node = serd_node_from_string(SERD_URI, uri_c_str);
-	SerdEnv*       env       = serd_env_new(&base_node);
+	const URI   file_uri  = URI(file_path);
+	const auto* uri_c_str = (const uint8_t*)uri.c_str();
+	SerdNode    base_node = serd_node_from_string(SERD_URI, uri_c_str);
+	SerdEnv*    env       = serd_env_new(&base_node);
 
 	// Load graph into model
 	Sord::Model model(*world.rdf_world(), uri.string(), SORD_SPO|SORD_PSO, false);

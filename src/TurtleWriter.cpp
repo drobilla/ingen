@@ -26,7 +26,7 @@ namespace ingen {
 static size_t
 c_text_sink(const void* buf, size_t len, void* stream)
 {
-	TurtleWriter* writer = (TurtleWriter*)stream;
+	auto* writer = static_cast<TurtleWriter*>(stream);
 	return writer->text_sink(buf, len);
 }
 

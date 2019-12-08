@@ -73,7 +73,7 @@ GraphImpl::duplicate(Engine&             engine,
 	const SampleRate rate = engine.sample_rate();
 
 	// Duplicate graph
-	GraphImpl* dup = new GraphImpl(
+	auto* dup = new GraphImpl(
 		engine, symbol, _polyphony, parent, rate, _poly_process);
 
 	Properties props = properties();

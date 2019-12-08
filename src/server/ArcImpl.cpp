@@ -48,7 +48,7 @@ ArcImpl::ArcImpl(PortImpl* tail, PortImpl* head)
 ArcImpl::~ArcImpl()
 {
 	if (is_linked()) {
-		InputPort* iport = dynamic_cast<InputPort*>(_head);
+		auto* iport = dynamic_cast<InputPort*>(_head);
 		if (iport) {
 			iport->remove_arc(*this);
 		}

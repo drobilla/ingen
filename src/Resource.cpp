@@ -58,7 +58,7 @@ Resource::set_property(const URI& uri, const Atom& value, Resource::Graph ctx)
 		auto next = i;
 		++next;
 		if (i->second.context() == ctx) {
-			const Atom value(i->second);
+			const auto value = i->second;
 			_properties.erase(i);
 			on_property_removed(uri, value);
 		}

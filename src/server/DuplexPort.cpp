@@ -93,7 +93,7 @@ DuplexPort::duplicate(Engine&             engine,
 	BufferFactory& bufs       = *engine.buffer_factory();
 	const Atom     polyphonic = get_property(bufs.uris().ingen_polyphonic);
 
-	DuplexPort* dup = new DuplexPort(
+	auto* dup = new DuplexPort(
 		bufs, parent, symbol, _index,
 		polyphonic.type() == bufs.uris().atom_Bool && polyphonic.get<int32_t>(),
 		_type, _buffer_type, _buffer_size,
