@@ -69,7 +69,7 @@ def configure(conf):
     conf.check_pkg('suil-0 >= 0.8.7', uselib_store='SUIL')
     conf.check_pkg('sratom-0 >= 0.4.6', uselib_store='SRATOM')
     conf.check_pkg('raul-1 >= 1.0.0', uselib_store='RAUL')
-    conf.check_pkg('serd-0 >= 0.30.0', uselib_store='SERD', mandatory=False)
+    conf.check_pkg('serd-0 >= 0.30.3', uselib_store='SERD', mandatory=False)
     conf.check_pkg('sord-0 >= 0.12.0', uselib_store='SORD', mandatory=False)
     conf.check_pkg('portaudio-2.0', uselib_store='PORTAUDIO', mandatory=False)
     conf.check_pkg('sigc++-2.0', uselib_store='SIGCPP', mandatory=False)
