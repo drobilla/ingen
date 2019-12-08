@@ -224,7 +224,11 @@ Delta::pre_process(PreProcessContext& ctx)
 
 	if (is_graph_object && !_object) {
 		Raul::Path path(uri_to_path(_subject));
-		bool is_graph = false, is_block = false, is_port = false, is_output = false;
+
+		bool is_graph  = false;
+		bool is_block  = false;
+		bool is_port   = false;
+		bool is_output = false;
 		ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 
 		if (is_graph) {

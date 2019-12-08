@@ -253,7 +253,8 @@ ControlBindings::control_to_port_value(RunContext&     context,
 		normal = (expf(normal) - 1.0f) / ((float)M_E - 1.0f);
 	}
 
-	float min, max;
+	float min = 0.0f;
+	float max = 1.0f;
 	get_range(context, port, &min, &max);
 
 	return normal * (max - min) + min;
@@ -269,7 +270,8 @@ ControlBindings::port_value_to_control(RunContext& context,
 		return 0;
 	}
 
-	float min, max;
+	float min = 0.0f;
+	float max = 1.0f;
 	get_range(context, port, &min, &max);
 
 	const float value  = value_atom.get<float>();
@@ -337,7 +339,8 @@ ControlBindings::set_port_value(RunContext& context,
                                 Type        type,
                                 int16_t     value)
 {
-	float min, max;
+	float min = 0.0f;
+	float max = 1.0f;
 	get_range(context, port, &min, &max);
 
 	const float val = control_to_port_value(context, port, type, value);
