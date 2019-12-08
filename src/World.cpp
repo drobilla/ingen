@@ -162,6 +162,11 @@ public:
 		// Module libraries go out of scope and close here
 	}
 
+	Impl(const Impl&) = delete;
+	Impl(Impl&&) = delete;
+	Impl& operator=(const Impl&) = delete;
+	Impl& operator=(Impl&&) = delete;
+
 	using Modules = std::map<std::string, Module*>;
 	Modules modules;
 

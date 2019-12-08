@@ -47,8 +47,8 @@ public:
 	URI(const URI& uri);
 	URI& operator=(const URI& uri);
 
-	URI(URI&& uri);
-	URI& operator=(URI&& uri);
+	URI(URI&& uri) noexcept;
+	URI& operator=(URI&& uri) noexcept;
 
 	~URI();
 

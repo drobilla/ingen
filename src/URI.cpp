@@ -80,7 +80,7 @@ URI::operator=(const URI& uri)
 	return *this;
 }
 
-URI::URI(URI&& uri)
+URI::URI(URI&& uri) noexcept
     : _node(uri._node)
     , _uri(uri._uri)
 {
@@ -89,7 +89,7 @@ URI::URI(URI&& uri)
 }
 
 URI&
-URI::operator=(URI&& uri)
+URI::operator=(URI&& uri) noexcept
 {
 	_node     = uri._node;
 	_uri      = uri._uri;

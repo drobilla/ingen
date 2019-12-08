@@ -65,6 +65,11 @@ struct Serialiser::Impl {
 		sratom_free(_sratom);
 	}
 
+	Impl(const Impl&) = delete;
+	Impl(Impl&&) = delete;
+	Impl& operator=(const Impl&) = delete;
+	Impl& operator=(Impl&&) = delete;
+
 	enum class Mode { TO_FILE, TO_STRING };
 
 	void start_to_file(const Raul::Path& root,
