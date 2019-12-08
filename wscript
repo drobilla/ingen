@@ -296,22 +296,41 @@ def lint(ctx):
     except Exception:
         Logs.warn('warning: Failed to call flake8')
 
-    cmd = ("clang-tidy -p=. -header-filter=ingen/ -checks=\"*," +
-           "-clang-analyzer-alpha.*," +
-           "-cppcoreguidelines-*," +
-           "-cppcoreguidelines-pro-type-union-access," +
-           "-google-build-using-namespace," +
-           "-google-readability-casting," +
-           "-google-readability-todo," +
-           "-llvm-header-guard," +
-           "-llvm-include-order," +
-           "-llvm-namespace-comment," +
-           "-misc-unused-parameters," +
-           "-readability-else-after-return," +
-           "-readability-implicit-bool-cast," +
-           "-readability-named-parameter\" " +
-           "$(find .. -name '*.cpp')")
-    subprocess.call(cmd, cwd='build', shell=True)
+    # Check for C/C++ issues with clang-tidy
+    try:
+        import json
+        import sys
+
+        with open('build/compile_commands.json', 'r') as db:
+            commands = json.load(db)
+            files = [c['file'] for c in commands]
+
+        for step_files in zip(*(iter(files),) * Options.options.jobs):
+            procs = []
+            for f in step_files:
+                out_filename = f.replace('../', '').replace('/', '_') + '.tidy'
+                out_file = open(os.path.join('build', out_filename), 'w+')
+                procs += [(subprocess.Popen(['clang-tidy', '--quiet', f],
+                                            cwd='build',
+                                            stdout=out_file,
+                                            stderr=subprocess.STDOUT),
+                           out_file)]
+
+            for proc in procs:
+                proc[0].wait()
+                proc[1].seek(0)
+                for line in proc[1]:
+                    sys.stdout.write(line)
+                proc[1].close()
+
+    except Exception as e:
+        Logs.warn('warning: Failed to call clang-tidy (%s)' % e)
+
+    # Check includes with include-what-you-use
+    try:
+        subprocess.call(['iwyu_tool.py', '-o', 'clang', '-p', 'build'])
+    except Exception:
+        Logs.warn('warning: Failed to call iwyu_tool.py')
 
     if status != 0:
         ctx.fatal("Lint checks failed")
