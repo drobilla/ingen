@@ -525,15 +525,18 @@ Delta::execute(RunContext& context)
 			}
 			break;
 		case SpecialType::POLYPHONIC: {
-			GraphImpl* parent = reinterpret_cast<GraphImpl*>(object->parent());
-			if (value.get<int32_t>()) {
-				object->apply_poly(context, parent->internal_poly_process());
-			} else {
-				object->apply_poly(context, 1);
+			if (object) {
+				if (value.get<int32_t>()) {
+					auto* parent = reinterpret_cast<GraphImpl*>(object->parent());
+					object->apply_poly(context, parent->internal_poly_process());
+				} else {
+					object->apply_poly(context, 1);
+				}
 			}
 		} break;
 		case SpecialType::POLYPHONY:
-			if (!_graph->apply_internal_poly(context,
+			if (_graph &&
+			    !_graph->apply_internal_poly(context,
 			                                 *_engine.buffer_factory(),
 			                                 *_engine.maid(),
 			                                 value.get<int32_t>())) {
@@ -557,7 +560,9 @@ Delta::execute(RunContext& context)
 			}
 			break;
         case SpecialType::PRESET:
-	        block->set_enabled(false);
+	        if (block) {
+		        block->set_enabled(false);
+	        }
 			break;
 		case SpecialType::NONE:
 			if (port) {
