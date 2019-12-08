@@ -59,6 +59,7 @@ get_link_target(const char* link_path)
 		return result;
 	}
 
+	free(target);
 	return std::string();
 }
 
