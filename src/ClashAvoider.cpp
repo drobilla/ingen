@@ -99,7 +99,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 					offset = ++o->second;
 				} else {
 					std::string parent_str = in.parent().base();
-					parent_str = parent_str.substr(0, parent_str.find_last_of("/"));
+					parent_str = parent_str.substr(0, parent_str.find_last_of('/'));
 					if (parent_str.empty()) {
 						parent_str = "/";
 					}

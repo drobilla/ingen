@@ -98,7 +98,7 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 	} else {
 		const std::string old_path = get_link_target(link_path.c_str());
 		if (!old_path.empty()) {
-			const std::string suffix = old_path.substr(old_path.find_last_of(".") + 1);
+			const std::string suffix = old_path.substr(old_path.find_last_of('.') + 1);
 			const pid_t       pid    = std::stoi(suffix);
 			if (!kill(pid, 0)) {
 				make_link = false;

@@ -181,7 +181,7 @@ get_port(ingen::World&     world,
 		sym = s->second.ptr<char>();
 	} else {
 		const std::string subject_str = subject.to_string();
-		const size_t      last_slash  = subject_str.find_last_of("/");
+		const size_t      last_slash  = subject_str.find_last_of('/');
 
 		sym = ((last_slash == std::string::npos)
 		       ? subject_str
