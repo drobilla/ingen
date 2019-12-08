@@ -243,7 +243,7 @@ ControlBindings::control_to_port_value(RunContext&     context,
 		normal = (float)value / 16383.0f;
 		break;
 	case Type::MIDI_NOTE:
-		normal = (value == 0.0f) ? 0.0f : 1.0f;
+		normal = (value == 0) ? 0.0f : 1.0f;
 		break;
 	default:
 		break;
@@ -284,7 +284,7 @@ ControlBindings::port_value_to_control(RunContext& context,
 	}
 
 	if (port->is_logarithmic()) {
-		normal = logf(normal * ((float)M_E - 1.0f) + 1.0);
+		normal = logf(normal * ((float)M_E - 1.0f) + 1.0f);
 	}
 
 	switch (type) {
