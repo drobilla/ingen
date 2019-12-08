@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from waflib.extras import autowaf as autowaf
+
 
 def build(bld):
     core_source = '''
@@ -55,52 +55,52 @@ def build(bld):
 
     core_libs = 'LV2 LILV RAUL SERD SORD SRATOM'
 
-    obj = bld(features        = 'cxx cxxshlib',
-              source          = core_source,
-              export_includes = ['../..'],
-              includes        = ['.', '../..'],
-              name            = 'libingen_server',
-              target          = 'ingen_server',
-              install_path    = '${LIBDIR}',
-              use             = 'libingen libingen_socket',
-              uselib          = core_libs,
-              cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
-              linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
+    bld(features        = 'cxx cxxshlib',
+        source          = core_source,
+        export_includes = ['../..'],
+        includes        = ['.', '../..'],
+        name            = 'libingen_server',
+        target          = 'ingen_server',
+        install_path    = '${LIBDIR}',
+        use             = 'libingen libingen_socket',
+        uselib          = core_libs,
+        cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
+        linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
 
     if bld.env.HAVE_JACK:
-        obj = bld(features        = 'cxx cxxshlib',
-                  source          = 'JackDriver.cpp ingen_jack.cpp',
-                  includes        = ['.', '../..'],
-                  name            = 'libingen_jack',
-                  target          = 'ingen_jack',
-                  install_path    = '${LIBDIR}',
-                  use             = 'libingen_server',
-                  uselib          = core_libs + ' JACK',
-                  cxxflags        = ['-fvisibility=hidden'] + bld.env.PTHREAD_CFLAGS,
-                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
+        bld(features        = 'cxx cxxshlib',
+            source          = 'JackDriver.cpp ingen_jack.cpp',
+            includes        = ['.', '../..'],
+            name            = 'libingen_jack',
+            target          = 'ingen_jack',
+            install_path    = '${LIBDIR}',
+            use             = 'libingen_server',
+            uselib          = core_libs + ' JACK',
+            cxxflags        = ['-fvisibility=hidden'] + bld.env.PTHREAD_CFLAGS,
+            linkflags       = bld.env.PTHREAD_LINKFLAGS)
 
     if bld.env.HAVE_PORTAUDIO:
-        obj = bld(features        = 'cxx cxxshlib',
-                  source          = 'PortAudioDriver.cpp ingen_portaudio.cpp',
-                  includes        = ['.', '../..'],
-                  name            = 'libingen_portaudio',
-                  target          = 'ingen_portaudio',
-                  install_path    = '${LIBDIR}',
-                  use             = 'libingen_server',
-                  uselib          = core_libs + ' PORTAUDIO',
-                  cxxflags        = ['-fvisibility=hidden'] + bld.env.PTHREAD_CFLAGS,
-                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
+        bld(features        = 'cxx cxxshlib',
+            source          = 'PortAudioDriver.cpp ingen_portaudio.cpp',
+            includes        = ['.', '../..'],
+            name            = 'libingen_portaudio',
+            target          = 'ingen_portaudio',
+            install_path    = '${LIBDIR}',
+            use             = 'libingen_server',
+            uselib          = core_libs + ' PORTAUDIO',
+            cxxflags        = ['-fvisibility=hidden'] + bld.env.PTHREAD_CFLAGS,
+            linkflags       = bld.env.PTHREAD_LINKFLAGS)
 
     # Ingen LV2 wrapper
     if bld.env.INGEN_BUILD_LV2:
-        obj = bld(features     = 'cxx cxxshlib',
-                  source       = ' ingen_lv2.cpp ',
-                  cflags       = ['-fvisibility=hidden'],
-                  includes     = ['.', '../..'],
-                  name         = 'libingen_lv2',
-                  target       = 'ingen_lv2',
-                  install_path = '${LV2DIR}/ingen.lv2/',
-                  use          = 'libingen libingen_server',
-                  uselib       = core_libs,
-                  cxxflags     = ['-fvisibility=hidden'] + bld.env.PTHREAD_CFLAGS,
-                  linkflags    = bld.env.PTHREAD_LINKFLAGS)
+        bld(features     = 'cxx cxxshlib',
+            source       = ' ingen_lv2.cpp ',
+            cflags       = ['-fvisibility=hidden'],
+            includes     = ['.', '../..'],
+            name         = 'libingen_lv2',
+            target       = 'ingen_lv2',
+            install_path = '${LV2DIR}/ingen.lv2/',
+            use          = 'libingen libingen_server',
+            uselib       = core_libs,
+            cxxflags     = ['-fvisibility=hidden'] + bld.env.PTHREAD_CFLAGS,
+            linkflags    = bld.env.PTHREAD_LINKFLAGS)

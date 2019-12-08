@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
 
 from waflib import Logs, Options, Utils
 from waflib.extras import autowaf
@@ -18,6 +17,7 @@ out     = 'build'        # Build directory
 
 line_just = 47
 
+
 def options(ctx):
     ctx.load('compiler_cxx')
     ctx.load('python')
@@ -32,16 +32,17 @@ def options(ctx):
 
     ctx.add_flags(
         opt,
-        {'no-gui':          'do not build GUI',
-         'no-client':       'do not build client library (or GUI)',
-         'no-jack':         'do not build jack backend (for ingen.lv2 only)',
-         'no-plugin':       'do not build ingen.lv2 plugin',
-         'no-python':       'do not install Python bindings',
-         'no-webkit':       'do not use webkit to display plugin documentation',
+        {'no-gui': 'do not build GUI',
+         'no-client': 'do not build client library (or GUI)',
+         'no-jack': 'do not build jack backend (for ingen.lv2 only)',
+         'no-plugin': 'do not build ingen.lv2 plugin',
+         'no-python': 'do not install Python bindings',
+         'no-webkit': 'do not use webkit to display plugin documentation',
          'no-jack-session': 'do not build JACK session support',
-         'no-socket':       'do not build Socket interface',
-         'debug-urids':     'print a trace of URI mapping',
-         'portaudio':       'build PortAudio backend'})
+         'no-socket': 'do not build Socket interface',
+         'debug-urids': 'print a trace of URI mapping',
+         'portaudio': 'build PortAudio backend'})
+
 
 def configure(conf):
     conf.load('compiler_cxx', cache=True)
@@ -73,19 +74,19 @@ def configure(conf):
     conf.check_pkg('portaudio-2.0', uselib_store='PORTAUDIO', mandatory=False)
     conf.check_pkg('sigc++-2.0', uselib_store='SIGCPP', mandatory=False)
 
-    conf.check_function('cxx',  'posix_memalign',
+    conf.check_function('cxx', 'posix_memalign',
                         defines     = '_POSIX_C_SOURCE=200809L',
                         header_name = 'stdlib.h',
                         define_name = 'HAVE_POSIX_MEMALIGN',
                         mandatory   = False)
 
-    conf.check_function('cxx',  'isatty',
+    conf.check_function('cxx', 'isatty',
                         header_name = 'unistd.h',
                         defines     = '_POSIX_C_SOURCE=200809L',
                         define_name = 'HAVE_ISATTY',
                         mandatory   = False)
 
-    conf.check_function('cxx',  'vasprintf',
+    conf.check_function('cxx', 'vasprintf',
                         header_name = 'stdio.h',
                         defines     = '_GNU_SOURCE=1',
                         define_name = 'HAVE_VASPRINTF',
@@ -96,25 +97,25 @@ def configure(conf):
                mandatory   = False)
 
     if not Options.options.no_socket:
-        conf.check_function('cxx',  'socket',
+        conf.check_function('cxx', 'socket',
                             header_name   = 'sys/socket.h',
                             define_name   = 'HAVE_SOCKET',
                             mandatory     = False)
 
     if not Options.options.no_python:
-        conf.check_python_version((2,4,0), mandatory=False)
+        conf.check_python_version((2, 4, 0), mandatory=False)
 
     if not Options.options.no_plugin:
         conf.env.INGEN_BUILD_LV2 = 1
 
     if not Options.options.no_jack:
         conf.check_pkg('jack >= 0.120.0', uselib_store='JACK', mandatory=False)
-        conf.check_function('cxx',  'jack_set_property',
+        conf.check_function('cxx', 'jack_set_property',
                             header_name   = 'jack/metadata.h',
                             define_name   = 'HAVE_JACK_METADATA',
                             uselib        = 'JACK',
                             mandatory     = False)
-        conf.check_function('cxx',  'jack_port_rename',
+        conf.check_function('cxx', 'jack_port_rename',
                             header_name   = 'jack/jack.h',
                             define_name   = 'HAVE_JACK_PORT_RENAME',
                             uselib        = 'JACK',
@@ -142,7 +143,7 @@ def configure(conf):
     if conf.check(linkflags=['-lpthread'], mandatory=False):
         conf.env.PTHREAD_LINKFLAGS += ['-lpthread']
 
-    conf.define('INGEN_SHARED', 1);
+    conf.define('INGEN_SHARED', 1)
     conf.define('INGEN_VERSION', INGEN_VERSION)
 
     if conf.env.HAVE_SIGCPP and not Options.options.no_client:
@@ -170,22 +171,24 @@ def configure(conf):
 
     autowaf.display_summary(
         conf,
-        {'GUI':                     bool(conf.env.INGEN_BUILD_GUI),
+        {'GUI': bool(conf.env.INGEN_BUILD_GUI),
          'HTML plugin doc support': bool(conf.env.HAVE_WEBKIT),
-         'PortAudio driver':        bool(conf.env.HAVE_PORTAUDIO),
-         'Jack driver':             bool(conf.env.HAVE_JACK),
-         'Jack session support':    conf.is_defined('INGEN_JACK_SESSION'),
-         'Jack metadata support':   conf.is_defined('HAVE_JACK_METADATA'),
-         'LV2 plugin driver':       bool(conf.env.INGEN_BUILD_LV2),
-         'LV2 bundle':              conf.env.INGEN_BUNDLE_DIR,
-         'LV2 plugin support':      bool(conf.env.HAVE_LILV),
-         'Socket interface':        conf.is_defined('HAVE_SOCKET')})
+         'PortAudio driver': bool(conf.env.HAVE_PORTAUDIO),
+         'Jack driver': bool(conf.env.HAVE_JACK),
+         'Jack session support': conf.is_defined('INGEN_JACK_SESSION'),
+         'Jack metadata support': conf.is_defined('HAVE_JACK_METADATA'),
+         'LV2 plugin driver': bool(conf.env.INGEN_BUILD_LV2),
+         'LV2 bundle': conf.env.INGEN_BUNDLE_DIR,
+         'LV2 plugin support': bool(conf.env.HAVE_LILV),
+         'Socket interface': conf.is_defined('HAVE_SOCKET')})
+
 
 unit_tests = ['tst_FilePath']
 
+
 def build(bld):
     opts           = Options.options
-    opts.datadir   = opts.datadir   or bld.env.PREFIX + 'share'
+    opts.datadir   = opts.datadir or bld.env.PREFIX + 'share'
     opts.moduledir = opts.moduledir or bld.env.PREFIX + 'lib/ingen'
 
     # Headers
@@ -208,26 +211,26 @@ def build(bld):
         bld.recurse('src/gui')
 
     # Program
-    obj = bld(features     = 'c cxx cxxprogram',
-              source       = 'src/ingen/ingen.cpp',
-              target       = 'ingen',
-              includes     = ['.'],
-              use          = 'libingen',
-              uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
-              install_path = '${BINDIR}')
+    bld(features     = 'c cxx cxxprogram',
+        source       = 'src/ingen/ingen.cpp',
+        target       = 'ingen',
+        includes     = ['.'],
+        use          = 'libingen',
+        uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
+        install_path = '${BINDIR}')
 
     # Test program
     if bld.env.BUILD_TESTS:
         for i in ['ingen_test', 'ingen_bench'] + unit_tests:
-            obj = bld(features     = 'cxx cxxprogram',
-                      source       = 'tests/%s.cpp' % i,
-                      target       = 'tests/%s' % i,
-                      includes     = ['.'],
-                      use          = 'libingen',
-                      uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
-                      install_path = '',
-                      cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
-                      linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
+            bld(features     = 'cxx cxxprogram',
+                source       = 'tests/%s.cpp' % i,
+                target       = 'tests/%s' % i,
+                includes     = ['.'],
+                use          = 'libingen',
+                uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
+                install_path = '',
+                cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
+                linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
@@ -270,9 +273,29 @@ def build(bld):
 
     bld.add_post_fun(autowaf.run_ldconfig)
 
+
 def lint(ctx):
     "checks code for style issues"
     import subprocess
+
+    status = 0
+
+    # Check Python style with flake8
+    try:
+        for i in ["src/client/wscript",
+                  "src/gui/wscript",
+                  "src/server/wscript",
+                  "src/wscript",
+                  "scripts/ingen.py",
+                  "scripts/ingenish",
+                  "scripts/ingenams",
+                  "wscript"]:
+            status += subprocess.call(["flake8",
+                                       "--ignore", "E221,W504,E251,E501",
+                                       i])
+    except Exception:
+        Logs.warn('warning: Failed to call flake8')
+
     cmd = ("clang-tidy -p=. -header-filter=ingen/ -checks=\"*," +
            "-clang-analyzer-alpha.*," +
            "-cppcoreguidelines-*," +
@@ -290,9 +313,11 @@ def lint(ctx):
            "$(find .. -name '*.cpp')")
     subprocess.call(cmd, cwd='build', shell=True)
 
-def upload_docs(ctx):
-    import shutil
+    if status != 0:
+        ctx.fatal("Lint checks failed")
 
+
+def upload_docs(ctx):
     # Ontology documentation
     os.system('rsync -avz -e ssh bundles/ingen.lv2/ingen.ttl drobilla@drobilla.net:~/drobilla.net/ns/')
     os.system('rsync -avz -e ssh build/ingen.lv2/ingen.html drobilla@drobilla.net:~/drobilla.net/ns/')
@@ -300,6 +325,7 @@ def upload_docs(ctx):
 
     # Doxygen documentation
     os.system('rsync -ravz --delete -e ssh build/doc/html/* drobilla@drobilla.net:~/drobilla.net/docs/ingen/')
+
 
 def test(tst):
     with tst.group('unit') as check:

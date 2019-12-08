@@ -23,6 +23,7 @@ ams_prefix  = 'http://github.com/blablack/ams-lv2/'
 fomp_prefix = 'http://drobilla.net/plugins/fomp/'
 note_uri    = 'http://drobilla.net/ns/ingen-internals#Note'
 
+
 class World:
     def __init__(self, server_uri):
         self.server_uri = server_uri
@@ -37,10 +38,10 @@ class World:
     def add_block(self, mod_id, plugin_uri, x, y):
         self.mod_prototypes[self.mod_sym(mod_id)] = plugin_uri
         self.server.put('/' + self.mod_sym(mod_id),
-                        ('\t\ta ingen:Block ;\n'
-                         + 'lv2:prototype <%s> ;\n' % plugin_uri
-                         + 'ingen:canvasX %f ;\n' % x
-                         + 'ingen:canvasY %f' % y).replace('\n', '\n\t\t'))
+                        ('\t\ta ingen:Block ;\n' +
+                         'lv2:prototype <%s> ;\n' % plugin_uri +
+                         'ingen:canvasX %f ;\n' % x +
+                         'ingen:canvasY %f' % y).replace('\n', '\n\t\t'))
 
     def add_arc(self,
                 head_port_id, tail_port_id,
@@ -84,7 +85,7 @@ class World:
         port_index = int(port_id)
         if world.mod_prototypes[self.mod_sym(mod_id)] == note_uri:
             # Adapt MCV/ADVMCV port index to Note port index
-            port_mapping = [ 3, 0, 2, 4, 6, 5, -1, -1, -1, -1 ]
+            port_mapping = [3, 0, 2, 4, 6, 5, -1, -1, -1, -1]
             port_index   = port_mapping[port_index]
             if port_index == -1:
                 sys.stderr.write('warning: unsupported MCV port %d\n' % int(port_id))
@@ -107,8 +108,9 @@ class World:
                 if tail and head:
                     self.server.connect(self.server.uri_to_path(tail),
                                         self.server.uri_to_path(head))
-            except:
+            except Exception:
                 pass
+
 
 # Static enumeration of special module type IDs
 class Special:
@@ -119,17 +121,18 @@ class Special:
     SCQUANTIZER = 31
     ADVMCV      = 35
 
+
 # Module types list, indexed by numeric ID in file
 # Except where otherwise commented, these correspond to internal modules,
 # and the string is the suffix of the corresponding AMS LV2 plugin URI
 module_types = [
-    "custom", # 0 = custom (unsupported)
+    "custom",  # 0 = custom (unsupported)
     "vco",
     "vca",
     "lfo",
     "delay",
     "ringmod",
-    "ladspa", # 6 = LADSPA plugin
+    "ladspa",  # 6 = LADSPA plugin
     "pcmout",
     "mix",
     "vcf",
@@ -153,8 +156,8 @@ module_types = [
     "jackin",
     "jackout",
     "midiout",
-    "scmcv", # Scala module (different line format)
-    "scquantizer", # Scala module (different line format)
+    "scmcv",  # Scala module (different line format)
+    "scquantizer",  # Scala module (different line format)
     "stereomix",
     "conv",
     "vcenv",
@@ -171,6 +174,7 @@ module_types = [
     "vco2"
 ]
 
+
 class Module:
     def __init__(self, num, plugin_uri, properties={}):
         self.num        = num
@@ -178,9 +182,11 @@ class Module:
         self.properties = properties
         self.ports      = []
 
+
 class Patch:
     def __init__(self):
         self.modules = []
+
 
 def ladspa_module(world, mod_id, x, y, poly, lib, label):
     lv2_uri = ''
@@ -197,8 +203,10 @@ def ladspa_module(world, mod_id, x, y, poly, lib, label):
     else:
         print('MOD %3d LADSPA %s %s %s' % (mod_id, poly, lib, label))
 
+
 def scala_module(world, mod_id, scala_name):
-    sys.stderr.write('warning: scala module %3d (%s) unsupported\n' % (d, scala_name))
+    sys.stderr.write('warning: scala module %3d (%s) unsupported\n' % (mod_id, scala_name))
+
 
 def standard_module(world, mod_id, x, y, name, arg):
     if name == 'vca':
@@ -212,14 +220,17 @@ def standard_module(world, mod_id, x, y, name, arg):
     lv2_uri = ams_prefix + name
     world.add_block(mod_id, lv2_uri, x, y)
 
+
 def float_control(world, mod_id, port_index, value,
                   logarithmic, minimum, maximum, midi_sign):
-    #print('FLOAT CONTROL %s:%s = %s' % (mod_id, port_index, value))
+    # print('FLOAT CONTROL %s:%s = %s' % (mod_id, port_index, value))
     pass
 
+
 def control(world, mod_id, port_index, value, midi_sign):
-    #print('CONTROL %s:%s = %s' % (mod_id, port_index, value))
+    # print('CONTROL %s:%s = %s' % (mod_id, port_index, value))
     pass
+
 
 if len(sys.argv) != 2 and len(sys.argv) != 3:
     sys.stderr.write('Usage: %s AMS_PATCH_FILE [SERVER_URI]\n' % sys.argv[0])
@@ -267,10 +278,10 @@ for l in in_file:
                           (expr[8], expr[9], expr[10]))
         elif expr[0] == 'FSlider':
             float_control(world, mod_id,
-                          expr[2],  expr[3],  expr[4],  expr[5],  expr[6],  expr[7])
+                          expr[2], expr[3], expr[4], expr[5], expr[6], expr[7])
         elif expr[0] == 'ISlider' or expr[0] == 'LSlider':
-            control(world, mod_id, expr[2],  expr[3],  expr[4])
-        #else:
+            control(world, mod_id, expr[2], expr[3], expr[4])
+        # else:
         #    sys.stderr.write('warning: unsupported form %s\n' % expr[0])
     except ingen.Error:
         e = sys.exc_info()[1]
@@ -278,6 +289,6 @@ for l in in_file:
 
 world.create_arcs()
 
-#print(world.server.model.serialize(format='n3'))
+# print(world.server.model.serialize(format='n3'))
 
 in_file.close()

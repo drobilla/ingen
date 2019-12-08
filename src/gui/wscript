@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-import waflib.extras.autowaf as autowaf
+
 import waflib.Utils as Utils
 import waflib.Options as Options
+
 
 def options(ctx):
     opt = ctx.configuration_options()
     opt.add_option('--light-theme', action='store_true', dest='light_theme',
                    help='use light coloured theme')
+
 
 def configure(conf):
     conf.check_pkg('glibmm-2.4 >= 2.14.0',
@@ -35,6 +37,7 @@ def configure(conf):
 
     if Options.options.light_theme:
         conf.define('INGEN_USE_LIGHT_THEME', 1)
+
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',

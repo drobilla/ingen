@@ -25,6 +25,7 @@ try:
 except ImportError:
     from io import StringIO as StringIO
 
+
 class NS:
     atom   = rdflib.Namespace('http://lv2plug.in/ns/ext/atom#')
     ingen  = rdflib.Namespace('http://drobilla.net/ns/ingen#')
@@ -34,6 +35,7 @@ class NS:
     rdf    = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
     rsz    = rdflib.Namespace('http://lv2plug.in/ns/ext/resize-port#')
     xsd    = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
+
 
 class Interface:
     'The core Ingen interface'
@@ -58,9 +60,11 @@ class Interface:
     def delete(self, subject):
         pass
 
+
 class Error(Exception):
     def __init__(self, msg, cause):
         Exception.__init__(self, '%s; cause: %s' % (msg, cause))
+
 
 def lv2_path():
     path = os.getenv('LV2_PATH')
@@ -77,12 +81,13 @@ def lv2_path():
                                 '/boot/common/add-ons/lv2'])
     elif sys.platform == 'win32':
         return os.pathsep.join([
-                os.path.join(os.getenv('APPDATA'), 'LV2'),
-                os.path.join(os.getenv('COMMONPROGRAMFILES'), 'LV2')])
+            os.path.join(os.getenv('APPDATA'), 'LV2'),
+            os.path.join(os.getenv('COMMONPROGRAMFILES'), 'LV2')])
     else:
         return os.pathsep.join(['~/.lv2',
                                 '/usr/lib/lv2',
                                 '/usr/local/lib/lv2'])
+
 
 def ingen_bundle_path():
     for d in lv2_path().split(os.pathsep):
@@ -90,6 +95,7 @@ def ingen_bundle_path():
         if os.path.exists(bundle):
             return bundle
     return None
+
 
 class Remote(Interface):
     def __init__(self, uri='unix:///tmp/ingen.sock'):
@@ -137,15 +143,13 @@ class Remote(Interface):
             put     = i[0]
             subject = update.value(put, NS.patch.subject, None)
             body    = update.value(put, NS.patch.body, None)
-            desc    = {}
             for i in update.triples([body, None, None]):
                 self.model.add([subject, i[1], i[2]])
         return update
 
     def uri_to_path(self, uri):
-        path = uri
         if uri.startswith(self.server_base):
-            return uri[len(self.server_base)-1:]
+            return uri[len(self.server_base) - 1:]
         return uri
 
     def recv(self):
@@ -184,10 +188,10 @@ class Remote(Interface):
         raise Error(fmt, cause)
 
     def send(self, msg):
+        if type(msg) == list:
+            msg = '\n'.join(msg)
+
         # Send message to server
-        payload = msg
-        if sys.version_info[0] == 3:
-            payload = bytes(msg, 'utf-8')
         self.sock.send(self.msgencode(msg))
 
         # Receive response and parse into a model
@@ -203,18 +207,17 @@ class Remote(Interface):
         # Add new prefixes to prepend to future responses because rdflib sucks
         for line in response_str.split('\n'):
             if line.startswith('@prefix'):
-                match = re.search('@prefix ([^:]*): <(.*)> *\.', line)
+                match = re.search('@prefix ([^:]*): <(.*)> *\\.', line)
                 if match:
                     name = match.group(1)
                     uri  = match.group(2)
-                    self.ns_manager.bind(match.group(1), match.group(2))
+                    self.ns_manager.bind(name, uri)
 
         # Handle response (though there should be only one)
         blanks        = []
         response_desc = []
         for i in response_model.triples([None, NS.rdf.type, NS.patch.Response]):
             response = i[0]
-            subject  = response_model.value(response, NS.patch.subject, None)
             body     = response_model.value(response, NS.patch.body, None)
 
             response_desc += [i]
@@ -240,70 +243,57 @@ class Remote(Interface):
         return self.update_model(response_model)
 
     def get(self, subject):
-        return self.send('''
-[]
-	a patch:Get ;
-	patch:subject <%s> .
-''' % subject)
+        return self.send(['[]',
+                          '	a patch:Get ;',
+                          '	patch:subject <%s> .' % subject])
 
     def put(self, subject, body):
-        return self.send('''
-[]
-	a patch:Put ;
-	patch:subject <%s> ;
-	patch:body [
-%s
-	] .
-''' % (subject, body))
+        return self.send(['[]',
+                          '	a patch:Put ;',
+                          '	patch:subject <%s> ;' % subject,
+                          '	patch:body [',
+                          '	' + body,
+                          '	] .'])
 
     def patch(self, subject, remove, add):
-        return self.send('''
-[]
-	a patch:Patch ;
-	patch:subject <%s> ;
-	patch:remove [
-%s
-	] ;
-	patch:add [
-%s
-	] .
-''' % (subject, remove, add))
+        return self.send(['[]',
+                          '	a patch:Patch ;',
+                          '	patch:subject <%s> ;' % subject,
+                          '	patch:remove [',
+                          remove,
+                          '	] ;',
+                          '	patch:add [',
+                          add,
+                          '	] .'])
 
     def set(self, subject, key, value):
-        return self.send('''
-[]
-	a patch:Set ;
-	patch:subject <%s> ;
-	patch:property <%s> ;
-    patch:value %s .
-''' % (subject, key, value))
+        return self.send(['[]',
+                          '	a patch:Set ;',
+                          '	patch:subject <%s> ;' % subject,
+                          '	patch:property <%s> ;' % key,
+                          ' patch:value %s .' % value])
 
     def connect(self, tail, head):
-        return self.send('''
-[]
-	a patch:Put ;
-	patch:subject <%s> ;
-	patch:body [
-		a ingen:Arc ;
-		ingen:tail <%s> ;
-		ingen:head <%s> ;
-	] .
-''' % (os.path.commonprefix([tail, head]), tail, head))
+        subject = os.path.commonprefix([tail, head])
+        return self.send(['[]',
+                          '	a patch:Put ;',
+                          '	patch:subject <%s> ;' % subject,
+                          '	patch:body [',
+                          '		a ingen:Arc ;',
+                          '		ingen:tail <%s> ;' % tail,
+                          '		ingen:head <%s> ;' % head,
+                          '	] .'])
 
     def disconnect(self, tail, head):
-        return self.send('''
-[]
-	a patch:Delete ;
-	patch:body [
-		a ingen:Arc ;
-		ingen:tail <%s> ;
-		ingen:head <%s> ;
-	] .
-''' % (tail, head))
+        return self.send(['[]',
+                          '	a patch:Delete ;',
+                          '	patch:body [',
+                          '		a ingen:Arc ;',
+                          '		ingen:tail <%s> ;' % tail,
+                          '		ingen:head <%s> ;' % head,
+                          '	] .'])
 
     def delete(self, subject):
-        return self.send('''
-[]
-	a patch:Delete ;
-	patch:subject <%s> .
-''' % subject)
+        return self.send(['[]',
+                          '	a patch:Delete ;',
+                          '	patch:subject <%s> .' % subject])

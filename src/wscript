@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from waflib.extras import autowaf as autowaf
+
 
 def build(bld):
     sources = [
@@ -26,22 +26,22 @@ def build(bld):
         'runtime_paths.cpp'
     ]
     if bld.is_defined('HAVE_SOCKET'):
-        sources += [ 'SocketReader.cpp', 'SocketWriter.cpp' ]
+        sources += ['SocketReader.cpp', 'SocketWriter.cpp']
 
     lib = []
     if bld.is_defined('HAVE_LIBDL'):
         lib += ['dl']
 
-    obj = bld(features        = 'cxx cxxshlib',
-              source          = sources,
-              export_includes = ['..'],
-              includes        = ['..'],
-              name            = 'libingen',
-              target          = 'ingen-%s' % bld.env.INGEN_MAJOR_VERSION,
-              vnum            = bld.env.INGEN_VERSION,
-              install_path    = '${LIBDIR}',
-              lib             = lib,
-              uselib          = 'LV2 LILV RAUL SERD SORD SRATOM',
-              cxxflags        = (['-fvisibility=hidden'] +
-                                 bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS),
-              linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
+    bld(features        = 'cxx cxxshlib',
+        source          = sources,
+        export_includes = ['..'],
+        includes        = ['..'],
+        name            = 'libingen',
+        target          = 'ingen-%s' % bld.env.INGEN_MAJOR_VERSION,
+        vnum            = bld.env.INGEN_VERSION,
+        install_path    = '${LIBDIR}',
+        lib             = lib,
+        uselib          = 'LV2 LILV RAUL SERD SORD SRATOM',
+        cxxflags        = (['-fvisibility=hidden'] +
+                           bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS),
+        linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)

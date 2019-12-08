@@ -15,21 +15,15 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import ingen
-import os.path
-import re
 import shlex
 import sys
-import time
-try:
-    import readline
-except:
-    pass
 
 # Python 2 compatibility
 try:
     input = raw_input
 except NameError:
     pass
+
 
 def print_usage():
     print('''Usage: ingenish [OPTION]... [COMMAND [ARGUMENT]...]
@@ -70,6 +64,7 @@ Example:
     set /main/tone/output ingen:value 0.7
 ''')
 
+
 def run(cmd):
     if cmd[0] == 'help':
         print_usage()
@@ -91,6 +86,7 @@ def run(cmd):
         return ingen.delete(cmd[1])
     return False
 
+
 a = 1
 server = 'unix:///tmp/ingen.sock'
 if len(sys.argv) > 1:
@@ -110,12 +106,12 @@ if len(sys.argv) - a == 0:
             run(shlex.split(input('> ')))
         except (EOFError, KeyboardInterrupt, SystemExit):
             break
-        except:
+        except Exception:
             print('error: %s' % sys.exc_info()[1])
 else:
     try:
         update = run(sys.argv[a:])
         if update:
             print(update.serialize(format='n3'))
-    except:
+    except Exception:
         print('error: %s' % sys.exc_info()[1])
