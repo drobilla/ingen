@@ -55,7 +55,9 @@ ClashAvoider::map_path(const Raul::Path& in)
 	const size_t pos = in.find_last_of('_');
 	if (pos != std::string::npos && pos != (in.length()-1)) {
 		const std::string trailing = in.substr(pos + 1);
-		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
+		char*             end      = nullptr;
+		strtoul(trailing.c_str(), &end, 10);
+		has_offset = (*end == '\0');
 	}
 
 	// Path without _n suffix
