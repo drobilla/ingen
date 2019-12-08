@@ -38,11 +38,11 @@ namespace server {
 
 struct Notification
 {
-	inline Notification(PortImpl* p = nullptr,
-	                    FrameTime f = 0,
-	                    LV2_URID  k = 0,
-	                    uint32_t  s = 0,
-	                    LV2_URID  t = 0)
+	explicit inline Notification(PortImpl* p = nullptr,
+	                             FrameTime f = 0,
+	                             LV2_URID  k = 0,
+	                             uint32_t  s = 0,
+	                             LV2_URID  t = 0)
 		: port(p), time(f), key(k), size(s), type(t)
 	{}
 

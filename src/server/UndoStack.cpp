@@ -118,7 +118,7 @@ UndoStack::pop()
 }
 
 struct BlankIDs {
-	BlankIDs(char c='b') : c(c) {}
+	explicit BlankIDs(char c='b') : c(c) {}
 
 	SerdNode get() {
 		snprintf(buf, sizeof(buf), "%c%u", c, n++);

@@ -28,7 +28,7 @@ class PreProcessContext;
 
 class Sentinel : public Event {
 public:
-	Sentinel(Engine& engine) : Event(engine) {}
+	explicit Sentinel(Engine& engine) : Event(engine) {}
 
 	bool pre_process(PreProcessContext&) override { return false; }
 	void execute(RunContext&) override {}
