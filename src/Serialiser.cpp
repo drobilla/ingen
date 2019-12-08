@@ -258,7 +258,7 @@ Serialiser::finish()
 std::string
 Serialiser::Impl::finish()
 {
-	std::string ret = "";
+	std::string ret;
 	if (_mode == Mode::TO_FILE) {
 		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {

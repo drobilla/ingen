@@ -71,8 +71,8 @@ Parser::find_resources(Sord::World& world,
 	for (Sord::Iter i = model.find(nil, rdf_type, type); !i.end(); ++i) {
 		const Sord::Node  resource     = i.get_subject();
 		const std::string resource_uri = resource.to_c_string();
-		std::string       file_path    = "";
 		Sord::Iter        f            = model.find(resource, rdfs_seeAlso, nil);
+		std::string       file_path;
 		if (!f.end()) {
 			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), nullptr);
 			file_path = (const char*)p;
