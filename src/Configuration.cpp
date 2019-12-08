@@ -21,6 +21,7 @@
 #include "ingen/fmt.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
+#include "lv2/urid/urid.h"
 #include "serd/serd.h"
 #include "sord/sord.h"
 #include "sord/sordmm.hpp"

@@ -17,6 +17,7 @@
 #ifndef INGEN_SERIALISER_HPP
 #define INGEN_SERIALISER_HPP
 
+#include "ingen/FilePath.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"

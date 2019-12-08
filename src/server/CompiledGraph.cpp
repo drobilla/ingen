@@ -16,6 +16,7 @@
 
 #include "CompiledGraph.hpp"
 
+#include "BlockImpl.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "ThreadManager.hpp"
@@ -29,6 +30,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
+#include <limits>
 #include <utility>
 
 namespace ingen {

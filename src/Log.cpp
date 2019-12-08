@@ -20,7 +20,9 @@
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "lv2/core/lv2.h"
 #include "lv2/log/log.h"
+#include "lv2/urid/urid.h"
 #include "raul/Path.hpp"
 
 #include <cstdio>

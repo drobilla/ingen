@@ -21,8 +21,8 @@
 
 #include <boost/variant/get.hpp>
 
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <utility>
 
 #ifndef MSG_NOSIGNAL

@@ -16,8 +16,8 @@
 
 #include "Broadcaster.hpp"
 
-#include "PluginImpl.hpp"
 #include "BlockFactory.hpp"
+#include "PluginImpl.hpp"
 
 #include "ingen/Interface.hpp"
 

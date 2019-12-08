@@ -31,8 +31,8 @@
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
 
-#include <cstdlib>
 #include <cassert>
+#include <cstdlib>
 
 namespace ingen {
 namespace server {

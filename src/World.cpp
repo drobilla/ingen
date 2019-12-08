@@ -32,15 +32,14 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/filesystem.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "lv2/log/log.h"
+#include "lv2/urid/urid.h"
 #include "sord/sordmm.hpp"
 
 #include <cstdint>
-#include <cstdlib>
 #include <list>
 #include <map>
 #include <memory>

@@ -36,6 +36,9 @@
 #include <mutex>
 
 namespace ingen {
+
+class FilePath;
+
 namespace server {
 
 class LV2Plugin;

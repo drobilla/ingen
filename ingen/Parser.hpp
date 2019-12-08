@@ -30,8 +30,6 @@
 #include <string>
 #include <utility>
 
-namespace Raul { class Path; }
-namespace Raul { class Symbol; }
 namespace Sord { class World; }
 
 namespace ingen {

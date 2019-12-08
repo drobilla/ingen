@@ -22,6 +22,7 @@
 #include "ingen/Message.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/ingen.h"
 #include "lv2/atom/forge.h"
 #include "lv2/urid/urid.h"

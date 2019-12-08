@@ -22,7 +22,6 @@
 #include "PortType.hpp"
 #include "types.hpp"
 
-#include "ingen/Atom.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"

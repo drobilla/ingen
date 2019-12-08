@@ -17,15 +17,30 @@
 #include "InternalBlock.hpp"
 
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
+#include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+
+#include "ingen/URIs.hpp"
+#include "raul/Array.hpp"
 
 #include <cstddef>
 #include <cstdint>
 
+namespace Raul {
+class Symbol;
+}
+
 namespace ingen {
+
+class Atom;
+
 namespace server {
+
+class GraphImpl;
+class RunContext;
 
 InternalBlock::InternalBlock(PluginImpl*         plugin,
                              const Raul::Symbol& symbol,

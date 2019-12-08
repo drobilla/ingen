@@ -19,6 +19,7 @@
 
 #include "Event.hpp"
 #include "Load.hpp"
+#include "types.hpp"
 
 #include "ingen/Clock.hpp"
 #include "ingen/EngineBase.hpp"

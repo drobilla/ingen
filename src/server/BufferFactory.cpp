@@ -23,6 +23,7 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "lv2/atom/atom.h"
+#include "lv2/urid/urid.h"
 
 #include <algorithm>
 

@@ -21,9 +21,9 @@
 #include "Broadcaster.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
+#include "LV2Block.hpp"
 #include "PluginImpl.hpp"
 #include "PreProcessContext.hpp"
-#include "LV2Block.hpp"
 
 #include "ingen/Forge.hpp"
 #include "ingen/Store.hpp"
