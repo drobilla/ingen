@@ -95,7 +95,7 @@ private:
 		LOADED_BUNDLE
 	};
 
-	typedef std::vector<UPtr<SetPortValue>> SetEvents;
+	using SetEvents = std::vector<UPtr<SetPortValue>>;
 
 	void init();
 

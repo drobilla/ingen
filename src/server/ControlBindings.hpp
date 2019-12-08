@@ -118,9 +118,9 @@ public:
 	void remove(RunContext& ctx, const std::vector<Binding*>& bindings);
 
 private:
-	typedef boost::intrusive::multiset<
-		Binding,
-		boost::intrusive::compare<BindingLess> > Bindings;
+	using Bindings =
+	        boost::intrusive::multiset<Binding,
+	                                   boost::intrusive::compare<BindingLess>>;
 
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 

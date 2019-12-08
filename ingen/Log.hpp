@@ -39,7 +39,7 @@ class World;
 
 class INGEN_API Log {
 public:
-	typedef std::function<int(LV2_URID, const char*, va_list)> Sink;
+	using Sink = std::function<int(LV2_URID, const char*, va_list)>;
 
 	Log(LV2_Log_Log* log, URIs& uris);
 

@@ -62,7 +62,7 @@ class BlockImpl : public NodeImpl
                 , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
-	typedef Raul::Array<PortImpl*> Ports;
+	using Ports = Raul::Array<PortImpl*>;
 
 	BlockImpl(PluginImpl*         plugin,
 	          const Raul::Symbol& symbol,

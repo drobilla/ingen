@@ -141,7 +141,7 @@ public:
 		}
 
 		// Delete module objects but save pointers to libraries
-		typedef std::list<std::unique_ptr<Library>> Libs;
+		using Libs = std::list<std::unique_ptr<Library>>;
 		Libs libs;
 		for (auto& m : modules) {
 			libs.emplace_back(std::move(m.second->library));
@@ -162,14 +162,14 @@ public:
 		// Module libraries go out of scope and close here
 	}
 
-	typedef std::map<std::string, Module*> Modules;
+	using Modules = std::map<std::string, Module*>;
 	Modules modules;
 
-	typedef std::map<const std::string, World::InterfaceFactory> InterfaceFactories;
+	using InterfaceFactories = std::map<const std::string, World::InterfaceFactory>;
 	InterfaceFactories interface_factories;
 
-	typedef bool (*ScriptRunner)(World& world, const char* filename);
-	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
+	using ScriptRunner  = bool (*)(World& world, const char* filename);
+	using ScriptRunners = std::map<const std::string, ScriptRunner>;
 	ScriptRunners script_runners;
 
 	using LilvWorldUPtr = std::unique_ptr<LilvWorld, decltype(&lilv_world_free)>;

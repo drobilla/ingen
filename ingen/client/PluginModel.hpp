@@ -67,10 +67,10 @@ public:
 	std::string  human_name() const;
 	std::string  port_human_name(uint32_t i) const;
 
-	typedef std::map<float, std::string> ScalePoints;
+	using ScalePoints = std::map<float, std::string>;
 	ScalePoints port_scale_points(uint32_t i) const;
 
-	typedef std::map<URI, std::string> Presets;
+	using Presets = std::map<URI, std::string>;
 	const Presets& presets() const { return _presets; }
 
 	static LilvWorld* lilv_world()        { return _lilv_world; }

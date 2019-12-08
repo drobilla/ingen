@@ -102,7 +102,7 @@ private:
 
 	void auto_menu_position(int& x, int& y, bool& push_in);
 
-	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
+	using LV2Children = std::multimap<const std::string, const LilvPluginClass*>;
 
 	Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
@@ -117,7 +117,7 @@ private:
 	App&                           _app;
 	SPtr<const client::GraphModel> _graph;
 
-	typedef std::map<SPtr<const client::ObjectModel>, Ganv::Module*> Views;
+	using Views = std::map<SPtr<const client::ObjectModel>, Ganv::Module*>;
 	Views _views;
 
 	int                 _auto_position_count;

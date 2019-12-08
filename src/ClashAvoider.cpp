@@ -70,7 +70,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 	if (m != _symbol_map.end()) {
 		return m->second;
 	} else {
-		typedef std::pair<SymbolMap::iterator, bool> InsertRecord;
+		using InsertRecord = std::pair<SymbolMap::iterator, bool>;
 
 		// See if parent is mapped
 		Raul::Path parent = in.parent();

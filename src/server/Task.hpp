@@ -96,7 +96,7 @@ public:
 	void set_done(bool done) { _done = done; }
 
 private:
-	typedef std::deque<std::unique_ptr<Task>> Children;
+	using Children = std::deque<std::unique_ptr<Task>>;
 
 	Task(const Task&) = delete;
 	Task& operator=(const Task&) = delete;

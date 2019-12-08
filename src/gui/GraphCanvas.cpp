@@ -659,7 +659,7 @@ GraphCanvas::copy_selection()
 void
 GraphCanvas::paste()
 {
-	typedef Properties::const_iterator PropIter;
+	using PropIter = Properties::const_iterator;
 
 	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 

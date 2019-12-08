@@ -240,7 +240,7 @@ ClientStore::message(const Message& msg)
 void
 ClientStore::operator()(const Put& msg)
 {
-	typedef Properties::const_iterator Iterator;
+	using Iterator = Properties::const_iterator;
 
 	const auto& uri        = msg.uri;
 	const auto& properties = msg.properties;

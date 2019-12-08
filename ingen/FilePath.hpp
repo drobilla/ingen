@@ -41,14 +41,14 @@ class INGEN_API FilePath
 {
 public:
 #ifdef USE_WINDOWS_FILE_PATHS
-	typedef wchar_t             value_type;
+	using value_type = wchar_t;
 	static constexpr value_type preferred_separator = L'\\';
 #else
-	typedef char                value_type;
+	using value_type = char;
 	static constexpr value_type preferred_separator = '/';
 #endif
 
-	typedef std::basic_string<value_type> string_type;
+	using string_type = std::basic_string<value_type>;
 
 	FilePath()                = default;
 	FilePath(const FilePath&) = default;

@@ -59,7 +59,7 @@ public:
 private:
 	enum class Type { BUNDLE_BEGIN, BUNDLE_END };
 
-	typedef std::map<GraphImpl*, MPtr<CompiledGraph>> CompiledGraphs;
+	using CompiledGraphs = std::map<GraphImpl*, MPtr<CompiledGraph>>;
 
 	CompiledGraphs _compiled_graphs;
 	Type           _type;

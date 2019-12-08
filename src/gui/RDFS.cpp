@@ -117,8 +117,8 @@ datatypes(World& world, URISet& types, bool super)
 URISet
 types(World& world, SPtr<const client::ObjectModel> model)
 {
-	typedef Properties::const_iterator    PropIter;
-	typedef std::pair<PropIter, PropIter> PropRange;
+	using PropIter  = Properties::const_iterator;
+	using PropRange = std::pair<PropIter, PropIter>;
 
 	// Start with every rdf:type
 	URISet types;

@@ -142,9 +142,8 @@ private:
 #endif
 
 protected:
-	typedef boost::intrusive::slist<EnginePort,
-	                                boost::intrusive::cache_last<true>
-	                                > Ports;
+	using Ports = boost::intrusive::slist<EnginePort,
+	                                      boost::intrusive::cache_last<true>>;
 
 	using AudioBufPtr = UPtr<float, FreeDeleter<float>>;
 

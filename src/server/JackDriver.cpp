@@ -52,7 +52,7 @@
 #include <string>
 #include <utility>
 
-typedef jack_default_audio_sample_t jack_sample_t;
+using jack_sample_t = jack_default_audio_sample_t;
 
 namespace ingen {
 namespace server {

@@ -50,7 +50,7 @@ public:
 
 	GraphType graph_type() const override { return Node::GraphType::BLOCK; }
 
-	typedef std::vector< SPtr<const PortModel> > Ports;
+	using Ports = std::vector<SPtr<const PortModel>>;
 
 	SPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
 	SPtr<const PortModel> get_port(uint32_t index) const;

@@ -83,7 +83,7 @@ public:
 		BufferRef buffer;
 	};
 
-	typedef Raul::Array<Voice> Voices;
+	using Voices = Raul::Array<Voice>;
 
 	PortImpl(BufferFactory&      bufs,
 	         BlockImpl*          block,

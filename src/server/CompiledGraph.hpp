@@ -53,7 +53,7 @@ private:
 
 	CompiledGraph(GraphImpl* graph);
 
-	typedef std::set<BlockImpl*> BlockSet;
+	using BlockSet = std::set<BlockImpl*>;
 
 	void dump(const std::string& name) const;
 

@@ -36,10 +36,10 @@ namespace gui {
 namespace rdfs {
 
 /** Set of URIs. */
-typedef std::set<URI> URISet;
+using URISet = std::set<URI>;
 
 /** Label => Resource map. */
-typedef std::map<std::string, URI> Objects;
+using Objects = std::map<std::string, URI>;
 
 /** Return the label of `node`. */
 std::string label(World& world, const LilvNode* node);

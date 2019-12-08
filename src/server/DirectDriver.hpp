@@ -93,9 +93,8 @@ public:
 	int real_time_priority() override { return 60; }
 
 private:
-	typedef boost::intrusive::slist<EnginePort,
-	                                boost::intrusive::cache_last<true>
-	                                > Ports;
+	using Ports = boost::intrusive::slist<EnginePort,
+	                                      boost::intrusive::cache_last<true>>;
 
 	Engine&     _engine;
 	Ports       _ports;

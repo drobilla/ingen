@@ -71,7 +71,8 @@ public:
 
 	void clear();
 
-	typedef std::map< const URI, SPtr<PluginModel> > Plugins;
+	using Plugins = std::map<const URI, SPtr<PluginModel>>;
+
 	SPtr<const Plugins> plugins() const              { return _plugins; }
 	SPtr<Plugins>       plugins()                    { return _plugins; }
 	void                set_plugins(SPtr<Plugins> p) { _plugins = p; }

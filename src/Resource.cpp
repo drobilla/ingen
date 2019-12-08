@@ -29,7 +29,7 @@ bool
 Resource::add_property(const URI& uri, const Atom& value, Graph ctx)
 {
 	// Ignore duplicate statements
-	typedef Properties::const_iterator iterator;
+	using iterator = Properties::const_iterator;
 	const std::pair<iterator, iterator> range = _properties.equal_range(uri);
 	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i) {
 		if (i->second == value && i->second.context() == ctx) {
@@ -150,7 +150,7 @@ Resource::type(const URIs&       uris,
                bool&             port,
                bool&             is_output)
 {
-	typedef Properties::const_iterator iterator;
+	using iterator = Properties::const_iterator;
 	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
 
 	graph = block = port = is_output = false;

@@ -147,7 +147,7 @@ get_properties(ingen::World&               world,
 	return props;
 }
 
-typedef std::pair<Raul::Path, Properties> PortRecord;
+using PortRecord = std::pair<Raul::Path, Properties>;
 
 static boost::optional<PortRecord>
 get_port(ingen::World&     world,
@@ -354,7 +354,7 @@ parse_graph(ingen::World&                 world,
 	target.put(path_to_uri(graph_path), props, ctx);
 
 	// For each port on this graph
-	typedef std::map<uint32_t, PortRecord> PortRecords;
+	using PortRecords = std::map<uint32_t, PortRecord>;
 	PortRecords ports;
 	for (Sord::Iter p = model.find(graph, lv2_port, nil); !p.end(); ++p) {
 		Sord::Node port = p.get_object();
@@ -532,7 +532,7 @@ parse(ingen::World&                 world,
 	}
 
 	// Get all subjects and their types (?subject a ?type)
-	typedef std::map< Sord::Node, std::set<Sord::Node> > Subjects;
+	using Subjects = std::map< Sord::Node, std::set<Sord::Node> >;
 	Subjects subjects;
 	for (Sord::Iter i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
 		const Sord::Node& subject   = i.get_subject();

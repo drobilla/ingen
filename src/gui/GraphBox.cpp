@@ -664,7 +664,7 @@ GraphBox::event_export_image()
 		dialog.set_transient_for(*_window);
 	}
 
-	typedef std::map<std::string, std::string> Types;
+	using Types = std::map<std::string, std::string>;
 	Types types;
 	types["*.dot"] = "Graphviz DOT";
 	types["*.pdf"] = "Portable Document Format";

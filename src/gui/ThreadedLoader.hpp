@@ -80,7 +80,7 @@ private:
 	                      const URI&                     filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
-	typedef sigc::slot<void> Closure;
+	using Closure = sigc::slot<void>;
 
 	void run();
 

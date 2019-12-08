@@ -130,7 +130,7 @@ private:
 
 	SPtr<const client::GraphModel> _graph;
 
-	typedef std::map<URI, Gtk::TreeModel::iterator> Rows;
+	using Rows = std::map<URI, Gtk::TreeModel::iterator>;
 	Rows _rows;
 
 	Glib::RefPtr<Gtk::ListStore> _plugins_liststore;

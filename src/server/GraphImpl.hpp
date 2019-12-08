@@ -99,8 +99,9 @@ public:
 
 	// Graph specific stuff not inherited from Block
 
-	typedef boost::intrusive::slist<
-		BlockImpl, boost::intrusive::constant_time_size<true> > Blocks;
+	using Blocks =
+	        boost::intrusive::slist<BlockImpl,
+	                                boost::intrusive::constant_time_size<true>>;
 
 	/** Add a block to this graph.
 	 * Pre-process thread only.
@@ -118,8 +119,9 @@ public:
 	uint32_t num_ports_non_rt() const;
 	bool     has_port_with_index(uint32_t index) const;
 
-	typedef boost::intrusive::slist<
-		DuplexPort, boost::intrusive::constant_time_size<true> > PortList;
+	using PortList =
+	        boost::intrusive::slist<DuplexPort,
+	                                boost::intrusive::constant_time_size<true>>;
 
 	void add_input(DuplexPort& port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);

@@ -109,9 +109,8 @@ private:
 	                       void*       outputs);
 
 protected:
-	typedef boost::intrusive::slist<EnginePort,
-	                                boost::intrusive::cache_last<true>
-	                                > Ports;
+	using Ports = boost::intrusive::slist<EnginePort,
+	                                      boost::intrusive::cache_last<true>>;
 
 	Engine&                     _engine;
 	Ports                       _ports;

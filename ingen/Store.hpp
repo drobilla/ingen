@@ -47,9 +47,9 @@ public:
 		return (i == end()) ? nullptr : i->second.get();
 	}
 
-	typedef std::pair<const_iterator, const_iterator> const_range;
-
-	typedef std::map< Raul::Path, SPtr<Node> > Objects;
+	using const_range = std::pair<const_iterator, const_iterator>;
+	using Objects     = std::map<Raul::Path, SPtr<Node>>;
+	using Mutex       = std::recursive_mutex;
 
 	iterator       find_descendants_end(Store::iterator parent);
 	const_iterator find_descendants_end(Store::const_iterator parent) const;
@@ -74,8 +74,6 @@ public:
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,
 	                           bool                allow_zero=true) const;
-
-	typedef std::recursive_mutex Mutex;
 
 	Mutex& mutex() { return _mutex; }
 

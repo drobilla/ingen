@@ -42,7 +42,7 @@ using namespace client;
 
 namespace gui {
 
-typedef std::set<URI> URISet;
+using URISet = std::set<URI>;
 
 PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)

@@ -62,8 +62,8 @@ public:
 	bool        is_zombie() const       { return _is_zombie; }
 	void        set_is_zombie(bool t)   { _is_zombie = t; }
 
-	typedef std::pair<URI, std::string> Preset;
-	typedef std::map<URI, std::string>  Presets;
+	using Preset  = std::pair<URI, std::string>;
+	using Presets = std::map<URI, std::string>;
 
 	const Presets& presets(bool force_reload=false) {
 		if (!_presets_loaded || force_reload) {

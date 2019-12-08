@@ -150,7 +150,7 @@ void
 BlockFactory::load_lv2_plugins()
 {
 	// Build an array of port type nodes for checking compatibility
-	typedef std::vector< SPtr<LilvNode> > Types;
+	using Types = std::vector<SPtr<LilvNode>>;
 	Types types;
 	for (unsigned t = PortType::ID::AUDIO; t <= PortType::ID::ATOM; ++t) {
 		const URI& uri(PortType((PortType::ID)t).uri());

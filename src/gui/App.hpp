@@ -182,7 +182,7 @@ protected:
 	float       _max_run_load;
 	std::string _status_text;
 
-	typedef std::unordered_map<Port*, bool> ActivityPorts;
+	using ActivityPorts = std::unordered_map<Port*, bool>;
 	ActivityPorts _activity_ports;
 
 	bool _enable_signal;

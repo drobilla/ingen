@@ -54,7 +54,7 @@ CreateBlock::CreateBlock(Engine&           engine,
 bool
 CreateBlock::pre_process(PreProcessContext& ctx)
 {
-	typedef Properties::const_iterator iterator;
+	using iterator = Properties::const_iterator;
 
 	const ingen::URIs& uris  = _engine.world().uris();
 	const SPtr<Store>  store = _engine.store();

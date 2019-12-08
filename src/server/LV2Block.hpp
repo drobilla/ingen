@@ -110,7 +110,7 @@ protected:
 		return (LilvInstance*)(*_instances)[voice]->instance;
 	}
 
-	typedef Raul::Array< SPtr<Instance> > Instances;
+	using Instances = Raul::Array<SPtr<Instance>>;
 
 	void drop_instances(const MPtr<Instances>& instances) {
 		if (instances) {
@@ -139,10 +139,10 @@ protected:
 		void* const    data;
 	};
 
-	typedef boost::intrusive::slist<Response,
-	                                boost::intrusive::cache_last<true>,
-	                                boost::intrusive::constant_time_size<false>
-	                                > Responses;
+	using Responses = boost::intrusive::slist<
+	        Response,
+	        boost::intrusive::cache_last<true>,
+	        boost::intrusive::constant_time_size<false>>;
 
 	static LV2_Worker_Status work_respond(
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);

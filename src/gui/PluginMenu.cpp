@@ -66,7 +66,7 @@ PluginMenu::clear()
 void
 PluginMenu::add_plugin(SPtr<client::PluginModel> p)
 {
-	typedef ClassMenus::iterator iterator;
+	using iterator = ClassMenus::iterator;
 
 	if (!p->lilv_plugin() || lilv_plugin_is_replaced(p->lilv_plugin())) {
 		return;

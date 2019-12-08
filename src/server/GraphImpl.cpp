@@ -82,7 +82,7 @@ GraphImpl::duplicate(Engine&             engine,
 	dup->set_properties(props);
 
 	// We need a map of port duplicates to duplicate arcs
-	typedef std::unordered_map<PortImpl*, PortImpl*> PortMap;
+	using PortMap = std::unordered_map<PortImpl*, PortImpl*>;
 	PortMap port_map;
 
 	// Add duplicates of all ports

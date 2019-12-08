@@ -53,8 +53,8 @@ public:
 	                               std::string       name);
 
 private:
-	typedef std::map<Raul::Path, unsigned>   Offsets;
-	typedef std::map<Raul::Path, Raul::Path> SymbolMap;
+	using Offsets   = std::map<Raul::Path, unsigned>;
+	using SymbolMap = std::map<Raul::Path, Raul::Path>;
 
 	const Store& _store;
 	Offsets      _offsets;

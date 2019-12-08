@@ -105,7 +105,7 @@ private:
 	void apply_clicked();
 	void ok_clicked();
 
-	typedef std::map<URI, Record> Records;
+	using Records = std::map<URI, Record>;
 	Records _records;
 
 	SPtr<const client::ObjectModel> _model;

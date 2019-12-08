@@ -92,7 +92,7 @@ class Lib {
 public:
 	explicit Lib(const char* bundle_path);
 
-	typedef std::vector< SPtr<const LV2Graph> > Graphs;
+	using Graphs = std::vector<SPtr<const LV2Graph>>;
 
 	Graphs graphs;
 };
@@ -391,7 +391,7 @@ public:
 	AtomReader& reader() { return _reader; }
 	AtomWriter& writer() { return _writer; }
 
-	typedef std::vector<EnginePort*> Ports;
+	using Ports = std::vector<EnginePort*>;
 
 	Ports& ports() { return _ports; }
 

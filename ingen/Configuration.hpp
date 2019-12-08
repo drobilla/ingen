@@ -137,9 +137,9 @@ private:
 		}
 	};
 
-	typedef std::map<std::string, Option>      Options;
-	typedef std::map<char, std::string>        ShortNames;
-	typedef std::map<std::string, std::string> Keys;
+	using Options    = std::map<std::string, Option>;
+	using ShortNames = std::map<char, std::string>;
+	using Keys       = std::map<std::string, std::string>;
 
 	std::string variable_string(LV2_URID type) const;
 

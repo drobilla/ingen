@@ -19,9 +19,9 @@
 
 #include <cstdint>
 
-typedef float    Sample;
-typedef uint32_t SampleCount;
-typedef uint32_t SampleRate;
-typedef uint32_t FrameTime;
+using Sample      = float;
+using SampleCount = uint32_t;
+using SampleRate  = uint32_t;
+using FrameTime   = uint32_t;
 
 #endif // INGEN_ENGINE_TYPES_HPP

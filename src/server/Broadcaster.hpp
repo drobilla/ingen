@@ -103,7 +103,7 @@ public:
 private:
 	friend class Transfer;
 
-	typedef std::set<SPtr<Interface>> Clients;
+	using Clients = std::set<SPtr<Interface>>;
 
 	std::mutex                  _clients_mutex;
 	Clients                     _clients;

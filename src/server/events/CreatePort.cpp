@@ -57,8 +57,8 @@ CreatePort::CreatePort(Engine&           engine,
 {
 	const ingen::URIs& uris = _engine.world().uris();
 
-	typedef Properties::const_iterator    Iterator;
-	typedef std::pair<Iterator, Iterator> Range;
+	using Iterator = Properties::const_iterator;
+	using Range    = std::pair<Iterator, Iterator>;
 
 	const Range types = properties.equal_range(uris.rdf_type);
 	for (Iterator i = types.first; i != types.second; ++i) {
@@ -116,7 +116,7 @@ CreatePort::pre_process(PreProcessContext& ctx)
 	const uint32_t buf_size    = bufs.default_size(_buf_type);
 	const int32_t  old_n_ports = _graph->num_ports_non_rt();
 
-	typedef Properties::const_iterator PropIter;
+	using PropIter = Properties::const_iterator;
 
 	PropIter index_i = _properties.find(uris.lv2_index);
 	int32_t  index   = 0;

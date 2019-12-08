@@ -34,7 +34,7 @@ namespace server {
 class PreProcessContext
 {
 public:
-	typedef std::unordered_set<GraphImpl*> DirtyGraphs;
+	using DirtyGraphs = std::unordered_set<GraphImpl*>;
 
 	/** Return true iff an atomic bundle is currently being pre-processed. */
 	bool in_bundle() const { return _in_bundle; }

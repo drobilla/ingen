@@ -67,9 +67,9 @@ public:
 	          const Atom&         value,
 	          size_t              buffer_size = 0);
 
-	typedef boost::intrusive::slist<ArcImpl,
-	                                boost::intrusive::constant_time_size<true>
-	                                > Arcs;
+	using Arcs =
+	        boost::intrusive::slist<ArcImpl,
+	                                boost::intrusive::constant_time_size<true>>;
 
 	/** Return the maximum polyphony of an output connected to this input. */
 	virtual uint32_t max_tail_poly(RunContext& context) const;

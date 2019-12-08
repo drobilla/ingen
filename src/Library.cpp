@@ -41,7 +41,7 @@ Library::get_function(const char* name)
 #ifdef _WIN32
 	return (VoidFuncPtr)GetProcAddress((HMODULE)_lib, name);
 #else
-	typedef VoidFuncPtr (*VoidFuncGetter)(void*, const char*);
+	using VoidFuncGetter = VoidFuncPtr (*)(void*, const char*);
 	VoidFuncGetter dlfunc = (VoidFuncGetter)dlsym;
 	return dlfunc(_lib, name);
 #endif

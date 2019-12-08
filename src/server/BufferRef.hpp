@@ -26,7 +26,7 @@ namespace server {
 
 class Buffer;
 
-typedef boost::intrusive_ptr<Buffer> BufferRef;
+using BufferRef = boost::intrusive_ptr<Buffer>;
 
 // Defined in Buffer.cpp
 INGEN_API void intrusive_ptr_add_ref(Buffer* b);

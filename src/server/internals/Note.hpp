@@ -84,7 +84,7 @@ private:
 		SampleCount time;
 	};
 
-    typedef Raul::Array<Voice> Voices;
+	using Voices = Raul::Array<Voice>;
 
 	void free_voice(RunContext& context, uint32_t voice, FrameTime time);
 

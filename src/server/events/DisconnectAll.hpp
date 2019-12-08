@@ -60,7 +60,7 @@ public:
 	void undo(Interface& target) override;
 
 private:
-	typedef std::list<Disconnect::Impl*> Impls;
+	using Impls = std::list<Disconnect::Impl*>;
 
 	const ingen::DisconnectAll _msg;
 	GraphImpl*                 _parent;

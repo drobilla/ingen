@@ -109,7 +109,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 
 	const ingen::URIs& uris = _engine.world().uris();
 
-	typedef Properties::const_iterator iterator;
+	using iterator = Properties::const_iterator;
 
 	uint32_t ext_poly = 1;
 	uint32_t int_poly = 1;

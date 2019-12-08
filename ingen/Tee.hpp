@@ -32,7 +32,7 @@ namespace ingen {
 class Tee : public Interface
 {
 public:
-	typedef std::vector<SPtr<Interface>> Sinks;
+	using Sinks = std::vector<SPtr<Interface>>;
 
 	explicit Tee(Sinks sinks) : _sinks(std::move(sinks)) {}
 

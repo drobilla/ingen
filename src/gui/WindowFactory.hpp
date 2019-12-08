@@ -79,7 +79,7 @@ public:
 	void clear();
 
 private:
-	typedef std::map<Raul::Path, GraphWindow*> GraphWindowMap;
+	using GraphWindowMap = std::map<Raul::Path, GraphWindow*>;
 
 	GraphWindow* new_graph_window(SPtr<const client::GraphModel> graph,
 	                              SPtr<GraphView>                view);

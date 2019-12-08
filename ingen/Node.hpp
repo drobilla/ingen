@@ -61,8 +61,8 @@ public:
 		PORT
 	};
 
-	typedef std::pair<const Node*, const Node*> ArcsKey;
-	typedef std::map< ArcsKey, SPtr<Arc> > Arcs;
+	using ArcsKey = std::pair<const Node*, const Node*>;
+	using Arcs    = std::map<ArcsKey, SPtr<Arc>>;
 
 	// Graphs only
 	Arcs&       arcs()       { return _arcs; }

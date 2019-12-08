@@ -65,7 +65,7 @@ protected:
 
 	class FeatureArray : public Raul::Noncopyable {
 	public:
-		typedef std::vector< SPtr<LV2_Feature> > FeatureVector;
+		using FeatureVector = std::vector<SPtr<LV2_Feature>>;
 
 		explicit FeatureArray(FeatureVector& features);
 
@@ -84,7 +84,7 @@ protected:
 	SPtr<FeatureArray> lv2_features(World& world, Node*  node) const;
 
 private:
-	typedef std::vector< SPtr<Feature> > Features;
+	using Features = std::vector<SPtr<Feature>>;
 	Features _features;
 };
 
