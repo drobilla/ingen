@@ -44,13 +44,14 @@ FilePath::operator=(FilePath&& path) noexcept
 FilePath&
 FilePath::operator=(string_type&& str)
 {
-	return *this = FilePath(std::move(str));
+	_str = std::move(str);
+	return *this;
 }
 
 FilePath&
 FilePath::operator/=(const FilePath& path)
 {
-	const FilePath::string_type str = path.string();
+	const FilePath::string_type& str = path.string();
 	if (!_str.empty() && !is_sep(_str.back()) && !str.empty() &&
 	    !is_sep(str.front())) {
 		_str += preferred_separator;

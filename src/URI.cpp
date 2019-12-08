@@ -81,8 +81,11 @@ URI::URI(const URI& uri)
 URI&
 URI::operator=(const URI& uri)
 {
-	serd_node_free(&_node);
-	_node = serd_node_new_uri(&uri._uri, nullptr, &_uri);
+	if (&uri != this) {
+		serd_node_free(&_node);
+		_node = serd_node_new_uri(&uri._uri, nullptr, &_uri);
+	}
+
 	return *this;
 }
 
