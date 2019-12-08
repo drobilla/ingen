@@ -230,7 +230,7 @@ float
 ControlBindings::control_to_port_value(RunContext&     context,
                                        const PortImpl* port,
                                        Type            type,
-                                       int16_t         value) const
+                                       int16_t         value)
 {
 	float normal = 0.0f;
 	switch (type) {
@@ -262,7 +262,7 @@ int16_t
 ControlBindings::port_value_to_control(RunContext& context,
                                        PortImpl*   port,
                                        Type        type,
-                                       const Atom& value_atom) const
+                                       const Atom& value_atom)
 {
 	if (value_atom.type() != port->bufs().forge().Float) {
 		return 0;

@@ -94,7 +94,7 @@ private:
 		}
 	}
 
-	void free_list(Buffer* head);
+	static void free_list(Buffer* head);
 
 	std::atomic<Buffer*> _free_audio;
 	std::atomic<Buffer*> _free_control;

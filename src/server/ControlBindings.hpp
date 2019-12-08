@@ -122,7 +122,8 @@ private:
 	        boost::intrusive::multiset<Binding,
 	                                   boost::intrusive::compare<BindingLess>>;
 
-	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
+	static Key
+	midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
 	void set_port_value(RunContext& context,
 	                    PortImpl*   port,
@@ -131,15 +132,15 @@ private:
 
 	bool finish_learn(RunContext& context, Key key);
 
-	float control_to_port_value(RunContext& context,
+	static float control_to_port_value(RunContext& context,
 	                            const PortImpl* port,
 	                            Type            type,
-	                            int16_t         value) const;
+	                            int16_t         value);
 
-	int16_t port_value_to_control(RunContext& context,
-	                              PortImpl*   port,
-	                              Type        type,
-	                              const Atom& value_atom) const;
+	static int16_t port_value_to_control(RunContext& context,
+	                                     PortImpl*   port,
+	                                     Type        type,
+	                                     const Atom& value_atom);
 
 	Engine&               _engine;
 	std::atomic<Binding*> _learn_binding;

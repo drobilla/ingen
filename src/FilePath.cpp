@@ -95,7 +95,7 @@ FilePath::operator+=(boost::basic_string_view<value_type> sv)
 }
 
 FilePath
-FilePath::root_name() const
+FilePath::root_name()
 {
 #ifdef USE_WINDOWS_FILE_PATHS
 	if (_str.length() >= 2 && _str[0] >= 'A' && _str[0] <= 'Z' &&

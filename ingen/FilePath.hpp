@@ -83,7 +83,8 @@ public:
 
 	operator string_type() const { return _str; }
 
-	FilePath root_name() const;
+	static FilePath root_name();
+
 	FilePath root_directory() const;
 	FilePath root_path() const;
 	FilePath relative_path() const;
