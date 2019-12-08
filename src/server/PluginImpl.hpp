@@ -55,7 +55,7 @@ public:
 	                               Engine&             engine,
 	                               const LilvState*    state) = 0;
 
-	virtual const Raul::Symbol symbol() const = 0;
+	virtual Raul::Symbol symbol() const = 0;
 
 	const Atom& type() const            { return _type; }
 	void        set_type(const Atom& t) { _type = t; }

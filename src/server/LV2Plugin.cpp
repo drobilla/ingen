@@ -65,7 +65,7 @@ LV2Plugin::update_properties()
 	lilv_node_free(micro);
 }
 
-const Raul::Symbol
+Raul::Symbol
 LV2Plugin::symbol() const
 {
 	std::string working = uri();

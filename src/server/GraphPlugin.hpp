@@ -50,8 +50,8 @@ public:
 		return nullptr;
 	}
 
-	const Raul::Symbol symbol() const override { return Raul::Symbol("graph"); }
-	const std::string  name()   const          { return "Ingen Graph"; }
+	Raul::Symbol symbol() const override { return Raul::Symbol("graph"); }
+	std::string  name()   const          { return "Ingen Graph"; }
 
 private:
 	const std::string _symbol;

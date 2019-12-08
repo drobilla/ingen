@@ -52,7 +52,7 @@ public:
 	                       Engine&             engine,
 	                       const LilvState*    state) override;
 
-	const Raul::Symbol symbol() const override { return _symbol; }
+	Raul::Symbol symbol() const override { return _symbol; }
 
 private:
 	const Raul::Symbol _symbol;

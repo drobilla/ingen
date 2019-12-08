@@ -37,7 +37,7 @@ ClashAvoider::ClashAvoider(const Store& store)
 	: _store(store)
 {}
 
-const URI
+URI
 ClashAvoider::map_uri(const URI& in)
 {
 	if (uri_is_path(in)) {
@@ -47,7 +47,7 @@ ClashAvoider::map_uri(const URI& in)
 	}
 }
 
-const Raul::Path
+Raul::Path
 ClashAvoider::map_path(const Raul::Path& in)
 {
 	unsigned offset = 0;

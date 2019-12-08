@@ -37,8 +37,8 @@ class INGEN_API ClashAvoider
 public:
 	explicit ClashAvoider(const Store& store);
 
-	const URI        map_uri(const URI& in);
-	const Raul::Path map_path(const Raul::Path& in);
+	URI        map_uri(const URI& in);
+	Raul::Path map_path(const Raul::Path& in);
 
 	bool exists(const Raul::Path& path) const;
 

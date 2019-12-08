@@ -48,7 +48,7 @@ public:
 	                       Engine&             engine,
 	                       const LilvState*    state) override;
 
-	const Raul::Symbol symbol() const override;
+	Raul::Symbol symbol() const override;
 
 	World&            world()       const { return _world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
