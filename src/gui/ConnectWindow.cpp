@@ -526,7 +526,7 @@ ConnectWindow::gtk_callback()
 		_app->interface()->get(URI(main_uri().string() + "/"));
 		next_stage();
 	} else if (_connect_stage == 4) {
-		if (_app->store()->size() > 0) {
+		if (!_app->store()->empty()) {
 			SPtr<const GraphModel> root = dynamic_ptr_cast<const GraphModel>(
 				_app->store()->object(Raul::Path("/")));
 			if (root) {

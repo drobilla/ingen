@@ -163,7 +163,7 @@ LoadGraphWindow::ok_clicked()
 			_app->forge().make(_poly_spinbutton->get_value_as_int()));
 	}
 
-	if (get_uri() == "") {
+	if (get_uri().empty()) {
 		return;
 	}
 
@@ -189,7 +189,7 @@ LoadGraphWindow::ok_clicked()
 			y = _app->forge().make(y.get<float>() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(u));
-			if (uri_list.size() == 1 && _symbol_entry->get_text() != "") {
+			if (uri_list.size() == 1 && !_symbol_entry->get_text().empty()) {
 				symbol = Raul::Symbol::symbolify(_symbol_entry->get_text());
 			}
 

@@ -139,7 +139,7 @@ GraphTreeWindow::find_graph(Gtk::TreeModel::Children         root,
 		SPtr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
 		if (graph == pm) {
 			return c;
-		} else if ((*c)->children().size() > 0) {
+		} else if (!(*c)->children().empty()) {
 			Gtk::TreeModel::iterator ret = find_graph(c->children(), graph);
 			if (ret != c->children().end()) {
 				return ret;

@@ -113,7 +113,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 				ss << base_path << "_" << offset;
 				if (!exists(Raul::Path(ss.str()))) {
 					std::string name = base_path.symbol();
-					if (name == "") {
+					if (name.empty()) {
 						name = "_";
 					}
 					Raul::Symbol sym(name);
