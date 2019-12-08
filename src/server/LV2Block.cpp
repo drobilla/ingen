@@ -66,6 +66,10 @@ LV2Block::LV2Block(LV2Plugin*          plugin,
 
 LV2Block::~LV2Block()
 {
+	if (_activated) {
+		LV2Block::deactivate();
+	}
+
 	// Explicitly drop instances first to prevent reference cycles
 	drop_instances(_instances);
 	drop_instances(_prepared_instances);

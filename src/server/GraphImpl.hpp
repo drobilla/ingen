@@ -46,7 +46,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class GraphImpl : public BlockImpl
+class GraphImpl final : public BlockImpl
 {
 public:
 	GraphImpl(Engine&             engine,

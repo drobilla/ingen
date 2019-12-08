@@ -47,7 +47,7 @@ class LV2Plugin;
  *
  * \ingroup engine
  */
-class LV2Block : public BlockImpl
+class LV2Block final : public BlockImpl
 {
 public:
 	LV2Block(LV2Plugin*          plugin,

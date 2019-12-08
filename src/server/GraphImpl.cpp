@@ -61,6 +61,10 @@ GraphImpl::GraphImpl(Engine&             engine,
 
 GraphImpl::~GraphImpl()
 {
+	if (_activated) {
+		GraphImpl::deactivate();
+	}
+
 	delete _plugin;
 }
 

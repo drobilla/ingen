@@ -53,7 +53,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class INGEN_API DuplexPort
+class INGEN_API DuplexPort final
     : public InputPort
     , public boost::intrusive::slist_base_hook<> // In GraphImpl
 {

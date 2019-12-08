@@ -74,8 +74,8 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 		}
 	}
 
-	get_buffers(bufs, &BufferFactory::get_buffer,
-	            _voices, parent->polyphony(), 0);
+	DuplexPort::get_buffers(bufs, &BufferFactory::get_buffer,
+	                        _voices, parent->polyphony(), 0);
 }
 
 DuplexPort::~DuplexPort()

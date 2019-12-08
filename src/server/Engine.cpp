@@ -136,12 +136,12 @@ Engine::Engine(ingen::World& world)
 Engine::~Engine()
 {
 	_root_graph = nullptr;
-	deactivate();
+	Engine::deactivate();
 
 	// Process all pending events
 	const FrameTime end = std::numeric_limits<FrameTime>::max();
 	RunContext&     ctx = run_context();
-	locate(ctx.end(), end - ctx.end());
+	Engine::locate(ctx.end(), end - ctx.end());
 	_post_processor->set_end_time(end);
 	_post_processor->process();
 	while (!_pre_processor->empty()) {

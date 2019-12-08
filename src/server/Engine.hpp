@@ -75,7 +75,7 @@ class Worker;
 
    @ingroup engine
 */
-class INGEN_API Engine : public EngineBase
+class INGEN_API Engine final : public EngineBase
 {
 public:
 	explicit Engine(ingen::World& world);

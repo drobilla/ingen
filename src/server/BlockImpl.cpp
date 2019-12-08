@@ -54,12 +54,10 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
 
 BlockImpl::~BlockImpl()
 {
-	if (_activated) {
-		deactivate();
-	}
+	assert(!_activated);
 
 	if (is_linked()) {
-		parent_graph()->remove_block(*this);
+		((GraphImpl*)_parent)->remove_block(*this);
 	}
 }
 

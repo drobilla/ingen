@@ -39,7 +39,7 @@ LV2Plugin::LV2Plugin(World& world, const LilvPlugin* lplugin)
 {
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
 
-	update_properties();
+	LV2Plugin::update_properties();
 }
 
 void
