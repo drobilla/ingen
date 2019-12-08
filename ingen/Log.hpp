@@ -86,7 +86,7 @@ public:
 		trace(fmt(format, std::forward<Args>(args)...));
 	}
 
-	int vtprintf(LV2_URID type, const char* format, va_list args);
+	int vtprintf(LV2_URID type, const char* fmt, va_list args);
 
 	void set_flush(bool f) { _flush = f; }
 	void set_trace(bool f) { _trace = f; }
