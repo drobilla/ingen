@@ -90,9 +90,7 @@ CreatePort::CreatePort(Engine&                engine,
 bool
 CreatePort::pre_process(PreProcessContext&)
 {
-	if (_port_type == PortType::UNKNOWN) {
-		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
-	} else if (!_flow) {
+	if (_port_type == PortType::UNKNOWN || !_flow) {
 		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
 	} else if (_path.is_root()) {
 		return Event::pre_process_done(Status::BAD_URI, _path);

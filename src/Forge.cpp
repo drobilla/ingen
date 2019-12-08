@@ -48,17 +48,13 @@ Forge::str(const Atom& atom, bool quoted)
 		ss << atom.get<float>();
 	} else if (atom.type() == Bool) {
 		ss << (atom.get<int32_t>() ? "true" : "false");
-	} else if (atom.type() == URI) {
+	} else if (atom.type() == URI || atom.type() == Path) {
 		ss << (quoted ? "<" : "")
 		   << atom.ptr<const char>()
 		   << (quoted ? ">" : "");
 	} else if (atom.type() == URID) {
 		ss << (quoted ? "<" : "")
 		   << _map.unmap_uri(atom.get<int32_t>())
-		   << (quoted ? ">" : "");
-	} else if (atom.type() == Path) {
-		ss << (quoted ? "<" : "")
-		   << atom.ptr<const char>()
 		   << (quoted ? ">" : "");
 	} else if (atom.type() == String) {
 		ss << (quoted ? "\"" : "")

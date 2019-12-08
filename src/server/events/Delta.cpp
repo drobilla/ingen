@@ -184,9 +184,8 @@ Delta::pre_process(PreProcessContext& ctx)
 
 		// Get "prototype" for preset (node to save state for)
 		const auto p = _properties.find(uris.lv2_prototype);
-		if (p == _properties.end()) {
-			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
-		} else if (!_engine.world().forge().is_uri(p->second)) {
+		if (p == _properties.end() ||
+		    !_engine.world().forge().is_uri(p->second)) {
 			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
 		}
 
