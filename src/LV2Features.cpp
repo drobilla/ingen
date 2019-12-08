@@ -79,7 +79,8 @@ LV2Features::lv2_features(World& world, Node* node) const
 			vec.push_back(fptr);
 		}
 	}
-	return SPtr<FeatureArray>(new FeatureArray(vec));
+
+	return std::make_shared<FeatureArray>(vec);
 }
 
 } // namespace ingen

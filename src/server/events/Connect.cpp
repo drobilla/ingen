@@ -105,7 +105,7 @@ Connect::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::EXISTS, _msg.head);
 	}
 
-	_arc = SPtr<ArcImpl>(new ArcImpl(tail_output, _head));
+	_arc = std::make_shared<ArcImpl>(tail_output, _head);
 
 	/* Need to be careful about graph port arcs here and adding a
 	   block's parent as a dependant/provider, or adding a graph as its own

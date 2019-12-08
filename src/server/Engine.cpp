@@ -95,7 +95,7 @@ Engine::Engine(ingen::World& world)
 	, _activated(false)
 {
 	if (!world.store()) {
-		world.set_store(SPtr<ingen::Store>(new Store()));
+		world.set_store(std::make_shared<ingen::Store>());
 	}
 
 	for (int i = 0; i < world.conf().option("threads").get<int32_t>(); ++i) {

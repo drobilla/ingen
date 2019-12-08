@@ -101,9 +101,9 @@ public:
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map.urid_map_feature());
 		lv2_features->add_feature(uri_map.urid_unmap_feature());
-		lv2_features->add_feature(SPtr<InstanceAccess>(new InstanceAccess()));
-		lv2_features->add_feature(SPtr<DataAccess>(new DataAccess()));
-		lv2_features->add_feature(SPtr<Log::Feature>(new Log::Feature()));
+		lv2_features->add_feature(std::make_shared<InstanceAccess>());
+		lv2_features->add_feature(std::make_shared<DataAccess>());
+		lv2_features->add_feature(std::make_shared<Log::Feature>());
 		lilv_world_load_all(lilv_world.get());
 
 		// Set up RDF namespaces
@@ -197,8 +197,8 @@ public:
 World::World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log)
 	: _impl(new Impl(map, unmap, log))
 {
-	_impl->serialiser = SPtr<Serialiser>(new Serialiser(*this));
-	_impl->parser     = SPtr<Parser>(new Parser());
+	_impl->serialiser = std::make_shared<Serialiser>(*this);
+	_impl->parser     = std::make_shared<Parser>();
 }
 
 World::~World()

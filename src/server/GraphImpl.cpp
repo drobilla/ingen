@@ -117,7 +117,7 @@ GraphImpl::duplicate(Engine&             engine,
 			auto t = port_map.find(arc->tail());
 			auto h = port_map.find(arc->head());
 			if (t != port_map.end() && h != port_map.end()) {
-				dup->add_arc(SPtr<ArcImpl>(new ArcImpl(t->second, h->second)));
+				dup->add_arc(std::make_shared<ArcImpl>(t->second, h->second));
 			}
 		}
 	}
