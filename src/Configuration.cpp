@@ -318,7 +318,7 @@ Configuration::save(URIMap&            uri_map,
 	                writer);
 
 	// Write a statement for each valid option
-	for (auto o : _options) {
+	for (const auto& o : _options) {
 		const Atom& value = o.second.value;
 		if (!(o.second.scope & scopes) ||
 		    o.second.key.empty() ||

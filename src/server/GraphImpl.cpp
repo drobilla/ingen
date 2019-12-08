@@ -87,17 +87,17 @@ GraphImpl::duplicate(Engine&             engine,
 
 	// Add duplicates of all ports
 	dup->_ports = bufs.maid().make_managed<Ports>(num_ports(), nullptr);
-	for (PortList::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {
-		DuplexPort* p_dup = p->duplicate(engine, p->symbol(), dup);
+	for (auto& p : _inputs) {
+		DuplexPort* p_dup = p.duplicate(engine, p.symbol(), dup);
 		dup->_inputs.push_front(*p_dup);
-		(*dup->_ports)[p->index()] = p_dup;
-		port_map.insert({&*p, p_dup});
+		(*dup->_ports)[p.index()] = p_dup;
+		port_map.insert({&p, p_dup});
 	}
-	for (PortList::iterator p = _outputs.begin(); p != _outputs.end(); ++p) {
-		DuplexPort* p_dup = p->duplicate(engine, p->symbol(), dup);
+	for (auto& p : _outputs) {
+		DuplexPort* p_dup = p.duplicate(engine, p.symbol(), dup);
 		dup->_outputs.push_front(*p_dup);
-		(*dup->_ports)[p->index()] = p_dup;
-		port_map.insert({&*p, p_dup});
+		(*dup->_ports)[p.index()] = p_dup;
+		port_map.insert({&p, p_dup});
 	}
 
 	// Add duplicates of all blocks
@@ -321,14 +321,14 @@ GraphImpl::has_port_with_index(uint32_t index) const
 	BufferFactory& bufs       = *_engine.buffer_factory();
 	const auto     index_atom = bufs.forge().make(int32_t(index));
 
-	for (auto p = _inputs.begin(); p != _inputs.end(); ++p) {
-		if (p->has_property(bufs.uris().lv2_index, index_atom)) {
+	for (const auto& p : _inputs) {
+		if (p.has_property(bufs.uris().lv2_index, index_atom)) {
 			return true;
 		}
 	}
 
-	for (auto p = _outputs.begin(); p != _outputs.end(); ++p) {
-		if (p->has_property(bufs.uris().lv2_index, index_atom)) {
+	for (const auto& p : _outputs) {
+		if (p.has_property(bufs.uris().lv2_index, index_atom)) {
 			return true;
 		}
 	}
@@ -362,11 +362,11 @@ GraphImpl::build_ports_array(Raul::Maid& maid)
 	MPtr<Ports> result = maid.make_managed<Ports>(n);
 
 	std::map<size_t, DuplexPort*> ports;
-	for (PortList::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {
-		ports.emplace(p->index(), &*p);
+	for (auto& p : _inputs) {
+		ports.emplace(p.index(), &p);
 	}
-	for (PortList::iterator p = _outputs.begin(); p != _outputs.end(); ++p) {
-		ports.emplace(p->index(), &*p);
+	for (auto& p : _outputs) {
+		ports.emplace(p.index(), &p);
 	}
 
 	size_t i = 0;
