@@ -114,9 +114,6 @@ Connect::pre_process(PreProcessContext& ctx)
 	if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
 		// Connection is between blocks inside a graph, compile graph
 
-		// The tail block is now a dependency (provider) of the head block
-		head_block->providers().insert(tail_block);
-
 		if (!dynamic_cast<internals::BlockDelayNode*>(tail_block)) {
 			/* Arcs leaving a delay node are ignored for the purposes of
 			   compilation, since the output is from the previous cycle and
@@ -124,6 +121,9 @@ Connect::pre_process(PreProcessContext& ctx)
 			   now a dependant of the head block. */
 			tail_block->dependants().insert(head_block);
 		}
+
+		// The tail block is now a dependency (provider) of the head block
+		head_block->providers().insert(tail_block);
 
 		if (ctx.must_compile(*_graph)) {
 			if (!(_compiled_graph = compile(*_engine.maid(), *_graph))) {
