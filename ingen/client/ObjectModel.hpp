@@ -80,11 +80,11 @@ protected:
 	ObjectModel(const ObjectModel& copy);
 
 	void set_path(const Raul::Path& p) override;
-	virtual void set_parent(SPtr<ObjectModel> p);
-	virtual void add_child(SPtr<ObjectModel> c) {}
-	virtual bool remove_child(SPtr<ObjectModel> c) { return true; }
+	virtual void set_parent(const SPtr<ObjectModel>& p);
+	virtual void add_child(const SPtr<ObjectModel>& c) {}
+	virtual bool remove_child(const SPtr<ObjectModel>& c) { return true; }
 
-	virtual void set(SPtr<ObjectModel> o);
+	virtual void set(const SPtr<ObjectModel>& o);
 
 	SPtr<ObjectModel> _parent;
 

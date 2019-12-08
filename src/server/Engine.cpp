@@ -336,7 +336,7 @@ Engine::main_iteration()
 }
 
 void
-Engine::set_driver(SPtr<Driver> driver)
+Engine::set_driver(const SPtr<Driver>& driver)
 {
 	_driver = driver;
 	for (const auto& ctx : _run_contexts) {
@@ -510,14 +510,14 @@ Engine::log() const
 }
 
 void
-Engine::register_client(SPtr<Interface> client)
+Engine::register_client(const SPtr<Interface>& client)
 {
 	log().info("Registering client <%1%>\n", client->uri().c_str());
 	_broadcaster->register_client(client);
 }
 
 bool
-Engine::unregister_client(SPtr<Interface> client)
+Engine::unregister_client(const SPtr<Interface>& client)
 {
 	log().info("Unregistering client <%1%>\n", client->uri().c_str());
 	return _broadcaster->unregister_client(client);

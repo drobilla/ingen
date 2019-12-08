@@ -32,15 +32,15 @@ namespace events {
 class Undo : public Event
 {
 public:
-	Undo(Engine&            engine,
-	     SPtr<Interface>    client,
-	     SampleCount        timestamp,
-	     const ingen::Undo& msg);
+	Undo(Engine&                engine,
+	     const SPtr<Interface>& client,
+	     SampleCount            timestamp,
+	     const ingen::Undo&     msg);
 
-	Undo(Engine&            engine,
-	     SPtr<Interface>    client,
-	     SampleCount        timestamp,
-	     const ingen::Redo& msg);
+	Undo(Engine&                engine,
+	     const SPtr<Interface>& client,
+	     SampleCount            timestamp,
+	     const ingen::Redo&     msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;

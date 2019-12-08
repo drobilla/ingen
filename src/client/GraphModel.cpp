@@ -29,7 +29,7 @@ namespace ingen {
 namespace client {
 
 void
-GraphModel::add_child(SPtr<ObjectModel> c)
+GraphModel::add_child(const SPtr<ObjectModel>& c)
 {
 	assert(c->parent().get() == this);
 
@@ -46,7 +46,7 @@ GraphModel::add_child(SPtr<ObjectModel> c)
 }
 
 bool
-GraphModel::remove_child(SPtr<ObjectModel> o)
+GraphModel::remove_child(const SPtr<ObjectModel>& o)
 {
 	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
@@ -66,7 +66,7 @@ GraphModel::remove_child(SPtr<ObjectModel> o)
 }
 
 void
-GraphModel::remove_arcs_on(SPtr<PortModel> p)
+GraphModel::remove_arcs_on(const SPtr<PortModel>& p)
 {
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
@@ -116,7 +116,7 @@ GraphModel::get_arc(const Node* tail, const Node* head)
  * this graph is a fatal error.
  */
 void
-GraphModel::add_arc(SPtr<ArcModel> arc)
+GraphModel::add_arc(const SPtr<ArcModel>& arc)
 {
 	// Store should have 'resolved' the connection already
 	assert(arc);

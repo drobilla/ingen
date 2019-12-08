@@ -156,7 +156,7 @@ public:
 	/** Add an arc to this graph.
 	 * Pre-processing thread only.
 	 */
-	void add_arc(SPtr<ArcImpl> a);
+	void add_arc(const SPtr<ArcImpl>& a);
 
 	/** Remove an arc from this graph.
 	 * Pre-processing thread only.

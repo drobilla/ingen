@@ -50,11 +50,11 @@ public:
 
 	void init(App& app) { _app = &app; }
 
-	void set_graph(SPtr<const client::GraphModel> graph);
+	void set_graph(const SPtr<const client::GraphModel>& graph);
 
-	void present(SPtr<const client::GraphModel> graph,
-	             bool                           import,
-	             Properties                     data);
+	void present(const SPtr<const client::GraphModel>& graph,
+	             bool                                  import,
+	             const Properties&                     data);
 
 protected:
 	void on_show() override;

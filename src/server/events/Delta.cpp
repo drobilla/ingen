@@ -48,10 +48,10 @@ class PreProcessContext;
 
 namespace events {
 
-Delta::Delta(Engine&           engine,
-             SPtr<Interface>   client,
-             SampleCount       timestamp,
-             const ingen::Put& msg)
+Delta::Delta(Engine&                engine,
+             const SPtr<Interface>& client,
+             SampleCount            timestamp,
+             const ingen::Put&      msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.uri)
@@ -67,10 +67,10 @@ Delta::Delta(Engine&           engine,
 	init();
 }
 
-Delta::Delta(Engine&             engine,
-             SPtr<Interface>     client,
-             SampleCount         timestamp,
-             const ingen::Delta& msg)
+Delta::Delta(Engine&                engine,
+             const SPtr<Interface>& client,
+             SampleCount            timestamp,
+             const ingen::Delta&    msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.uri)
@@ -88,7 +88,7 @@ Delta::Delta(Engine&             engine,
 }
 
 Delta::Delta(Engine&                   engine,
-             SPtr<Interface>           client,
+             const SPtr<Interface>&    client,
              SampleCount               timestamp,
              const ingen::SetProperty& msg)
 	: Event(engine, client, msg.seq, timestamp)

@@ -93,15 +93,15 @@ public:
 	unsigned run(uint32_t sample_count) override;
 	void quit() override;
 	bool main_iteration() override;
-	void register_client(SPtr<Interface> client) override;
-	bool unregister_client(SPtr<Interface> client) override;
+	void register_client(const SPtr<Interface>& client) override;
+	bool unregister_client(const SPtr<Interface>& client) override;
 
 	void listen() override;
 
 	/** Return a random [0..1] float with uniform distribution */
 	float frand() { return _uniform_dist(_rand_engine); }
 
-	void set_driver(SPtr<Driver> driver);
+	void set_driver(const SPtr<Driver>& driver);
 
 	/** Return the frame time to execute an event that arrived now.
 	 *

@@ -64,11 +64,11 @@ private:
 	{}
 
 	void clear() override;
-	void add_child(SPtr<ObjectModel> c) override;
-	bool remove_child(SPtr<ObjectModel> o) override;
-	void remove_arcs_on(SPtr<PortModel> p);
+	void add_child(const SPtr<ObjectModel>& c) override;
+	bool remove_child(const SPtr<ObjectModel>& o) override;
+	void remove_arcs_on(const SPtr<PortModel>& p);
 
-	void add_arc(SPtr<ArcModel> arc);
+	void add_arc(const SPtr<ArcModel>& arc);
 	void remove_arc(const ingen::Node* tail,
 	                const ingen::Node* head);
 };

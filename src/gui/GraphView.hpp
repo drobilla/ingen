@@ -69,11 +69,11 @@ public:
 	SPtr<const client::GraphModel> graph()                const { return _graph; }
 	Gtk::ToolItem*                 breadcrumb_container() const { return _breadcrumb_container; }
 
-	static SPtr<GraphView> create(App& app,
-	                              SPtr<const client::GraphModel> graph);
+	static SPtr<GraphView>
+	create(App& app, const SPtr<const client::GraphModel>& graph);
 
 private:
-	void set_graph(SPtr<const client::GraphModel> graph);
+	void set_graph(const SPtr<const client::GraphModel>& graph);
 
 	void process_toggled();
 	void poly_changed();

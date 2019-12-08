@@ -44,7 +44,7 @@ namespace server {
 namespace events {
 
 Disconnect::Disconnect(Engine&                  engine,
-                       SPtr<Interface>          client,
+                       const SPtr<Interface>&   client,
                        SampleCount              timestamp,
                        const ingen::Disconnect& msg)
 	: Event(engine, client, msg.seq, timestamp)

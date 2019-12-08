@@ -40,12 +40,12 @@ namespace ingen {
 namespace server {
 namespace events {
 
-CreatePort::CreatePort(Engine&           engine,
-                       SPtr<Interface>   client,
-                       int32_t           id,
-                       SampleCount       timestamp,
-                       const Raul::Path& path,
-                       const Properties& properties)
+CreatePort::CreatePort(Engine&                engine,
+                       const SPtr<Interface>& client,
+                       int32_t                id,
+                       SampleCount            timestamp,
+                       const Raul::Path&      path,
+                       const Properties&      properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _port_type(PortType::UNKNOWN)

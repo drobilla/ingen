@@ -41,7 +41,7 @@ class URIs;
 class INGEN_API TurtleWriter : public AtomWriter, public AtomSink
 {
 public:
-	TurtleWriter(URIMap& map, URIs& uris, const URI& uri);
+	TurtleWriter(URIMap& map, URIs& uris, URI uri);
 
 	~TurtleWriter() override;
 

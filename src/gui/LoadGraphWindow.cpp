@@ -97,9 +97,9 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 }
 
 void
-LoadGraphWindow::present(SPtr<const GraphModel> graph,
-                         bool                   import,
-                         Properties             data)
+LoadGraphWindow::present(const SPtr<const GraphModel>& graph,
+                         bool                          import,
+                         const Properties&             data)
 {
 	_import = import;
 	set_graph(graph);
@@ -117,7 +117,7 @@ LoadGraphWindow::present(SPtr<const GraphModel> graph,
  * This function MUST be called before using the window in any way!
  */
 void
-LoadGraphWindow::set_graph(SPtr<const GraphModel> graph)
+LoadGraphWindow::set_graph(const SPtr<const GraphModel>& graph)
 {
 	_graph = graph;
 	_symbol_entry->set_text("");

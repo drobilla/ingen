@@ -38,10 +38,10 @@ namespace events {
 class Connect : public Event
 {
 public:
-	Connect(Engine&               engine,
-	        SPtr<Interface>       client,
-	        SampleCount           timestamp,
-	        const ingen::Connect& msg);
+	Connect(Engine&                engine,
+	        const SPtr<Interface>& client,
+	        SampleCount            timestamp,
+	        const ingen::Connect&  msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;

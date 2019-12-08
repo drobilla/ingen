@@ -61,14 +61,14 @@ public:
 	void show_port_names(bool b);
 	bool show_port_names() const { return _show_port_names; }
 
-	void add_plugin(SPtr<client::PluginModel> p);
+	void add_plugin(const SPtr<client::PluginModel>& p);
 	void remove_plugin(const URI& uri);
-	void add_block(SPtr<const client::BlockModel> bm);
-	void remove_block(SPtr<const client::BlockModel> bm);
-	void add_port(SPtr<const client::PortModel> pm);
-	void remove_port(SPtr<const client::PortModel> pm);
-	void connection(SPtr<const client::ArcModel> arc);
-	void disconnection(SPtr<const client::ArcModel> arc);
+	void add_block(const SPtr<const client::BlockModel>& bm);
+	void remove_block(const SPtr<const client::BlockModel>& bm);
+	void add_port(const SPtr<const client::PortModel>& pm);
+	void remove_port(const SPtr<const client::PortModel>& pm);
+	void connection(const SPtr<const client::ArcModel>& arc);
+	void disconnection(const SPtr<const client::ArcModel>& arc);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -106,7 +106,7 @@ private:
 
 	Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
-	Ganv::Port* get_port_view(SPtr<client::PortModel> port);
+	Ganv::Port* get_port_view(const SPtr<client::PortModel>& port);
 
 	void connect(Ganv::Node* tail,
 	             Ganv::Node* head);

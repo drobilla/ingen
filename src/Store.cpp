@@ -77,7 +77,7 @@ Store::find_descendants_end(const const_iterator parent) const
 }
 
 Store::const_range
-Store::children_range(SPtr<const Node> o) const
+Store::children_range(const SPtr<const Node>& o) const
 {
 	const const_iterator parent = find(o->path());
 	if (parent != end()) {

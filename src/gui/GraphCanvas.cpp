@@ -307,7 +307,7 @@ GraphCanvas::show_port_names(bool b)
 }
 
 void
-GraphCanvas::add_plugin(SPtr<PluginModel> p)
+GraphCanvas::add_plugin(const SPtr<PluginModel>& p)
 {
 	if (_internal_menu && _app.uris().ingen_Internal == p->type()) {
 		_internal_menu->items().push_back(
@@ -327,7 +327,7 @@ GraphCanvas::remove_plugin(const URI& uri)
 }
 
 void
-GraphCanvas::add_block(SPtr<const BlockModel> bm)
+GraphCanvas::add_block(const SPtr<const BlockModel>& bm)
 {
 	SPtr<const GraphModel> pm = dynamic_ptr_cast<const GraphModel>(bm);
 	NodeModule*            module;
@@ -345,7 +345,7 @@ GraphCanvas::add_block(SPtr<const BlockModel> bm)
 }
 
 void
-GraphCanvas::remove_block(SPtr<const BlockModel> bm)
+GraphCanvas::remove_block(const SPtr<const BlockModel>& bm)
 {
 	auto i = _views.find(bm);
 
@@ -360,7 +360,7 @@ GraphCanvas::remove_block(SPtr<const BlockModel> bm)
 }
 
 void
-GraphCanvas::add_port(SPtr<const PortModel> pm)
+GraphCanvas::add_port(const SPtr<const PortModel>& pm)
 {
 	GraphPortModule* view = GraphPortModule::create(*this, pm);
 	_views.emplace(pm, view);
@@ -368,7 +368,7 @@ GraphCanvas::add_port(SPtr<const PortModel> pm)
 }
 
 void
-GraphCanvas::remove_port(SPtr<const PortModel> pm)
+GraphCanvas::remove_port(const SPtr<const PortModel>& pm)
 {
 	auto i = _views.find(pm);
 
@@ -386,7 +386,7 @@ GraphCanvas::remove_port(SPtr<const PortModel> pm)
 }
 
 Ganv::Port*
-GraphCanvas::get_port_view(SPtr<PortModel> port)
+GraphCanvas::get_port_view(const SPtr<PortModel>& port)
 {
 	Ganv::Module* module = _views[port];
 
@@ -413,7 +413,7 @@ GraphCanvas::get_port_view(SPtr<PortModel> port)
 
 /** Called when a connection is added to the model. */
 void
-GraphCanvas::connection(SPtr<const ArcModel> arc)
+GraphCanvas::connection(const SPtr<const ArcModel>& arc)
 {
 	Ganv::Port* const tail = get_port_view(arc->tail());
 	Ganv::Port* const head = get_port_view(arc->head());
@@ -428,7 +428,7 @@ GraphCanvas::connection(SPtr<const ArcModel> arc)
 
 /** Called when a connection is removed from the model. */
 void
-GraphCanvas::disconnection(SPtr<const ArcModel> arc)
+GraphCanvas::disconnection(const SPtr<const ArcModel>& arc)
 {
 	Ganv::Port* const tail = get_port_view(arc->tail());
 	Ganv::Port* const head = get_port_view(arc->head());

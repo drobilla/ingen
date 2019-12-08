@@ -38,10 +38,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Connect::Connect(Engine&               engine,
-                 SPtr<Interface>       client,
-                 SampleCount           timestamp,
-                 const ingen::Connect& msg)
+Connect::Connect(Engine&                engine,
+                 const SPtr<Interface>& client,
+                 SampleCount            timestamp,
+                 const ingen::Connect&  msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _graph(nullptr)

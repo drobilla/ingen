@@ -38,12 +38,12 @@ namespace events {
 class CreateBlock : public Event
 {
 public:
-	CreateBlock(Engine&           engine,
-	            SPtr<Interface>   client,
-	            int32_t           id,
-	            SampleCount       timestamp,
-	            const Raul::Path& path,
-	            Properties&       properties);
+	CreateBlock(Engine&                engine,
+	            const SPtr<Interface>& client,
+	            int32_t                id,
+	            SampleCount            timestamp,
+	            const Raul::Path&      path,
+	            Properties&            properties);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;

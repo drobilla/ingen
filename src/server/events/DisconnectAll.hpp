@@ -44,7 +44,7 @@ class DisconnectAll : public Event
 {
 public:
 	DisconnectAll(Engine&                     engine,
-	              SPtr<Interface>             client,
+	              const SPtr<Interface>&      client,
 	              SampleCount                 timestamp,
 	              const ingen::DisconnectAll& msg);
 

@@ -45,10 +45,10 @@ class DisconnectAll;
 class Delete : public Event
 {
 public:
-	Delete(Engine&           engine,
-	       SPtr<Interface>   client,
-	       FrameTime         timestamp,
-	       const ingen::Del& msg);
+	Delete(Engine&                engine,
+	       const SPtr<Interface>& client,
+	       FrameTime              timestamp,
+	       const ingen::Del&      msg);
 
 	~Delete();
 

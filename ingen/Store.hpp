@@ -54,7 +54,7 @@ public:
 	iterator       find_descendants_end(Store::iterator parent);
 	const_iterator find_descendants_end(Store::const_iterator parent) const;
 
-	const_range children_range(SPtr<const Node> o) const;
+	const_range children_range(const SPtr<const Node>& o) const;
 
 	/** Remove the object at `top` and all its children from the store.
 	 *

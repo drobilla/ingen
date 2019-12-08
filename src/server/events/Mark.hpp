@@ -41,12 +41,12 @@ class Mark : public Event
 {
 public:
 	Mark(Engine&                   engine,
-	     SPtr<Interface>           client,
+	     const SPtr<Interface>&    client,
 	     SampleCount               timestamp,
 	     const ingen::BundleBegin& msg);
 
 	Mark(Engine&                 engine,
-	     SPtr<Interface>         client,
+	     const SPtr<Interface>&  client,
 	     SampleCount             timestamp,
 	     const ingen::BundleEnd& msg);
 

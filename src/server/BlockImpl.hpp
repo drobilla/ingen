@@ -133,10 +133,10 @@ public:
 	virtual void post_process(RunContext& context);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
-	virtual void set_port_buffer(uint32_t    voice,
-	                             uint32_t    port_num,
-	                             BufferRef   buf,
-	                             SampleCount offset);
+	virtual void set_port_buffer(uint32_t         voice,
+	                             uint32_t         port_num,
+	                             const BufferRef& buf,
+	                             SampleCount      offset);
 
 	Node*             port(uint32_t index)      const override;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }

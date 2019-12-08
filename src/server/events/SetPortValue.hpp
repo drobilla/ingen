@@ -40,14 +40,14 @@ namespace events {
 class SetPortValue : public Event
 {
 public:
-	SetPortValue(Engine&         engine,
-	             SPtr<Interface> client,
-	             int32_t         id,
-	             SampleCount     timestamp,
-	             PortImpl*       port,
-	             const Atom&     value,
-	             bool            activity,
-	             bool            synthetic = false);
+	SetPortValue(Engine&                engine,
+	             const SPtr<Interface>& client,
+	             int32_t                id,
+	             SampleCount            timestamp,
+	             PortImpl*              port,
+	             const Atom&            value,
+	             bool                   activity,
+	             bool                   synthetic = false);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;

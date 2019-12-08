@@ -47,18 +47,18 @@ class SetPortValue;
 class Delta : public Event
 {
 public:
-	Delta(Engine&           engine,
-	      SPtr<Interface>   client,
-	      SampleCount       timestamp,
-	      const ingen::Put& msg);
+	Delta(Engine&                engine,
+	      const SPtr<Interface>& client,
+	      SampleCount            timestamp,
+	      const ingen::Put&      msg);
 
-	Delta(Engine&             engine,
-	      SPtr<Interface>     client,
-	      SampleCount         timestamp,
-	      const ingen::Delta& msg);
+	Delta(Engine&                engine,
+	      const SPtr<Interface>& client,
+	      SampleCount            timestamp,
+	      const ingen::Delta&    msg);
 
 	Delta(Engine&                   engine,
-	      SPtr<Interface>           client,
+	      const SPtr<Interface>&    client,
 	      SampleCount               timestamp,
 	      const ingen::SetProperty& msg);
 

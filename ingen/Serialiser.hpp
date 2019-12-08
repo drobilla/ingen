@@ -46,8 +46,8 @@ public:
 	virtual ~Serialiser();
 
 	/** Write a graph and all its contents as a complete bundle. */
-	virtual void write_bundle(SPtr<const Node> graph,
-	                          const URI&       uri);
+	virtual void write_bundle(const SPtr<const Node>& graph,
+	                          const URI&              uri);
 
 	/** Begin a serialization to a string.
 	 *
@@ -76,15 +76,15 @@ public:
 	 *
 	 * @throw std::logic_error
 	 */
-	virtual void serialise(SPtr<const Node> object,
-	                       Property::Graph  context = Property::Graph::DEFAULT);
+	virtual void serialise(const SPtr<const Node>& object,
+	                       Property::Graph         context = Property::Graph::DEFAULT);
 
 	/** Serialize an arc.
 	 *
 	 * @throw std::logic_error
 	 */
-	virtual void serialise_arc(const Sord::Node& parent,
-	                           SPtr<const Arc>   arc);
+	virtual void serialise_arc(const Sord::Node&      parent,
+	                           const SPtr<const Arc>& arc);
 
 	/** Finish serialization.
 	 *

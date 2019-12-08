@@ -64,18 +64,18 @@ public:
 	uint32_t          num_ports()    const override { return _ports.size(); }
 	const Ports&      ports()        const          { return _ports; }
 
-	void default_port_value_range(SPtr<const PortModel> port,
-	                              float&                min,
-	                              float&                max,
-	                              uint32_t              srate = 1) const;
+	void default_port_value_range(const SPtr<const PortModel>& port,
+	                              float&                       min,
+	                              float&                       max,
+	                              uint32_t                     srate = 1) const;
 
-	void port_value_range(SPtr<const PortModel> port,
-	                      float&                min,
-	                      float&                max,
-	                      uint32_t              srate = 1) const;
+	void port_value_range(const SPtr<const PortModel>& port,
+	                      float&                       min,
+	                      float&                       max,
+	                      uint32_t                     srate = 1) const;
 
 	std::string label() const;
-	std::string port_label(SPtr<const PortModel> port) const;
+	std::string port_label(const SPtr<const PortModel>& port) const;
 
 	// Signals
 	INGEN_SIGNAL(new_port, void, SPtr<const PortModel>);
@@ -87,17 +87,19 @@ protected:
 	BlockModel(URIs&             uris,
 	           const URI&        plugin_uri,
 	           const Raul::Path& path);
-	BlockModel(URIs&             uris,
-	           SPtr<PluginModel> plugin,
-	           const Raul::Path& path);
+
+	BlockModel(URIs&                    uris,
+	           const SPtr<PluginModel>& plugin,
+	           const Raul::Path&        path);
+
 	explicit BlockModel(const Raul::Path& path);
 
-	void add_child(SPtr<ObjectModel> c) override;
-	bool remove_child(SPtr<ObjectModel> c) override;
-	void add_port(SPtr<PortModel> pm);
-	void remove_port(SPtr<PortModel> port);
+	void add_child(const SPtr<ObjectModel>& c) override;
+	bool remove_child(const SPtr<ObjectModel>& c) override;
+	void add_port(const SPtr<PortModel>& pm);
+	void remove_port(const SPtr<PortModel>& port);
 	void remove_port(const Raul::Path& port_path);
-	void set(SPtr<ObjectModel> model) override;
+	void set(const SPtr<ObjectModel>& model) override;
 
 	virtual void clear();
 

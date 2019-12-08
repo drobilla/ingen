@@ -43,10 +43,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Delete::Delete(Engine&           engine,
-               SPtr<Interface>   client,
-               FrameTime         timestamp,
-               const ingen::Del& msg)
+Delete::Delete(Engine&                engine,
+               const SPtr<Interface>& client,
+               FrameTime              timestamp,
+               const ingen::Del&      msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _engine_port(nullptr)

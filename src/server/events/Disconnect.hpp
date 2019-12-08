@@ -38,7 +38,7 @@ class Disconnect : public Event
 {
 public:
 	Disconnect(Engine&                  engine,
-	           SPtr<Interface>          client,
+	           const SPtr<Interface>&   client,
 	           SampleCount              timestamp,
 	           const ingen::Disconnect& msg);
 

@@ -66,7 +66,7 @@ GraphView::init(App& app)
 }
 
 void
-GraphView::set_graph(SPtr<const GraphModel> graph)
+GraphView::set_graph(const SPtr<const GraphModel>& graph)
 {
 	assert(!_canvas); // FIXME: remove
 
@@ -101,7 +101,7 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 }
 
 SPtr<GraphView>
-GraphView::create(App& app, SPtr<const GraphModel> graph)
+GraphView::create(App& app, const SPtr<const GraphModel>& graph)
 {
 	GraphView* result = nullptr;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");

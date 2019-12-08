@@ -40,8 +40,8 @@ using namespace client;
 
 namespace gui {
 
-GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
-                                 SPtr<const client::PortModel> model)
+GraphPortModule::GraphPortModule(GraphCanvas&                         canvas,
+                                 const SPtr<const client::PortModel>& model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 	, _port(nullptr)
@@ -63,8 +63,7 @@ GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
 }
 
 GraphPortModule*
-GraphPortModule::create(GraphCanvas&          canvas,
-                        SPtr<const PortModel> model)
+GraphPortModule::create(GraphCanvas& canvas, const SPtr<const PortModel>& model)
 {
 	GraphPortModule* ret  = new GraphPortModule(canvas, model);
 	Port*            port = Port::create(canvas.app(), *ret, model, true);

@@ -35,10 +35,10 @@ namespace events {
 class Copy : public Event
 {
 public:
-	Copy(Engine&            engine,
-	     SPtr<Interface>    client,
-	     SampleCount        timestamp,
-	     const ingen::Copy& msg);
+	Copy(Engine&                engine,
+	     const SPtr<Interface>& client,
+	     SampleCount            timestamp,
+	     const ingen::Copy&     msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;

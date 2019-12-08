@@ -29,9 +29,9 @@
 namespace ingen {
 namespace client {
 
-BlockModel::BlockModel(URIs&             uris,
-                       SPtr<PluginModel> plugin,
-                       const Raul::Path& path)
+BlockModel::BlockModel(URIs&                    uris,
+                       const SPtr<PluginModel>& plugin,
+                       const Raul::Path&        path)
 	: ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
@@ -69,7 +69,7 @@ BlockModel::~BlockModel()
 }
 
 void
-BlockModel::remove_port(SPtr<PortModel> port)
+BlockModel::remove_port(const SPtr<PortModel>& port)
 {
 	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i) == port) {
@@ -103,7 +103,7 @@ BlockModel::clear()
 }
 
 void
-BlockModel::add_child(SPtr<ObjectModel> c)
+BlockModel::add_child(const SPtr<ObjectModel>& c)
 {
 	assert(c->parent().get() == this);
 
@@ -115,7 +115,7 @@ BlockModel::add_child(SPtr<ObjectModel> c)
 }
 
 bool
-BlockModel::remove_child(SPtr<ObjectModel> c)
+BlockModel::remove_child(const SPtr<ObjectModel>& c)
 {
 	assert(c->path().is_child_of(path()));
 	assert(c->parent().get() == this);
@@ -131,7 +131,7 @@ BlockModel::remove_child(SPtr<ObjectModel> c)
 }
 
 void
-BlockModel::add_port(SPtr<PortModel> pm)
+BlockModel::add_port(const SPtr<PortModel>& pm)
 {
 	assert(pm);
 	assert(pm->path().is_child_of(path()));
@@ -170,10 +170,10 @@ BlockModel::port(uint32_t index) const
 }
 
 void
-BlockModel::default_port_value_range(SPtr<const PortModel> port,
-                                     float&                min,
-                                     float&                max,
-                                     uint32_t              srate) const
+BlockModel::default_port_value_range(const SPtr<const PortModel>& port,
+                                     float&                       min,
+                                     float&                       max,
+                                     uint32_t                     srate) const
 {
 	// Default control values
 	min = 0.0;
@@ -204,10 +204,10 @@ BlockModel::default_port_value_range(SPtr<const PortModel> port,
 }
 
 void
-BlockModel::port_value_range(SPtr<const PortModel> port,
-                             float&                min,
-                             float&                max,
-                             uint32_t              srate) const
+BlockModel::port_value_range(const SPtr<const PortModel>& port,
+                             float&                       min,
+                             float&                       max,
+                             uint32_t                     srate) const
 {
 	assert(port->parent().get() == this);
 
@@ -247,7 +247,7 @@ BlockModel::label() const
 }
 
 std::string
-BlockModel::port_label(SPtr<const PortModel> port) const
+BlockModel::port_label(const SPtr<const PortModel>& port) const
 {
 	const Atom& name = port->get_property(URI(LV2_CORE__name));
 	if (name.is_valid() && name.type() == _uris.forge.String) {
@@ -274,7 +274,7 @@ BlockModel::port_label(SPtr<const PortModel> port) const
 }
 
 void
-BlockModel::set(SPtr<ObjectModel> model)
+BlockModel::set(const SPtr<ObjectModel>& model)
 {
 	SPtr<BlockModel> block = dynamic_ptr_cast<BlockModel>(model);
 	if (block) {

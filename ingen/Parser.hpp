@@ -77,21 +77,21 @@ public:
 	 * @return whether or not load was successful.
 	 */
 	virtual bool parse_file(
-		World&                        world,
-		Interface&                    target,
-		const FilePath&               path,
-		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
-		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
-		boost::optional<Properties>   data   = boost::optional<Properties>());
+		World&                               world,
+		Interface&                           target,
+		const FilePath&                      path,
+		const boost::optional<Raul::Path>&   parent = boost::optional<Raul::Path>(),
+		const boost::optional<Raul::Symbol>& symbol = boost::optional<Raul::Symbol>(),
+		const boost::optional<Properties>&   data   = boost::optional<Properties>());
 
 	virtual boost::optional<URI> parse_string(
-		World&                        world,
-		Interface&                    target,
-		const std::string&            str,
-		const URI&                    base_uri,
-		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
-		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
-		boost::optional<Properties>   data   = boost::optional<Properties>());
+		World&                               world,
+		Interface&                           target,
+		const std::string&                   str,
+		const URI&                           base_uri,
+		const boost::optional<Raul::Path>&   parent = boost::optional<Raul::Path>(),
+		const boost::optional<Raul::Symbol>& symbol = boost::optional<Raul::Symbol>(),
+		const boost::optional<Properties>&   data   = boost::optional<Properties>());
 };
 
 } // namespace ingen

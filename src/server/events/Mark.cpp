@@ -27,7 +27,7 @@ namespace server {
 namespace events {
 
 Mark::Mark(Engine&                   engine,
-           SPtr<Interface>           client,
+           const SPtr<Interface>&    client,
            SampleCount               timestamp,
            const ingen::BundleBegin& msg)
 	: Event(engine, client, msg.seq, timestamp)
@@ -36,7 +36,7 @@ Mark::Mark(Engine&                   engine,
 {}
 
 Mark::Mark(Engine&                 engine,
-           SPtr<Interface>         client,
+           const SPtr<Interface>&  client,
            SampleCount             timestamp,
            const ingen::BundleEnd& msg)
 	: Event(engine, client, msg.seq, timestamp)

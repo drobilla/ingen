@@ -271,7 +271,7 @@ GraphImpl::remove_block(BlockImpl& block)
 }
 
 void
-GraphImpl::add_arc(SPtr<ArcImpl> a)
+GraphImpl::add_arc(const SPtr<ArcImpl>& a)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_arcs.emplace(std::make_pair(a->tail(), a->head()), a);

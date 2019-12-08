@@ -425,7 +425,7 @@ using namespace ingen;
 using namespace ingen::server;
 
 static void
-ingen_lv2_main(SPtr<Engine> engine, const SPtr<LV2Driver>& driver)
+ingen_lv2_main(const SPtr<Engine>& engine, const SPtr<LV2Driver>& driver)
 {
 	while (true) {
 		// Wait until there is work to be done

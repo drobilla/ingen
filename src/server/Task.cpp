@@ -140,7 +140,9 @@ Task::simplify(std::unique_ptr<Task>&& task)
 }
 
 void
-Task::dump(std::function<void (const std::string&)> sink, unsigned indent, bool first) const
+Task::dump(const std::function<void(const std::string&)>& sink,
+           unsigned                                       indent,
+           bool                                           first) const
 {
 	if (!first) {
 		sink("\n");

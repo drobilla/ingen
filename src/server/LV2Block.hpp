@@ -85,10 +85,10 @@ public:
 	boost::optional<Resource> save_preset(const URI&        uri,
 	                                      const Properties& props) override;
 
-	void set_port_buffer(uint32_t    voice,
-	                     uint32_t    port_num,
-	                     BufferRef   buf,
-	                     SampleCount offset) override;
+	void set_port_buffer(uint32_t         voice,
+	                     uint32_t         port_num,
+	                     const BufferRef& buf,
+	                     SampleCount      offset) override;
 
 	static LilvState* load_state(World& world, const FilePath& path);
 

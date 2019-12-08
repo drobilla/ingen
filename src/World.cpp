@@ -224,9 +224,9 @@ World::load_configuration(int& argc, char**& argv)
 	_impl->log.set_trace(_impl->conf.option("trace").get<int32_t>());
 }
 
-void World::set_engine(SPtr<EngineBase> e)   { _impl->engine     = e; }
-void World::set_interface(SPtr<Interface> i) { _impl->interface  = i; }
-void World::set_store(SPtr<Store> s)         { _impl->store      = s; }
+void World::set_engine(const SPtr<EngineBase>& e)   { _impl->engine     = e; }
+void World::set_interface(const SPtr<Interface>& i) { _impl->interface  = i; }
+void World::set_store(const SPtr<Store>& s)         { _impl->store      = s; }
 
 SPtr<EngineBase> World::engine()     { return _impl->engine; }
 SPtr<Interface>  World::interface()  { return _impl->interface; }
@@ -292,7 +292,7 @@ World::run_module(const char* name)
 /** Get an interface for a remote engine at `engine_uri`
  */
 SPtr<Interface>
-World::new_interface(const URI& engine_uri, SPtr<Interface> respondee)
+World::new_interface(const URI& engine_uri, const SPtr<Interface>& respondee)
 {
 	const Impl::InterfaceFactories::const_iterator i =
 	        _impl->interface_factories.find(std::string(engine_uri.scheme()));

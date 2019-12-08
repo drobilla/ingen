@@ -34,7 +34,7 @@ LV2Features::LV2Features()
 }
 
 void
-LV2Features::add_feature(SPtr<Feature> feature)
+LV2Features::add_feature(const SPtr<Feature>& feature)
 {
 	_features.push_back(feature);
 }

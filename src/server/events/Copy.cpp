@@ -36,10 +36,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Copy::Copy(Engine&            engine,
-           SPtr<Interface>    client,
-           SampleCount        timestamp,
-           const ingen::Copy& msg)
+Copy::Copy(Engine&                engine,
+           const SPtr<Interface>& client,
+           SampleCount            timestamp,
+           const ingen::Copy&     msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _old_block(nullptr)

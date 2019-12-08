@@ -78,7 +78,7 @@ protected:
 		LV2_Feature** _array;
 	};
 
-	void add_feature(SPtr<Feature> feature);
+	void add_feature(const SPtr<Feature>& feature);
 	bool is_supported(const std::string& uri) const;
 
 	SPtr<FeatureArray> lv2_features(World& world, Node*  node) const;

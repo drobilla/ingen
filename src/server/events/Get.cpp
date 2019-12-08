@@ -37,10 +37,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Get::Get(Engine&           engine,
-         SPtr<Interface>   client,
-         SampleCount       timestamp,
-         const ingen::Get& msg)
+Get::Get(Engine&                engine,
+         const SPtr<Interface>& client,
+         SampleCount            timestamp,
+         const ingen::Get&      msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _object(nullptr)

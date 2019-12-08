@@ -31,10 +31,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Move::Move(Engine&           engine,
-           SPtr<Interface>   client,
-           SampleCount       timestamp,
-           const ingen::Move& msg)
+Move::Move(Engine&                engine,
+           const SPtr<Interface>& client,
+           SampleCount            timestamp,
+           const ingen::Move&     msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 {

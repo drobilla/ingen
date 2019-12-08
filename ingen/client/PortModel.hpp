@@ -82,10 +82,10 @@ private:
 		, _direction(dir)
 	{}
 
-	void add_child(SPtr<ObjectModel> c) override    { throw; }
-	bool remove_child(SPtr<ObjectModel> c) override { throw; }
+	void add_child(const SPtr<ObjectModel>& c) override    { throw; }
+	bool remove_child(const SPtr<ObjectModel>& c) override { throw; }
 
-	void set(SPtr<ObjectModel> model) override;
+	void set(const SPtr<ObjectModel>& model) override;
 
 	uint32_t  _index;
 	Direction _direction;

@@ -294,10 +294,10 @@ BlockImpl::post_process(RunContext& context)
 }
 
 void
-BlockImpl::set_port_buffer(uint32_t    voice,
-                           uint32_t    port_num,
-                           BufferRef   buf,
-                           SampleCount offset)
+BlockImpl::set_port_buffer(uint32_t         voice,
+                           uint32_t         port_num,
+                           const BufferRef& buf,
+                           SampleCount      offset)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 	  << " buffer " << buf << " offset " << offset << std::endl;*/

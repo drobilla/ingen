@@ -73,7 +73,9 @@ public:
 	void run(RunContext& context);
 
 	/** Pretty print task to the given stream (recursively). */
-	void dump(std::function<void (const std::string&)> sink, unsigned indent, bool first) const;
+	void dump(const std::function<void(const std::string&)>& sink,
+	          unsigned                                       indent,
+	          bool                                           first) const;
 
 	/** Return true iff this is an empty task. */
 	bool empty() const { return _mode != Mode::SINGLE && _children.empty(); }

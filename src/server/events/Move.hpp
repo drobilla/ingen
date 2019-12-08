@@ -36,10 +36,10 @@ namespace events {
 class Move : public Event
 {
 public:
-	Move(Engine&            engine,
-	     SPtr<Interface>    client,
-	     SampleCount        timestamp,
-	     const ingen::Move& msg);
+	Move(Engine&                engine,
+	     const SPtr<Interface>& client,
+	     SampleCount            timestamp,
+	     const ingen::Move&     msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;

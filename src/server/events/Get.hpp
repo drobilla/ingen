@@ -39,10 +39,10 @@ namespace events {
 class Get : public Event
 {
 public:
-	Get(Engine&           engine,
-	    SPtr<Interface>   client,
-	    SampleCount       timestamp,
-	    const ingen::Get& msg);
+	Get(Engine&                engine,
+	    const SPtr<Interface>& client,
+	    SampleCount            timestamp,
+	    const ingen::Get&      msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override {}

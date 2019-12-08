@@ -73,7 +73,7 @@ GraphTreeWindow::init(App& app, ClientStore& store)
 }
 
 void
-GraphTreeWindow::new_object(SPtr<ObjectModel> object)
+GraphTreeWindow::new_object(const SPtr<ObjectModel>& object)
 {
 	SPtr<GraphModel> graph = dynamic_ptr_cast<GraphModel>(object);
 	if (graph) {
@@ -82,7 +82,7 @@ GraphTreeWindow::new_object(SPtr<ObjectModel> object)
 }
 
 void
-GraphTreeWindow::add_graph(SPtr<GraphModel> pm)
+GraphTreeWindow::add_graph(const SPtr<GraphModel>& pm)
 {
 	if (!pm->parent()) {
 		Gtk::TreeModel::iterator iter = _graph_treestore->append();
@@ -123,7 +123,7 @@ GraphTreeWindow::add_graph(SPtr<GraphModel> pm)
 }
 
 void
-GraphTreeWindow::remove_graph(SPtr<GraphModel> pm)
+GraphTreeWindow::remove_graph(const SPtr<GraphModel>& pm)
 {
 	Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), pm);
 	if (i != _graph_treestore->children().end()) {
@@ -132,8 +132,8 @@ GraphTreeWindow::remove_graph(SPtr<GraphModel> pm)
 }
 
 Gtk::TreeModel::iterator
-GraphTreeWindow::find_graph(Gtk::TreeModel::Children  root,
-                            SPtr<client::ObjectModel> graph)
+GraphTreeWindow::find_graph(Gtk::TreeModel::Children         root,
+                            const SPtr<client::ObjectModel>& graph)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
 		SPtr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
@@ -193,9 +193,9 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 }
 
 void
-GraphTreeWindow::graph_property_changed(const URI&       key,
-                                        const Atom&      value,
-                                        SPtr<GraphModel> graph)
+GraphTreeWindow::graph_property_changed(const URI&              key,
+                                        const Atom&             value,
+                                        const SPtr<GraphModel>& graph)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
@@ -212,7 +212,7 @@ GraphTreeWindow::graph_property_changed(const URI&       key,
 }
 
 void
-GraphTreeWindow::graph_moved(SPtr<GraphModel> graph)
+GraphTreeWindow::graph_moved(const SPtr<GraphModel>& graph)
 {
 	_enable_signal = false;
 

@@ -37,11 +37,11 @@ write_prefix(void* handle, const SerdNode* name, const SerdNode* uri)
 	return SERD_SUCCESS;
 }
 
-TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, const URI& uri)
+TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
     : AtomWriter(map, uris, *this)
     , _map(map)
     , _sratom(sratom_new(&map.urid_map_feature()->urid_map))
-    , _uri(uri)
+    , _uri(std::move(uri))
     , _wrote_prefixes(false)
 {
 	// Use <ingen:/> as base URI, so relative URIs are like bundle paths

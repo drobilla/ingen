@@ -104,7 +104,10 @@ public:
 	inline Engine& engine() { return _engine; }
 
 protected:
-	Event(Engine& engine, SPtr<Interface> client, int32_t id, FrameTime time)
+	Event(Engine&                engine,
+	      const SPtr<Interface>& client,
+	      int32_t                id,
+	      FrameTime              time)
 		: _engine(engine)
 		, _next(nullptr)
 		, _request_client(std::move(client))

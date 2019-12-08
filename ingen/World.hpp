@@ -102,16 +102,16 @@ public:
 	 * @param respondee The Interface that will receive responses to commands
 	 *                  and broadcasts, if applicable.
 	 */
-	virtual SPtr<Interface> new_interface(const URI&      engine_uri,
-	                                      SPtr<Interface> respondee);
+	virtual SPtr<Interface> new_interface(const URI& engine_uri,
+	                                      const SPtr<Interface>& respondee);
 
 	/** Run a script. */
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
-	virtual void set_engine(SPtr<EngineBase> e);
-	virtual void set_interface(SPtr<Interface> i);
-	virtual void set_store(SPtr<Store> s);
+	virtual void set_engine(const SPtr<EngineBase>& e);
+	virtual void set_interface(const SPtr<Interface>& i);
+	virtual void set_store(const SPtr<Store>& s);
 
 	virtual SPtr<EngineBase> engine();
 	virtual SPtr<Interface>  interface();

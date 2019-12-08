@@ -132,12 +132,12 @@ public:
 	/**
 	   Register a client to receive updates about engine changes.
 	*/
-	virtual void register_client(SPtr<Interface> client) = 0;
+	virtual void register_client(const SPtr<Interface>& client) = 0;
 
 	/**
 	   Unregister a client.
 	*/
-	virtual bool unregister_client(SPtr<Interface> client) = 0;
+	virtual bool unregister_client(const SPtr<Interface>& client) = 0;
 };
 
 } // namespace ingen

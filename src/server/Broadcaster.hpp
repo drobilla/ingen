@@ -45,18 +45,22 @@ public:
 	Broadcaster();
 	~Broadcaster();
 
-	void register_client(SPtr<Interface> client);
-	bool unregister_client(SPtr<Interface> client);
+	void register_client(const SPtr<Interface>& client);
+	bool unregister_client(const SPtr<Interface>& client);
 
-	void set_broadcast(SPtr<Interface> client, bool broadcast);
+	void set_broadcast(const SPtr<Interface>& client, bool broadcast);
 
 	/** Ignore a client when broadcasting.
 	 *
 	 * This is used to prevent feeding back updates to the client that
 	 * initiated a property set in the first place.
 	 */
-	void set_ignore_client(SPtr<Interface> client) { _ignore_client = client; }
-	void clear_ignore_client()                     { _ignore_client.reset(); }
+	void set_ignore_client(const SPtr<Interface>& client)
+	{
+		_ignore_client = client;
+	}
+
+	void clear_ignore_client() { _ignore_client.reset(); }
 
 	/** Return true iff there are any clients with broadcasting enabled.
 	 *

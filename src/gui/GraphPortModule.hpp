@@ -45,9 +45,8 @@ class PortMenu;
 class GraphPortModule : public Ganv::Module
 {
 public:
-	static GraphPortModule* create(
-		GraphCanvas&                  canvas,
-		SPtr<const client::PortModel> model);
+	static GraphPortModule*
+	create(GraphCanvas& canvas, const SPtr<const client::PortModel>& model);
 
 	App& app() const;
 
@@ -59,8 +58,8 @@ public:
 	SPtr<const client::PortModel> port() const { return _model; }
 
 protected:
-	GraphPortModule(GraphCanvas&                  canvas,
-	                SPtr<const client::PortModel> model);
+	GraphPortModule(GraphCanvas&                         canvas,
+	                const SPtr<const client::PortModel>& model);
 
 	bool show_menu(GdkEventButton* ev);
 	void set_selected(gboolean b) override;

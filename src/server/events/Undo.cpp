@@ -27,24 +27,24 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Undo::Undo(Engine&            engine,
-           SPtr<Interface>    client,
-           SampleCount        timestamp,
-           const ingen::Undo& msg)
+Undo::Undo(Engine&                engine,
+           const SPtr<Interface>& client,
+           SampleCount            timestamp,
+           const ingen::Undo&     msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _is_redo(false)
 {}
 
-Undo::Undo(Engine&            engine,
-           SPtr<Interface>    client,
-           SampleCount        timestamp,
-           const ingen::Redo& msg)
+Undo::Undo(Engine&                engine,
+           const SPtr<Interface>& client,
+           SampleCount            timestamp,
+           const ingen::Redo&     msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _is_redo(true)
 {}
 
 bool
-Undo::pre_process(PreProcessContext& ctx)
+Undo::pre_process(PreProcessContext&)
 {
 	const UPtr<UndoStack>& stack = _is_redo ? _engine.redo_stack() : _engine.undo_stack();
 	const Event::Mode      mode  = _is_redo ? Event::Mode::REDO    : Event::Mode::UNDO;

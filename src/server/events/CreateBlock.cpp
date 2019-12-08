@@ -38,12 +38,12 @@ namespace ingen {
 namespace server {
 namespace events {
 
-CreateBlock::CreateBlock(Engine&           engine,
-                         SPtr<Interface>   client,
-                         int32_t           id,
-                         SampleCount       timestamp,
-                         const Raul::Path& path,
-                         Properties&       properties)
+CreateBlock::CreateBlock(Engine&                engine,
+                         const SPtr<Interface>& client,
+                         int32_t                id,
+                         SampleCount            timestamp,
+                         const Raul::Path&      path,
+                         Properties&            properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _properties(properties)

@@ -47,16 +47,16 @@ public:
 
 	void init(App& app, client::ClientStore& store);
 
-	void new_object(SPtr<client::ObjectModel> object);
+	void new_object(const SPtr<client::ObjectModel>& object);
 
-	void graph_property_changed(const URI&               key,
-	                            const Atom&              value,
-	                            SPtr<client::GraphModel> graph);
+	void graph_property_changed(const URI&                      key,
+	                            const Atom&                     value,
+	                            const SPtr<client::GraphModel>& graph);
 
-	void graph_moved(SPtr<client::GraphModel> graph);
+	void graph_moved(const SPtr<client::GraphModel>& graph);
 
-	void add_graph(SPtr<client::GraphModel> pm);
-	void remove_graph(SPtr<client::GraphModel> pm);
+	void add_graph(const SPtr<client::GraphModel>& pm);
+	void remove_graph(const SPtr<client::GraphModel>& pm);
 	void show_graph_menu(GdkEventButton* ev);
 
 protected:
@@ -67,7 +67,7 @@ protected:
 
 	Gtk::TreeModel::iterator find_graph(
 		Gtk::TreeModel::Children  root,
-		SPtr<client::ObjectModel> graph);
+		const SPtr<client::ObjectModel>& graph);
 
 	GraphTreeView* _graphs_treeview;
 

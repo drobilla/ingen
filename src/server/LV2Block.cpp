@@ -732,10 +732,10 @@ LV2Block::save_preset(const URI&        uri,
 }
 
 void
-LV2Block::set_port_buffer(uint32_t    voice,
-                          uint32_t    port_num,
-                          BufferRef   buf,
-                          SampleCount offset)
+LV2Block::set_port_buffer(uint32_t         voice,
+                          uint32_t         port_num,
+                          const BufferRef& buf,
+                          SampleCount      offset)
 {
 	BlockImpl::set_port_buffer(voice, port_num, buf, offset);
 	lilv_instance_connect_port(
