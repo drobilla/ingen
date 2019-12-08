@@ -123,18 +123,18 @@ ControlBindings::midi_event_key(uint16_t, const uint8_t* buf, uint16_t& value)
 	switch (lv2_midi_message_type(buf)) {
 	case LV2_MIDI_MSG_CONTROLLER:
 		value = static_cast<int8_t>(buf[2]);
-		return Key(Type::MIDI_CC, static_cast<int8_t>(buf[1]));
+		return {Type::MIDI_CC, static_cast<int8_t>(buf[1])};
 	case LV2_MIDI_MSG_BENDER:
 		value = (static_cast<int8_t>(buf[2]) << 7) + static_cast<int8_t>(buf[1]);
-		return Key(Type::MIDI_BENDER);
+		return {Type::MIDI_BENDER};
 	case LV2_MIDI_MSG_CHANNEL_PRESSURE:
 		value = static_cast<int8_t>(buf[1]);
-		return Key(Type::MIDI_CHANNEL_PRESSURE);
+		return {Type::MIDI_CHANNEL_PRESSURE};
 	case LV2_MIDI_MSG_NOTE_ON:
 		value = 1.0f;
-		return Key(Type::MIDI_NOTE, static_cast<int8_t>(buf[1]));
+		return {Type::MIDI_NOTE, static_cast<int8_t>(buf[1])};
 	default:
-		return Key();
+		return {};
 	}
 }
 
