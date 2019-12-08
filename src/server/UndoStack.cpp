@@ -42,7 +42,7 @@ UndoStack::start_entry()
 	if (_depth == 0) {
 		time_t now;
 		time(&now);
-		_stack.push_back(Entry(now));
+		_stack.emplace_back(Entry(now));
 	}
 	return ++_depth;
 }
