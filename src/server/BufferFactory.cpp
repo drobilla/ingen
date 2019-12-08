@@ -145,9 +145,7 @@ BufferFactory::get_buffer(LV2_URID type,
 }
 
 BufferRef
-BufferFactory::claim_buffer(LV2_URID type,
-                            LV2_URID value_type,
-                            uint32_t capacity)
+BufferFactory::claim_buffer(LV2_URID type, LV2_URID value_type, uint32_t)
 {
 	Buffer* try_head = try_get_buffer(type);
 	if (!try_head) {

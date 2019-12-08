@@ -30,8 +30,8 @@ class Sentinel : public Event {
 public:
 	Sentinel(Engine& engine) : Event(engine) {}
 
-	bool pre_process(PreProcessContext& ctx) override { return false; }
-	void execute(RunContext& context) override {}
+	bool pre_process(PreProcessContext&) override { return false; }
+	void execute(RunContext&) override {}
 	void post_process() override {}
 };
 
@@ -56,7 +56,7 @@ PostProcessor::~PostProcessor()
 }
 
 void
-PostProcessor::append(RunContext& context, Event* first, Event* last)
+PostProcessor::append(RunContext&, Event* first, Event* last)
 {
 	assert(first);
 	assert(last);

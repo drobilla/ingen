@@ -181,7 +181,7 @@ DuplexPort::set_driver_buffer(void* buf, uint32_t capacity)
 }
 
 uint32_t
-DuplexPort::max_tail_poly(RunContext& context) const
+DuplexPort::max_tail_poly(RunContext&) const
 {
 	return std::max(_poly, parent_graph()->internal_poly_process());
 }

@@ -117,7 +117,7 @@ ControlBindings::binding_key(const Atom& binding) const
 }
 
 ControlBindings::Key
-ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value)
+ControlBindings::midi_event_key(uint16_t, const uint8_t* buf, uint16_t& value)
 {
 	switch (lv2_midi_message_type(buf)) {
 	case LV2_MIDI_MSG_CONTROLLER:
@@ -138,7 +138,7 @@ ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& val
 }
 
 bool
-ControlBindings::set_port_binding(RunContext& context,
+ControlBindings::set_port_binding(RunContext&,
                                   PortImpl*   port,
                                   Binding*    binding,
                                   const Atom& value)
@@ -387,7 +387,7 @@ ControlBindings::get_all(const Raul::Path& path, std::vector<Binding*>& bindings
 }
 
 void
-ControlBindings::remove(RunContext& ctx, const std::vector<Binding*>& bindings)
+ControlBindings::remove(RunContext&, const std::vector<Binding*>& bindings)
 {
 	for (Binding* b : bindings) {
 		_bindings->erase(*b);
@@ -427,7 +427,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 }
 
 void
-ControlBindings::post_process(RunContext& context, Buffer* buffer)
+ControlBindings::post_process(RunContext&, Buffer* buffer)
 {
 	if (buffer->get<LV2_Atom>()) {
 		buffer->append_event_buffer(_feedback.get());

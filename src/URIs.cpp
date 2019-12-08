@@ -37,7 +37,7 @@
 namespace ingen {
 
 URIs::Quark::Quark(Forge&      forge,
-                   URIMap*     map,
+                   URIMap*,
                    LilvWorld*  lworld,
                    const char* str)
 	: URI(str)

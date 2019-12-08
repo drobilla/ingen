@@ -65,7 +65,7 @@ Task::run(RunContext& context)
 }
 
 Task*
-Task::steal(RunContext& context)
+Task::steal(RunContext&)
 {
 	if (_mode == Mode::PARALLEL) {
 		const unsigned i = _next++;

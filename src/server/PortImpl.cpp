@@ -115,7 +115,7 @@ PortImpl::get_buffers(BufferFactory&      bufs,
                       GetFn               get,
                       const MPtr<Voices>& voices,
                       uint32_t            poly,
-                      size_t              num_in_arcs) const
+                      size_t) const
 {
 	for (uint32_t v = 0; v < poly; ++v) {
 		voices->at(v).buffer.reset();
@@ -127,7 +127,7 @@ PortImpl::get_buffers(BufferFactory&      bufs,
 }
 
 bool
-PortImpl::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
+PortImpl::setup_buffers(RunContext&, BufferFactory& bufs, uint32_t poly)
 {
 	return get_buffers(bufs, &BufferFactory::claim_buffer, _voices, poly, 0);
 }
@@ -211,7 +211,7 @@ PortImpl::deactivate()
 }
 
 void
-PortImpl::set_voices(RunContext& context, MPtr<Voices>&& voices)
+PortImpl::set_voices(RunContext&, MPtr<Voices>&& voices)
 {
 	_voices = std::move(voices);
 	connect_buffers();
@@ -382,7 +382,7 @@ PortImpl::apply_poly(RunContext& context, uint32_t poly)
 }
 
 void
-PortImpl::set_buffer_size(RunContext& context, BufferFactory& bufs, size_t size)
+PortImpl::set_buffer_size(RunContext&, BufferFactory&, size_t size)
 {
 	_buffer_size = size;
 
@@ -410,7 +410,7 @@ PortImpl::recycle_buffers()
 }
 
 void
-PortImpl::set_is_driver_port(BufferFactory& bufs)
+PortImpl::set_is_driver_port(BufferFactory&)
 {
 	_is_driver_port = true;
 }

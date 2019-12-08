@@ -54,7 +54,7 @@ SetPortValue::SetPortValue(Engine&                engine,
 }
 
 bool
-SetPortValue::pre_process(PreProcessContext& ctx)
+SetPortValue::pre_process(PreProcessContext&)
 {
 	ingen::URIs& uris = _engine.world().uris();
 	if (_port->is_output()) {

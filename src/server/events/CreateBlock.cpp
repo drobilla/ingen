@@ -156,7 +156,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 }
 
 void
-CreateBlock::execute(RunContext& context)
+CreateBlock::execute(RunContext&)
 {
 	if (_status == Status::SUCCESS && _compiled_graph) {
 		_graph->set_compiled_graph(std::move(_compiled_graph));

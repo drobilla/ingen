@@ -128,7 +128,7 @@ InputPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
 }
 
 void
-InputPort::add_arc(RunContext& context, ArcImpl& c)
+InputPort::add_arc(RunContext&, ArcImpl& c)
 {
 	_arcs.push_front(c);
 }
@@ -140,7 +140,7 @@ InputPort::remove_arc(ArcImpl& arc)
 }
 
 uint32_t
-InputPort::max_tail_poly(RunContext& context) const
+InputPort::max_tail_poly(RunContext&) const
 {
 	return parent_block()->parent_graph()->internal_poly_process();
 }

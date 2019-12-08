@@ -39,7 +39,7 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
                      const Raul::Symbol& symbol,
                      bool                polyphonic,
                      GraphImpl*          parent,
-                     SampleRate          srate)
+                     SampleRate)
 	: NodeImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
@@ -294,10 +294,7 @@ BlockImpl::post_process(RunContext& context)
 }
 
 void
-BlockImpl::set_port_buffer(uint32_t         voice,
-                           uint32_t         port_num,
-                           const BufferRef& buf,
-                           SampleCount      offset)
+BlockImpl::set_port_buffer(uint32_t, uint32_t, const BufferRef&, SampleCount)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 	  << " buffer " << buf << " offset " << offset << std::endl;*/

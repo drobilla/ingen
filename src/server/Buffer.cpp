@@ -48,7 +48,7 @@ Buffer::Buffer(BufferFactory& bufs,
                LV2_URID       value_type,
                uint32_t       capacity,
                bool           external,
-               void*          buf)
+               void*)
 	: _factory(bufs)
 	, _next(nullptr)
 	, _buf(external ? nullptr : aligned_alloc(capacity))
@@ -267,7 +267,7 @@ Buffer::peak(const RunContext& context) const
 }
 
 void
-Buffer::prepare_write(RunContext& context)
+Buffer::prepare_write(RunContext&)
 {
 	if (_type == _factory.uris().atom_Sequence) {
 		auto* atom = get<LV2_Atom>();
@@ -279,7 +279,7 @@ Buffer::prepare_write(RunContext& context)
 }
 
 void
-Buffer::prepare_output_write(RunContext& context)
+Buffer::prepare_output_write(RunContext&)
 {
 	if (_type == _factory.uris().atom_Sequence) {
 		auto* atom = get<LV2_Atom>();

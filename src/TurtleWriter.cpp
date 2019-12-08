@@ -86,7 +86,7 @@ TurtleWriter::~TurtleWriter()
 }
 
 bool
-TurtleWriter::write(const LV2_Atom* msg, int32_t default_id)
+TurtleWriter::write(const LV2_Atom* msg, int32_t)
 {
 	if (!_wrote_prefixes) {
 		// Write namespace prefixes once to reduce traffic

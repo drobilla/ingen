@@ -48,7 +48,7 @@ Get::Get(Engine&                engine,
 {}
 
 bool
-Get::pre_process(PreProcessContext& ctx)
+Get::pre_process(PreProcessContext&)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 

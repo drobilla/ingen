@@ -48,7 +48,7 @@ UndoStack::start_entry()
 }
 
 bool
-UndoStack::write(const LV2_Atom* msg, int32_t default_id)
+UndoStack::write(const LV2_Atom* msg, int32_t)
 {
 	_stack.back().push_event(msg);
 	return true;
@@ -156,7 +156,7 @@ struct ListContext {
 		end_node(writer, &node);
 	}
 
-	void end_node(SerdWriter* writer, const SerdNode* node) {
+	void end_node(SerdWriter*, const SerdNode* node) {
 		// Prepare for next call: node rdf:rest ...
 		s = *node;
 		p = serd_node_from_string(SERD_URI, NS_RDF "rest");

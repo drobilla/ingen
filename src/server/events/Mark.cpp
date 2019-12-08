@@ -75,7 +75,7 @@ Mark::pre_process(PreProcessContext& ctx)
 }
 
 void
-Mark::execute(RunContext& context)
+Mark::execute(RunContext&)
 {
 	for (auto& g : _compiled_graphs) {
 		g.first->set_compiled_graph(std::move(g.second));

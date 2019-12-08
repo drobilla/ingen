@@ -178,8 +178,8 @@ GraphImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 bool
 GraphImpl::apply_internal_poly(RunContext&    context,
                                BufferFactory& bufs,
-                               Raul::Maid&    maid,
-                               uint32_t       poly)
+                               Raul::Maid&,
+                               uint32_t poly)
 {
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 

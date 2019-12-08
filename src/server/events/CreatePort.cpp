@@ -88,7 +88,7 @@ CreatePort::CreatePort(Engine&                engine,
 }
 
 bool
-CreatePort::pre_process(PreProcessContext& ctx)
+CreatePort::pre_process(PreProcessContext&)
 {
 	if (_port_type == PortType::UNKNOWN) {
 		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);

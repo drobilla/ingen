@@ -41,7 +41,7 @@ Move::Move(Engine&                engine,
 }
 
 bool
-Move::pre_process(PreProcessContext& ctx)
+Move::pre_process(PreProcessContext&)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 

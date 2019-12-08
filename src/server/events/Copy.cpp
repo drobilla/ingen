@@ -140,7 +140,7 @@ ends_with(const std::string& str, const std::string& end)
 }
 
 bool
-Copy::engine_to_filesystem(PreProcessContext& ctx)
+Copy::engine_to_filesystem(PreProcessContext&)
 {
 	// Ensure source is a graph
 	SPtr<GraphImpl> graph = dynamic_ptr_cast<GraphImpl>(_old_block);
@@ -167,7 +167,7 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 }
 
 bool
-Copy::filesystem_to_engine(PreProcessContext& ctx)
+Copy::filesystem_to_engine(PreProcessContext&)
 {
 	if (!_engine.world().parser()) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
@@ -193,7 +193,7 @@ Copy::filesystem_to_engine(PreProcessContext& ctx)
 }
 
 void
-Copy::execute(RunContext& context)
+Copy::execute(RunContext&)
 {
 	if (_block && _compiled_graph) {
 		_parent->set_compiled_graph(std::move(_compiled_graph));

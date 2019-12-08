@@ -45,7 +45,7 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
                             bool                polyphonic,
                             GraphImpl*          parent,
                             Engine&             engine,
-                            const LilvState*    state)
+                            const LilvState*)
 {
 	const SampleCount srate = engine.sample_rate();
 
