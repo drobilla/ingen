@@ -112,8 +112,7 @@ Serialiser::Serialiser(World& world)
 	: me{make_unique<Impl>(world)}
 {}
 
-Serialiser::~Serialiser()
-{}
+Serialiser::~Serialiser() = default;
 
 void
 Serialiser::Impl::write_manifest(const FilePath& bundle_path,

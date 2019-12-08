@@ -105,10 +105,6 @@ Delta::Delta(Engine&                   engine,
 	init();
 }
 
-Delta::~Delta()
-{
-}
-
 void
 Delta::init()
 {

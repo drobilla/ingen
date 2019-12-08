@@ -50,10 +50,6 @@ BlockFactory::BlockFactory(ingen::World& world)
 	load_internal_plugins();
 }
 
-BlockFactory::~BlockFactory()
-{
-}
-
 const BlockFactory::Plugins&
 BlockFactory::plugins()
 {

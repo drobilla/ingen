@@ -43,6 +43,7 @@ class INGEN_API Serialiser
 {
 public:
 	explicit Serialiser(World& world);
+
 	virtual ~Serialiser();
 
 	/** Write a graph and all its contents as a complete bundle. */

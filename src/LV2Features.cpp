@@ -29,10 +29,6 @@ LV2Features::Feature::free_feature(LV2_Feature* feature)
 	free(feature);
 }
 
-LV2Features::LV2Features()
-{
-}
-
 void
 LV2Features::add_feature(const SPtr<Feature>& feature)
 {

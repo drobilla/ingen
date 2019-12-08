@@ -35,7 +35,7 @@ class World;
  */
 class INGEN_API LV2Features {
 public:
-	LV2Features();
+	LV2Features() = default;
 
 	class Feature {
 	public:

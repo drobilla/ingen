@@ -40,7 +40,8 @@ class BlockFactory : public Raul::Noncopyable
 {
 public:
 	explicit BlockFactory(ingen::World& world);
-	~BlockFactory();
+
+	~BlockFactory() = default;
 
 	/** Reload plugin list.
 	 *
