@@ -57,14 +57,12 @@ InputPort::InputPort(BufferFactory&      bufs,
 }
 
 bool
-InputPort::apply_poly(RunContext& context, uint32_t poly)
+InputPort::apply_poly(RunContext& context, const uint32_t poly)
 {
-	bool ret = PortImpl::apply_poly(context, poly);
-	if (!ret) {
-		poly = 1;
-	}
+	const bool ret = PortImpl::apply_poly(context, poly);
 
-	assert(_voices->size() >= poly);
+	(void)ret;
+	assert(_voices->size() >= (ret ? poly : 1));
 
 	return true;
 }
