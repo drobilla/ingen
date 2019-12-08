@@ -26,7 +26,8 @@
 namespace ingen {
 
 Forge::Forge(URIMap& map)
-	: _map(map)
+	: LV2_Atom_Forge()
+	, _map(map)
 {
 	lv2_atom_forge_init(this, &map.urid_map_feature()->urid_map);
 }

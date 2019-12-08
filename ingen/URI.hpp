@@ -91,8 +91,8 @@ private:
 		return Chunk((const char*)chunk.buf, chunk.len);
 	}
 
-	SerdNode _node;
 	SerdURI  _uri;
+	SerdNode _node;
 };
 
 inline bool operator==(const URI& lhs, const URI& rhs)

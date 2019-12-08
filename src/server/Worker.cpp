@@ -137,7 +137,7 @@ void
 Worker::run()
 {
 	while (_sem.wait() && !_exit_flag) {
-		MessageHeader msg;
+		MessageHeader msg{};
 		if (_requests.read_space() > sizeof(msg)) {
 			if (_requests.read(sizeof(msg), &msg) != sizeof(msg)) {
 				_log.error("Error reading header from work request ring\n");

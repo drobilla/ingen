@@ -95,6 +95,7 @@ public:
 		, uri_map(log, map, unmap)
 		, forge(uri_map)
 		, uris(forge, &uri_map, lilv_world.get())
+		, lv2_log()
 		, conf(forge)
 		, log(lv2_log, uris)
 	{

@@ -42,6 +42,7 @@ SocketReader::SocketReader(ingen::World&      world,
                            SPtr<Raul::Socket> sock)
 	: _world(world)
 	, _iface(iface)
+	, _env()
 	, _inserter(nullptr)
 	, _msg_node(nullptr)
 	, _socket(std::move(sock))
@@ -141,7 +142,7 @@ SocketReader::run()
 	// Make an AtomReader to call Ingen Interface methods based on Atom
 	AtomReader ar(_world.uri_map(), _world.uris(), _world.log(), _iface);
 
-	struct pollfd pfd;
+	struct pollfd pfd{};
 	pfd.fd      = _socket->fd();
 	pfd.events  = POLLIN;
 	pfd.revents = 0;

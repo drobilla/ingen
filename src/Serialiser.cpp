@@ -56,6 +56,7 @@ namespace ingen {
 struct Serialiser::Impl {
 	explicit Impl(World& world)
 		: _root_path("/")
+		, _mode(Mode::TO_FILE)
 		, _world(world)
 		, _model(nullptr)
 		, _sratom(sratom_new(&_world.uri_map().urid_map_feature()->urid_map))

@@ -51,6 +51,7 @@ ControlBindings::ControlBindings(Engine& engine)
 	                       engine.world().uris().atom_Sequence,
 	                       0,
 	                       4096)) // FIXME: capacity?
+	, _forge()
 {
 	lv2_atom_forge_init(
 		&_forge, &engine.world().uri_map().urid_map_feature()->urid_map);

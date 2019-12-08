@@ -46,7 +46,7 @@ static std::string
 get_link_target(const char* link_path)
 {
 	// Stat the link to get the required size for the target path
-	struct stat link_stat;
+	struct stat link_stat{};
 	if (lstat(link_path, &link_stat)) {
 		return std::string();
 	}

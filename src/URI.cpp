@@ -23,35 +23,39 @@
 namespace ingen {
 
 URI::URI()
-    : _node(SERD_NODE_NULL)
-    , _uri(SERD_URI_NULL)
+	: _uri(SERD_URI_NULL)
+	, _node(SERD_NODE_NULL)
 {}
 
 URI::URI(const std::string& str)
-    : _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
+	: _uri(SERD_URI_NULL)
+	, _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
                                           nullptr,
                                           &_uri))
 {}
 
 URI::URI(const char* str)
-    : _node(serd_node_new_uri_from_string((const uint8_t*)str, nullptr, &_uri))
+	: _uri(SERD_URI_NULL)
+	, _node(serd_node_new_uri_from_string((const uint8_t*)str, nullptr, &_uri))
 {}
 
 URI::URI(const std::string& str, const URI& base)
-    : _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
+	: _uri(SERD_URI_NULL)
+	, _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
                                           &base._uri,
                                           &_uri))
 {}
 
 URI::URI(SerdNode node)
-    : _node(serd_node_new_uri_from_node(&node, nullptr, &_uri))
+	: _uri(SERD_URI_NULL)
+	, _node(serd_node_new_uri_from_node(&node, nullptr, &_uri))
 {
 	assert(node.type == SERD_URI);
 }
 
 URI::URI(SerdNode node, SerdURI uri)
-	: _node(node)
-	, _uri(uri)
+	: _uri(uri)
+	, _node(node)
 {
 	assert(node.type == SERD_URI);
 }
@@ -62,14 +66,16 @@ URI::URI(const Sord::Node& node)
 }
 
 URI::URI(const FilePath& path)
-    : _node(serd_node_new_file_uri((const uint8_t*)path.c_str(),
+	: _uri(SERD_URI_NULL)
+	, _node(serd_node_new_file_uri((const uint8_t*)path.c_str(),
                                    nullptr,
                                    &_uri,
                                    true))
 {}
 
 URI::URI(const URI& uri)
-    : _node(serd_node_new_uri(&uri._uri, nullptr, &_uri))
+	: _uri(SERD_URI_NULL)
+	, _node(serd_node_new_uri(&uri._uri, nullptr, &_uri))
 {}
 
 URI&
@@ -81,8 +87,8 @@ URI::operator=(const URI& uri)
 }
 
 URI::URI(URI&& uri) noexcept
-    : _node(uri._node)
-    , _uri(uri._uri)
+	: _uri(uri._uri)
+	, _node(uri._node)
 {
 	uri._node = SERD_NODE_NULL;
 	uri._uri  = SERD_URI_NULL;

@@ -118,16 +118,16 @@ UndoStack::pop()
 }
 
 struct BlankIDs {
-	BlankIDs(char c='b') : n(0), c(c) {}
+	BlankIDs(char c='b') : c(c) {}
 
 	SerdNode get() {
 		snprintf(buf, sizeof(buf), "%c%u", c, n++);
 		return serd_node_from_string(SERD_BLANK, USTR(buf));
 	}
 
-	char       buf[16];
-	unsigned   n;
-	const char c;
+	char       buf[16]{};
+	unsigned   n{0};
+	const char c{'b'};
 };
 
 struct ListContext {

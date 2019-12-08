@@ -66,6 +66,7 @@ RunContext::RunContext(Engine&           engine,
 	, _end(0)
 	, _offset(0)
 	, _nframes(0)
+	, _rate(0)
 	, _realtime(true)
 {}
 
@@ -79,6 +80,7 @@ RunContext::RunContext(const RunContext& copy)
 	, _end(copy._end)
 	, _offset(copy._offset)
 	, _nframes(copy._nframes)
+	, _rate(copy._rate)
 	, _realtime(copy._realtime)
 {}
 
@@ -168,7 +170,7 @@ RunContext::set_priority(int priority)
 	if (_thread) {
 		pthread_t   pthread = _thread->native_handle();
 		const int   policy  = (priority > 0) ? SCHED_FIFO : SCHED_OTHER;
-		sched_param sp;
+		sched_param sp{};
 		sp.sched_priority = (priority > 0) ? priority : 0;
 		if (pthread_setschedparam(pthread, policy, &sp)) {
 			_engine.log().error(

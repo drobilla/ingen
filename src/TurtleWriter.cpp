@@ -41,6 +41,8 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
     : AtomWriter(map, uris, *this)
     , _map(map)
     , _sratom(sratom_new(&map.urid_map_feature()->urid_map))
+    , _base(SERD_NODE_NULL)
+    , _base_uri(SERD_URI_NULL)
     , _uri(std::move(uri))
     , _wrote_prefixes(false)
 {

@@ -36,6 +36,7 @@ URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
                                        LV2_URID_Map* impl,
                                        Log&          log)
 	: Feature(LV2_URID__map, &urid_map)
+	, urid_map()
 	, log(log)
 {
 	if (impl) {
@@ -77,6 +78,7 @@ URIMap::URIDMapFeature::map(const char* uri)
 URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*         map,
                                            LV2_URID_Unmap* impl)
 	: Feature(LV2_URID__unmap, &urid_unmap)
+	, urid_unmap()
 {
 	if (impl) {
 		urid_unmap = *impl;
