@@ -50,6 +50,7 @@ public:
 	     SampleCount             timestamp,
 	     const ingen::BundleEnd& msg);
 
+	void mark(PreProcessContext& ctx) override;
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& context) override;
 	void post_process() override;

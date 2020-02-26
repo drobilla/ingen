@@ -202,6 +202,7 @@ PreProcessor::run()
 		}
 
 		// Set block state before enqueueing event
+		ev->mark(ctx);
 		switch (ev->get_execution()) {
 		case Event::Execution::NORMAL:
 			break;

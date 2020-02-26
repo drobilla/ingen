@@ -32,7 +32,7 @@ Mark::Mark(Engine&                   engine,
            const ingen::BundleBegin& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _type(Type::BUNDLE_BEGIN)
-	, _depth(0)
+	, _depth(-1)
 {}
 
 Mark::Mark(Engine&                 engine,
@@ -41,11 +41,11 @@ Mark::Mark(Engine&                 engine,
            const ingen::BundleEnd& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _type(Type::BUNDLE_END)
-	, _depth(0)
+	, _depth(-1)
 {}
 
-bool
-Mark::pre_process(PreProcessContext& ctx)
+void
+Mark::mark(PreProcessContext& ctx)
 {
 	const UPtr<UndoStack>& stack = ((_mode == Mode::UNDO)
 	                                ? _engine.redo_stack()
@@ -53,11 +53,26 @@ Mark::pre_process(PreProcessContext& ctx)
 
 	switch (_type) {
 	case Type::BUNDLE_BEGIN:
-		ctx.set_in_bundle(true);
 		_depth = stack->start_entry();
 		break;
 	case Type::BUNDLE_END:
 		_depth = stack->finish_entry();
+		break;
+	}
+}
+
+bool
+Mark::pre_process(PreProcessContext& ctx)
+{
+	if (_depth < 0) {
+		mark(ctx);
+	}
+
+	switch (_type) {
+	case Type::BUNDLE_BEGIN:
+		ctx.set_in_bundle(true);
+		break;
+	case Type::BUNDLE_END:
 		ctx.set_in_bundle(false);
 		if (!ctx.dirty_graphs().empty()) {
 			for (GraphImpl* g : ctx.dirty_graphs()) {
@@ -91,6 +106,7 @@ Mark::post_process()
 Event::Execution
 Mark::get_execution() const
 {
+	assert(_depth >= 0);
 	if (!_engine.atomic_bundles()) {
 		return Execution::NORMAL;
 	}
