@@ -600,8 +600,11 @@ void
 GraphCanvas::destroy_selection()
 {
 	_app.interface()->bundle_begin();
+
+	// TODO: Refine this to not destroy arcs that will be anyway?
 	for_each_selected_edge(destroy_arc, &_app);
 	for_each_selected_node(destroy_node, &_app);
+
 	_app.interface()->bundle_end();
 }
 
