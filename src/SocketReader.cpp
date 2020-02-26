@@ -157,7 +157,7 @@ SocketReader::run()
 
 	struct pollfd pfd{};
 	pfd.fd      = _socket->fd();
-	pfd.events  = POLLIN;
+	pfd.events  = POLLIN|POLLPRI;
 	pfd.revents = 0;
 
 	while (!_exit_flag && !_socket_error) {
