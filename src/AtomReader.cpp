@@ -182,6 +182,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		_iface(BundleBegin{seq});
 	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
 		_iface(BundleEnd{seq});
+	} else if (obj->body.otype == _uris.ingen_Undo) {
+		_iface(Undo{seq});
+	} else if (obj->body.otype == _uris.ingen_Redo) {
+		_iface(Redo{seq});
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = nullptr;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
