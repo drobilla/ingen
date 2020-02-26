@@ -45,6 +45,12 @@ protected:
 	virtual void on_hangup() {}
 
 private:
+	/// Serd source function for reading from socket
+	static size_t c_recv(void* buf, size_t size, size_t nmemb, void* stream);
+
+	/// Serd error function for getting socket error status
+	static int c_err(void* stream);
+
 	void run();
 
 	static SerdStatus set_base_uri(SocketReader*   iface,
@@ -69,6 +75,7 @@ private:
 	SordInserter*      _inserter;
 	SordNode*          _msg_node;
 	SPtr<Raul::Socket> _socket;
+	int                _socket_error;
 	bool               _exit_flag;
 	std::thread        _thread;
 };
