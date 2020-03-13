@@ -1,8 +1,7 @@
 Ingen
 =====
 
-Ingen is a realtime modular synthesizer and/or effects processor for
-Jack/LV2/etc. (i.e. GNU/Linux audio systems).
+Ingen is a realtime modular audio environment based on LV2 plugins.
 
 For more information, see <http://drobilla.net/software/ingen>.
 
