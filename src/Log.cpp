@@ -108,7 +108,7 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 		ColorContext ctx(stderr, ColorContext::Color::GREEN);
 		ret = vfprintf(stderr, fmt, args);
 	} else {
-		fprintf(stderr, "Unknown log type %d\n", type);
+		fprintf(stderr, "Unknown log type %u\n", type);
 		return 0;
 	}
 	if (_flush) {

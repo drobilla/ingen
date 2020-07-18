@@ -435,7 +435,7 @@ Buffer::dump_cv(const RunContext& context) const
 	for (uint32_t i = 0; i < context.nframes(); ++i) {
 		if (samples()[i] != value) {
 			value = samples()[i];
-			fprintf(stderr, "  %4d: %.02f\n", i, value);
+			fprintf(stderr, "  %4u: %.02f\n", i, value);
 		}
 	}
 	fprintf(stderr, "}\n");
