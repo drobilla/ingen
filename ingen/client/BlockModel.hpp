@@ -78,8 +78,8 @@ public:
 	std::string port_label(const SPtr<const PortModel>& port) const;
 
 	// Signals
-	INGEN_SIGNAL(new_port, void, SPtr<const PortModel>);
-	INGEN_SIGNAL(removed_port, void, SPtr<const PortModel>);
+	INGEN_SIGNAL(new_port, void, SPtr<const PortModel>)
+	INGEN_SIGNAL(removed_port, void, SPtr<const PortModel>)
 
 protected:
 	friend class ClientStore;

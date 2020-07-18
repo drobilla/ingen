@@ -51,10 +51,10 @@ public:
 	uint32_t internal_poly() const;
 
 	// Signals
-	INGEN_SIGNAL(new_block, void, SPtr<BlockModel>);
-	INGEN_SIGNAL(removed_block, void, SPtr<BlockModel>);
-	INGEN_SIGNAL(new_arc, void, SPtr<ArcModel>);
-	INGEN_SIGNAL(removed_arc, void, SPtr<ArcModel>);
+	INGEN_SIGNAL(new_block, void, SPtr<BlockModel>)
+	INGEN_SIGNAL(removed_block, void, SPtr<BlockModel>)
+	INGEN_SIGNAL(new_arc, void, SPtr<ArcModel>)
+	INGEN_SIGNAL(removed_arc, void, SPtr<ArcModel>)
 
 private:
 	friend class ClientStore;

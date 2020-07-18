@@ -66,12 +66,12 @@ public:
 	Node* graph_parent() const override { return _parent.get(); }
 
 	// Signals
-	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>);
-	INGEN_SIGNAL(removed_child, void, SPtr<ObjectModel>);
-	INGEN_SIGNAL(property, void, const URI&, const Atom&);
-	INGEN_SIGNAL(property_removed, void, const URI&, const Atom&);
-	INGEN_SIGNAL(destroyed, void);
-	INGEN_SIGNAL(moved, void);
+	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>)
+	INGEN_SIGNAL(removed_child, void, SPtr<ObjectModel>)
+	INGEN_SIGNAL(property, void, const URI&, const Atom&)
+	INGEN_SIGNAL(property_removed, void, const URI&, const Atom&)
+	INGEN_SIGNAL(destroyed, void)
+	INGEN_SIGNAL(moved, void)
 
 protected:
 	friend class ClientStore;

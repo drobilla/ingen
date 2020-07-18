@@ -98,9 +98,9 @@ public:
 	void operator()(const SetProperty&);
 	void operator()(const Undo&) {}
 
-	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>);
-	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>);
-	INGEN_SIGNAL(plugin_deleted, void, URI);
+	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>)
+	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>)
+	INGEN_SIGNAL(plugin_deleted, void, URI)
 
 private:
 	SPtr<ObjectModel> _object(const Raul::Path& path);

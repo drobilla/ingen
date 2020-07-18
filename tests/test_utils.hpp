@@ -19,20 +19,26 @@
 #include <iostream>
 
 #define EXPECT_TRUE(value) \
-	if (!(value)) { \
-		std::cerr << fmt("error: %1%:%2%: !%3%\n", \
-		                 __FILE__, __LINE__, (#value)); \
-	}
+	do { \
+		if (!(value)) { \
+			std::cerr << fmt("error: %1%:%2%: !%3%\n", \
+			                 __FILE__, __LINE__, (#value)); \
+		} \
+	} while (0)
 
 #define EXPECT_FALSE(value) \
-	if ((value)) { \
-		std::cerr << (fmt("error: %1%:%2%: !%3%\n", \
-		                  __FILE__, __LINE__, (#value))); \
-	}
+	do { \
+		if ((value)) { \
+			std::cerr << (fmt("error: %1%:%2%: !%3%\n", \
+			                  __FILE__, __LINE__, (#value))); \
+		} \
+	} while (0)
 
 #define EXPECT_EQ(value, expected) \
-	if (!((value) == (expected))) { \
-		std::cerr << fmt("error: %1%:%2%: %3% != %4%\n", \
-		                 __FILE__, __LINE__, (#value), (#expected)); \
-		std::cerr << "note: actual value: " << value << std::endl; \
-	}
+	do { \
+		if (!((value) == (expected))) { \
+			std::cerr << fmt("error: %1%:%2%: %3% != %4%\n", \
+			                 __FILE__, __LINE__, (#value), (#expected)); \
+			std::cerr << "note: actual value: " << value << std::endl; \
+		} \
+	} while (0)

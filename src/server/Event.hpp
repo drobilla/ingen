@@ -63,7 +63,7 @@ public:
 	};
 
 	/** Claim position in undo stack before pre-processing (non-realtime). */
-	virtual void mark(PreProcessContext&) {};
+	virtual void mark(PreProcessContext&) {}
 
 	/** Pre-process event before execution (non-realtime). */
 	virtual bool pre_process(PreProcessContext& ctx) = 0;

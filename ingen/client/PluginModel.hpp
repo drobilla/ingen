@@ -95,9 +95,9 @@ public:
 	static Sord::World* rdf_world() { return _rdf_world; }
 
 	// Signals
-	INGEN_SIGNAL(changed, void);
-	INGEN_SIGNAL(property, void, const URI&, const Atom&);
-	INGEN_SIGNAL(preset, void, const URI&, const std::string&);
+	INGEN_SIGNAL(changed, void)
+	INGEN_SIGNAL(property, void, const URI&, const Atom&)
+	INGEN_SIGNAL(preset, void, const URI&, const std::string&)
 
 	bool fetched() const     { return _fetched; }
 	void set_fetched(bool f) { _fetched = f; }

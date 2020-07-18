@@ -84,7 +84,7 @@ public:
 	             const URI&,        // Subject
 	             const URI&,        // Predicate
 	             const Atom&,       // Object
-	             Resource::Graph);  // Context
+	             Resource::Graph)   // Context
 
 	ingen::World&          world() const { return _world; }
 	SPtr<const BlockModel> block() const { return _block; }

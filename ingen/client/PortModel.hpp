@@ -66,9 +66,9 @@ public:
 	void on_property(const URI& uri, const Atom& value) override;
 
 	// Signals
-	INGEN_SIGNAL(value_changed, void, const Atom&);
-	INGEN_SIGNAL(voice_changed, void, uint32_t, const Atom&);
-	INGEN_SIGNAL(activity, void, const Atom&);
+	INGEN_SIGNAL(value_changed, void, const Atom&)
+	INGEN_SIGNAL(voice_changed, void, uint32_t, const Atom&)
+	INGEN_SIGNAL(activity, void, const Atom&)
 
 private:
 	friend class ClientStore;

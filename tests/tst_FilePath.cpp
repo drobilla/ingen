@@ -31,8 +31,8 @@ main(int, char**)
 {
 	EXPECT_EQ(FilePath("/").parent_path(), FilePath("/"));
 
-	EXPECT_TRUE(FilePath("/abs").is_absolute())
-	EXPECT_FALSE(FilePath("/abs").is_relative())
+	EXPECT_TRUE(FilePath("/abs").is_absolute());
+	EXPECT_FALSE(FilePath("/abs").is_relative());
 	EXPECT_EQ(FilePath("/abs").root_name(), FilePath());
 	EXPECT_EQ(FilePath("/abs").root_directory(), FilePath("/"));
 	EXPECT_EQ(FilePath("/abs").root_path(), FilePath("/"));
@@ -42,8 +42,8 @@ main(int, char**)
 	EXPECT_EQ(FilePath("/abs").stem(), FilePath("abs"));
 	EXPECT_EQ(FilePath("/abs").extension(), FilePath());
 
-	EXPECT_FALSE(FilePath("rel").is_absolute())
-	EXPECT_TRUE(FilePath("rel").is_relative())
+	EXPECT_FALSE(FilePath("rel").is_absolute());
+	EXPECT_TRUE(FilePath("rel").is_relative());
 	EXPECT_EQ(FilePath("rel").root_name(), FilePath());
 	EXPECT_EQ(FilePath("rel").root_directory(), FilePath());
 	EXPECT_EQ(FilePath("rel").root_path(), FilePath());
@@ -53,20 +53,20 @@ main(int, char**)
 	EXPECT_EQ(FilePath("rel").stem(), "rel");
 	EXPECT_EQ(FilePath("rel").extension(), FilePath());
 
-	EXPECT_FALSE(FilePath("file.txt").is_absolute())
-	EXPECT_TRUE(FilePath("file.txt").is_relative())
+	EXPECT_FALSE(FilePath("file.txt").is_absolute());
+	EXPECT_TRUE(FilePath("file.txt").is_relative());
 	EXPECT_EQ(FilePath("file.txt").filename(), "file.txt");
 	EXPECT_EQ(FilePath("file.txt").stem(), "file");
 	EXPECT_EQ(FilePath("file.txt").extension(), ".txt");
 
-	EXPECT_TRUE(FilePath("/abs/file.txt").is_absolute())
-	EXPECT_FALSE(FilePath("/abs/file.txt").is_relative())
+	EXPECT_TRUE(FilePath("/abs/file.txt").is_absolute());
+	EXPECT_FALSE(FilePath("/abs/file.txt").is_relative());
 	EXPECT_EQ(FilePath("/abs/file.txt").filename(), "file.txt");
 	EXPECT_EQ(FilePath("/abs/file.txt").stem(), "file");
 	EXPECT_EQ(FilePath("/abs/file.txt").extension(), ".txt");
 
-	EXPECT_FALSE(FilePath("rel/file.txt").is_absolute())
-	EXPECT_TRUE(FilePath("rel/file.txt").is_relative())
+	EXPECT_FALSE(FilePath("rel/file.txt").is_absolute());
+	EXPECT_TRUE(FilePath("rel/file.txt").is_relative());
 	EXPECT_EQ(FilePath("rel/file.txt").filename(), "file.txt");
 	EXPECT_EQ(FilePath("rel/file.txt").stem(), "file");
 	EXPECT_EQ(FilePath("rel/file.txt").extension(), ".txt");
