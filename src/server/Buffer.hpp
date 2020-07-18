@@ -116,7 +116,7 @@ public:
 		if (is_audio() || is_control()) {
 			return samples()[offset];
 		} else if (_value_buffer) {
-			return ((LV2_Atom_Float*)value())->body;
+			return ((const LV2_Atom_Float*)value())->body;
 		}
 		return 0.0f;
 	}

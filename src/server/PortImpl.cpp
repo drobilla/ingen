@@ -494,7 +494,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 			} else if (value && value->type == _bufs.uris().atom_Float) {
 				/* Float sequence, monitor as a control. */
 				key = uris.ingen_value;
-				val = ((LV2_Atom_Float*)buffer(0)->value())->body;
+				val = ((const LV2_Atom_Float*)buffer(0)->value())->body;
 			} else if (atom->size > sizeof(LV2_Atom_Sequence_Body)) {
 				/* General sequence, send activity for blinkenlights. */
 				const int32_t one = 1;

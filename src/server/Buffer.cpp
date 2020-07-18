@@ -331,7 +331,7 @@ bool
 Buffer::append_event_buffer(const Buffer* buf)
 {
 	auto* seq  = (LV2_Atom_Sequence*)get<LV2_Atom>();
-	auto* bseq = (LV2_Atom_Sequence*)buf->get<LV2_Atom>();
+	auto* bseq = (const LV2_Atom_Sequence*)buf->get<LV2_Atom>();
 	if (seq->atom.type == _factory.uris().atom_Chunk) {
 		clear();  // Chunk initialized with prepare_output_write(), clear
 	}
