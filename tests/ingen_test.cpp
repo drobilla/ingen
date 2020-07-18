@@ -51,7 +51,7 @@
 using namespace std;
 using namespace ingen;
 
-unique_ptr<World> world;
+static unique_ptr<World> world;
 
 static void
 ingen_try(bool cond, const char* msg)
