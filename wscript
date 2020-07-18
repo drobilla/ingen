@@ -53,6 +53,74 @@ def configure(conf):
     conf.load('autowaf', cache=True)
     autowaf.set_cxx_lang(conf, 'c++11')
 
+    if Options.options.ultra_strict:
+        autowaf.add_compiler_flags(conf.env, 'cxx', {
+            'clang': [
+                '-Wno-cast-align',
+                '-Wno-cast-qual',
+                '-Wno-deprecated-copy-dtor',
+                '-Wno-documentation-unknown-command',
+                '-Wno-double-promotion',
+                '-Wno-exit-time-destructors',
+                '-Wno-extra-semi',
+                '-Wno-extra-semi-stmt',
+                '-Wno-float-conversion',
+                '-Wno-float-equal',
+                '-Wno-format-nonliteral',
+                '-Wno-global-constructors',
+                '-Wno-header-hygiene',
+                '-Wno-implicit-fallthrough',
+                '-Wno-implicit-float-conversion',
+                '-Wno-implicit-int-conversion',
+                '-Wno-inconsistent-missing-destructor-override',
+                '-Wno-old-style-cast',
+                '-Wno-padded',
+                '-Wno-range-loop-bind-reference',
+                '-Wno-reserved-id-macro',
+                '-Wno-return-std-move-in-c++11',
+                '-Wno-shadow',
+                '-Wno-shadow-field',
+                '-Wno-shadow-field-in-constructor',
+                '-Wno-shorten-64-to-32',
+                '-Wno-sign-conversion',
+                '-Wno-switch-enum',
+                '-Wno-unreachable-code',
+                '-Wno-unused-parameter',
+                '-Wno-vla',
+                '-Wno-vla-extension',
+                '-Wno-weak-vtables',
+            ],
+            'gcc': [
+                '-Wno-cast-align',
+                '-Wno-cast-qual',
+                '-Wno-conditionally-supported',
+                '-Wno-conversion',
+                '-Wno-deprecated-copy-dtor',
+                '-Wno-double-promotion',
+                '-Wno-effc++',
+                '-Wno-extra-semi',
+                '-Wno-float-conversion',
+                '-Wno-float-equal',
+                '-Wno-format',
+                '-Wno-format-nonliteral',
+                '-Wno-implicit-fallthrough',
+                '-Wno-multiple-inheritance',
+                '-Wno-old-style-cast',
+                '-Wno-padded',
+                '-Wno-pedantic',
+                '-Wno-shadow',
+                '-Wno-sign-conversion',
+                '-Wno-stack-protector',
+                '-Wno-suggest-attribute=format',
+                '-Wno-suggest-override',
+                '-Wno-switch-enum',
+                '-Wno-unreachable-code',
+                '-Wno-unused-parameter',
+                '-Wno-useless-cast',
+                '-Wno-vla',
+            ],
+        })
+
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
     conf.check_cxx(msg='Checking for thread_local keyword',
                    mandatory=False,
@@ -78,18 +146,24 @@ def configure(conf):
                         defines     = '_POSIX_C_SOURCE=200809L',
                         header_name = 'stdlib.h',
                         define_name = 'HAVE_POSIX_MEMALIGN',
+                        return_type = 'int',
+                        arg_types   = 'void**,size_t,size_t',
                         mandatory   = False)
 
     conf.check_function('cxx', 'isatty',
                         header_name = 'unistd.h',
                         defines     = '_POSIX_C_SOURCE=200809L',
                         define_name = 'HAVE_ISATTY',
+                        return_type = 'int',
+                        arg_types   = 'int',
                         mandatory   = False)
 
     conf.check_function('cxx', 'vasprintf',
                         header_name = 'stdio.h',
                         defines     = '_GNU_SOURCE=1',
                         define_name = 'HAVE_VASPRINTF',
+                        return_type = 'int',
+                        arg_types   = 'char**,const char*,va_list',
                         mandatory   = False)
 
     conf.check(define_name = 'HAVE_LIBDL',
@@ -98,9 +172,11 @@ def configure(conf):
 
     if not Options.options.no_socket:
         conf.check_function('cxx', 'socket',
-                            header_name   = 'sys/socket.h',
-                            define_name   = 'HAVE_SOCKET',
-                            mandatory     = False)
+                            header_name = 'sys/socket.h',
+                            define_name = 'HAVE_SOCKET',
+                            return_type = 'int',
+                            arg_types   = 'int,int,int',
+                            mandatory   = False)
 
     if not Options.options.no_python:
         conf.check_python_version((2, 4, 0), mandatory=False)
@@ -114,11 +190,19 @@ def configure(conf):
                             header_name   = 'jack/metadata.h',
                             define_name   = 'HAVE_JACK_METADATA',
                             uselib        = 'JACK',
+                            return_type   = 'int',
+                            arg_types     = '''jack_client_t*,
+                                               jack_uuid_t,
+                                               const char*,
+                                               const char*,
+                                               const char*''',
                             mandatory     = False)
         conf.check_function('cxx', 'jack_port_rename',
                             header_name   = 'jack/jack.h',
                             define_name   = 'HAVE_JACK_PORT_RENAME',
                             uselib        = 'JACK',
+                            return_type   = 'int',
+                            arg_types     = 'jack_client_t*,jack_port_t*,const char*',
                             mandatory     = False)
         if not Options.options.no_jack_session:
             conf.define('INGEN_JACK_SESSION', 1)
