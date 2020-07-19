@@ -124,7 +124,7 @@ ClientUpdate::put_preset(const URIs&        uris,
                          const std::string& label)
 {
 	const Properties props{
-		{ uris.rdf_type, uris.pset_Preset.urid },
+		{ uris.rdf_type, uris.pset_Preset.urid_atom() },
 		{ uris.rdfs_label, uris.forge.alloc(label) },
 		{ uris.lv2_appliesTo, uris.forge.make_urid(plugin) }};
 	put(preset, props);

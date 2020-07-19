@@ -79,7 +79,7 @@ lv2_ui_write(SuilController controller,
 			ui->world().forge().make(value),
 			Resource::Graph::DEFAULT);
 
-	} else if (format == uris.atom_eventTransfer.urid.get<LV2_URID>()) {
+	} else if (format == uris.atom_eventTransfer.urid()) {
 		const LV2_Atom* atom = (const LV2_Atom*)buffer;
 		Atom            val  = ui->world().forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));

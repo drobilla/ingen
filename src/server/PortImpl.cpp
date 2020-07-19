@@ -103,7 +103,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	if (is_output) {
 		if (_parent->graph_type() != Node::GraphType::GRAPH) {
-			add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort.urid);
+			add_property(bufs.uris().rdf_type,
+			             bufs.uris().lv2_OutputPort.urid_atom());
 		}
 	}
 

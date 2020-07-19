@@ -41,7 +41,7 @@ public:
 	{}
 
 	Property(const URIs::Quark& quark, Graph ctx=Graph::DEFAULT)
-		: Atom(quark.urid)
+		: Atom(quark.urid_atom())
 		, _ctx(ctx)
 	{}
 

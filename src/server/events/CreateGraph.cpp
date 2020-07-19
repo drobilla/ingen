@@ -152,7 +152,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		// Create a new graph
 		_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
 		                       _engine.sample_rate(), int_poly);
-		_graph->add_property(uris.rdf_type, uris.ingen_Graph.urid);
+		_graph->add_property(uris.rdf_type, uris.ingen_Graph.urid_atom());
 		_graph->add_property(uris.rdf_type,
 		                     Property(uris.ingen_Block,
 		                              Resource::Graph::EXTERNAL));

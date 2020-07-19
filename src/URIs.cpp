@@ -41,21 +41,21 @@ URIs::Quark::Quark(Forge&      forge,
                    LilvWorld*  lworld,
                    const char* str)
 	: URI(str)
-	, urid(forge.make_urid(URI(str)))
-	, uri(forge.alloc_uri(str))
-	, lnode(lilv_new_uri(lworld, str))
+	, _urid_atom(forge.make_urid(URI(str)))
+	, _uri_atom(forge.alloc_uri(str))
+	, _lilv_node(lilv_new_uri(lworld, str))
 {}
 
 URIs::Quark::Quark(const Quark& copy)
 	: URI(copy)
-	, urid(copy.urid)
-	, uri(copy.uri)
-	, lnode(lilv_node_duplicate(copy.lnode))
+	, _urid_atom(copy._urid_atom)
+	, _uri_atom(copy._uri_atom)
+	, _lilv_node(lilv_node_duplicate(copy._lilv_node))
 {}
 
 URIs::Quark::~Quark()
 {
-	lilv_node_free(lnode);
+	lilv_node_free(_lilv_node);
 }
 
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"

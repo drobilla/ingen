@@ -32,7 +32,7 @@ namespace server {
 
 LV2Plugin::LV2Plugin(World& world, const LilvPlugin* lplugin)
 	: PluginImpl(world.uris(),
-	             world.uris().lv2_Plugin.urid,
+	             world.uris().lv2_Plugin.urid_atom(),
 	             URI(lilv_node_as_uri(lilv_plugin_get_uri(lplugin))))
 	, _world(world)
 	, _lilv_plugin(lplugin)

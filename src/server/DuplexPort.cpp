@@ -69,8 +69,11 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 	_is_output = is_output;
 	if (is_output) {
 		if (parent->graph_type() != Node::GraphType::GRAPH) {
-			remove_property(bufs.uris().rdf_type, bufs.uris().lv2_InputPort.urid);
-			add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort.urid);
+			remove_property(bufs.uris().rdf_type,
+			                bufs.uris().lv2_InputPort.urid_atom());
+
+			add_property(bufs.uris().rdf_type,
+			             bufs.uris().lv2_OutputPort.urid_atom());
 		}
 	}
 

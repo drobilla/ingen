@@ -82,7 +82,7 @@ Resource::set_property(const URI&         uri,
                        const URIs::Quark& value,
                        Resource::Graph    ctx)
 {
-	return set_property(uri, value.urid, ctx);
+	return set_property(uri, value.urid_atom(), ctx);
 }
 
 void
@@ -106,8 +106,8 @@ Resource::remove_property(const URI& uri, const Atom& value)
 void
 Resource::remove_property(const URI& uri, const URIs::Quark& value)
 {
-	remove_property(uri, value.urid);
-	remove_property(uri, value.uri);
+	remove_property(uri, value.urid_atom());
+	remove_property(uri, value.uri_atom());
 }
 
 bool
@@ -196,7 +196,7 @@ Resource::set_properties(const Properties& props)
 	// Erase existing properties with matching keys
 	for (const auto& p : props) {
 		_properties.erase(p.first);
-		on_property_removed(p.first, _uris.patch_wildcard.urid);
+		on_property_removed(p.first, _uris.patch_wildcard.urid_atom());
 	}
 
 	// Set new properties

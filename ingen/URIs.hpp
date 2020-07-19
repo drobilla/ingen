@@ -51,13 +51,20 @@ public:
 
 		~Quark();
 
-		operator LV2_URID()        const { return urid.get<LV2_URID>(); }
-		explicit operator Atom()   const { return urid; }
-		operator const LilvNode*() const { return lnode; }
+		const Atom& urid_atom() const { return _urid_atom; }
+		const Atom& uri_atom() const { return _uri_atom; }
 
-		Atom      urid;
-		Atom      uri;
-		LilvNode* lnode;
+		LV2_URID        urid() const { return _urid_atom.get<LV2_URID>(); }
+		const LilvNode* node() const { return _lilv_node; }
+
+		operator LV2_URID()        const { return _urid_atom.get<LV2_URID>(); }
+		explicit operator Atom()   const { return _urid_atom; }
+		operator const LilvNode*() const { return _lilv_node; }
+
+	private:
+		Atom      _urid_atom;
+		Atom      _uri_atom;
+		LilvNode* _lilv_node;
 	};
 
 	ingen::Forge& forge;
@@ -203,10 +210,10 @@ public:
 inline bool
 operator==(const URIs::Quark& lhs, const Atom& rhs)
 {
-	if (rhs.type() == lhs.urid.type()) {
-		return rhs == lhs.urid;
-	} else if (rhs.type() == lhs.uri.type()) {
-		return rhs == lhs.uri;
+	if (rhs.type() == lhs.urid_atom().type()) {
+		return rhs == lhs.urid_atom();
+	} else if (rhs.type() == lhs.uri_atom().type()) {
+		return rhs == lhs.uri_atom();
 	}
 	return false;
 }

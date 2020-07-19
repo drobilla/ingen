@@ -52,7 +52,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 	const ingen::URIs& uris = bufs.uris();
 
 	if (parent->graph_type() != Node::GraphType::GRAPH) {
-		add_property(uris.rdf_type, uris.lv2_InputPort.urid);
+		add_property(uris.rdf_type, uris.lv2_InputPort.urid_atom());
 	}
 }
 

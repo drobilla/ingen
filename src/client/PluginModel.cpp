@@ -50,9 +50,9 @@ PluginModel::PluginModel(URIs&             uris,
 {
 	if (!_type.is_valid()) {
 		if (uri.string().find("ingen-internals") != string::npos) {
-			_type = uris.ingen_Internal.urid;
+			_type = uris.ingen_Internal.urid_atom();
 		} else {
-			_type = uris.lv2_Plugin.urid;  // Assume LV2 and hope for the best...
+			_type = uris.lv2_Plugin.urid_atom();  // Assume LV2 and hope for the best...
 		}
 	}
 

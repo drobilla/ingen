@@ -33,7 +33,7 @@ using namespace internals;
 InternalPlugin::InternalPlugin(URIs&               uris,
                                const URI&          uri,
                                const Raul::Symbol& symbol)
-	: PluginImpl(uris, uris.ingen_Internal.urid, uri)
+	: PluginImpl(uris, uris.ingen_Internal.urid_atom(), uri)
 	, _symbol(symbol)
 {
 	set_property(uris.rdf_type, uris.ingen_Internal);
