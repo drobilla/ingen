@@ -136,8 +136,16 @@ def configure(conf):
     conf.check_pkg('raul-1 >= 1.0.0', uselib_store='RAUL')
     conf.check_pkg('serd-0 >= 0.30.3', uselib_store='SERD', mandatory=False)
     conf.check_pkg('sord-0 >= 0.12.0', uselib_store='SORD', mandatory=False)
-    conf.check_pkg('portaudio-2.0', uselib_store='PORTAUDIO', mandatory=False)
-    conf.check_pkg('sigc++-2.0', uselib_store='SIGCPP', mandatory=False)
+
+    conf.check_pkg('portaudio-2.0',
+                   uselib_store = 'PORTAUDIO',
+                   system       = True,
+                   mandatory    = False)
+
+    conf.check_pkg('sigc++-2.0',
+                   uselib_store = 'SIGCPP',
+                   system       = True,
+                   mandatory    = False)
 
     conf.check_function('cxx', 'posix_memalign',
                         defines     = '_POSIX_C_SOURCE=200809L',
@@ -182,7 +190,11 @@ def configure(conf):
         conf.env.INGEN_BUILD_LV2 = 1
 
     if not Options.options.no_jack:
-        conf.check_pkg('jack >= 0.120.0', uselib_store='JACK', mandatory=False)
+        conf.check_pkg('jack >= 0.120.0',
+                       uselib_store = 'JACK',
+                       system       = True,
+                       mandatory    = False)
+
         conf.check_function('cxx', 'jack_set_property',
                             header_name   = 'jack/metadata.h',
                             define_name   = 'HAVE_JACK_METADATA',
