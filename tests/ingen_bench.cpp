@@ -59,7 +59,7 @@ real_path(const char* path)
 int
 main(int argc, char** argv)
 {
-	set_bundle_path_from_code((void*)&ingen_try);
+	set_bundle_path_from_code(reinterpret_cast<void(*)()>(&ingen_try));
 
 	// Create world
 	try {

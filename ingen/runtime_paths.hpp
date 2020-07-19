@@ -28,7 +28,7 @@ namespace ingen {
 extern const char search_path_separator;
 
 INGEN_API void set_bundle_path(const char* path);
-INGEN_API void set_bundle_path_from_code(void* function);
+INGEN_API void set_bundle_path_from_code(void (*function)());
 
 INGEN_API FilePath
 find_in_search_path(const std::string&           name,

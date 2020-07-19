@@ -65,10 +65,10 @@ parse_search_path(const char* search_path, std::vector<FilePath> defaults)
  * Passing a function defined in a module etc. will not work!
  */
 void
-set_bundle_path_from_code(void* function)
+set_bundle_path_from_code(void (*function)())
 {
 	Dl_info dli;
-	dladdr(function, &dli);
+	dladdr(reinterpret_cast<void*>(function), &dli);
 
 #ifdef BUNDLE
 	char bin_loc[PATH_MAX];

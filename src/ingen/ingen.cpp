@@ -90,7 +90,8 @@ print_version()
 int
 main(int argc, char** argv)
 {
-	ingen::set_bundle_path_from_code((void*)&print_version);
+	ingen::set_bundle_path_from_code(
+	    reinterpret_cast<void (*)()>(&print_version));
 
 	// Create world
 	try {
