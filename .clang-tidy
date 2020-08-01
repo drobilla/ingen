@@ -15,7 +15,6 @@ Checks: >
   -android-cloexec-fopen,
   -bugprone-branch-clone,
   -bugprone-forward-declaration-namespace,
-  -bugprone-not-null-terminated-result,
   -bugprone-parent-virtual-call,
   -bugprone-signed-char-misuse,
   -bugprone-suspicious-string-compare,

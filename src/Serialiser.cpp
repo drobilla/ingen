@@ -578,7 +578,7 @@ Serialiser::Impl::serialise_properties(Sord::Node        id,
 			if (p.second.type() == _world.uris().atom_URI &&
 			    !strncmp(reinterpret_cast<const char*>(p.second.get_body()),
 			             "ingen:/main/",
-			             13)) {
+			             12)) {
 				/* Value is a graph URI relative to the running engine.
 				   Chop the prefix and save the path relative to the graph file.
 				   This allows saving references to bundle resources. */
