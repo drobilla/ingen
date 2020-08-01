@@ -40,8 +40,7 @@ class GraphCanvas;
 class SubgraphModule : public NodeModule
 {
 public:
-	SubgraphModule(GraphCanvas&                        canvas,
-	               SPtr<const client::GraphModel> graph);
+	SubgraphModule(GraphCanvas& canvas, SPtr<const client::GraphModel> graph);
 
 	virtual ~SubgraphModule() = default;
 
