@@ -171,18 +171,18 @@ App::attach(const SPtr<ingen::Interface>& client)
 	}
 
 	_client = client;
-	_store  = SPtr<ClientStore>(new ClientStore(_world.uris(), _world.log(), sig_client()));
-	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world.interface()));
+	_store  = std::make_shared<ClientStore>(_world.uris(), _world.log(), sig_client());
+	_loader = std::make_shared<ThreadedLoader>(*this, _world.interface());
 	if (!_world.store()) {
 		_world.set_store(_store);
 	}
 
 	if (_world.conf().option("dump").get<int32_t>()) {
-		_dumper = SPtr<StreamWriter>(new StreamWriter(_world.uri_map(),
-		                                              _world.uris(),
-		                                              URI("ingen:/client"),
-		                                              stderr,
-		                                              ColorContext::Color::CYAN));
+		_dumper = std::make_shared<StreamWriter>(_world.uri_map(),
+		                                         _world.uris(),
+		                                         URI("ingen:/client"),
+		                                         stderr,
+		                                         ColorContext::Color::CYAN);
 
 		sig_client()->signal_message().connect(
 			sigc::mem_fun(*_dumper.get(), &StreamWriter::message));

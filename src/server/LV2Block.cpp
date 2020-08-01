@@ -41,6 +41,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 

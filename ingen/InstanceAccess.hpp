@@ -25,6 +25,7 @@
 #include "lilv/lilv.h"
 #include "lv2/core/lv2.h"
 
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -44,9 +45,9 @@ struct InstanceAccess : public ingen::LV2Features::Feature
 			return SPtr<LV2_Feature>();
 		}
 
-		return SPtr<LV2_Feature>(
-			new LV2_Feature{ "http://lv2plug.in/ns/ext/instance-access",
-			                 lilv_instance_get_handle(instance) });
+		return std::make_shared<LV2_Feature>(
+		    LV2_Feature{"http://lv2plug.in/ns/ext/instance-access",
+		                lilv_instance_get_handle(instance)});
 	}
 };
 

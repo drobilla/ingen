@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <memory>
 
 namespace ingen {
 
@@ -70,7 +71,7 @@ GraphView::set_graph(const SPtr<const GraphModel>& graph)
 	assert(_breadcrumb_container); // ensure created
 
 	_graph = graph;
-	_canvas = SPtr<GraphCanvas>(new GraphCanvas(*_app, graph, 1600*2, 1200*2));
+	_canvas = std::make_shared<GraphCanvas>(*_app, graph, 1600*2, 1200*2);
 	_canvas->build();
 
 	_canvas_scrolledwindow->add(_canvas->widget());

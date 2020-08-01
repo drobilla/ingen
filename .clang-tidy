@@ -54,7 +54,6 @@ Checks: >
   -llvm-header-guard,
   -llvm-namespace-comment,
   -misc-unused-parameters,
-  -modernize-make-shared,
   -modernize-redundant-void-arg,
   -modernize-use-default-member-init,
   -modernize-use-trailing-return-type,

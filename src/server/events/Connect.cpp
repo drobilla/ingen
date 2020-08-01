@@ -31,6 +31,7 @@
 #include "raul/Maid.hpp"
 
 #include <cassert>
+#include <memory>
 #include <mutex>
 #include <utility>
 
