@@ -2,7 +2,6 @@ Checks: >
   *,
   -*avoid-c-arrays,
   -*braces-around-statements,
-  -*deprecated-headers,
   -*magic-numbers,
   -*move-const-arg,
   -*narrowing-conversions,

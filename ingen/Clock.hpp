@@ -21,8 +21,8 @@
 #    include <mach/mach.h>
 #    include <mach/mach_time.h>
 #else
+#    include <ctime>
 #    include <sys/time.h>
-#    include <time.h>
 #endif
 
 #include <cstdint>

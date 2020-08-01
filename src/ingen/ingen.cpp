@@ -32,12 +32,12 @@
 #endif
 
 #include <chrono>
+#include <csignal>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <mutex>
-#include <signal.h>
 #include <string>
 #include <thread>
 
