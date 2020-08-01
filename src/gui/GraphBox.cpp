@@ -64,11 +64,6 @@ static const int STATUS_CONTEXT_HOVER  = 2;
 GraphBox::GraphBox(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::VBox(cobject)
-	, _app(nullptr)
-	, _window(nullptr)
-	, _breadcrumbs(nullptr)
-	, _has_shown_documentation(false)
-	, _enable_signal(true)
 {
 	property_visible() = false;
 

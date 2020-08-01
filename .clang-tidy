@@ -55,7 +55,6 @@ Checks: >
   -llvm-namespace-comment,
   -misc-unused-parameters,
   -modernize-redundant-void-arg,
-  -modernize-use-default-member-init,
   -modernize-use-trailing-return-type,
   -modernize-use-using,
   -portability-simd-intrinsics,

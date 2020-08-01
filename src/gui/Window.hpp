@@ -33,8 +33,12 @@ class App;
 class Window : public Gtk::Window
 {
 public:
-	Window()                                 : _app(nullptr) {}
-	explicit Window(BaseObjectType* cobject) : Gtk::Window(cobject), _app(nullptr) {}
+	Window() = default;
+
+	explicit Window(BaseObjectType* cobject)
+	    : Gtk::Window(cobject)
+	{
+	}
 
 	virtual void init_window(App& app) { _app = &app; }
 
@@ -48,7 +52,7 @@ public:
 
 	static bool key_press_handler(Gtk::Window* win, GdkEventKey* event);
 
-	App* _app;
+	App* _app = nullptr;
 };
 
 /** Ingen GUI Dialog
@@ -57,8 +61,12 @@ public:
 class Dialog : public Gtk::Dialog
 {
 public:
-	Dialog()                                 : _app(nullptr) {}
-	explicit Dialog(BaseObjectType* cobject) : Gtk::Dialog(cobject), _app(nullptr) {}
+	Dialog() = default;
+
+	explicit Dialog(BaseObjectType* cobject)
+	    : Gtk::Dialog(cobject)
+	{
+	}
 
 	virtual void init_dialog(App& app) { _app = &app; }
 
@@ -70,7 +78,7 @@ public:
 		return Gtk::Window::on_key_press_event(event);
 	}
 
-	App* _app;
+	App* _app = nullptr;
 };
 
 } // namespace gui

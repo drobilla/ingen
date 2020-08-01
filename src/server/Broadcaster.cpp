@@ -27,11 +27,6 @@
 namespace ingen {
 namespace server {
 
-Broadcaster::Broadcaster()
-	: _must_broadcast(false)
-	, _bundle_depth(0)
-{}
-
 Broadcaster::~Broadcaster()
 {
 	std::lock_guard<std::mutex> lock(_clients_mutex);

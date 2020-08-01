@@ -69,19 +69,19 @@ private:
 	/** Key, one for each key on the keyboard */
 	struct Key {
 		enum class State { OFF, ON_ASSIGNED, ON_UNASSIGNED };
-		Key() : state(State::OFF), voice(0), time(0) {}
-		State       state;
-		uint32_t    voice;
-		SampleCount time;
+
+		State       state = State::OFF;
+		uint32_t    voice = 0;
+		SampleCount time  = 0;
 	};
 
 	/** Voice, one of these always exists for each voice */
 	struct Voice {
 		enum class State { FREE, ACTIVE, HOLDING };
-		Voice() : state(State::FREE), note(0), time(0) {}
-		State       state;
-		uint8_t     note;
-		SampleCount time;
+
+		State       state = State::FREE;
+		uint8_t     note  = 0;
+		SampleCount time  = 0;
 	};
 
 	using Voices = Raul::Array<Voice>;

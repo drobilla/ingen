@@ -42,7 +42,7 @@ namespace server {
 class Broadcaster : public Interface
 {
 public:
-	Broadcaster();
+	Broadcaster() = default;
 	~Broadcaster();
 
 	void register_client(const SPtr<Interface>& client);
@@ -114,8 +114,8 @@ private:
 	std::mutex                  _clients_mutex;
 	Clients                     _clients;
 	std::set< SPtr<Interface> > _broadcastees;
-	std::atomic<bool>           _must_broadcast;
-	unsigned                    _bundle_depth;
+	std::atomic<bool>           _must_broadcast{false};
+	unsigned                    _bundle_depth{0};
 	SPtr<Interface>             _ignore_client;
 };
 

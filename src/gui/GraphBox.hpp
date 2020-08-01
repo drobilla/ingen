@@ -144,10 +144,10 @@ private:
 	void event_show_engine();
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
-	App*                           _app;
+	App*                           _app = nullptr;
 	SPtr<const client::GraphModel> _graph;
 	SPtr<GraphView>                _view;
-	GraphWindow*                   _window;
+	GraphWindow*                   _window = nullptr;
 
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;
@@ -204,8 +204,8 @@ private:
 	/** Invisible bin used to store breadcrumbs when not shown by a view */
 	Gtk::Alignment _breadcrumb_bin;
 
-	bool _has_shown_documentation;
-	bool _enable_signal;
+	bool _has_shown_documentation = false;
+	bool _enable_signal           = true;
 };
 
 } // namespace gui

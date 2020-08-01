@@ -49,7 +49,7 @@ class INGEN_API Interface
 public:
 	using result_type = void;
 
-	Interface() : _seq(0) {}
+	Interface() {}
 
 	virtual ~Interface() = default;
 
@@ -141,7 +141,7 @@ public:
 	/** @} */
 
 private:
-	int32_t _seq;
+	int32_t _seq = 0;
 };
 
 } // namespace ingen

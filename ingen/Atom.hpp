@@ -43,7 +43,7 @@ namespace ingen {
 */
 class INGEN_API Atom {
 public:
-	Atom() noexcept : _atom{0, 0}, _body{} {}
+	Atom() noexcept = default;
 
 	~Atom() { dealloc(); }
 
@@ -53,7 +53,6 @@ public:
 	 */
 	Atom(uint32_t size, LV2_URID type, const void* body)
 	    : _atom{size, type}
-		, _body{}
 	{
 		if (is_reference()) {
 			_body.ptr = static_cast<LV2_Atom*>(malloc(sizeof(LV2_Atom) + size));
@@ -66,7 +65,6 @@ public:
 
 	Atom(const Atom& copy)
 		: _atom{copy._atom}
-		, _body{}
 	{
 		if (is_reference()) {
 			_body.ptr =
@@ -172,11 +170,12 @@ private:
 		return _atom.size > sizeof(_body.val);
 	}
 
-	LV2_Atom _atom;
-	union {
+	LV2_Atom _atom = {0, 0};
+	union
+	{
 		intptr_t  val;
 		LV2_Atom* ptr;
-	} _body;
+	} _body = {};
 };
 
 } // namespace ingen

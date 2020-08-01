@@ -61,7 +61,7 @@ public:
 			SET
 		};
 
-		SetState() : state(State::SET), value(0), time(0) {}
+		SetState() = default;
 
 		void set(const RunContext& ctx, FrameTime t, Sample v) {
 			time  = t;
@@ -71,9 +71,9 @@ public:
 			         : State::HALF_SET_CYCLE_1);
 		}
 
-		State     state;  ///< State of buffer for setting control value
-		Sample    value;  ///< Value currently being set
-		FrameTime time;   ///< Time value was set
+		State     state = State::SET; ///< State for setting control value
+		Sample    value = 0;          ///< Value currently being set
+		FrameTime time  = 0;          ///< Time value was set
 	};
 
 	struct Voice {

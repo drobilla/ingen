@@ -451,19 +451,12 @@ ingen_lv2_main(const SPtr<Engine>& engine, const SPtr<LV2Driver>& driver)
 }
 
 struct IngenPlugin {
-	IngenPlugin()
-		: main(nullptr)
-		, map(nullptr)
-		, argc(0)
-		, argv(nullptr)
-	{}
-
 	UPtr<ingen::World> world;
 	SPtr<Engine>       engine;
 	UPtr<std::thread>  main;
-	LV2_URID_Map*      map;
-	int                argc;
-	char**             argv;
+	LV2_URID_Map*      map  = nullptr;
+	int                argc = 0;
+	char**             argv = nullptr;
 };
 
 static Lib::Graphs
