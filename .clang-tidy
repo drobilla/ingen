@@ -9,8 +9,6 @@ Checks: >
   -*non-private-member-variables-in-classes,
   -*special-member-functions,
   -*uppercase-literal-suffix,
-  -*use-equals-default,
-  -*use-equals-delete,
   -*use-override,
   -android-cloexec-fopen,
   -bugprone-branch-clone,

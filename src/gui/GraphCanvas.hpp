@@ -52,7 +52,7 @@ public:
 	            int                            width,
 	            int                            height);
 
-	virtual ~GraphCanvas() {}
+	virtual ~GraphCanvas() = default;
 
 	App& app() { return _app; }
 

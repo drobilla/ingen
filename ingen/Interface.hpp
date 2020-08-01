@@ -49,7 +49,7 @@ class INGEN_API Interface
 public:
 	using result_type = void;
 
-	Interface() {}
+	Interface() = default;
 
 	virtual ~Interface() = default;
 

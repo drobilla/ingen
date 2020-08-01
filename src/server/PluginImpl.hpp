@@ -48,6 +48,9 @@ public:
 	{
 	}
 
+	PluginImpl(const PluginImpl&) = delete;
+	PluginImpl& operator=(const PluginImpl&) = delete;
+
 	virtual BlockImpl* instantiate(BufferFactory&      bufs,
 	                               const Raul::Symbol& symbol,
 	                               bool                polyphonic,
@@ -84,10 +87,6 @@ protected:
 	Presets _presets;
 	bool    _presets_loaded;
 	bool    _is_zombie;
-
-private:
-	PluginImpl(const PluginImpl&) = delete;
-	PluginImpl& operator=(const PluginImpl&) = delete;
 };
 
 } // namespace server

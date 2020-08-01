@@ -42,7 +42,7 @@ class INGEN_API SigClientInterface : public ingen::Interface,
                                      public INGEN_TRACKABLE
 {
 public:
-	SigClientInterface() {}
+	SigClientInterface() = default;
 
 	URI uri() const override { return URI("ingen:/clients/sig"); }
 

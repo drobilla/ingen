@@ -68,6 +68,9 @@ public:
 	 */
 	RunContext(const RunContext& copy);
 
+	RunContext& operator=(const RunContext&) = delete;
+	RunContext& operator=(RunContext&&) = delete;
+
 	/** Return true iff the given port should broadcast its value.
 	 *
 	 * Whether or not broadcasting is actually done is a per-client property,
@@ -138,8 +141,6 @@ public:
 	inline bool        realtime() const { return _realtime; }
 
 protected:
-	const RunContext& operator=(const RunContext& copy) = delete;
-
 	void run();
 
 	Engine&           _engine;      ///< Engine we're running in

@@ -49,6 +49,9 @@ public:
 		assert(!(mode == Mode::SINGLE && !block));
 	}
 
+	Task(const Task&) = delete;
+	Task& operator=(const Task&) = delete;
+
 	Task(Task&& task)
 		: _children(std::move(task._children))
 		, _block(task._block)
@@ -99,9 +102,6 @@ public:
 
 private:
 	using Children = std::deque<std::unique_ptr<Task>>;
-
-	Task(const Task&) = delete;
-	Task& operator=(const Task&) = delete;
 
 	Task* get_task(RunContext& ctx);
 
