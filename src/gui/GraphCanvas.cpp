@@ -718,7 +718,10 @@ GraphCanvas::paste()
 	}
 
 	// Find canvas paste origin based on pointer position
-	int widget_point_x, widget_point_y, scroll_x, scroll_y;
+	int widget_point_x = 0;
+	int widget_point_y = 0;
+	int scroll_x       = 0;
+	int scroll_y       = 0;
 	widget().get_pointer(widget_point_x, widget_point_y);
 	get_scroll_offsets(scroll_x, scroll_y);
 	const int paste_x = widget_point_x + scroll_x + (20.0f * _paste_count);
@@ -816,7 +819,8 @@ GraphCanvas::menu_add_port(const string& sym_base,
                            const URI&    type,
                            bool          is_output)
 {
-	string sym, name;
+	string sym;
+	string name;
 	generate_port_name(sym_base, sym, name_base, name);
 	const Raul::Path& path = _graph->path().child(Raul::Symbol(sym));
 

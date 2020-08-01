@@ -245,7 +245,10 @@ ClientStore::operator()(const Put& msg)
 	const auto& uri        = msg.uri;
 	const auto& properties = msg.properties;
 
-	bool is_graph, is_block, is_port, is_output;
+	bool is_block  = false;
+	bool is_graph  = false;
+	bool is_output = false;
+	bool is_port   = false;
 	Resource::type(uris(), properties,
 	               is_graph, is_block, is_port, is_output);
 
