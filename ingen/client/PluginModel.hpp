@@ -109,7 +109,7 @@ protected:
 	void add_preset(const URI& uri, const std::string& label);
 
 private:
-	std::string get_documentation(const LilvNode* subject, bool html) const;
+	static std::string get_documentation(const LilvNode* subject, bool html);
 
 	static Sord::World*       _rdf_world;
 	static LilvWorld*         _lilv_world;

@@ -47,15 +47,17 @@ private:
 
 	inline uint64_t now_microseconds() const {
 		struct timespec time;
-#    if defined(CLOCK_MONOTONIC_RAW)
-		clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-#    else
-		clock_gettime(CLOCK_MONOTONIC, &time);
-#    endif
+		clock_gettime(_clock, &time);
 		return static_cast<uint64_t>(time.tv_sec) * 1e6 +
 		       static_cast<uint64_t>(time.tv_nsec) / 1e3;
 	}
 
+private:
+#	if defined(CLOCK_MONOTONIC_RAW)
+	const clockid_t _clock = CLOCK_MONOTONIC_RAW;
+#	else
+	const clockid_t _clock = CLOCK_MONOTONIC;
+#	endif
 #endif
 };
 

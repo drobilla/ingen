@@ -178,7 +178,7 @@ public:
 		}
 	}
 
-	void post_process_port(RunContext& context, EnginePort* port) {
+	static void post_process_port(RunContext& context, EnginePort* port) {
 		DuplexPort* graph_port = port->graph_port();
 
 		// No copying necessary, host buffers are used directly

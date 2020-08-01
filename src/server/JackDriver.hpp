@@ -106,10 +106,9 @@ public:
 private:
 	friend class JackPort;
 
+	static void thread_init_cb(void* jack_driver);
+
 	// Static JACK callbacks which call the non-static callbacks (methods)
-	inline static void thread_init_cb(void* const jack_driver) {
-		return static_cast<JackDriver*>(jack_driver)->_thread_init_cb();
-	}
 	inline static void shutdown_cb(void* const jack_driver) {
 		return static_cast<JackDriver*>(jack_driver)->_shutdown_cb();
 	}
@@ -126,14 +125,13 @@ private:
 #endif
 
 	void pre_process_port(RunContext& context, EnginePort* port);
-	void post_process_port(RunContext& context, EnginePort* port);
+	void post_process_port(RunContext& context, EnginePort* port) const;
 
 	void port_property_internal(const jack_port_t* jport,
 	                            const URI&         uri,
 	                            const Atom&        value);
 
 	// Non static callbacks (methods)
-	void _thread_init_cb();
 	void _shutdown_cb();
 	int  _process_cb(jack_nframes_t nframes);
 	int  _block_length_cb(jack_nframes_t nframes);

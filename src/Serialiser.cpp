@@ -92,7 +92,7 @@ struct Serialiser::Impl {
 
 	void write_bundle(const SPtr<const Node>& graph, const URI& uri);
 
-	Sord::Node path_rdf_node(const Raul::Path& path);
+	Sord::Node path_rdf_node(const Raul::Path& path) const;
 
 	void write_manifest(const FilePath&         bundle_path,
 	                    const SPtr<const Node>& graph);
@@ -278,7 +278,7 @@ Serialiser::Impl::finish()
 }
 
 Sord::Node
-Serialiser::Impl::path_rdf_node(const Raul::Path& path)
+Serialiser::Impl::path_rdf_node(const Raul::Path& path) const
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));

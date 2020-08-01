@@ -75,7 +75,7 @@ Log::trace(const std::string& msg)
 }
 
 void
-Log::print(FILE* stream, const std::string& msg)
+Log::print(FILE* stream, const std::string& msg) const
 {
 	fprintf(stream, "%s", msg.c_str());
 	if (_flush) {

@@ -388,7 +388,7 @@ JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 }
 
 void
-JackDriver::post_process_port(RunContext& context, EnginePort* port)
+JackDriver::post_process_port(RunContext& context, EnginePort* port) const
 {
 	const URIs&       uris       = context.engine().world().uris();
 	const SampleCount nframes    = context.nframes();
@@ -413,7 +413,7 @@ JackDriver::post_process_port(RunContext& context, EnginePort* port)
 				const uint8_t* buf =
 				    static_cast<const uint8_t*>(LV2_ATOM_BODY(&ev->body));
 
-				if (ev->body.type == _midi_event_type) {
+				if (ev->body.type == this->_midi_event_type) {
 					jack_midi_event_write(
 						jack_buf, ev->time.frames, buf, ev->body.size);
 				}
@@ -527,7 +527,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 }
 
 void
-JackDriver::_thread_init_cb()
+JackDriver::thread_init_cb(void*)
 {
 	ThreadManager::set_flag(THREAD_PROCESS);
 	ThreadManager::set_flag(THREAD_IS_REAL_TIME);

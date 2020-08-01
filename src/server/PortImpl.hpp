@@ -230,7 +230,7 @@ public:
 
 	BufferFactory& bufs() const { return _bufs; }
 
-	BufferRef value_buffer(uint32_t voice);
+	BufferRef value_buffer(uint32_t voice) const;
 
 	BufferRef user_buffer(RunContext&) const { return _user_buffer; }
 	void      set_user_buffer(RunContext&, BufferRef b) { _user_buffer = b; }
@@ -240,7 +240,7 @@ public:
 	                                      SampleCount end) const;
 
 	/** Update value buffer for `voice` to be current as of `offset`. */
-	void update_values(SampleCount offset, uint32_t voice);
+	void update_values(SampleCount offset, uint32_t voice) const;
 
 	void force_monitor_update() { _force_monitor_update = true; }
 

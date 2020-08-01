@@ -101,7 +101,7 @@ URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle h,
 }
 
 const char*
-URIMap::URIDUnmapFeature::unmap(LV2_URID urid)
+URIMap::URIDUnmapFeature::unmap(LV2_URID urid) const
 {
 	return urid_unmap.unmap(urid_unmap.handle, urid);
 }

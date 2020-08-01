@@ -121,8 +121,9 @@ private:
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
 
-	std::string generate_module_name(SPtr<const client::PluginModel> plugin,
-	                                 int                             offset=0);
+	static std::string
+	generate_module_name(SPtr<const client::PluginModel> plugin,
+	                     int                             offset = 0);
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 

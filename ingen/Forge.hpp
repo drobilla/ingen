@@ -43,7 +43,7 @@ public:
 		return atom.type() == URI || atom.type() == URID;
 	}
 
-	Atom make()          { return Atom(); }
+	static Atom make()   { return Atom(); }
 	Atom make(int32_t v) { return Atom(sizeof(v), Int, &v); }
 	Atom make(float v)   { return Atom(sizeof(v), Float, &v); }
 	Atom make(bool v) {
@@ -55,7 +55,7 @@ public:
 
 	Atom make_urid(const ingen::URI& u);
 
-	Atom alloc(uint32_t size, uint32_t type, const void* val) {
+	static Atom alloc(uint32_t size, uint32_t type, const void* val) {
 		return Atom(size, type, val);
 	}
 

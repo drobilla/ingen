@@ -340,7 +340,7 @@ void
 ControlBindings::set_port_value(RunContext& context,
                                 PortImpl*   port,
                                 Type        type,
-                                int16_t     value)
+                                int16_t     value) const
 {
 	float min = 0.0f;
 	float max = 1.0f;

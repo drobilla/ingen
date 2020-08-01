@@ -527,7 +527,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 }
 
 BufferRef
-PortImpl::value_buffer(uint32_t voice)
+PortImpl::value_buffer(uint32_t voice) const
 {
 	return buffer(voice)->value_buffer();
 }
@@ -546,7 +546,7 @@ PortImpl::next_value_offset(SampleCount offset, SampleCount end) const
 }
 
 void
-PortImpl::update_values(SampleCount offset, uint32_t voice)
+PortImpl::update_values(SampleCount offset, uint32_t voice) const
 {
 	buffer(voice)->update_value_buffer(offset);
 }

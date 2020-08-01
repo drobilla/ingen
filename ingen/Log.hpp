@@ -93,7 +93,7 @@ public:
 	void set_sink(Sink s)  { _sink = s; }
 
 private:
-	void print(FILE* stream, const std::string& msg);
+	void print(FILE* stream, const std::string& msg) const;
 
 	LV2_Log_Log* _log;
 	URIs&        _uris;

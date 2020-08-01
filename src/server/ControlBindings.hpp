@@ -128,7 +128,7 @@ private:
 	void set_port_value(RunContext& context,
 	                    PortImpl*   port,
 	                    Type        type,
-	                    int16_t     value);
+	                    int16_t     value) const;
 
 	bool finish_learn(RunContext& context, Key key);
 

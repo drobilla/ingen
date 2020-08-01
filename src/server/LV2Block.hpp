@@ -112,7 +112,7 @@ protected:
 
 	using Instances = Raul::Array<SPtr<Instance>>;
 
-	void drop_instances(const MPtr<Instances>& instances) {
+	static void drop_instances(const MPtr<Instances>& instances) {
 		if (instances) {
 			for (size_t i = 0; i < instances->size(); ++i) {
 				(*instances)[i].reset();

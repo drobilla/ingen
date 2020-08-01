@@ -274,7 +274,7 @@ link(const std::string& addr, bool html)
 }
 
 std::string
-PluginModel::get_documentation(const LilvNode* subject, bool html) const
+PluginModel::get_documentation(const LilvNode* subject, bool html)
 {
 	std::string doc;
 
