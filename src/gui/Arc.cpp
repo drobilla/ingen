@@ -19,6 +19,8 @@
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
 
+#include <memory>
+
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 namespace ingen {
@@ -32,7 +34,7 @@ Arc::Arc(Ganv::Canvas&                       canvas,
 {
 	SPtr<const client::ObjectModel> tparent = model->tail()->parent();
 	SPtr<const client::BlockModel>  tparent_block;
-	if ((tparent_block = dynamic_ptr_cast<const client::BlockModel>(tparent))) {
+	if ((tparent_block = std::dynamic_pointer_cast<const client::BlockModel>(tparent))) {
 		if (tparent_block->plugin_uri() == NS_INTERNALS "BlockDelay") {
 			g_object_set(_gobj, "dash-length", 4.0, nullptr);
 			set_constraining(false);

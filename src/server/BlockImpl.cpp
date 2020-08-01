@@ -23,8 +23,8 @@
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
+#include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
-#include "raul/Maid.hpp"
 #include "raul/Symbol.hpp"
 
 #include <cassert>
@@ -33,6 +33,9 @@
 #include <string>
 
 namespace ingen {
+
+class Resource;
+
 namespace server {
 
 BlockImpl::BlockImpl(PluginImpl*         plugin,

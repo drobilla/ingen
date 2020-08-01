@@ -42,33 +42,11 @@ using WPtr = std::weak_ptr<T>;
 template <class T>
 using MPtr = Raul::managed_ptr<T>;
 
-template<class T, class U>
-SPtr<T> static_ptr_cast(const SPtr<U>& r) {
-	return std::static_pointer_cast<T>(r);
-}
-
-template<class T, class U>
-SPtr<T> dynamic_ptr_cast(const SPtr<U>& r) {
-	return std::dynamic_pointer_cast<T>(r);
-}
-
-template<class T, class U>
-SPtr<T> const_ptr_cast(const SPtr<U>& r) {
-	return std::const_pointer_cast<T>(r);
-}
-
 template <typename T, typename... Args>
 std::unique_ptr<T>
 make_unique(Args&&... args)
 {
 	return std::unique_ptr<T>{new T{std::forward<Args>(args)...}};
-}
-
-template <typename T, typename... Args>
-std::shared_ptr<T>
-make_shared(Args&&... args)
-{
-	return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
 } // namespace ingen

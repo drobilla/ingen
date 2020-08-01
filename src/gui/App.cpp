@@ -55,6 +55,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -217,11 +218,11 @@ App::request_plugins_if_necessary()
 SPtr<SigClientInterface>
 App::sig_client()
 {
-	SPtr<QueuedInterface> qi = dynamic_ptr_cast<QueuedInterface>(_client);
+	SPtr<QueuedInterface> qi = std::dynamic_pointer_cast<QueuedInterface>(_client);
 	if (qi) {
-		return dynamic_ptr_cast<SigClientInterface>(qi->sink());
+		return std::dynamic_pointer_cast<SigClientInterface>(qi->sink());
 	}
-	return dynamic_ptr_cast<SigClientInterface>(_client);
+	return std::dynamic_pointer_cast<SigClientInterface>(_client);
 }
 
 SPtr<Serialiser>
@@ -427,7 +428,7 @@ App::gtk_main_iteration()
 			return false;
 		}
 	} else {
-		dynamic_ptr_cast<QueuedInterface>(_client)->emit();
+		std::dynamic_pointer_cast<QueuedInterface>(_client)->emit();
 	}
 	_enable_signal = true;
 

@@ -27,6 +27,7 @@
 #include "ingen/client/GraphModel.hpp"
 
 #include <cassert>
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -48,7 +49,7 @@ SubgraphModule::on_double_click(GdkEventButton* event)
 {
 	assert(_graph);
 
-	SPtr<GraphModel> parent = dynamic_ptr_cast<GraphModel>(_graph->parent());
+	SPtr<GraphModel> parent = std::dynamic_pointer_cast<GraphModel>(_graph->parent());
 
 	GraphWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
 	                                 ? nullptr
@@ -84,7 +85,7 @@ SubgraphModule::browse_to_graph()
 {
 	assert(_graph->parent());
 
-	SPtr<GraphModel> parent = dynamic_ptr_cast<GraphModel>(_graph->parent());
+	SPtr<GraphModel> parent = std::dynamic_pointer_cast<GraphModel>(_graph->parent());
 
 	GraphWindow* const preferred = (parent)
 		? app().window_factory()->graph_window(parent)

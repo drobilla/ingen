@@ -50,6 +50,7 @@
 #include <algorithm>
 #include <cassert>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -236,7 +237,7 @@ GraphCanvas::build()
 
 	// Create modules for blocks
 	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
-		SPtr<BlockModel> block = dynamic_ptr_cast<BlockModel>(i->second);
+		SPtr<BlockModel> block = std::dynamic_pointer_cast<BlockModel>(i->second);
 		if (block && block->parent() == _graph) {
 			add_block(block);
 		}
@@ -249,7 +250,7 @@ GraphCanvas::build()
 
 	// Create arcs
 	for (const auto& a : _graph->arcs()) {
-		connection(dynamic_ptr_cast<ArcModel>(a.second));
+		connection(std::dynamic_pointer_cast<ArcModel>(a.second));
 	}
 }
 
@@ -324,7 +325,7 @@ GraphCanvas::remove_plugin(const URI& uri)
 void
 GraphCanvas::add_block(const SPtr<const BlockModel>& bm)
 {
-	SPtr<const GraphModel> pm     = dynamic_ptr_cast<const GraphModel>(bm);
+	SPtr<const GraphModel> pm     = std::dynamic_pointer_cast<const GraphModel>(bm);
 	NodeModule*            module = nullptr;
 	if (pm) {
 		module = SubgraphModule::create(*this, pm, _human_names);

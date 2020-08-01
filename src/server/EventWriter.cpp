@@ -17,7 +17,17 @@
 #include "EventWriter.hpp"
 
 #include "Engine.hpp"
-#include "events.hpp"
+
+#include "events/Connect.hpp"
+#include "events/Copy.hpp"
+#include "events/Delete.hpp"
+#include "events/Delta.hpp"
+#include "events/Disconnect.hpp"
+#include "events/DisconnectAll.hpp"
+#include "events/Get.hpp"
+#include "events/Mark.hpp"
+#include "events/Move.hpp"
+#include "events/Undo.hpp"
 
 #include <boost/variant/apply_visitor.hpp>
 

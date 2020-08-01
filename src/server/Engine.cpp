@@ -58,6 +58,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <limits>
+#include <memory>
 #include <thread>
 #include <utility>
 
@@ -161,7 +162,7 @@ Engine::~Engine()
 	const SPtr<Store> store = this->store();
 	if (store) {
 		for (auto& s : *store.get()) {
-			if (!dynamic_ptr_cast<NodeImpl>(s.second)->parent()) {
+			if (!std::dynamic_pointer_cast<NodeImpl>(s.second)->parent()) {
 				s.second.reset();
 			}
 		}

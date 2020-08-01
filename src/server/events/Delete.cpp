@@ -36,6 +36,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <memory>
 #include <mutex>
 #include <string>
 
@@ -79,8 +80,8 @@ Delete::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::NOT_FOUND, _path);
 	}
 
-	if (!(_block = dynamic_ptr_cast<BlockImpl>(iter->second))) {
-		_port = dynamic_ptr_cast<DuplexPort>(iter->second);
+	if (!(_block = std::dynamic_pointer_cast<BlockImpl>(iter->second))) {
+		_port = std::dynamic_pointer_cast<DuplexPort>(iter->second);
 	}
 
 	if ((!_block && !_port) || (_port && !_engine.driver()->dynamic_ports())) {

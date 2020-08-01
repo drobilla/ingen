@@ -47,6 +47,7 @@
 #endif
 
 #include <cassert>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -255,7 +256,7 @@ GraphBox::set_graph_from_path(const Raul::Path&      path,
 		assert(view->graph()->path() == path);
 		_app->window_factory()->present_graph(view->graph(), _window, view);
 	} else {
-		SPtr<const GraphModel> model = dynamic_ptr_cast<const GraphModel>(
+		SPtr<const GraphModel> model = std::dynamic_pointer_cast<const GraphModel>(
 			_app->store()->object(path));
 		if (model) {
 			_app->window_factory()->present_graph(model, _window);
@@ -814,7 +815,9 @@ GraphBox::event_arrange()
 void
 GraphBox::event_parent_activated()
 {
-	SPtr<client::GraphModel> parent = dynamic_ptr_cast<client::GraphModel>(_graph->parent());
+	SPtr<client::GraphModel> parent =
+	    std::dynamic_pointer_cast<client::GraphModel>(_graph->parent());
+
 	if (parent) {
 		_app->window_factory()->present_graph(parent, _window);
 	}

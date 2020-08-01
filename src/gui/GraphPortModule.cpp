@@ -31,6 +31,7 @@
 #include "ingen/client/GraphModel.hpp"
 
 #include <cassert>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -48,7 +49,7 @@ GraphPortModule::GraphPortModule(GraphCanvas&                         canvas,
 {
 	assert(model);
 
-	assert(dynamic_ptr_cast<const GraphModel>(model->parent()));
+	assert(std::dynamic_pointer_cast<const GraphModel>(model->parent()));
 
 	set_stacked(model->polyphonic());
 	if (model->is_input() && !model->is_numeric()) {

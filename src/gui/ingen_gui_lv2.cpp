@@ -45,6 +45,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <memory>
 
 #define INGEN_LV2_UI_URI INGEN_NS "GraphUIGtk2"
 
@@ -168,7 +169,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	// Create a GraphBox for the root and set as the UI widget
 	SPtr<const ingen::client::GraphModel> root =
-		ingen::dynamic_ptr_cast<const ingen::client::GraphModel>(
+		std::dynamic_pointer_cast<const ingen::client::GraphModel>(
 			ui->app->store()->object(Raul::Path("/")));
 	ui->view = ingen::gui::GraphBox::create(*ui->app, root);
 	ui->view->unparent();

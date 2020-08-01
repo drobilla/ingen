@@ -28,6 +28,7 @@
 #include "ingen/World.hpp"
 #include "raul/Path.hpp"
 
+#include <memory>
 #include <mutex>
 #include <string>
 #include <utility>
@@ -63,7 +64,7 @@ Copy::pre_process(PreProcessContext& ctx)
 		}
 
 		// Ensure it is a block (ports are not supported for now)
-		if (!(_old_block = dynamic_ptr_cast<BlockImpl>(i->second))) {
+		if (!(_old_block = std::dynamic_pointer_cast<BlockImpl>(i->second))) {
 			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, old_path);
 		}
 
@@ -143,7 +144,7 @@ bool
 Copy::engine_to_filesystem(PreProcessContext&)
 {
 	// Ensure source is a graph
-	SPtr<GraphImpl> graph = dynamic_ptr_cast<GraphImpl>(_old_block);
+	SPtr<GraphImpl> graph = std::dynamic_pointer_cast<GraphImpl>(_old_block);
 	if (!graph) {
 		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _msg.old_uri);
 	}

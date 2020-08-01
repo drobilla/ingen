@@ -27,6 +27,7 @@
 #include "lv2/data-access/data-access.h"
 
 #include <cstdlib>
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -57,7 +58,7 @@ struct DataAccess : public ingen::LV2Features::Feature
 
 		data->data_access = desc->extension_data;
 
-		return make_shared<LV2_Feature>(
+		return std::make_shared<LV2_Feature>(
 			LV2_Feature{"http://lv2plug.in/ns/ext/data-access", data});
 	}
 };

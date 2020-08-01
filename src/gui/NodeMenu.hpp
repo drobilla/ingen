@@ -26,6 +26,7 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/menushell.h>
 
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -50,7 +51,7 @@ public:
 
 protected:
 	SPtr<const client::BlockModel> block() const {
-		return dynamic_ptr_cast<const client::BlockModel>(_object);
+		return std::dynamic_pointer_cast<const client::BlockModel>(_object);
 	}
 
 	void add_preset(const URI& uri, const std::string& label);

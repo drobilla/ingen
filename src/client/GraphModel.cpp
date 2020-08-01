@@ -22,6 +22,7 @@
 #include "ingen/client/ClientStore.hpp"
 
 #include <cassert>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -33,13 +34,13 @@ GraphModel::add_child(const SPtr<ObjectModel>& c)
 {
 	assert(c->parent().get() == this);
 
-	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(c);
+	SPtr<PortModel> pm = std::dynamic_pointer_cast<PortModel>(c);
 	if (pm) {
 		add_port(pm);
 		return;
 	}
 
-	SPtr<BlockModel> bm = dynamic_ptr_cast<BlockModel>(c);
+	SPtr<BlockModel> bm = std::dynamic_pointer_cast<BlockModel>(c);
 	if (bm) {
 		_signal_new_block.emit(bm);
 	}
@@ -51,13 +52,13 @@ GraphModel::remove_child(const SPtr<ObjectModel>& o)
 	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
 
-	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(o);
+	SPtr<PortModel> pm = std::dynamic_pointer_cast<PortModel>(o);
 	if (pm) {
 		remove_arcs_on(pm);
 		remove_port(pm);
 	}
 
-	SPtr<BlockModel> bm = dynamic_ptr_cast<BlockModel>(o);
+	SPtr<BlockModel> bm = std::dynamic_pointer_cast<BlockModel>(o);
 	if (bm) {
 		_signal_removed_block.emit(bm);
 	}
@@ -74,7 +75,7 @@ GraphModel::remove_arcs_on(const SPtr<PortModel>& p)
 		auto next = j;
 		++next;
 
-		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(j->second);
+		SPtr<ArcModel> arc = std::dynamic_pointer_cast<ArcModel>(j->second);
 		if (arc->tail_path().parent() == p->path()
 		    || arc->tail_path() == p->path()
 		    || arc->head_path().parent() == p->path()
@@ -102,7 +103,7 @@ GraphModel::get_arc(const Node* tail, const Node* head)
 {
 	auto i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
-		return dynamic_ptr_cast<ArcModel>(i->second);
+		return std::dynamic_pointer_cast<ArcModel>(i->second);
 	} else {
 		return SPtr<ArcModel>();
 	}
@@ -148,7 +149,7 @@ GraphModel::remove_arc(const Node* tail, const Node* head)
 {
 	auto i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
-		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(i->second);
+		SPtr<ArcModel> arc = std::dynamic_pointer_cast<ArcModel>(i->second);
 		_signal_removed_arc.emit(arc);
 		_arcs.erase(i);
 	}

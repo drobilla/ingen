@@ -21,11 +21,15 @@
 #include "LV2Block.hpp"
 
 #include "ingen/Log.hpp"
+#include "ingen/types.hpp"
 #include "lv2/worker/worker.h"
 
 #include <cstdlib>
 
 namespace ingen {
+
+class World;
+
 namespace server {
 
 /// A message in the Worker::_requests ring

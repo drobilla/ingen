@@ -18,6 +18,7 @@
 #include "ingen/client/PortModel.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -69,7 +70,7 @@ PortModel::set(const SPtr<ObjectModel>& model)
 {
 	ObjectModel::set(model);
 
-	SPtr<PortModel> port = dynamic_ptr_cast<PortModel>(model);
+	SPtr<PortModel> port = std::dynamic_pointer_cast<PortModel>(model);
 	if (port) {
 		_index = port->_index;
 		_direction = port->_direction;

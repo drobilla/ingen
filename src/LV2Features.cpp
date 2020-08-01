@@ -19,6 +19,7 @@
 #include "lv2/core/lv2.h"
 
 #include <cstdlib>
+#include <memory>
 
 namespace ingen {
 

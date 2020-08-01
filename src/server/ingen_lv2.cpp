@@ -633,7 +633,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 
 	auto*                  me     = static_cast<IngenPlugin*>(instance);
 	server::Engine*        engine = static_cast<server::Engine*>(me->world->engine().get());
-	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
+	const SPtr<LV2Driver>& driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 	} else {
@@ -645,8 +645,8 @@ static void
 ingen_activate(LV2_Handle instance)
 {
 	auto*                  me     = static_cast<IngenPlugin*>(instance);
-	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
-	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
+	SPtr<server::Engine>   engine = std::static_pointer_cast<server::Engine>(me->world->engine());
+	const SPtr<LV2Driver>& driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 	engine->activate();
 	me->main = make_unique<std::thread>(ingen_lv2_main, engine, driver);
 }
@@ -655,8 +655,8 @@ static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	auto*                  me     = static_cast<IngenPlugin*>(instance);
-	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
-	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
+	SPtr<server::Engine>   engine = std::static_pointer_cast<server::Engine>(me->world->engine());
+	const SPtr<LV2Driver>& driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 
 	server::ThreadManager::set_flag(ingen::server::THREAD_PROCESS);
 	server::ThreadManager::set_flag(ingen::server::THREAD_IS_REAL_TIME);

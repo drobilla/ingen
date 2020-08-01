@@ -21,6 +21,8 @@
 
 #include "App.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace gui {
 
@@ -32,7 +34,7 @@ struct GUIModule : public Module {
 		if (!world.interface()) {
 			world.set_interface(
 				world.new_interface(URI(uri), make_client(world)));
-		} else if (!dynamic_ptr_cast<SigClientInterface>(
+		} else if (!std::dynamic_pointer_cast<SigClientInterface>(
 			           world.interface()->respondee())) {
 			world.interface()->set_respondee(make_client(world));
 		}

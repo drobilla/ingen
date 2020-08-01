@@ -41,6 +41,7 @@
 #include <gtkmm/eventbox.h>
 
 #include <cassert>
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -137,7 +138,7 @@ NodeModule::create(GraphCanvas&           canvas,
                    SPtr<const BlockModel> block,
                    bool                   human)
 {
-	SPtr<const GraphModel> graph = dynamic_ptr_cast<const GraphModel>(block);
+	SPtr<const GraphModel> graph = std::dynamic_pointer_cast<const GraphModel>(block);
 
 	NodeModule* ret = (graph)
 		? new SubgraphModule(canvas, graph)
@@ -429,13 +430,13 @@ NodeModule::on_event(GdkEvent* ev)
 		return on_double_click(&ev->button);
 	} else if (ev->type == GDK_ENTER_NOTIFY) {
 		GraphBox* const box = app().window_factory()->graph_box(
-			dynamic_ptr_cast<const GraphModel>(_block->parent()));
+			std::dynamic_pointer_cast<const GraphModel>(_block->parent()));
 		if (box) {
 			box->object_entered(_block.get());
 		}
 	} else if (ev->type == GDK_LEAVE_NOTIFY) {
 		GraphBox* const box = app().window_factory()->graph_box(
-			dynamic_ptr_cast<const GraphModel>(_block->parent()));
+			std::dynamic_pointer_cast<const GraphModel>(_block->parent()));
 		if (box) {
 			box->object_left(_block.get());
 		}

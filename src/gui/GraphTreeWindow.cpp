@@ -24,6 +24,8 @@
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
 
+#include <memory>
+
 namespace ingen {
 
 using namespace client;
@@ -76,7 +78,7 @@ GraphTreeWindow::init(App& app, ClientStore& store)
 void
 GraphTreeWindow::new_object(const SPtr<ObjectModel>& object)
 {
-	SPtr<GraphModel> graph = dynamic_ptr_cast<GraphModel>(object);
+	SPtr<GraphModel> graph = std::dynamic_pointer_cast<GraphModel>(object);
 	if (graph) {
 		add_graph(graph);
 	}

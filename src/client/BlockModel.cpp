@@ -24,6 +24,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -107,7 +108,7 @@ BlockModel::add_child(const SPtr<ObjectModel>& c)
 
 	//ObjectModel::add_child(c);
 
-	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(c);
+	SPtr<PortModel> pm = std::dynamic_pointer_cast<PortModel>(c);
 	assert(pm);
 	add_port(pm);
 }
@@ -120,7 +121,7 @@ BlockModel::remove_child(const SPtr<ObjectModel>& c)
 
 	//bool ret = ObjectModel::remove_child(c);
 
-	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(c);
+	SPtr<PortModel> pm = std::dynamic_pointer_cast<PortModel>(c);
 	assert(pm);
 	remove_port(pm);
 
@@ -274,7 +275,7 @@ BlockModel::port_label(const SPtr<const PortModel>& port) const
 void
 BlockModel::set(const SPtr<ObjectModel>& model)
 {
-	SPtr<BlockModel> block = dynamic_ptr_cast<BlockModel>(model);
+	SPtr<BlockModel> block = std::dynamic_pointer_cast<BlockModel>(model);
 	if (block) {
 		_plugin_uri = block->_plugin_uri;
 		_plugin     = block->_plugin;

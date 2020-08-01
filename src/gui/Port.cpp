@@ -35,6 +35,7 @@
 #include "ingen/client/PortModel.hpp"
 
 #include <cassert>
+#include <memory>
 #include <string>
 
 using namespace ingen::client;
@@ -125,7 +126,7 @@ Port::port_label(App& app, SPtr<const PortModel> pm)
 				label = name.ptr<char>();
 			} else {
 				const SPtr<const BlockModel> parent(
-					dynamic_ptr_cast<const BlockModel>(pm->parent()));
+					std::dynamic_pointer_cast<const BlockModel>(pm->parent()));
 				if (parent && parent->plugin_model()) {
 					label = parent->plugin_model()->port_human_name(pm->index());
 				}
@@ -150,7 +151,7 @@ Port::update_metadata()
 {
 	SPtr<const PortModel> pm = _port_model.lock();
 	if (pm && _app.can_control(pm.get()) && pm->is_numeric()) {
-		SPtr<const BlockModel> parent = dynamic_ptr_cast<const BlockModel>(pm->parent());
+		SPtr<const BlockModel> parent = std::dynamic_pointer_cast<const BlockModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
 			float max = 1.0f;
@@ -230,7 +231,7 @@ Port::on_scale_point_activated(float f)
 Gtk::Menu*
 Port::build_enum_menu()
 {
-	SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(model()->parent());
+	SPtr<const BlockModel> block = std::dynamic_pointer_cast<BlockModel>(model()->parent());
 	Gtk::Menu*             menu  = Gtk::manage(new Gtk::Menu());
 
 	PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
@@ -259,7 +260,7 @@ Gtk::Menu*
 Port::build_uri_menu()
 {
 	World&                 world = _app.world();
-	SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(model()->parent());
+	SPtr<const BlockModel> block = std::dynamic_pointer_cast<BlockModel>(model()->parent());
 	Gtk::Menu*             menu  = Gtk::manage(new Gtk::Menu());
 
 	// Get the port designation, which should be a rdf:Property
@@ -373,10 +374,10 @@ Port::activity(const Atom& value)
 GraphBox*
 Port::get_graph_box() const
 {
-	SPtr<const GraphModel> graph = dynamic_ptr_cast<const GraphModel>(model()->parent());
+	SPtr<const GraphModel> graph = std::dynamic_pointer_cast<const GraphModel>(model()->parent());
 	GraphBox*              box   = _app.window_factory()->graph_box(graph);
 	if (!box) {
-		graph = dynamic_ptr_cast<const GraphModel>(model()->parent()->parent());
+		graph = std::dynamic_pointer_cast<const GraphModel>(model()->parent()->parent());
 		box   = _app.window_factory()->graph_box(graph);
 	}
 	return box;
@@ -514,7 +515,9 @@ Port::on_selected(gboolean b)
 	if (b) {
 		SPtr<const PortModel> pm = _port_model.lock();
 		if (pm) {
-			SPtr<const BlockModel> block = dynamic_ptr_cast<const BlockModel>(pm->parent());
+			SPtr<const BlockModel> block =
+			    std::dynamic_pointer_cast<const BlockModel>(pm->parent());
+
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && win->documentation_is_visible() && block->plugin_model()) {
 				bool html = false;

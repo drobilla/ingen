@@ -22,6 +22,7 @@
 #include "ThreadManager.hpp"
 
 #include "ingen/types.hpp"
+#include "lv2/urid/urid.h"
 
 #include <cassert>
 #include <cstdint>

@@ -29,6 +29,7 @@
 #include "ingen/client/GraphModel.hpp"
 
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -127,7 +128,7 @@ WindowFactory::parent_graph_window(SPtr<const BlockModel> block)
 		return nullptr;
 	}
 
-	return graph_window(dynamic_ptr_cast<GraphModel>(block->parent()));
+	return graph_window(std::dynamic_pointer_cast<GraphModel>(block->parent()));
 }
 
 /** Present a GraphWindow for a Graph.

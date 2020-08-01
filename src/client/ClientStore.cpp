@@ -29,6 +29,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -63,7 +64,7 @@ ClientStore::add_object(const SPtr<ObjectModel>& object)
 	// one (with precedence to the new values).
 	auto existing = find(object->path());
 	if (existing != end()) {
-		dynamic_ptr_cast<ObjectModel>(existing->second)->set(object);
+		std::dynamic_pointer_cast<ObjectModel>(existing->second)->set(object);
 	} else {
 		if (!object->path().is_root()) {
 			SPtr<ObjectModel> parent = _object(object->path().parent());
@@ -98,12 +99,12 @@ ClientStore::remove_object(const Raul::Path& path)
 		return SPtr<ObjectModel>();
 	}
 
-	SPtr<ObjectModel> object = dynamic_ptr_cast<ObjectModel>(top->second);
+	SPtr<ObjectModel> object = std::dynamic_pointer_cast<ObjectModel>(top->second);
 
 	// Remove object and any adjacent arcs from parent if applicable
 	if (object && object->parent()) {
-		SPtr<PortModel> port = dynamic_ptr_cast<PortModel>(object);
-		if (port && dynamic_ptr_cast<GraphModel>(port->parent())) {
+		SPtr<PortModel> port = std::dynamic_pointer_cast<PortModel>(object);
+		if (port && std::dynamic_pointer_cast<GraphModel>(port->parent())) {
 			disconnect_all(port->parent()->path(), path);
 			if (port->parent()->parent()) {
 				disconnect_all(port->parent()->parent()->path(), path);
@@ -159,7 +160,7 @@ ClientStore::_object(const Raul::Path& path)
 	if (i == end()) {
 		return SPtr<ObjectModel>();
 	} else {
-		SPtr<ObjectModel> model = dynamic_ptr_cast<ObjectModel>(i->second);
+		SPtr<ObjectModel> model = std::dynamic_pointer_cast<ObjectModel>(i->second);
 		assert(model);
 		assert(model->path().is_root() || model->parent());
 		return model;
@@ -289,7 +290,7 @@ ClientStore::operator()(const Put& msg)
 
 	const Raul::Path path(uri_to_path(uri));
 
-	SPtr<ObjectModel> obj = dynamic_ptr_cast<ObjectModel>(_object(path));
+	SPtr<ObjectModel> obj = std::dynamic_pointer_cast<ObjectModel>(_object(path));
 	if (obj) {
 		obj->set_properties(properties);
 		return;
@@ -407,19 +408,19 @@ ClientStore::connection_graph(const Raul::Path& tail_path,
 	SPtr<GraphModel> graph;
 
 	if (tail_path.parent() == head_path.parent()) {
-		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent()));
+		graph = std::dynamic_pointer_cast<GraphModel>(_object(tail_path.parent()));
 	}
 
 	if (!graph && tail_path.parent() == head_path.parent().parent()) {
-		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent()));
+		graph = std::dynamic_pointer_cast<GraphModel>(_object(tail_path.parent()));
 	}
 
 	if (!graph && tail_path.parent().parent() == head_path.parent()) {
-		graph = dynamic_ptr_cast<GraphModel>(_object(head_path.parent()));
+		graph = std::dynamic_pointer_cast<GraphModel>(_object(head_path.parent()));
 	}
 
 	if (!graph) {
-		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent().parent()));
+		graph = std::dynamic_pointer_cast<GraphModel>(_object(tail_path.parent().parent()));
 	}
 
 	if (!graph) {
@@ -434,8 +435,8 @@ bool
 ClientStore::attempt_connection(const Raul::Path& tail_path,
                                 const Raul::Path& head_path)
 {
-	SPtr<PortModel> tail = dynamic_ptr_cast<PortModel>(_object(tail_path));
-	SPtr<PortModel> head = dynamic_ptr_cast<PortModel>(_object(head_path));
+	SPtr<PortModel> tail = std::dynamic_pointer_cast<PortModel>(_object(tail_path));
+	SPtr<PortModel> head = std::dynamic_pointer_cast<PortModel>(_object(head_path));
 
 	if (tail && head) {
 		SPtr<GraphModel> graph = connection_graph(tail_path, head_path);
@@ -457,8 +458,8 @@ ClientStore::operator()(const Connect& msg)
 void
 ClientStore::operator()(const Disconnect& msg)
 {
-	SPtr<PortModel>  tail  = dynamic_ptr_cast<PortModel>(_object(msg.tail));
-	SPtr<PortModel>  head  = dynamic_ptr_cast<PortModel>(_object(msg.head));
+	SPtr<PortModel>  tail  = std::dynamic_pointer_cast<PortModel>(_object(msg.tail));
+	SPtr<PortModel>  head  = std::dynamic_pointer_cast<PortModel>(_object(msg.head));
 	SPtr<GraphModel> graph = connection_graph(msg.tail, msg.head);
 	if (graph) {
 		graph->remove_arc(tail.get(), head.get());
@@ -468,7 +469,7 @@ ClientStore::operator()(const Disconnect& msg)
 void
 ClientStore::operator()(const DisconnectAll& msg)
 {
-	SPtr<GraphModel>  graph  = dynamic_ptr_cast<GraphModel>(_object(msg.graph));
+	SPtr<GraphModel>  graph  = std::dynamic_pointer_cast<GraphModel>(_object(msg.graph));
 	SPtr<ObjectModel> object = _object(msg.path);
 
 	if (!graph || !object) {
@@ -479,7 +480,7 @@ ClientStore::operator()(const DisconnectAll& msg)
 
 	const GraphModel::Arcs arcs = graph->arcs();
 	for (const auto& a : arcs) {
-		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(a.second);
+		SPtr<ArcModel> arc = std::dynamic_pointer_cast<ArcModel>(a.second);
 		if (arc->tail()->parent() == object
 		    || arc->head()->parent() == object
 		    || arc->tail()->path() == msg.path

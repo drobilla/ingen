@@ -21,7 +21,6 @@
 #include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
-#include "lv2/atom/forge.h"
 #include "lv2/urid/urid.h"
 #include "raul/Socket.hpp"
 #include "sord/sordmm.hpp"
@@ -29,10 +28,11 @@
 #include <cerrno>
 #include <cstdint>
 #include <cstdio>
-#include <cstring>
 #include <memory>
 #include <mutex>
 #include <poll.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <utility>
 
 namespace ingen {
