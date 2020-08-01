@@ -67,7 +67,6 @@ Checks: >
   -modernize-use-default-member-init,
   -modernize-use-trailing-return-type,
   -modernize-use-using,
-  -performance-faster-string-find,
   -performance-for-range-copy,
   -performance-no-automatic-move,
   -performance-type-promotion-in-math-fn,

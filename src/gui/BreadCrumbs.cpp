@@ -92,16 +92,16 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
 			}
-			const string name = suffix.substr(0, suffix.find("/"));
+			const string name = suffix.substr(0, suffix.find('/'));
 			_full_path = _full_path.child(Raul::Symbol(name));
 			BreadCrumb* but = create_crumb(_full_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
 			but->show();
-			if (suffix.find("/") == string::npos) {
+			if (suffix.find('/') == string::npos) {
 				break;
 			} else {
-				suffix = suffix.substr(suffix.find("/")+1);
+				suffix = suffix.substr(suffix.find('/') + 1);
 			}
 		}
 
@@ -135,17 +135,17 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
 			}
-			const string name = suffix.substr(0, suffix.find("/"));
+			const string name = suffix.substr(0, suffix.find('/'));
 			working_path = working_path.child(Raul::Symbol(name));
 			BreadCrumb* but = create_crumb(working_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
 			but->set_active(working_path == _active_path);
 			but->show();
-			if (suffix.find("/") == string::npos) {
+			if (suffix.find('/') == string::npos) {
 				break;
 			} else {
-				suffix = suffix.substr(suffix.find("/")+1);
+				suffix = suffix.substr(suffix.find('/')+1);
 			}
 		}
 	}
