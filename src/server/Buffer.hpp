@@ -69,7 +69,7 @@ public:
 		return is_audio() ? _capacity : sizeof(LV2_Atom) + get<LV2_Atom>()->size;
 	}
 
-	typedef BufferRef (BufferFactory::*GetFn)(LV2_URID, LV2_URID, uint32_t);
+	using GetFn = BufferRef (BufferFactory::*)(LV2_URID, LV2_URID, uint32_t);
 
 	/** Set the buffer type and optional value type for this buffer.
 	 *

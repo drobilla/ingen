@@ -51,7 +51,6 @@ Checks: >
   -llvm-header-guard,
   -misc-unused-parameters,
   -modernize-use-trailing-return-type,
-  -modernize-use-using,
   -portability-simd-intrinsics,
   -readability-avoid-const-params-in-decls,
   -readability-const-return-type,

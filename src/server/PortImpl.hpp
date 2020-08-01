@@ -266,7 +266,7 @@ public:
 	bool is_toggled()     const { return _is_toggled; }
 
 protected:
-	typedef BufferRef (BufferFactory::*GetFn)(LV2_URID, LV2_URID, uint32_t);
+	using GetFn = BufferRef (BufferFactory::*)(LV2_URID, LV2_URID, uint32_t);
 
 	/** Set `voices` as the buffers to be used for this port.
 	 *
