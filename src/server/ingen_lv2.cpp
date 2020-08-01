@@ -78,7 +78,7 @@ namespace ingen {
 
 /** Record of a graph in this bundle. */
 struct LV2Graph : public Parser::ResourceRecord {
-	LV2Graph(Parser::ResourceRecord record);
+	explicit LV2Graph(Parser::ResourceRecord record);
 
 	LV2_Descriptor descriptor;
 };
