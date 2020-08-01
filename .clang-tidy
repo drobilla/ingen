@@ -2,7 +2,6 @@ Checks: >
   *,
   -*avoid-c-arrays,
   -*magic-numbers,
-  -*move-const-arg,
   -*narrowing-conversions,
   -*noexcept-move*,
   -*non-private-member-variables-in-classes,
