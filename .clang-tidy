@@ -52,8 +52,6 @@ Checks: >
   -misc-unused-parameters,
   -modernize-use-trailing-return-type,
   -portability-simd-intrinsics,
-  -readability-avoid-const-params-in-decls,
-  -readability-const-return-type,
   -readability-else-after-return,
   -readability-implicit-bool-conversion,
   -readability-named-parameter,

@@ -33,7 +33,7 @@ public:
 
 	using VoidFuncPtr = void (*)();
 
-	VoidFuncPtr get_function(const char* const name);
+	VoidFuncPtr get_function(const char* name);
 
 	static const char* get_last_error();
 

@@ -55,7 +55,7 @@ public:
 
 	const Atom& type() const { return _type; }
 
-	const URI type_uri() const
+	URI type_uri() const
 	{
 		return URI(_type.is_valid() ? _uris.forge.str(_type, false)
 		                            : "http://www.w3.org/2002/07/owl#Nothing");

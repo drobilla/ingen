@@ -71,7 +71,7 @@ public:
 
 	struct URIDUnmapFeature : public Feature {
 		URIDUnmapFeature(URIMap* map, LV2_URID_Unmap* impl);
-		const char*        unmap(const LV2_URID urid) const;
+		const char*        unmap(LV2_URID urid) const;
 		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID urid);
 		LV2_URID_Unmap urid_unmap;
 	};

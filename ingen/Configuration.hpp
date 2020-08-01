@@ -66,7 +66,7 @@ public:
 	                   char               letter,
 	                   const std::string& desc,
 	                   Scope              scope,
-	                   const LV2_URID     type,
+	                   LV2_URID           type,
 	                   const Atom&        value);
 
 	void print_usage(const std::string& program, std::ostream& os);
