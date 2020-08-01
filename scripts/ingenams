@@ -245,9 +245,9 @@ world   = World(server_uri)
 in_file = open(in_path, 'r')
 
 in_comment = False
-for l in in_file:
+for line in in_file:
     try:
-        expr = l.split()
+        expr = line.split()
         if not expr:
             continue
         elif expr[0] == '#PARA#':
