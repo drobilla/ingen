@@ -12,7 +12,6 @@ Checks: >
   -*use-override,
   -android-cloexec-fopen,
   -bugprone-branch-clone,
-  -bugprone-forward-declaration-namespace,
   -bugprone-parent-virtual-call,
   -bugprone-signed-char-misuse,
   -bugprone-suspicious-string-compare,

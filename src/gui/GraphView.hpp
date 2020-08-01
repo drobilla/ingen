@@ -28,8 +28,6 @@
 #include <gtkmm/toolitem.h>
 #include <gtkmm/toolitem.h>
 
-namespace Raul { class Atom; }
-
 namespace ingen {
 
 class Atom;

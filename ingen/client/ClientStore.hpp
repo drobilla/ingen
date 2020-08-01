@@ -30,7 +30,6 @@
 
 namespace Raul {
 class Path;
-class Atom;
 } // namespace Raul
 
 namespace ingen {

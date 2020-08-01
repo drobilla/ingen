@@ -34,7 +34,6 @@
 #include "Window.hpp"
 
 namespace Raul {
-class Atom;
 class Path;
 } // namespace Raul
 

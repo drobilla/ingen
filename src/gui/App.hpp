@@ -38,7 +38,6 @@ namespace ingen {
 
 class Interface;
 class Log;
-class Port;
 class Serialiser;
 class StreamWriter;
 class World;

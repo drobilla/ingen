@@ -26,7 +26,6 @@ namespace ingen {
 
 namespace client {
 class GraphModel;
-class GraphWindow;
 class PortModel;
 } // namespace client
 

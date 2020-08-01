@@ -29,7 +29,7 @@
 #include <memory>
 #include <utility>
 
-namespace raul { class Maid; }
+namespace Raul { class Maid; }
 
 namespace ingen {
 namespace server {
