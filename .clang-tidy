@@ -50,7 +50,6 @@ Checks: >
   -hicpp-vararg,
   -llvm-header-guard,
   -misc-unused-parameters,
-  -modernize-redundant-void-arg,
   -modernize-use-trailing-return-type,
   -modernize-use-using,
   -portability-simd-intrinsics,

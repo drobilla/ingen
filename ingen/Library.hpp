@@ -31,7 +31,7 @@ public:
 	Library(const Library&) = delete;
 	Library& operator=(const Library&) = delete;
 
-	using VoidFuncPtr = void (*)(void);
+	using VoidFuncPtr = void (*)();
 
 	VoidFuncPtr get_function(const char* const name);
 
