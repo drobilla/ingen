@@ -14,7 +14,6 @@ Checks: >
   -bugprone-suspicious-string-compare,
   -cert-dcl50-cpp,
   -cert-err34-c,
-  -cert-oop54-cpp,
   -clang-analyzer-alpha.*,
   -clang-analyzer-core.CallAndMessage,
   -clang-analyzer-optin.cplusplus.VirtualCall,

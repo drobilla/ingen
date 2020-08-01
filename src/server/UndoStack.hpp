@@ -54,10 +54,12 @@ public:
 		~Entry() { clear(); }
 
 		Entry& operator=(const Entry& rhs) {
-			clear();
-			time = rhs.time;
-			for (const LV2_Atom* ev : rhs.events) {
-				push_event(ev);
+			if (&rhs != this) {
+				clear();
+				time = rhs.time;
+				for (const LV2_Atom* ev : rhs.events) {
+					push_event(ev);
+				}
 			}
 			return *this;
 		}
