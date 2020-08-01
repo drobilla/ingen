@@ -41,9 +41,9 @@ class INGEN_API Resource : public Raul::Deletable
 public:
 	using Graph = Property::Graph;
 
-	Resource(const URIs& uris, const URI& uri)
+	Resource(const URIs& uris, URI uri)
 		: _uris(uris)
-		, _uri(uri)
+		, _uri(std::move(uri))
 	{}
 
 	Resource(const Resource& resource) = default;

@@ -84,9 +84,7 @@ public:
 protected:
 	friend class ClientStore;
 
-	BlockModel(URIs&             uris,
-	           const URI&        plugin_uri,
-	           const Raul::Path& path);
+	BlockModel(URIs& uris, URI plugin_uri, const Raul::Path& path);
 
 	BlockModel(URIs&                    uris,
 	           const SPtr<PluginModel>& plugin,

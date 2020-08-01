@@ -41,14 +41,12 @@ BlockModel::BlockModel(URIs&                    uris,
 {
 }
 
-BlockModel::BlockModel(URIs&             uris,
-                       const URI&        plugin_uri,
-                       const Raul::Path& path)
-	: ObjectModel(uris, path)
-	, _plugin_uri(plugin_uri)
-	, _num_values(0)
-	, _min_values(nullptr)
-	, _max_values(nullptr)
+BlockModel::BlockModel(URIs& uris, URI plugin_uri, const Raul::Path& path)
+    : ObjectModel(uris, path)
+    , _plugin_uri(std::move(plugin_uri))
+    , _num_values(0)
+    , _min_values(nullptr)
+    , _max_values(nullptr)
 {
 }
 

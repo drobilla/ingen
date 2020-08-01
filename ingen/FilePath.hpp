@@ -54,8 +54,7 @@ public:
 	FilePath(const FilePath&) = default;
 	FilePath(FilePath&&)      = default;
 
-	FilePath(string_type&& str) : _str(std::move(str)) {}
-	FilePath(const string_type& str) : _str(str) {}
+	FilePath(string_type str) : _str(std::move(str)) {}
 	FilePath(const value_type* str) : _str(str) {}
 	FilePath(const boost::basic_string_view<value_type>& sv)
 		: _str(sv.data(), sv.length())

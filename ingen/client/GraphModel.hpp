@@ -60,8 +60,11 @@ private:
 	friend class ClientStore;
 
 	GraphModel(URIs& uris, const Raul::Path& graph_path)
-		: BlockModel(uris, uris.ingen_Graph, graph_path)
-	{}
+	    : BlockModel(uris,
+	                 static_cast<const URI&>(uris.ingen_Graph),
+	                 graph_path)
+	{
+	}
 
 	void clear() override;
 	void add_child(const SPtr<ObjectModel>& c) override;
