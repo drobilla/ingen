@@ -233,15 +233,16 @@ Configuration::load(const FilePath& path)
 	}
 
 	SerdNode node = serd_node_new_file_uri(
-		(const uint8_t*)path.c_str(), nullptr, nullptr, true);
-	const std::string uri((const char*)node.buf);
+	    reinterpret_cast<const uint8_t*>(path.c_str()), nullptr, nullptr, true);
+
+	const std::string uri(reinterpret_cast<const char*>(node.buf));
 
 	Sord::World world;
 	Sord::Model model(world, uri, SORD_SPO, false);
 	SerdEnv*    env = serd_env_new(&node);
 	model.load_file(env, SERD_TURTLE, uri, uri);
 
-	Sord::Node nodemm(world, Sord::Node::URI, (const char*)node.buf);
+	Sord::Node nodemm(world, Sord::Node::URI, reinterpret_cast<const char*>(node.buf));
 	Sord::Node nil;
 	for (Sord::Iter i = model.find(nodemm, nil, nil); !i.end(); ++i) {
 		const Sord::Node& pred = i.get_predicate();
@@ -290,31 +291,41 @@ Configuration::save(URIMap&            uri_map,
 
 	// Use the file's URI as the base URI
 	SerdURI  base_uri;
-	SerdNode base = serd_node_new_file_uri(
-		(const uint8_t*)path.c_str(), nullptr, &base_uri, true);
+	SerdNode base =
+	    serd_node_new_file_uri(reinterpret_cast<const uint8_t*>(path.c_str()),
+	                           nullptr,
+	                           &base_uri,
+	                           true);
 
 	// Create environment with ingen prefix
 	SerdEnv* env = serd_env_new(&base);
-	serd_env_set_prefix_from_strings(
-		env, (const uint8_t*)"ingen", (const uint8_t*)INGEN_NS);
+	serd_env_set_prefix_from_strings(env,
+	                                 reinterpret_cast<const uint8_t*>("ingen"),
+	                                 reinterpret_cast<const uint8_t*>(
+	                                     INGEN_NS));
 
 	// Create Turtle writer
 	SerdWriter* writer = serd_writer_new(
 		SERD_TURTLE,
-		(SerdStyle)(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED),
+		static_cast<SerdStyle>(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED),
 		env,
 		&base_uri,
 		serd_file_sink,
 		file.get());
 
 	// Write a prefix directive for each prefix in the environment
-	serd_env_foreach(env, (SerdPrefixSink)serd_writer_set_prefix, writer);
+	serd_env_foreach(env,
+	                 reinterpret_cast<SerdPrefixSink>(serd_writer_set_prefix),
+	                 writer);
 
 	// Create an atom serialiser and connect it to the Turtle writer
 	Sratom* sratom = sratom_new(&uri_map.urid_map_feature()->urid_map);
 	sratom_set_pretty_numbers(sratom, true);
-	sratom_set_sink(sratom, (const char*)base.buf,
-	                (SerdStatementSink)serd_writer_write_statement, nullptr,
+	sratom_set_sink(sratom,
+	                reinterpret_cast<const char*>(base.buf),
+	                reinterpret_cast<SerdStatementSink>(
+	                    serd_writer_write_statement),
+	                nullptr,
 	                writer);
 
 	// Write a statement for each valid option
@@ -328,7 +339,7 @@ Configuration::save(URIMap&            uri_map,
 
 		const std::string key(std::string("ingen:") + o.second.key);
 		SerdNode pred = serd_node_from_string(
-			SERD_CURIE, (const uint8_t*)key.c_str());
+			SERD_CURIE, reinterpret_cast<const uint8_t*>(key.c_str()));
 		sratom_write(sratom, &uri_map.urid_unmap_feature()->urid_unmap, 0,
 		             &base, &pred, value.type(), value.size(), value.get_body());
 	}

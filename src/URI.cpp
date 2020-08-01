@@ -28,20 +28,24 @@ URI::URI()
 {}
 
 URI::URI(const std::string& str)
-	: _uri(SERD_URI_NULL)
-	, _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
+    : _uri(SERD_URI_NULL)
+    , _node(serd_node_new_uri_from_string(reinterpret_cast<const uint8_t*>(
+                                              str.c_str()),
                                           nullptr,
                                           &_uri))
 {}
 
 URI::URI(const char* str)
-	: _uri(SERD_URI_NULL)
-	, _node(serd_node_new_uri_from_string((const uint8_t*)str, nullptr, &_uri))
+    : _uri(SERD_URI_NULL)
+    , _node(serd_node_new_uri_from_string(reinterpret_cast<const uint8_t*>(str),
+                                          nullptr,
+                                          &_uri))
 {}
 
 URI::URI(const std::string& str, const URI& base)
-	: _uri(SERD_URI_NULL)
-	, _node(serd_node_new_uri_from_string((const uint8_t*)str.c_str(),
+    : _uri(SERD_URI_NULL)
+    , _node(serd_node_new_uri_from_string(reinterpret_cast<const uint8_t*>(
+                                              str.c_str()),
                                           &base._uri,
                                           &_uri))
 {}
@@ -66,11 +70,12 @@ URI::URI(const Sord::Node& node)
 }
 
 URI::URI(const FilePath& path)
-	: _uri(SERD_URI_NULL)
-	, _node(serd_node_new_file_uri((const uint8_t*)path.c_str(),
-                                   nullptr,
-                                   &_uri,
-                                   true))
+    : _uri(SERD_URI_NULL)
+    , _node(
+          serd_node_new_file_uri(reinterpret_cast<const uint8_t*>(path.c_str()),
+                                 nullptr,
+                                 &_uri,
+                                 true))
 {}
 
 URI::URI(const URI& uri)

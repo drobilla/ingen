@@ -94,8 +94,8 @@ main(int argc, char** argv)
 	}
 
 	// Get start graph and commands file options
-	const FilePath load_path = real_file_path((const char*)load.get_body());
-	const FilePath run_path  = real_file_path((const char*)execute.get_body());
+	const FilePath load_path = real_file_path(static_cast<const char*>(load.get_body()));
+	const FilePath run_path  = real_file_path(static_cast<const char*>(execute.get_body()));
 
 	if (load_path.empty()) {
 		cerr << "error: initial graph '" << load_path << "' does not exist" << endl;
@@ -142,10 +142,13 @@ main(int argc, char** argv)
 
 	SerdURI cmds_base;
 	SerdNode cmds_file_uri = serd_node_new_file_uri(
-		(const uint8_t*)run_path.c_str(),
+		reinterpret_cast<const uint8_t*>(run_path.c_str()),
 		nullptr, &cmds_base, true);
-	Sord::Model* cmds = new Sord::Model(*world->rdf_world(),
-	                                    (const char*)cmds_file_uri.buf);
+
+	Sord::Model* cmds =
+	    new Sord::Model(*world->rdf_world(),
+	                    reinterpret_cast<const char*>(cmds_file_uri.buf));
+
 	SerdEnv* env = serd_env_new(&cmds_file_uri);
 	cmds->load_file(env, SERD_TURTLE, run_path);
 	Sord::Node nil;
@@ -153,7 +156,7 @@ main(int argc, char** argv)
 	for (;; ++n_events) {
 		std::string subject_str = fmt("msg%1%", n_events);
 		Sord::URI subject(*world->rdf_world(), subject_str,
-		                  (const char*)cmds_file_uri.buf);
+		                  reinterpret_cast<const char*>(cmds_file_uri.buf));
 		Sord::Iter iter = cmds->find(subject, nil, nil);
 		if (iter.end()) {
 			break;

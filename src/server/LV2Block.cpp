@@ -94,8 +94,8 @@ LV2Block::make_instance(URIs&      uris,
 
 	const LV2_Options_Interface* options_iface = nullptr;
 	if (lilv_plugin_has_extension_data(lplug, uris.opt_interface)) {
-		options_iface = (const LV2_Options_Interface*)
-			lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface);
+		options_iface = static_cast<const LV2_Options_Interface*>(
+			lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface));
 	}
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
@@ -137,7 +137,7 @@ LV2Block::make_instance(URIs&      uris,
 
 				options_iface->get(inst->lv2_handle, options);
 				if (options[0].value) {
-					LV2_URID type = *(const LV2_URID*)options[0].value;
+					LV2_URID type = *static_cast<const LV2_URID*>(options[0].value);
 					if (type == _uris.lv2_ControlPort) {
 						port->set_type(PortType::CONTROL, 0);
 					} else if (type == _uris.lv2_CVPort) {
@@ -460,9 +460,9 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 
 	// FIXME: Polyphony + worker?
 	if (lilv_plugin_has_feature(plug, uris.work_schedule)) {
-		_worker_iface = (const LV2_Worker_Interface*)
+		_worker_iface = static_cast<const LV2_Worker_Interface*>(
 			lilv_instance_get_extension_data(instance(0),
-			                                 LV2_WORKER__interface);
+			                                 LV2_WORKER__interface));
 	}
 
 	return ret;
@@ -558,7 +558,7 @@ LV2Block::work_respond(LV2_Worker_Respond_Handle handle,
                        uint32_t                  size,
                        const void*               data)
 {
-	auto* block = (LV2Block*)handle;
+	auto* block = static_cast<LV2Block*>(handle);
 	auto* r     = new LV2Block::Response(size, data);
 	block->_responses.push_back(*r);
 	return LV2_WORKER_SUCCESS;
@@ -673,7 +673,7 @@ get_port_value(const char* port_symbol,
                uint32_t*   size,
                uint32_t*   type)
 {
-	auto* const block = (LV2Block*)user_data;
+	auto* const block = static_cast<LV2Block*>(user_data);
 	auto* const port  = block->port_by_symbol(port_symbol);
 
 	if (port && port->is_input() && port->value().is_valid()) {

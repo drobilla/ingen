@@ -19,7 +19,7 @@
 #include "ingen/URIMap.hpp"
 #include "lv2/atom/atom.h"
 
-#define USTR(s) ((const uint8_t*)(s))
+#define USTR(s) reinterpret_cast<const uint8_t*>(s)
 
 namespace ingen {
 
@@ -33,7 +33,7 @@ c_text_sink(const void* buf, size_t len, void* stream)
 static SerdStatus
 write_prefix(void* handle, const SerdNode* name, const SerdNode* uri)
 {
-	serd_writer_set_prefix((SerdWriter*)handle, name, uri);
+	serd_writer_set_prefix(static_cast<SerdWriter*>(handle), name, uri);
 	return SERD_SUCCESS;
 }
 
@@ -47,7 +47,7 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
     , _wrote_prefixes(false)
 {
 	// Use <ingen:/> as base URI, so relative URIs are like bundle paths
-	_base = serd_node_from_string(SERD_URI, (const uint8_t*)"ingen:/");
+	_base = serd_node_from_string(SERD_URI, USTR("ingen:/"));
 	serd_uri_parse(_base.buf, &_base_uri);
 
 	// Set up serialisation environment
@@ -66,7 +66,7 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
 	// Make a Turtle writer that writes to text_sink
 	_writer = serd_writer_new(
 		SERD_TURTLE,
-		(SerdStyle)(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED|SERD_STYLE_CURIED),
+		static_cast<SerdStyle>(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED|SERD_STYLE_CURIED),
 		_env,
 		&_base_uri,
 		c_text_sink,
@@ -74,9 +74,9 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
 
 	// Configure sratom to write directly to the writer (and thus text_sink)
 	sratom_set_sink(_sratom,
-	                (const char*)_base.buf,
-	                (SerdStatementSink)serd_writer_write_statement,
-	                (SerdEndSink)serd_writer_end_anon,
+	                reinterpret_cast<const char*>(_base.buf),
+	                reinterpret_cast<SerdStatementSink>(serd_writer_write_statement),
+	                reinterpret_cast<SerdEndSink>(serd_writer_end_anon),
 	                _writer);
 }
 

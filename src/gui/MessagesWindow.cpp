@@ -41,8 +41,8 @@ MessagesWindow::MessagesWindow(BaseObjectType*                   cobject,
 	_close_button->signal_clicked().connect(sigc::mem_fun(this, &Window::hide));
 
 	for (int s = Gtk::STATE_NORMAL; s <= Gtk::STATE_INSENSITIVE; ++s) {
-		_textview->modify_base((Gtk::StateType)s, Gdk::Color("#000000"));
-		_textview->modify_text((Gtk::StateType)s, Gdk::Color("#EEEEEC"));
+		_textview->modify_base(static_cast<Gtk::StateType>(s), Gdk::Color("#000000"));
+		_textview->modify_text(static_cast<Gtk::StateType>(s), Gdk::Color("#EEEEEC"));
 	}
 }
 

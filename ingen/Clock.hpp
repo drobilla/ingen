@@ -52,7 +52,8 @@ private:
 #    else
 		clock_gettime(CLOCK_MONOTONIC, &time);
 #    endif
-		return (uint64_t)time.tv_sec * 1e6 + (uint64_t)time.tv_nsec / 1e3;
+		return static_cast<uint64_t>(time.tv_sec) * 1e6 +
+		       static_cast<uint64_t>(time.tv_nsec) / 1e3;
 	}
 
 #endif

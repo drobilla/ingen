@@ -67,7 +67,8 @@ port_order(const GanvPort* a, const GanvPort* b, void* data)
 	const Port* pa = dynamic_cast<const Port*>(Glib::wrap(a));
 	const Port* pb = dynamic_cast<const Port*>(Glib::wrap(b));
 	if (pa && pb) {
-		return ((int)pa->model()->index() - (int)pb->model()->index());
+		return (static_cast<int>(pa->model()->index()) -
+		        static_cast<int>(pb->model()->index()));
 	}
 	return 0;
 }
@@ -261,7 +262,7 @@ GraphCanvas::build()
 static void
 show_module_human_names(GanvNode* node, void* data)
 {
-	bool b = *(bool*)data;
+	bool b = *static_cast<bool*>(data);
 	if (GANV_IS_MODULE(node)) {
 		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
 		NodeModule* nmod = dynamic_cast<NodeModule*>(module);
@@ -518,8 +519,8 @@ GraphCanvas::on_event(GdkEvent* event)
 	case GDK_BUTTON_PRESS:
 		if (event->button.button == 3) {
 			_auto_position_count = 1;
-			_menu_x = (int)event->button.x_root;
-			_menu_y = (int)event->button.y_root;
+			_menu_x = static_cast<int>(event->button.x_root);
+			_menu_y = static_cast<int>(event->button.y_root);
 			show_menu(false, event->button.button, event->button.time);
 			ret = true;
 		}
@@ -569,7 +570,7 @@ destroy_node(GanvNode* node, void* data)
 		return;
 	}
 
-	App*          app         = (App*)data;
+	App*          app         = static_cast<App*>(data);
 	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
 	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
 
@@ -588,7 +589,7 @@ destroy_node(GanvNode* node, void* data)
 static void
 destroy_arc(GanvEdge* arc, void* data)
 {
-	App*        app   = (App*)data;
+	App*        app   = static_cast<App*>(data);
 	Ganv::Edge* arcmm = Glib::wrap(arc);
 
 	Port* tail = dynamic_cast<Port*>(arcmm->get_tail());
@@ -611,7 +612,7 @@ GraphCanvas::destroy_selection()
 static void
 serialise_node(GanvNode* node, void* data)
 {
-	Serialiser* serialiser = (Serialiser*)data;
+	Serialiser* serialiser = static_cast<Serialiser*>(data);
 	if (!GANV_IS_MODULE(node)) {
 		return;
 	}
@@ -632,7 +633,7 @@ serialise_node(GanvNode* node, void* data)
 static void
 serialise_arc(GanvEdge* arc, void* data)
 {
-	Serialiser* serialiser = (Serialiser*)data;
+	Serialiser* serialiser = static_cast<Serialiser*>(data);
 	if (!GANV_IS_EDGE(arc)) {
 		return;
 	}
@@ -879,9 +880,11 @@ GraphCanvas::get_initial_data(Resource::Graph ctx)
 	Properties result;
 	const URIs& uris = _app.uris();
 	result.emplace(uris.ingen_canvasX,
-	               Property(_app.forge().make((float)_menu_x), ctx));
+	               Property(_app.forge().make(static_cast<float>(_menu_x)),
+	                        ctx));
 	result.emplace(uris.ingen_canvasY,
-	               Property(_app.forge().make((float)_menu_y), ctx));
+	               Property(_app.forge().make(static_cast<float>(_menu_y)),
+	                        ctx));
 	return result;
 }
 

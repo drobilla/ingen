@@ -179,7 +179,10 @@ public:
 	                             uint32_t       size);
 
 	/** The Graph this Block belongs to. */
-	GraphImpl* parent_graph() const override { return (GraphImpl*)_parent; }
+	GraphImpl* parent_graph() const override
+	{
+		return reinterpret_cast<GraphImpl*>(_parent);
+	}
 
 	uint32_t num_ports() const override { return _ports ? _ports->size() : 0; }
 

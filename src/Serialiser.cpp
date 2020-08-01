@@ -353,17 +353,20 @@ Serialiser::Impl::serialise_graph(const SPtr<const Node>& graph,
 			SPtr<Node> subgraph = n->second;
 
 			SerdURI base_uri;
-			serd_uri_parse((const uint8_t*)_base_uri.c_str(), &base_uri);
+			serd_uri_parse(reinterpret_cast<const uint8_t*>(_base_uri.c_str()),
+			               &base_uri);
 
 			const std::string sub_bundle_path = subgraph->path().substr(1) + ".ingen";
 
 			SerdURI  subgraph_uri;
 			SerdNode subgraph_node = serd_node_new_uri_from_string(
-				(const uint8_t*)sub_bundle_path.c_str(),
+				reinterpret_cast<const uint8_t*>(sub_bundle_path.c_str()),
 				&base_uri,
 				&subgraph_uri);
 
-			const Sord::URI subgraph_id(world, (const char*)subgraph_node.buf);
+			const Sord::URI subgraph_id(world,
+			                            reinterpret_cast<const char*>(
+			                                subgraph_node.buf));
 
 			// Save our state
 			URI          my_base_uri = _base_uri;
@@ -552,14 +555,19 @@ void
 Serialiser::Impl::serialise_properties(Sord::Node        id,
                                        const Properties& props)
 {
-	LV2_URID_Unmap* unmap    = &_world.uri_map().urid_unmap_feature()->urid_unmap;
-	SerdNode        base     = serd_node_from_string(SERD_URI,
-	                                                 (const uint8_t*)_base_uri.c_str());
+	LV2_URID_Unmap* unmap = &_world.uri_map().urid_unmap_feature()->urid_unmap;
+	SerdNode        base  = serd_node_from_string(SERD_URI,
+                                          reinterpret_cast<const uint8_t*>(
+                                              _base_uri.c_str()));
+
 	SerdEnv*        env      = serd_env_new(&base);
 	SordInserter*   inserter = sord_inserter_new(_model->c_obj(), env);
 
-	sratom_set_sink(_sratom, _base_uri.c_str(),
-	                (SerdStatementSink)sord_inserter_write_statement, nullptr,
+	sratom_set_sink(_sratom,
+	                _base_uri.c_str(),
+	                reinterpret_cast<SerdStatementSink>(
+	                    sord_inserter_write_statement),
+	                nullptr,
 	                inserter);
 
 	sratom_set_pretty_numbers(_sratom, true);
@@ -568,7 +576,9 @@ Serialiser::Impl::serialise_properties(Sord::Node        id,
 		const Sord::URI key(_model->world(), p.first);
 		if (!skip_property(_world.uris(), key)) {
 			if (p.second.type() == _world.uris().atom_URI &&
-			    !strncmp((const char*)p.second.get_body(), "ingen:/main/", 13)) {
+			    !strncmp(reinterpret_cast<const char*>(p.second.get_body()),
+			             "ingen:/main/",
+			             13)) {
 				/* Value is a graph URI relative to the running engine.
 				   Chop the prefix and save the path relative to the graph file.
 				   This allows saving references to bundle resources. */
@@ -576,7 +586,7 @@ Serialiser::Impl::serialise_properties(Sord::Node        id,
 				             sord_node_to_serd_node(id.c_obj()),
 				             sord_node_to_serd_node(key.c_obj()),
 				             p.second.type(), p.second.size(),
-				             (const char*)p.second.get_body() + 13);
+				             reinterpret_cast<const char*>(p.second.get_body()) + 13);
 			} else {
 				sratom_write(_sratom, unmap, 0,
 				             sord_node_to_serd_node(id.c_obj()),

@@ -149,7 +149,7 @@ BlockFactory::load_lv2_plugins()
 	using Types = std::vector<SPtr<LilvNode>>;
 	Types types;
 	for (unsigned t = PortType::ID::AUDIO; t <= PortType::ID::ATOM; ++t) {
-		const URI& uri(PortType((PortType::ID)t).uri());
+		const URI& uri(PortType(static_cast<PortType::ID>(t)).uri());
 		types.push_back(
 			SPtr<LilvNode>(lilv_new_uri(_world.lilv_world(), uri.c_str()),
 			               lilv_node_free));

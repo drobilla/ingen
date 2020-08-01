@@ -27,7 +27,6 @@ Checks: >
   -fuchsia-*,
   -google-build-using-namespace,
   -google-default-arguments,
-  -google-readability-casting,
   -google-readability-todo,
   -google-runtime-references,
   -hicpp-multiway-paths-covered,

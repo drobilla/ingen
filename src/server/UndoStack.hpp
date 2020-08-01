@@ -71,7 +71,7 @@ public:
 
 		void push_event(const LV2_Atom* ev) {
 			const uint32_t size = lv2_atom_total_size(ev);
-			LV2_Atom*      copy = (LV2_Atom*)malloc(size);
+			LV2_Atom*      copy = static_cast<LV2_Atom*>(malloc(size));
 			memcpy(copy, ev, size);
 			events.push_front(copy);
 		}

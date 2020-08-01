@@ -91,7 +91,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	set_type(type, buffer_type);
 
 	remove_property(uris.lv2_index, uris.patch_wildcard);
-	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
+	set_property(uris.lv2_index, bufs.forge().make(static_cast<int32_t>(index)));
 
 	if (has_value()) {
 		set_property(uris.ingen_value, value);
@@ -249,7 +249,9 @@ PortImpl::set_voice_value(const RunContext& context,
 	switch (_type.id()) {
 	case PortType::CONTROL:
 		if (buffer(voice)->value()) {
-			((LV2_Atom_Float*)buffer(voice)->value())->body = value;
+			const_cast<LV2_Atom_Float*>(
+			    reinterpret_cast<const LV2_Atom_Float*>(buffer(voice)->value()))
+			    ->body = value;
 		}
 		_voices->at(voice).set_state.set(context, context.start(), value);
 		break;
@@ -277,7 +279,7 @@ PortImpl::set_voice_value(const RunContext& context,
 				buffer(voice)->append_event(offset,
 				                            sizeof(value),
 				                            _bufs.uris().atom_Float,
-				                            (const uint8_t*)&value);
+				                            reinterpret_cast<const uint8_t*>(&value));
 			}
 			_voices->at(voice).set_state.set(context, time, value);
 		} else {
@@ -319,7 +321,7 @@ PortImpl::update_set_state(const RunContext& context, uint32_t v)
 			buf->clear();
 			buf->append_event(
 				0, sizeof(float), _bufs.uris().atom_Float,
-				(const uint8_t*)&state.value);
+				reinterpret_cast<const uint8_t*>(&state.value));
 		} else {
 			buf->set_block(state.value, 0, context.nframes());
 		}
@@ -483,7 +485,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 				   uninitialized Chunk, so do nothing. */
 			} else if (_monitored) {
 				/* Sequence explicitly monitored, send everything. */
-				const auto* seq = (const LV2_Atom_Sequence*)atom;
+				const auto* seq = reinterpret_cast<const LV2_Atom_Sequence*>(atom);
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 					context.notify(uris.ingen_activity,
 					               context.start() + ev->time.frames,
@@ -495,7 +497,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 			} else if (value && value->type == _bufs.uris().atom_Float) {
 				/* Float sequence, monitor as a control. */
 				key = uris.ingen_value;
-				val = ((const LV2_Atom_Float*)buffer(0)->value())->body;
+				val = reinterpret_cast<const LV2_Atom_Float*>(buffer(0)->value())->body;
 			} else if (atom->size > sizeof(LV2_Atom_Sequence_Body)) {
 				/* General sequence, send activity for blinkenlights. */
 				const int32_t one = 1;
@@ -503,7 +505,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 				               context.start(),
 				               this,
 				               sizeof(int32_t),
-				               (LV2_URID)uris.atom_Bool,
+				               static_cast<LV2_URID>(uris.atom_Bool),
 				               &one);
 				_force_monitor_update = false;
 			}

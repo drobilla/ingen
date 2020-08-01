@@ -121,9 +121,9 @@ Delete::pre_process(PreProcessContext& ctx)
 					_port_index_changes.emplace(
 						port->path(), std::make_pair(port->index(), i));
 					port->remove_property(uris.lv2_index, uris.patch_wildcard);
-					port->set_property(
-						uris.lv2_index,
-						_engine.buffer_factory()->forge().make((int32_t)i));
+					port->set_property(uris.lv2_index,
+					                   _engine.buffer_factory()->forge().make(
+					                       static_cast<int32_t>(i)));
 				}
 			}
 		}

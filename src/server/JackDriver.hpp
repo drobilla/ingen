@@ -108,20 +108,20 @@ private:
 
 	// Static JACK callbacks which call the non-static callbacks (methods)
 	inline static void thread_init_cb(void* const jack_driver) {
-		return ((JackDriver*)jack_driver)->_thread_init_cb();
+		return static_cast<JackDriver*>(jack_driver)->_thread_init_cb();
 	}
 	inline static void shutdown_cb(void* const jack_driver) {
-		return ((JackDriver*)jack_driver)->_shutdown_cb();
+		return static_cast<JackDriver*>(jack_driver)->_shutdown_cb();
 	}
 	inline static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
-		return ((JackDriver*)jack_driver)->_process_cb(nframes);
+		return static_cast<JackDriver*>(jack_driver)->_process_cb(nframes);
 	}
 	inline static int block_length_cb(jack_nframes_t nframes, void* const jack_driver) {
-		return ((JackDriver*)jack_driver)->_block_length_cb(nframes);
+		return static_cast<JackDriver*>(jack_driver)->_block_length_cb(nframes);
 	}
 #ifdef INGEN_JACK_SESSION
 	inline static void session_cb(jack_session_event_t* event, void* jack_driver) {
-		((JackDriver*)jack_driver)->_session_cb(event);
+		static_cast<JackDriver*>(jack_driver)->_session_cb(event);
 	}
 #endif
 

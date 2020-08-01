@@ -148,7 +148,7 @@ s_add_set_event(const char* port_symbol,
                 uint32_t    size,
                 uint32_t    type)
 {
-	((Delta*)user_data)->add_set_event(port_symbol, value, size, type);
+	static_cast<Delta*>(user_data)->add_set_event(port_symbol, value, size, type);
 }
 
 static LilvNode*

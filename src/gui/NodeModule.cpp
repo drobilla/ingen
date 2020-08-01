@@ -163,7 +163,7 @@ NodeModule::create(GraphCanvas&           canvas,
 App&
 NodeModule::app() const
 {
-	return ((GraphCanvas*)canvas())->app();
+	return static_cast<GraphCanvas*>(canvas())->app();
 }
 
 void
@@ -268,7 +268,9 @@ NodeModule::embed_gui(bool embed)
 			if (!_plugin_ui->instantiate()) {
 				app().log().error("Failed to instantiate LV2 UI\n");
 			} else {
-				GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
+				GtkWidget* c_widget =
+				    static_cast<GtkWidget*>(_plugin_ui->get_widget());
+
 				_gui_widget = Glib::wrap(c_widget);
 
 				Gtk::Container* container = new Gtk::EventBox();
@@ -362,7 +364,9 @@ NodeModule::popup_gui()
 				return false;
 			}
 
-			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
+			GtkWidget* c_widget =
+			    static_cast<GtkWidget*>(_plugin_ui->get_widget());
+
 			_gui_widget = Glib::wrap(c_widget);
 
 			_gui_window = new Gtk::Window();

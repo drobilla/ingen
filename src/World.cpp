@@ -264,9 +264,12 @@ World::load_module(const char* name)
 	}
 	log().info("Loading %1% module\n", name);
 	std::unique_ptr<ingen::Library> lib = ingen_load_library(log(), name);
+
 	ingen::Module* (*module_load)() =
-		lib ? (ingen::Module* (*)())lib->get_function("ingen_module_load")
-		    : nullptr;
+	    lib ? reinterpret_cast<ingen::Module* (*)()>(
+	              lib->get_function("ingen_module_load"))
+	        : nullptr;
+
 	if (module_load) {
 		Module* module = module_load();
 		if (module) {

@@ -201,15 +201,16 @@ main(int argc, char** argv)
 			*world, *engine_interface, graph, parent, symbol);
 	} else if (conf.option("server-load").is_valid()) {
 		const char* path = conf.option("server-load").ptr<char>();
-		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
+		if (serd_uri_string_has_scheme(reinterpret_cast<const uint8_t*>(path))) {
 			std::cout << "Loading " << path << " (server side)" << std::endl;
 			engine_interface->copy(URI(path), main_uri());
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
-				(const uint8_t*)path, nullptr, nullptr, true);
-			std::cout << "Loading " << (const char*)uri.buf
+				reinterpret_cast<const uint8_t*>(path), nullptr, nullptr, true);
+			std::cout << "Loading " << reinterpret_cast<const char*>(uri.buf)
 			          << " (server side)" << std::endl;
-			engine_interface->copy(URI((const char*)uri.buf), main_uri());
+			engine_interface->copy(URI(reinterpret_cast<const char*>(uri.buf)),
+			                       main_uri());
 			serd_node_free(&uri);
 		}
 	}
@@ -217,14 +218,15 @@ main(int argc, char** argv)
 	// Save the currently loaded graph
 	if (conf.option("save").is_valid()) {
 		const char* path = conf.option("save").ptr<char>();
-		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
+		if (serd_uri_string_has_scheme(reinterpret_cast<const uint8_t*>(path))) {
 			std::cout << "Saving to " << path << std::endl;
 			engine_interface->copy(main_uri(), URI(path));
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
-				(const uint8_t*)path, nullptr, nullptr, true);
-			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
-			engine_interface->copy(main_uri(), URI((const char*)uri.buf));
+				reinterpret_cast<const uint8_t*>(path), nullptr, nullptr, true);
+			std::cout << "Saving to " << reinterpret_cast<const char*>(uri.buf)
+			          << std::endl;
+			engine_interface->copy(main_uri(), URI(reinterpret_cast<const char*>(uri.buf)));
 			serd_node_free(&uri);
 		}
 	}

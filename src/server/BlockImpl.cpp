@@ -57,7 +57,7 @@ BlockImpl::~BlockImpl()
 	assert(!_activated);
 
 	if (is_linked()) {
-		((GraphImpl*)_parent)->remove_block(*this);
+		reinterpret_cast<GraphImpl*>(_parent)->remove_block(*this);
 	}
 }
 

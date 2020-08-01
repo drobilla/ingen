@@ -85,21 +85,22 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 	if (!atom) {
 		return boost::optional<URI>();
 	} else if (atom->type == _uris.atom_URI) {
-		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
+		const char* str = static_cast<const char*>(LV2_ATOM_BODY_CONST(atom));
 		if (URI::is_valid(str)) {
 			return URI(str);
 		} else {
 			_log.warn("Invalid URI <%1%>\n", str);
 		}
 	} else if (atom->type == _uris.atom_Path) {
-		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
+		const char* str = static_cast<const char*>(LV2_ATOM_BODY_CONST(atom));
 		if (!strncmp(str, "file://", 5)) {
 			return URI(str);
 		} else {
 			return URI(std::string("file://") + str);
 		}
 	} else if (atom->type == _uris.atom_URID) {
-		const char* str = _map.unmap_uri(((const LV2_Atom_URID*)atom)->body);
+		const char* str =
+		    _map.unmap_uri(reinterpret_cast<const LV2_Atom_URID*>(atom)->body);
 		if (str) {
 			return URI(str);
 		} else {
@@ -141,7 +142,7 @@ AtomReader::is_message(const URIs& uris, const LV2_Atom* msg)
 		return false;
 	}
 
-	const auto* obj = (const LV2_Atom_Object*)msg;
+	const auto* obj = reinterpret_cast<const LV2_Atom_Object*>(msg);
 	return (obj->body.otype == uris.patch_Get ||
 	        obj->body.otype == uris.patch_Delete ||
 	        obj->body.otype == uris.patch_Put ||
@@ -159,19 +160,19 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		return false;
 	}
 
-	const auto*     obj     = (const LV2_Atom_Object*)msg;
+	const auto*     obj     = reinterpret_cast<const LV2_Atom_Object*>(msg);
 	const LV2_Atom* subject = nullptr;
 	const LV2_Atom* number  = nullptr;
 
 	lv2_atom_object_get(obj,
-	                    (LV2_URID)_uris.patch_subject,        &subject,
-	                    (LV2_URID)_uris.patch_sequenceNumber, &number,
+	                    _uris.patch_subject.urid(),        &subject,
+	                    _uris.patch_sequenceNumber.urid(), &number,
 	                    nullptr);
 
 	const boost::optional<URI> subject_uri = atom_to_uri(subject);
 
 	const int32_t seq = ((number && number->type == _uris.atom_Int)
-	                     ? ((const LV2_Atom_Int*)number)->body
+	                     ? reinterpret_cast<const LV2_Atom_Int*>(number)->body
 	                     : default_id);
 
 	if (obj->body.otype == _uris.patch_Get) {
@@ -188,7 +189,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		_iface(Redo{seq});
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = nullptr;
-		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
+		lv2_atom_object_get(obj,
+		                    _uris.patch_body.urid(), &body,
+		                    0);
 
 		if (subject_uri && !body) {
 			_iface(Del{seq, *subject_uri});
@@ -198,9 +201,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			const LV2_Atom* head       = nullptr;
 			const LV2_Atom* incidentTo = nullptr;
 			lv2_atom_object_get(body,
-			                    (LV2_URID)_uris.ingen_tail,       &tail,
-			                    (LV2_URID)_uris.ingen_head,       &head,
-			                    (LV2_URID)_uris.ingen_incidentTo, &incidentTo,
+			                    _uris.ingen_tail.urid(),       &tail,
+			                    _uris.ingen_head.urid(),       &head,
+			                    _uris.ingen_incidentTo.urid(), &incidentTo,
 			                    nullptr);
 
 			boost::optional<Raul::Path> subject_path(atom_to_path(subject));
@@ -220,8 +223,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		const LV2_Atom_Object* body    = nullptr;
 		const LV2_Atom*        context = nullptr;
 		lv2_atom_object_get(obj,
-		                    (LV2_URID)_uris.patch_body,    &body,
-		                    (LV2_URID)_uris.patch_context, &context,
+		                    _uris.patch_body.urid(),    &body,
+		                    _uris.patch_context.urid(), &context,
 		                    0);
 		if (!body) {
 			_log.warn("Put message has no body\n");
@@ -235,8 +238,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			LV2_Atom* tail = nullptr;
 			LV2_Atom* head = nullptr;
 			lv2_atom_object_get(body,
-			                    (LV2_URID)_uris.ingen_tail, &tail,
-			                    (LV2_URID)_uris.ingen_head, &head,
+			                    _uris.ingen_tail.urid(), &tail,
+			                    _uris.ingen_head.urid(), &head,
 			                    nullptr);
 			if (!tail || !head) {
 				_log.warn("Arc has no tail or head\n");
@@ -265,11 +268,12 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		const LV2_Atom*      value   = nullptr;
 		const LV2_Atom*      context = nullptr;
 		lv2_atom_object_get(obj,
-		                    (LV2_URID)_uris.patch_property, &prop,
-		                    (LV2_URID)_uris.patch_value,    &value,
-		                    (LV2_URID)_uris.patch_context,  &context,
+		                    _uris.patch_property.urid(), &prop,
+		                    _uris.patch_value.urid(),    &value,
+		                    _uris.patch_context.urid(),  &context,
 		                    0);
-		if (!prop || ((const LV2_Atom*)prop)->type != _uris.atom_URID) {
+		if (!prop ||
+		    reinterpret_cast<const LV2_Atom*>(prop)->type != _uris.atom_URID) {
 			_log.warn("Set message missing property\n");
 			return false;
 		} else if (!value) {
@@ -294,9 +298,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		const LV2_Atom_Object* add     = nullptr;
 		const LV2_Atom*        context = nullptr;
 		lv2_atom_object_get(obj,
-		                    (LV2_URID)_uris.patch_remove,  &remove,
-		                    (LV2_URID)_uris.patch_add,     &add,
-		                    (LV2_URID)_uris.patch_context, &context,
+		                    _uris.patch_remove.urid(),  &remove,
+		                    _uris.patch_add.urid(),     &add,
+		                    _uris.patch_context.urid(), &context,
 		                    0);
 		if (!remove) {
 			_log.warn("Patch message has no remove\n");
@@ -321,7 +325,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		}
 
 		const LV2_Atom* dest = nullptr;
-		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
+		lv2_atom_object_get(obj, _uris.patch_destination.urid(), &dest, 0);
 		if (!dest) {
 			_log.warn("Copy message has no destination\n");
 			return false;
@@ -347,7 +351,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		}
 
 		const LV2_Atom* dest = nullptr;
-		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
+		lv2_atom_object_get(obj, _uris.patch_destination.urid(), &dest, 0);
 		if (!dest) {
 			_log.warn("Move message has no destination\n");
 			return false;
@@ -370,8 +374,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		const LV2_Atom* seq  = nullptr;
 		const LV2_Atom* body = nullptr;
 		lv2_atom_object_get(obj,
-		                    (LV2_URID)_uris.patch_sequenceNumber, &seq,
-		                    (LV2_URID)_uris.patch_body,           &body,
+		                    _uris.patch_sequenceNumber.urid(), &seq,
+		                    _uris.patch_body.urid(),           &body,
 		                    0);
 		if (!seq || seq->type != _uris.atom_Int) {
 			_log.warn("Response message has no sequence number\n");
@@ -380,8 +384,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			_log.warn("Response message body is not integer\n");
 			return false;
 		}
-		_iface(Response{((const LV2_Atom_Int*)seq)->body,
-		                (ingen::Status)((const LV2_Atom_Int*)body)->body,
+		_iface(Response{reinterpret_cast<const LV2_Atom_Int*>(seq)->body,
+		                static_cast<ingen::Status>(
+		                    reinterpret_cast<const LV2_Atom_Int*>(body)->body),
 		                subject_uri ? subject_uri->c_str() : ""});
 	} else {
 		_log.warn("Unknown object type <%1%>\n",

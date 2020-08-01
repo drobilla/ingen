@@ -54,7 +54,7 @@ NodeImpl::get_property(const URI& key) const
 GraphImpl*
 NodeImpl::parent_graph() const
 {
-	return dynamic_cast<GraphImpl*>((BlockImpl*)_parent);
+	return dynamic_cast<GraphImpl*>(reinterpret_cast<BlockImpl*>(_parent));
 }
 
 } // namespace server

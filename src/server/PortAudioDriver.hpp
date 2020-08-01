@@ -88,7 +88,7 @@ private:
 	              const PaStreamCallbackTimeInfo* time,
 	              PaStreamCallbackFlags           flags,
 	              void*                           handle) {
-		return ((PortAudioDriver*)handle)->process_cb(
+		return static_cast<PortAudioDriver*>(handle)->process_cb(
 			inputs, outputs, nframes, time, flags);
 	}
 

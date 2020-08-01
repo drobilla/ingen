@@ -103,7 +103,8 @@ void signal_main(RunContext& context, LV2Driver* driver);
 inline size_t
 ui_ring_size(SampleCount block_length)
 {
-	return std::max((size_t)8192, (size_t)block_length * 16);
+	return std::max(static_cast<size_t>(8192u),
+	                static_cast<size_t>(block_length) * 16u);
 }
 
 class LV2Driver : public ingen::server::Driver
@@ -148,11 +149,17 @@ public:
 		if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
 			graph_port->set_driver_buffer(lv2_buf, nframes * sizeof(float));
 		} else if (graph_port->buffer_type() == uris.atom_Sequence) {
-			graph_port->set_driver_buffer(lv2_buf, lv2_atom_total_size((LV2_Atom*)lv2_buf));
+			graph_port->set_driver_buffer(lv2_buf,
+			                              lv2_atom_total_size(
+			                                  static_cast<LV2_Atom*>(lv2_buf)));
+
 			if (graph_port->symbol() == "control") {  // TODO: Safe to use index?
-				LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)lv2_buf;
-				bool               enqueued = false;
-				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+				LV2_Atom_Sequence* seq =
+				    reinterpret_cast<LV2_Atom_Sequence*>(lv2_buf);
+
+				bool enqueued = false;
+				LV2_ATOM_SEQUENCE_FOREACH(seq, ev)
+				{
 					if (AtomReader::is_message(uris, &ev->body)) {
 						enqueued = enqueue_message(&ev->body) || enqueued;
 					}
@@ -186,7 +193,8 @@ public:
 		_engine.locate(_frame_time, nframes);
 
 		// Notify buffer is a Chunk with size set to the available space
-		_notify_capacity = ((LV2_Atom_Sequence*)_ports[1]->buffer())->atom.size;
+		_notify_capacity =
+		    static_cast<LV2_Atom_Sequence*>(_ports[1]->buffer())->atom.size;
 
 		for (auto& p : _ports) {
 			pre_process_port(_engine.run_context(), p);
@@ -261,15 +269,19 @@ public:
 
 	void append_time_events(RunContext& context, Buffer& buffer) override {
 		const URIs&        uris = _engine.world().uris();
-		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
+		LV2_Atom_Sequence* seq =
+		    static_cast<LV2_Atom_Sequence*>(_ports[0]->buffer());
+
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 			if (ev->body.type == uris.atom_Object) {
-				const LV2_Atom_Object* obj = (LV2_Atom_Object*)&ev->body;
+				const LV2_Atom_Object* obj =
+				    reinterpret_cast<LV2_Atom_Object*>(&ev->body);
+
 				if (obj->body.otype == uris.time_Position) {
 					buffer.append_event(ev->time.frames,
 					                    ev->body.size,
 					                    ev->body.type,
-					                    (const uint8_t*)(&ev->body + 1));
+					                    reinterpret_cast<const uint8_t*>(&ev->body + 1));
 				}
 			}
 		}
@@ -317,12 +329,14 @@ public:
 			buf = realloc(buf, sizeof(LV2_Atom) + atom.size);
 			memcpy(buf, &atom, sizeof(LV2_Atom));
 
-			if (!_from_ui.read(atom.size, (char*)buf + sizeof(LV2_Atom))) {
-				_engine.log().rt_error("Error reading body from from-UI ring\n");
+			if (!_from_ui.read(atom.size,
+			                   static_cast<char*>(buf) + sizeof(LV2_Atom))) {
+				_engine.log().rt_error(
+				    "Error reading body from from-UI ring\n");
 				break;
 			}
 
-			_reader.write((LV2_Atom*)buf);
+			_reader.write(static_cast<LV2_Atom*>(buf));
 			read += sizeof(LV2_Atom) + atom.size;
 		}
 		free(buf);
@@ -334,7 +348,9 @@ public:
 			return;
 		}
 
-		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
+		LV2_Atom_Sequence* seq =
+		    static_cast<LV2_Atom_Sequence*>(_ports[1]->buffer());
+
 		if (!seq) {
 			_engine.log().rt_error("Notify output not connected\n");
 			return;
@@ -358,8 +374,8 @@ public:
 				break;  // Output port buffer full, resume next time
 			}
 
-			LV2_Atom_Event* ev = (LV2_Atom_Event*)(
-				(uint8_t*)seq + lv2_atom_total_size(&seq->atom));
+			LV2_Atom_Event* ev = reinterpret_cast<LV2_Atom_Event*>(
+				reinterpret_cast<uint8_t*>(seq) + lv2_atom_total_size(&seq->atom));
 
 			ev->time.frames = 0;  // TODO: Time?
 			ev->body        = atom;
@@ -486,13 +502,13 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	const LV2_Options_Option* options = nullptr;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID__map)) {
-			map = (LV2_URID_Map*)features[i]->data;
+			map = static_cast<LV2_URID_Map*>(features[i]->data);
 		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
-			unmap = (LV2_URID_Unmap*)features[i]->data;
+			unmap = static_cast<LV2_URID_Unmap*>(features[i]->data);
 		} else if (!strcmp(features[i]->URI, LV2_LOG__log)) {
-			log = (LV2_Log_Log*)features[i]->data;
+			log = static_cast<LV2_Log_Log*>(features[i]->data);
 		} else if (!strcmp(features[i]->URI, LV2_OPTIONS__options)) {
-			options = (const LV2_Options_Option*)features[i]->data;
+			options = static_cast<const LV2_Options_Option*>(features[i]->data);
 		}
 	}
 
@@ -509,10 +525,14 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	set_bundle_path(bundle_path);
 	const std::string manifest_path = ingen::bundle_file_path("manifest.ttl");
-	SerdNode          manifest_node = serd_node_new_file_uri(
-		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
+	SerdNode          manifest_node =
+	    serd_node_new_file_uri(reinterpret_cast<const uint8_t*>(
+	                               manifest_path.c_str()),
+	                           nullptr,
+	                           nullptr,
+	                           true);
 
-	Lib::Graphs graphs = find_graphs(URI((const char*)manifest_node.buf));
+	Lib::Graphs graphs = find_graphs(URI(reinterpret_cast<const char*>(manifest_node.buf)));
 	serd_node_free(&manifest_node);
 
 	const LV2Graph* graph = nullptr;
@@ -541,9 +561,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	if (options) {
 		for (const LV2_Options_Option* o = options; o->key; ++o) {
 			if (o->key == bufsz_max && o->type == atom_Int) {
-				block_length = *(const int32_t*)o->value;
+				block_length = *static_cast<const int32_t*>(o->value);
 			} else if (o->key == bufsz_seq && o->type == atom_Int) {
-				seq_size = *(const int32_t*)o->value;
+				seq_size = *static_cast<const int32_t*>(o->value);
 			}
 		}
 	}
@@ -607,7 +627,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->register_client(client);
 
 	driver->set_instantiated(true);
-	return (LV2_Handle)plugin;
+	return static_cast<LV2_Handle>(plugin);
 }
 
 static void
@@ -615,8 +635,8 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
 	using namespace ingen::server;
 
-	IngenPlugin*           me     = (IngenPlugin*)instance;
-	server::Engine*        engine = (server::Engine*)me->world->engine().get();
+	IngenPlugin*           me     = static_cast<IngenPlugin*>(instance);
+	server::Engine*        engine = static_cast<server::Engine*>(me->world->engine().get());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
@@ -628,7 +648,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 static void
 ingen_activate(LV2_Handle instance)
 {
-	IngenPlugin*           me     = (IngenPlugin*)instance;
+	IngenPlugin*           me     = static_cast<IngenPlugin*>(instance);
 	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	engine->activate();
@@ -638,7 +658,7 @@ ingen_activate(LV2_Handle instance)
 static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
-	IngenPlugin*           me     = (IngenPlugin*)instance;
+	IngenPlugin*           me     = static_cast<IngenPlugin*>(instance);
 	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 
@@ -651,7 +671,7 @@ ingen_run(LV2_Handle instance, uint32_t sample_count)
 static void
 ingen_deactivate(LV2_Handle instance)
 {
-	IngenPlugin* me = (IngenPlugin*)instance;
+	IngenPlugin* me = static_cast<IngenPlugin*>(instance);
 	me->world->engine()->deactivate();
 	if (me->main) {
 		me->main->join();
@@ -662,7 +682,7 @@ ingen_deactivate(LV2_Handle instance)
 static void
 ingen_cleanup(LV2_Handle instance)
 {
-	IngenPlugin* me = (IngenPlugin*)instance;
+	IngenPlugin* me = static_cast<IngenPlugin*>(instance);
 	me->world->set_engine(SPtr<ingen::server::Engine>());
 	me->world->set_interface(SPtr<ingen::Interface>());
 	if (me->main) {
@@ -681,9 +701,9 @@ get_state_features(const LV2_Feature* const* features,
 {
 	for (int i = 0; features[i]; ++i) {
 		if (map && !strcmp(features[i]->URI, LV2_STATE__mapPath)) {
-			*map = (LV2_State_Map_Path*)features[i]->data;
+			*map = static_cast<LV2_State_Map_Path*>(features[i]->data);
 		} else if (make && !strcmp(features[i]->URI, LV2_STATE__makePath)) {
-			*make = (LV2_State_Make_Path*)features[i]->data;
+			*make = static_cast<LV2_State_Make_Path*>(features[i]->data);
 		}
 	}
 }
@@ -695,7 +715,7 @@ ingen_save(LV2_Handle                instance,
            uint32_t                  flags,
            const LV2_Feature* const* features)
 {
-	IngenPlugin* plugin = (IngenPlugin*)instance;
+	IngenPlugin* plugin = static_cast<IngenPlugin*>(instance);
 
 	LV2_State_Map_Path*  map_path  = nullptr;
 	LV2_State_Make_Path* make_path = nullptr;
@@ -742,7 +762,7 @@ ingen_restore(LV2_Handle                  instance,
               uint32_t                    flags,
               const LV2_Feature* const*   features)
 {
-	IngenPlugin* plugin = (IngenPlugin*)instance;
+	IngenPlugin* plugin = static_cast<IngenPlugin*>(instance);
 
 	LV2_State_Map_Path* map_path = nullptr;
 	get_state_features(features, &map_path, nullptr);
@@ -757,8 +777,8 @@ ingen_restore(LV2_Handle                  instance,
 	uint32_t valflags;
 
 	// Get abstract path to graph file
-	const char* path = (const char*)retrieve(
-		handle, ingen_file, &size, &type, &valflags);
+	const char* path = static_cast<const char*>(
+		retrieve(handle, ingen_file, &size, &type, &valflags));
 	if (!path) {
 		return LV2_STATE_ERR_NO_PROPERTY;
 	}
@@ -821,10 +841,14 @@ Lib::Lib(const char* bundle_path)
 {
 	ingen::set_bundle_path(bundle_path);
 	const std::string manifest_path = ingen::bundle_file_path("manifest.ttl");
-	SerdNode          manifest_node = serd_node_new_file_uri(
-		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
+	SerdNode          manifest_node =
+	    serd_node_new_file_uri(reinterpret_cast<const uint8_t*>(
+	                               manifest_path.c_str()),
+	                           nullptr,
+	                           nullptr,
+	                           true);
 
-	graphs = find_graphs(URI((const char*)manifest_node.buf));
+	graphs = find_graphs(URI(reinterpret_cast<const char*>(manifest_node.buf)));
 
 	serd_node_free(&manifest_node);
 }
@@ -832,14 +856,14 @@ Lib::Lib(const char* bundle_path)
 static void
 lib_cleanup(LV2_Lib_Handle handle)
 {
-	Lib* lib = (Lib*)handle;
+	Lib* lib = static_cast<Lib*>(handle);
 	delete lib;
 }
 
 static const LV2_Descriptor*
 lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 {
-	Lib* lib = (Lib*)handle;
+	Lib* lib = static_cast<Lib*>(handle);
 	return index < lib->graphs.size() ? &lib->graphs[index]->descriptor : nullptr;
 }
 
@@ -853,7 +877,7 @@ lv2_lib_descriptor(const char*              bundle_path,
 	Lib*                  lib       = new Lib(bundle_path);
 
 	// FIXME: memory leak.  I think the LV2_Lib_Descriptor API is botched :(
-	LV2_Lib_Descriptor* desc = (LV2_Lib_Descriptor*)malloc(desc_size);
+	LV2_Lib_Descriptor* desc = static_cast<LV2_Lib_Descriptor*>(malloc(desc_size));
 	desc->handle     = lib;
 	desc->size       = desc_size;
 	desc->cleanup    = lib_cleanup;

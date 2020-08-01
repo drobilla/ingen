@@ -29,7 +29,7 @@ is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 {
 	const LV2_Atom* atom = buf->get<const LV2_Atom>();
 	return lv2_atom_sequence_is_end(
-		(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(atom),
+		static_cast<const LV2_Atom_Sequence_Body*>(LV2_ATOM_BODY_CONST(atom)),
 		atom->size,
 		ev);
 }
@@ -96,7 +96,7 @@ mix(const RunContext&   context,
 			if (first) {
 				dst->append_event(
 					first->time.frames, first->body.size, first->body.type,
-					(const uint8_t*)LV2_ATOM_BODY_CONST(&first->body));
+					static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&first->body)));
 
 				iters[first_i] = lv2_atom_sequence_next(first);
 				if (is_end(srcs[first_i], iters[first_i])) {

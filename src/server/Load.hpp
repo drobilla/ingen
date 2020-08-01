@@ -40,7 +40,9 @@ struct Load
 			mean    = load;
 			changed = true;
 		} else {
-			const float a = mean + ((float)load - mean) / (float)++n;
+			const float a = mean + (static_cast<float>(load) - mean) /
+			                           static_cast<float>(++n);
+
 			if (a != mean) {
 				changed = floorf(a) != floorf(mean);
 				mean    = a;

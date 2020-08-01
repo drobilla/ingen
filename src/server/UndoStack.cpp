@@ -29,9 +29,9 @@
 #include <iterator>
 #include <memory>
 
-#define NS_RDF (const uint8_t*)"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#define NS_RDF "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
-#define USTR(s) ((const uint8_t*)(s))
+#define USTR(s) reinterpret_cast<const uint8_t*>(s)
 
 namespace ingen {
 namespace server {
@@ -62,22 +62,22 @@ UndoStack::ignore_later_event(const LV2_Atom* first,
 		return false;
 	}
 
-	const auto* f = (const LV2_Atom_Object*)first;
-	const auto* s = (const LV2_Atom_Object*)second;
+	const auto* f = reinterpret_cast<const LV2_Atom_Object*>(first);
+	const auto* s = reinterpret_cast<const LV2_Atom_Object*>(second);
 	if (f->body.otype == _uris.patch_Set && f->body.otype == s->body.otype) {
 		const LV2_Atom* f_subject  = nullptr;
 		const LV2_Atom* f_property = nullptr;
 		const LV2_Atom* s_subject  = nullptr;
 		const LV2_Atom* s_property = nullptr;
 		lv2_atom_object_get(f,
-		                    (LV2_URID)_uris.patch_subject,  &f_subject,
-		                    (LV2_URID)_uris.patch_property, &f_property,
+		                    _uris.patch_subject.urid(), &f_subject,
+		                    _uris.patch_property.urid(), &f_property,
 		                    0);
 		lv2_atom_object_get(s,
-		                    (LV2_URID)_uris.patch_subject,  &s_subject,
-		                    (LV2_URID)_uris.patch_property, &s_property,
+		                    _uris.patch_subject.urid(), &s_subject,
+		                    _uris.patch_property.urid(), &s_property,
 		                    0);
-		return (lv2_atom_equals(f_subject,  s_subject) &&
+		return (lv2_atom_equals(f_subject, s_subject) &&
 		        lv2_atom_equals(f_property, s_property));
 	}
 
@@ -149,7 +149,7 @@ struct ListContext {
 		const SerdNode node = start_node(writer);
 
 		// node rdf:first value
-		p     = serd_node_from_string(SERD_URI, NS_RDF "first");
+		p = serd_node_from_string(SERD_URI, USTR(NS_RDF "first"));
 		flags = SERD_LIST_CONT;
 		serd_writer_write_statement(writer, flags|oflags, nullptr, &node, &p, value, nullptr, nullptr);
 
@@ -159,12 +159,15 @@ struct ListContext {
 	void end_node(SerdWriter*, const SerdNode* node) {
 		// Prepare for next call: node rdf:rest ...
 		s = *node;
-		p = serd_node_from_string(SERD_URI, NS_RDF "rest");
+		p = serd_node_from_string(SERD_URI, USTR(NS_RDF "rest"));
 	}
 
 	void end(SerdWriter* writer) {
-		const SerdNode nil = serd_node_from_string(SERD_URI, NS_RDF "nil");
-		serd_writer_write_statement(writer, flags, nullptr, &s, &p, &nil, nullptr, nullptr);
+		const SerdNode nil =
+		    serd_node_from_string(SERD_URI, USTR(NS_RDF "nil"));
+
+		serd_writer_write_statement(
+		    writer, flags, nullptr, &s, &p, &nil, nullptr, nullptr);
 	}
 
 	BlankIDs& ids;
@@ -195,7 +198,10 @@ UndoStack::write_entry(Sratom*                 sratom,
 	for (const LV2_Atom* atom : entry.events) {
 		const SerdNode node = ctx.start_node(writer);
 
-		p         = serd_node_from_string(SERD_URI, NS_RDF "first");
+		p = serd_node_from_string(SERD_URI,
+		                          reinterpret_cast<const uint8_t*>(NS_RDF
+		                                                           "first"));
+
 		ctx.flags = SERD_LIST_CONT;
 		sratom_write(sratom, &_map.urid_unmap_feature()->urid_unmap, SERD_LIST_CONT,
 		             &node, &p,
@@ -219,23 +225,25 @@ UndoStack::save(FILE* stream, const char* name)
 	SerdURI        base_uri;
 	serd_uri_parse(base.buf, &base_uri);
 
-	SerdWriter* writer = serd_writer_new(
-		SERD_TURTLE,
-		(SerdStyle)(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED|SERD_STYLE_CURIED),
-		env,
-		&base_uri,
-		serd_file_sink,
-		stream);
+	SerdWriter* writer =
+	    serd_writer_new(SERD_TURTLE,
+	                    static_cast<SerdStyle>(SERD_STYLE_RESOLVED |
+	                                           SERD_STYLE_ABBREVIATED |
+	                                           SERD_STYLE_CURIED),
+	                    env,
+	                    &base_uri,
+	                    serd_file_sink,
+	                    stream);
 
 	// Configure sratom to write directly to the writer (and thus the socket)
 	Sratom* sratom = sratom_new(&_map.urid_map_feature()->urid_map);
 	sratom_set_sink(sratom,
-	                (const char*)base.buf,
-	                (SerdStatementSink)serd_writer_write_statement,
-	                (SerdEndSink)serd_writer_end_anon,
+	                reinterpret_cast<const char*>(base.buf),
+	                reinterpret_cast<SerdStatementSink>(serd_writer_write_statement),
+	                reinterpret_cast<SerdEndSink>(serd_writer_end_anon),
 	                writer);
 
-	SerdNode s = serd_node_from_string(SERD_BLANK, (const uint8_t*)name);
+	SerdNode s = serd_node_from_string(SERD_BLANK, USTR(name));
 	SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "entries"));
 
 	BlankIDs    ids('u');

@@ -52,8 +52,9 @@ struct DataAccess : public ingen::LV2Features::Feature
 		}
 
 		const LV2_Descriptor*       desc = lilv_instance_get_descriptor(inst);
-		LV2_Extension_Data_Feature* data = (LV2_Extension_Data_Feature*)
-			malloc(sizeof(LV2_Extension_Data_Feature));
+		LV2_Extension_Data_Feature* data =
+		    static_cast<LV2_Extension_Data_Feature*>(
+		        malloc(sizeof(LV2_Extension_Data_Feature)));
 
 		data->data_access = desc->extension_data;
 

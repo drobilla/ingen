@@ -115,7 +115,7 @@ TriggerNode::run(RunContext& context)
 
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		const int64_t  t    = ev->time.frames;
-		const uint8_t* buf  = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+		const uint8_t* buf  = static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));
 		bool           emit = false;
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
@@ -156,7 +156,7 @@ TriggerNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, Fr
 	const uint32_t offset = time - context.start();
 
 	if (_learning) {
-		_note_port->set_control_value(context, time, (float)note_num);
+		_note_port->set_control_value(context, time, static_cast<float>(note_num));
 		_note_port->force_monitor_update();
 		_learning = false;
 	}

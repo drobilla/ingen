@@ -25,22 +25,22 @@ namespace gui {
 static inline uint32_t
 rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	return ((((uint32_t)(r)) << 24) |
-	        (((uint32_t)(g)) << 16) |
-	        (((uint32_t)(b)) << 8) |
-	        (((uint32_t)(a))));
+	return ((static_cast<uint32_t>(r) << 24) |
+	        (static_cast<uint32_t>(g) << 16) |
+	        (static_cast<uint32_t>(b) << 8) |
+	        (static_cast<uint32_t>(a)));
 }
 
 static inline uint8_t
 mono_interpolate(uint8_t v1, uint8_t v2, float f)
 {
-	return ((int)rint((v2) * (f) + (v1) * (1 - (f))));
+	return static_cast<int>(rint((v2) * (f) + (v1) * (1 - (f))));
 }
 
-#define RGBA_R(x) (((uint32_t)(x)) >> 24)
-#define RGBA_G(x) ((((uint32_t)(x)) >> 16) & 0xFF)
-#define RGBA_B(x) ((((uint32_t)(x)) >> 8) & 0xFF)
-#define RGBA_A(x) (((uint32_t)(x)) & 0xFF)
+#define RGBA_R(x) (static_cast<uint32_t>(x) >> 24)
+#define RGBA_G(x) ((static_cast<uint32_t>(x) >> 16) & 0xFF)
+#define RGBA_B(x) ((static_cast<uint32_t>(x) >> 8) & 0xFF)
+#define RGBA_A(x) (static_cast<uint32_t>(x) & 0xFF)
 
 static inline uint32_t
 rgba_interpolate(uint32_t c1, uint32_t c2, float f)

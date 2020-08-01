@@ -149,11 +149,11 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 			const uint64_t start = engine.cycle_start_time(context);
 			const uint64_t end   = engine.current_time();
 			fprintf(stderr, "Processed %zu events in %u us\n",
-			        n_processed, (unsigned)(end - start));
+			        n_processed, static_cast<unsigned>(end - start));
 		}
 #endif
 
-		auto* next = (Event*)last->next();
+		auto* next = static_cast<Event*>(last->next());
 		last->next(nullptr);
 		dest.append(context, head, last);
 
@@ -245,7 +245,7 @@ PreProcessor::run()
 			wait_for_block_state(BlockState::UNBLOCKED);
 		}
 
-		back = (Event*)ev->next();
+		back = static_cast<Event*>(ev->next());
 	}
 }
 

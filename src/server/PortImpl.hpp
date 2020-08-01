@@ -99,7 +99,7 @@ public:
 	GraphType graph_type() const override { return GraphType::PORT; }
 
 	/** A port's parent is always a block, so static cast should be safe */
-	BlockImpl* parent_block() const { return (BlockImpl*)_parent; }
+	BlockImpl* parent_block() const { return reinterpret_cast<BlockImpl*>(_parent); }
 
 	/** Set the the voices (buffers) for this port in the audio thread. */
 	void set_voices(RunContext& context, MPtr<Voices>&& voices);

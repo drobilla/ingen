@@ -83,7 +83,7 @@ GraphPortModule::create(GraphCanvas& canvas, const SPtr<const PortModel>& model)
 App&
 GraphPortModule::app() const
 {
-	return ((GraphCanvas*)canvas())->app();
+	return static_cast<GraphCanvas*>(canvas())->app();
 }
 
 bool

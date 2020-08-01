@@ -82,11 +82,13 @@ main(int argc, char** argv)
 	}
 
 	// Get start graph and output file options
-	const std::string start_graph = real_path((const char*)load.get_body());
-	const std::string out_file    = (const char*)out.get_body();
+	const std::string start_graph =
+	    real_path(static_cast<const char*>(load.get_body()));
+
+	const std::string out_file = static_cast<const char*>(out.get_body());
 	if (start_graph.empty()) {
 		cerr << "error: initial graph '"
-		     << ((const char*)load.get_body())
+		     << static_cast<const char*>(load.get_body())
 		     << "' does not exist" << endl;
 		return EXIT_FAILURE;
 	}

@@ -79,7 +79,7 @@ ControlBindings::binding_key(const Atom& binding) const
 	Key       key;
 	LV2_Atom* num = nullptr;
 	if (binding.type() == uris.atom_Object) {
-		const auto* obj = (const LV2_Atom_Object_Body*)binding.get_body();
+		const auto* obj = static_cast<const LV2_Atom_Object_Body*>(binding.get_body());
 		if (obj->otype == uris.midi_Bender) {
 			key = Key(Type::MIDI_BENDER);
 		} else if (obj->otype == uris.midi_ChannelPressure) {
@@ -87,7 +87,7 @@ ControlBindings::binding_key(const Atom& binding) const
 		} else if (obj->otype == uris.midi_Controller) {
 			lv2_atom_object_body_get(binding.size(),
 			                         obj,
-			                         (LV2_URID)uris.midi_controllerNumber,
+			                         uris.midi_controllerNumber.urid(),
 			                         &num,
 			                         nullptr);
 			if (!num) {
@@ -95,12 +95,12 @@ ControlBindings::binding_key(const Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().rt_error("Controller number not an integer\n");
 			} else {
-				key = Key(Type::MIDI_CC, ((LV2_Atom_Int*)num)->body);
+				key = Key(Type::MIDI_CC, reinterpret_cast<LV2_Atom_Int*>(num)->body);
 			}
 		} else if (obj->otype == uris.midi_NoteOn) {
 			lv2_atom_object_body_get(binding.size(),
 			                         obj,
-			                         (LV2_URID)uris.midi_noteNumber,
+			                         uris.midi_noteNumber.urid(),
 			                         &num,
 			                         nullptr);
 			if (!num) {
@@ -108,7 +108,7 @@ ControlBindings::binding_key(const Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().rt_error("Note number not an integer\n");
 			} else {
-				key = Key(Type::MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
+				key = Key(Type::MIDI_NOTE, reinterpret_cast<LV2_Atom_Int*>(num)->body);
 			}
 		}
 	} else if (binding.type()) {
@@ -199,7 +199,10 @@ ControlBindings::port_value_changed(RunContext& ctx,
 			break;
 		}
 		if (size > 0) {
-			_feedback->append_event(ctx.nframes() - 1, size, (LV2_URID)uris.midi_MidiEvent, buf);
+			_feedback->append_event(ctx.nframes() - 1,
+			                        size,
+			                        static_cast<LV2_URID>(uris.midi_MidiEvent),
+			                        buf);
 		}
 	}
 }
@@ -237,10 +240,10 @@ ControlBindings::control_to_port_value(RunContext&     context,
 	switch (type) {
 	case Type::MIDI_CC:
 	case Type::MIDI_CHANNEL_PRESSURE:
-		normal = (float)value / 127.0f;
+		normal = static_cast<float>(value) / 127.0f;
 		break;
 	case Type::MIDI_BENDER:
-		normal = (float)value / 16383.0f;
+		normal = static_cast<float>(value) / 16383.0f;
 		break;
 	case Type::MIDI_NOTE:
 		normal = (value == 0) ? 0.0f : 1.0f;
@@ -250,7 +253,7 @@ ControlBindings::control_to_port_value(RunContext&     context,
 	}
 
 	if (port->is_logarithmic()) {
-		normal = (expf(normal) - 1.0f) / ((float)M_E - 1.0f);
+		normal = (expf(normal) - 1.0f) / (static_cast<float>(M_E) - 1.0f);
 	}
 
 	float min = 0.0f;
@@ -286,7 +289,7 @@ ControlBindings::port_value_to_control(RunContext& context,
 	}
 
 	if (port->is_logarithmic()) {
-		normal = logf(normal * ((float)M_E - 1.0f) + 1.0f);
+		normal = logf(normal * (static_cast<float>(M_E) - 1.0f) + 1.0f);
 	}
 
 	switch (type) {
@@ -367,7 +370,7 @@ ControlBindings::finish_learn(RunContext& context, Key key)
 
 	LV2_Atom buf[16];
 	memset(buf, 0, sizeof(buf));
-	lv2_atom_forge_set_buffer(&_forge, (uint8_t*)buf, sizeof(buf));
+	lv2_atom_forge_set_buffer(&_forge, reinterpret_cast<uint8_t*>(buf), sizeof(buf));
 	forge_binding(uris, &_forge, key.type, key.num);
 	const LV2_Atom* atom = buf;
 	context.notify(uris.midi_binding,
@@ -412,7 +415,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 	auto* seq = buffer->get<LV2_Atom_Sequence>();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->body.type == uris.midi_MidiEvent) {
-			const auto* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+			const auto* buf = static_cast<const uint8_t*>(LV2_ATOM_BODY(&ev->body));
 			const Key   key = midi_event_key(ev->body.size, buf, value);
 
 			if (_learn_binding && !!key) {

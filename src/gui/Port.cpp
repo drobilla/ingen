@@ -194,7 +194,7 @@ Port::on_value_changed(double value)
 		return;  // Non-float, unsupported
 	}
 
-	if (current_value.get<float>() == (float)value) {
+	if (current_value.get<float>() == static_cast<float>(value)) {
 		return;  // No change
 	}
 

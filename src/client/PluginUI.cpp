@@ -52,7 +52,7 @@ lv2_ui_write(SuilController controller,
              uint32_t       format,
              const void*    buffer)
 {
-	PluginUI* const       ui   = (PluginUI*)controller;
+	PluginUI* const       ui   = static_cast<PluginUI*>(controller);
 	const URIs&           uris = ui->world().uris();
 	SPtr<const PortModel> port = get_port(ui, port_index);
 	if (!port) {
@@ -67,7 +67,7 @@ lv2_ui_write(SuilController controller,
 				ui->block()->plugin()->uri().c_str());
 			return;
 		}
-		const float value = *(const float*)buffer;
+		const float value = *static_cast<const float*>(buffer);
 		if (port->value().type() == uris.atom_Float &&
 		    value == port->value().get<float>()) {
 			return;  // Ignore feedback
@@ -80,7 +80,7 @@ lv2_ui_write(SuilController controller,
 			Resource::Graph::DEFAULT);
 
 	} else if (format == uris.atom_eventTransfer.urid()) {
-		const LV2_Atom* atom = (const LV2_Atom*)buffer;
+		const LV2_Atom* atom = static_cast<const LV2_Atom*>(buffer);
 		Atom            val  = ui->world().forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 		ui->signal_property_changed()(port->uri(),
@@ -97,7 +97,7 @@ lv2_ui_write(SuilController controller,
 static uint32_t
 lv2_ui_port_index(SuilController controller, const char* port_symbol)
 {
-	PluginUI* const ui = (PluginUI*)controller;
+	PluginUI* const ui = static_cast<PluginUI*>(controller);
 
 	const BlockModel::Ports& ports = ui->block()->ports();
 	for (uint32_t i = 0; i < ports.size(); ++i) {
@@ -114,7 +114,7 @@ lv2_ui_subscribe(SuilController            controller,
                  uint32_t                  protocol,
                  const LV2_Feature* const* features)
 {
-	PluginUI* const       ui   = (PluginUI*)controller;
+	PluginUI* const       ui   = static_cast<PluginUI*>(controller);
 	SPtr<const PortModel> port = get_port(ui, port_index);
 	if (!port) {
 		return 1;
@@ -135,7 +135,7 @@ lv2_ui_unsubscribe(SuilController            controller,
                    uint32_t                  protocol,
                    const LV2_Feature* const* features)
 {
-	PluginUI* const       ui   = (PluginUI*)controller;
+	PluginUI* const       ui   = static_cast<PluginUI*>(controller);
 	SPtr<const PortModel> port = get_port(ui, port_index);
 	if (!port) {
 		return 1;
@@ -299,7 +299,7 @@ PluginUI::instantiate()
 SuilWidget
 PluginUI::get_widget()
 {
-	return (SuilWidget*)suil_instance_get_widget(_instance);
+	return suil_instance_get_widget(_instance);
 }
 
 void

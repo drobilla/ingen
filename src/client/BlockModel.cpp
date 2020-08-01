@@ -56,8 +56,8 @@ BlockModel::BlockModel(const BlockModel& copy)
 	: ObjectModel(copy)
 	, _plugin_uri(copy._plugin_uri)
 	, _num_values(copy._num_values)
-	, _min_values((float*)malloc(sizeof(float) * _num_values))
-	, _max_values((float*)malloc(sizeof(float) * _num_values))
+	, _min_values(static_cast<float*>(malloc(sizeof(float) * _num_values)))
+	, _max_values(static_cast<float*>(malloc(sizeof(float) * _num_values)))
 {
 	memcpy(_min_values, copy._min_values, sizeof(float) * _num_values);
 	memcpy(_max_values, copy._max_values, sizeof(float) * _num_values);

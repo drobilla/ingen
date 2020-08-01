@@ -170,7 +170,8 @@ BufferFactory::create(LV2_URID type, LV2_URID value_type, uint32_t capacity)
 	if (capacity == 0) {
 		capacity = default_size(type);
 	} else if (type == _uris.atom_Float) {
-		capacity = std::max(capacity, (uint32_t)sizeof(LV2_Atom_Float));
+		capacity =
+		    std::max(capacity, static_cast<uint32_t>(sizeof(LV2_Atom_Float)));
 	} else if (type == _uris.atom_Sound) {
 		capacity = std::max(capacity, default_size(_uris.atom_Sound));
 	}

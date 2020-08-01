@@ -119,11 +119,11 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	LV2_Log_Log*    log   = nullptr;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID__map)) {
-			map = (LV2_URID_Map*)features[i]->data;
+			map = static_cast<LV2_URID_Map*>(features[i]->data);
 		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
-			unmap = (LV2_URID_Unmap*)features[i]->data;
+			unmap = static_cast<LV2_URID_Unmap*>(features[i]->data);
 		} else if (!strcmp(features[i]->URI, LV2_LOG__log)) {
-			log = (LV2_Log_Log*)features[i]->data;
+			log = static_cast<LV2_Log_Log*>(features[i]->data);
 		}
 	}
 
@@ -183,7 +183,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 static void
 cleanup(LV2UI_Handle handle)
 {
-	ingen::IngenLV2UI* ui = (ingen::IngenLV2UI*)handle;
+	ingen::IngenLV2UI* ui = static_cast<ingen::IngenLV2UI*>(handle);
 	delete ui;
 }
 
@@ -194,8 +194,8 @@ port_event(LV2UI_Handle handle,
            uint32_t     format,
            const void*  buffer)
 {
-	ingen::IngenLV2UI* ui   = (ingen::IngenLV2UI*)handle;
-	const LV2_Atom*    atom = (const LV2_Atom*)buffer;
+	ingen::IngenLV2UI* ui   = static_cast<ingen::IngenLV2UI*>(handle);
+	const LV2_Atom*    atom = static_cast<const LV2_Atom*>(buffer);
 	ui->reader->write(atom);
 }
 

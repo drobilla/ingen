@@ -58,7 +58,11 @@ public:
 
 	std::string string() const { return std::string(c_str(), _node.n_bytes); }
 	size_t      length() const { return _node.n_bytes; }
-	const char* c_str()  const { return (const char*)_node.buf; }
+
+	const char* c_str() const
+	{
+		return reinterpret_cast<const char*>(_node.buf);
+	}
 
 	FilePath file_path() const {
 		return scheme() == "file" ? FilePath(path()) : FilePath();
@@ -66,8 +70,15 @@ public:
 
 	operator std::string() const { return string(); }
 
-	const char* begin() const { return (const char*)_node.buf; }
-	const char* end()   const { return (const char*)_node.buf + _node.n_bytes; }
+	const char* begin() const
+	{
+		return reinterpret_cast<const char*>(_node.buf);
+	}
+
+	const char* end() const
+	{
+		return reinterpret_cast<const char*>(_node.buf) + _node.n_bytes;
+	}
 
 	Chunk scheme()    const { return make_chunk(_uri.scheme); }
 	Chunk authority() const { return make_chunk(_uri.authority); }
@@ -75,8 +86,10 @@ public:
 	Chunk query()     const { return make_chunk(_uri.query); }
 	Chunk fragment()  const { return make_chunk(_uri.fragment); }
 
-	static bool is_valid(const char* str) {
-		return serd_uri_string_has_scheme((const uint8_t*)str);
+	static bool is_valid(const char* str)
+	{
+		return serd_uri_string_has_scheme(
+		    reinterpret_cast<const uint8_t*>(str));
 	}
 
 	static bool is_valid(const std::string& str)
@@ -88,7 +101,7 @@ private:
 	URI(SerdNode node, SerdURI uri);
 
 	static Chunk make_chunk(const SerdChunk& chunk) {
-		return Chunk((const char*)chunk.buf, chunk.len);
+		return Chunk(reinterpret_cast<const char*>(chunk.buf), chunk.len);
 	}
 
 	SerdURI  _uri;

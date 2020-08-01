@@ -52,7 +52,7 @@ get_link_target(const char* link_path)
 	}
 
 	// Allocate buffer and read link target
-	char* target = (char*)calloc(1, link_stat.st_size + 1);
+	char* target = static_cast<char*>(calloc(1, link_stat.st_size + 1));
 	if (readlink(link_path, target, link_stat.st_size) != -1) {
 		const std::string result(target);
 		free(target);

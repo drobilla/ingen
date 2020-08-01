@@ -39,7 +39,7 @@ public:
 	    : _size{0}
 	    , _capacity{8 * sizeof(LV2_Atom)}
 	    , _sratom{sratom_new(&map)}
-	    , _buf{(LV2_Atom*)calloc(8, sizeof(LV2_Atom))}
+	    , _buf{static_cast<LV2_Atom*>(calloc(8, sizeof(LV2_Atom)))}
 	{
 		lv2_atom_forge_init(this, &map);
 		lv2_atom_forge_set_sink(this, c_append, c_deref, this);
@@ -79,11 +79,12 @@ private:
 		// Update size and reallocate if necessary
 		if (lv2_atom_pad_size(_size + len) > _capacity) {
 			_capacity = lv2_atom_pad_size(_size + len);
-			_buf      = AtomPtr{(LV2_Atom*)realloc(_buf.release(), _capacity)};
+			_buf      = AtomPtr{
+                static_cast<LV2_Atom*>(realloc(_buf.release(), _capacity))};
 		}
 
 		// Append new data
-		memcpy((uint8_t*)_buf.get() + _size, buf, len);
+		memcpy(reinterpret_cast<uint8_t*>(_buf.get()) + _size, buf, len);
 		_size += len;
 		return ref;
 	}
@@ -94,7 +95,7 @@ private:
 		   -Wcast-align.  This is questionable at best, though the forge should
 		   only dereference references to aligned atoms. */
 		assert((ref - 1) % sizeof(LV2_Atom) == 0);
-		return (LV2_Atom*)(_buf.get() + (ref - 1) / sizeof(LV2_Atom));
+		return static_cast<LV2_Atom*>(_buf.get() + (ref - 1) / sizeof(LV2_Atom));
 
 		// Alternatively:
 		// return (LV2_Atom*)((uint8_t*)_buf + ref - 1);
@@ -102,12 +103,12 @@ private:
 
 	static LV2_Atom_Forge_Ref
 	c_append(void* handle, const void* buf, uint32_t len) {
-		return ((AtomForge*)handle)->append(buf, len);
+		return static_cast<AtomForge*>(handle)->append(buf, len);
 	}
 
 	static LV2_Atom*
 	c_deref(void* handle, LV2_Atom_Forge_Ref ref) {
-		return ((AtomForge*)handle)->deref(ref);
+		return static_cast<AtomForge*>(handle)->deref(ref);
 	}
 
 	size_t    _size;     ///< Current atom size

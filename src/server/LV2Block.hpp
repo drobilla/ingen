@@ -107,7 +107,7 @@ protected:
 	                             bool       preparing);
 
 	inline LilvInstance* instance(uint32_t voice) {
-		return (LilvInstance*)(*_instances)[voice]->instance;
+		return static_cast<LilvInstance*>((*_instances)[voice]->instance);
 	}
 
 	using Instances = Raul::Array<SPtr<Instance>>;

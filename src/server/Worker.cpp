@@ -40,7 +40,7 @@ schedule(LV2_Worker_Schedule_Handle handle,
          uint32_t                   size,
          const void*                data)
 {
-	auto*   block  = (LV2Block*)handle;
+	auto*   block  = static_cast<LV2Block*>(handle);
 	Engine& engine = block->parent_graph()->engine();
 
 	return engine.worker()->request(block, size, data);
@@ -51,7 +51,7 @@ schedule_sync(LV2_Worker_Schedule_Handle handle,
               uint32_t                   size,
               const void*                data)
 {
-	auto*   block  = (LV2Block*)handle;
+	auto*   block  = static_cast<LV2Block*>(handle);
 	Engine& engine = block->parent_graph()->engine();
 
 	return engine.sync_worker()->request(block, size, data);
@@ -95,11 +95,12 @@ Worker::Schedule::feature(World&, Node* n)
 		return SPtr<LV2_Feature>();
 	}
 
-	auto* data = (LV2_Worker_Schedule*)malloc(sizeof(LV2_Worker_Schedule));
+	auto* data = static_cast<LV2_Worker_Schedule*>(malloc(sizeof(LV2_Worker_Schedule)));
+
 	data->handle        = block;
 	data->schedule_work = synchronous ? schedule_sync : schedule;
 
-	auto* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+	auto* f = static_cast<LV2_Feature*>(malloc(sizeof(LV2_Feature)));
 	f->URI  = LV2_WORKER__schedule;
 	f->data = data;
 
@@ -112,7 +113,7 @@ Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)
 	, _sem(0)
 	, _requests(buffer_size)
 	, _responses(buffer_size)
-	, _buffer((uint8_t*)malloc(buffer_size))
+	, _buffer(static_cast<uint8_t*>(malloc(buffer_size)))
 	, _buffer_size(buffer_size)
 	, _thread(nullptr)
 	, _exit_flag(false)

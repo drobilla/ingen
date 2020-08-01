@@ -114,7 +114,7 @@ ControllerNode::run(RunContext& context)
 	LV2_Atom_Sequence* seq      = midi_in->get<LV2_Atom_Sequence>();
 	const BufferRef    midi_out = _midi_out_port->buffer(0);
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+		const uint8_t* buf = static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3 &&
 		    lv2_midi_message_type(buf) == LV2_MIDI_MSG_CONTROLLER) {

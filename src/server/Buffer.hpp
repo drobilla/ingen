@@ -94,9 +94,10 @@ public:
 	/// Audio or float buffers only
 	inline const Sample* samples() const {
 		if (is_control()) {
-			return (const Sample*)LV2_ATOM_BODY_CONST(get<LV2_Atom_Float>());
+			return static_cast<const Sample*>(
+			    LV2_ATOM_BODY_CONST(get<LV2_Atom_Float>()));
 		} else if (is_audio()) {
-			return (const Sample*)_buf;
+			return static_cast<const Sample*>(_buf);
 		}
 		return nullptr;
 	}
@@ -104,9 +105,9 @@ public:
 	/// Audio buffers only
 	inline Sample* samples() {
 		if (is_control()) {
-			return (Sample*)LV2_ATOM_BODY(get<LV2_Atom_Float>());
+			return static_cast<Sample*>(LV2_ATOM_BODY(get<LV2_Atom_Float>()));
 		} else if (is_audio()) {
-			return (Sample*)_buf;
+			return static_cast<Sample*>(_buf);
 		}
 		return nullptr;
 	}
@@ -116,7 +117,7 @@ public:
 		if (is_audio() || is_control()) {
 			return samples()[offset];
 		} else if (_value_buffer) {
-			return ((const LV2_Atom_Float*)value())->body;
+			return reinterpret_cast<const LV2_Atom_Float*>(value())->body;
 		}
 		return 0.0f;
 	}

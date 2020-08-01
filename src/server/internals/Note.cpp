@@ -167,8 +167,12 @@ NoteNode::run(RunContext& context)
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		const uint8_t*  buf  = (const uint8_t*)LV2_ATOM_BODY_CONST(&ev->body);
-		const FrameTime time = context.start() + (FrameTime)ev->time.frames;
+		const uint8_t* buf =
+		    static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));
+
+		const FrameTime time =
+		    context.start() + static_cast<FrameTime>(ev->time.frames);
+
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
 			switch (lv2_midi_message_type(buf)) {
@@ -198,8 +202,11 @@ NoteNode::run(RunContext& context)
 				}
 				break;
 			case LV2_MIDI_MSG_BENDER:
-				bend(context, time, (((((uint16_t)buf[2] << 7) | buf[1]) - 8192.0f)
-				                     / 8192.0f));
+				bend(context,
+				     time,
+				     ((((static_cast<uint16_t>(buf[2]) << 7) | buf[1]) -
+				       8192.0f) /
+				      8192.0f));
 				break;
 			case LV2_MIDI_MSG_CHANNEL_PRESSURE:
 				channel_pressure(context, time, buf[1] / 127.0f);
@@ -218,7 +225,7 @@ static inline float
 note_to_freq(uint8_t num)
 {
 	static const float A4 = 440.0f;
-	return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
+	return A4 * powf(2.0f, static_cast<float>(num - 57.0f) / 12.0f);
 }
 
 void
@@ -286,7 +293,7 @@ NoteNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, Frame
 	assert(_keys[voice->note].voice == voice_num);
 
 	_freq_port->set_voice_value(context, voice_num, time, note_to_freq(note_num));
-	_num_port->set_voice_value(context, voice_num, time, (float)note_num);
+	_num_port->set_voice_value(context, voice_num, time, static_cast<float>(note_num));
 	_vel_port->set_voice_value(context, voice_num, time, velocity / 127.0f);
 	_gate_port->set_voice_value(context, voice_num, time, 1.0f);
 	if (!double_trigger) {

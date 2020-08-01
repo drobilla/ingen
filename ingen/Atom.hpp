@@ -55,7 +55,7 @@ public:
 		_atom.type = type;
 		_body.ptr  = nullptr;
 		if (is_reference()) {
-			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + size);
+			_body.ptr = static_cast<LV2_Atom*>(malloc(sizeof(LV2_Atom) + size));
 			memcpy(_body.ptr, &_atom, sizeof(LV2_Atom));
 		}
 		if (body) {
@@ -67,7 +67,9 @@ public:
 		: _atom(copy._atom)
 	{
 		if (is_reference()) {
-			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + _atom.size);
+			_body.ptr =
+			    static_cast<LV2_Atom*>(malloc(sizeof(LV2_Atom) + _atom.size));
+
 			memcpy(_body.ptr, copy._body.ptr, sizeof(LV2_Atom) + _atom.size);
 		} else {
 			_body.val = copy._body.val;
@@ -81,7 +83,9 @@ public:
 		dealloc();
 		_atom = other._atom;
 		if (is_reference()) {
-			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + _atom.size);
+			_body.ptr =
+			    static_cast<LV2_Atom*>(malloc(sizeof(LV2_Atom) + _atom.size));
+
 			memcpy(_body.ptr, other._body.ptr, sizeof(LV2_Atom) + _atom.size);
 		} else {
 			_body.val = other._body.val;
@@ -133,11 +137,11 @@ public:
 	inline bool     is_valid() const { return _atom.type; }
 
 	inline const void* get_body() const {
-		return is_reference() ? (void*)(_body.ptr + 1) : &_body.val;
+		return is_reference() ? static_cast<void*>(_body.ptr + 1) : &_body.val;
 	}
 
 	inline void* get_body() {
-		return is_reference() ? (void*)(_body.ptr + 1) : &_body.val;
+		return is_reference() ? static_cast<void*>(_body.ptr + 1) : &_body.val;
 	}
 
 	template <typename T> const T& get() const {

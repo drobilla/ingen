@@ -75,7 +75,7 @@ Parser::find_resources(Sord::World& world,
 		std::string       file_path;
 		if (!f.end()) {
 			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), nullptr);
-			file_path = (const char*)p;
+			file_path = reinterpret_cast<const char*>(p);
 			serd_free(p);
 		}
 		resources.insert(ResourceRecord(resource, file_path));
@@ -274,12 +274,15 @@ parse_block(ingen::World&                      world,
 		return boost::optional<Raul::Path>();
 	}
 
-	const auto* type_uri = (const uint8_t*)prototype.to_c_string();
+	const auto* type_uri =
+	    reinterpret_cast<const uint8_t*>(prototype.to_c_string());
+
 	if (!serd_uri_string_has_scheme(type_uri) ||
-	    !strncmp((const char*)type_uri, "file:", 5)) {
+	    !strncmp(reinterpret_cast<const char*>(type_uri), "file:", 5)) {
 		// Prototype is a file, subgraph
 		SerdURI base_uri_parts;
-		serd_uri_parse((const uint8_t*)base_uri.c_str(), &base_uri_parts);
+		serd_uri_parse(reinterpret_cast<const uint8_t*>(base_uri.c_str()),
+		               &base_uri_parts);
 
 		SerdURI  ignored;
 		SerdNode sub_uri = serd_node_new_uri_from_string(
@@ -287,11 +290,11 @@ parse_block(ingen::World&                      world,
 			&base_uri_parts,
 			&ignored);
 
-		const std::string sub_uri_str = (const char*)sub_uri.buf;
+		const std::string sub_uri_str = reinterpret_cast<const char*>(sub_uri.buf);
 		const std::string sub_file    = sub_uri_str + "/main.ttl";
 
 		const SerdNode sub_base = serd_node_from_string(
-			SERD_URI, (const uint8_t*)sub_file.c_str());
+		    SERD_URI, reinterpret_cast<const uint8_t*>(sub_file.c_str()));
 
 		Sord::Model sub_model(*world.rdf_world(), sub_file);
 		SerdEnv* env = serd_env_new(&sub_base);
@@ -632,7 +635,7 @@ Parser::parse_file(ingen::World&                        world,
 
 	// Initialise parsing environment
 	const URI   file_uri  = URI(file_path);
-	const auto* uri_c_str = (const uint8_t*)uri.c_str();
+	const auto* uri_c_str = reinterpret_cast<const uint8_t*>(uri.c_str());
 	SerdNode    base_node = serd_node_from_string(SERD_URI, uri_c_str);
 	SerdEnv*    env       = serd_env_new(&base_node);
 
@@ -680,12 +683,14 @@ Parser::parse_string(ingen::World&                        world,
 	SerdEnv* env = serd_env_new(nullptr);
 	if (!base_uri.empty()) {
 		const SerdNode base = serd_node_from_string(
-			SERD_URI, (const uint8_t*)base_uri.c_str());
+			SERD_URI, reinterpret_cast<const uint8_t*>(base_uri.c_str()));
 		serd_env_set_base_uri(env, &base);
 	}
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 
-	URI actual_base((const char*)serd_env_get_base_uri(env, nullptr)->buf);
+	URI actual_base(reinterpret_cast<const char*>(
+	    serd_env_get_base_uri(env, nullptr)->buf));
+
 	serd_env_free(env);
 
 	world.log().info("Parsing string (base %1%)\n", base_uri);

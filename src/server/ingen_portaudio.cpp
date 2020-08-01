@@ -28,16 +28,17 @@ using namespace ingen;
 
 struct IngenPortAudioModule : public ingen::Module {
 	void load(ingen::World& world) override {
-		if (((server::Engine*)world.engine().get())->driver()) {
+		server::Engine* const engine =
+		    static_cast<server::Engine*>(world.engine().get());
+
+		if (engine->driver()) {
 			world.log().warn("Engine already has a driver\n");
 			return;
 		}
 
-		server::PortAudioDriver* driver = new server::PortAudioDriver(
-			*(server::Engine*)world.engine().get());
+		server::PortAudioDriver* driver = new server::PortAudioDriver(*engine);
 		driver->attach();
-		((server::Engine*)world.engine().get())->set_driver(
-			SPtr<server::Driver>(driver));
+		engine->set_driver(SPtr<server::Driver>(driver));
 	}
 };
 

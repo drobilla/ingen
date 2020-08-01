@@ -97,7 +97,7 @@ SocketReader::write_statement(SocketReader*      iface,
 size_t
 SocketReader::c_recv(void* buf, size_t size, size_t nmemb, void* stream)
 {
-	SocketReader* self = (SocketReader*)stream;
+	SocketReader* self = static_cast<SocketReader*>(stream);
 
 	const ssize_t c = recv(self->_socket->fd(), buf, size * nmemb, MSG_WAITALL);
 	if (c < 0) {
@@ -111,7 +111,7 @@ SocketReader::c_recv(void* buf, size_t size, size_t nmemb, void* stream)
 int
 SocketReader::c_err(void* stream)
 {
-	SocketReader* self = (SocketReader*)stream;
+	SocketReader* self = static_cast<SocketReader*>(stream);
 
 	return self->_socket_error;
 }
@@ -131,7 +131,8 @@ SocketReader::run()
 		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
 
 		// Use <ingen:/> as base URI, so relative URIs are like bundle paths
-		base_uri = sord_new_uri(world->c_obj(), (const uint8_t*)"ingen:/");
+		base_uri = sord_new_uri(world->c_obj(),
+		                        reinterpret_cast<const uint8_t*>("ingen:/"));
 
 		// Make a model and reader to parse the next Turtle message
 		_env = world->prefixes().c_obj();
@@ -143,14 +144,19 @@ SocketReader::run()
 
 	SerdReader* reader = serd_reader_new(
 		SERD_TURTLE, this, nullptr,
-		(SerdBaseSink)set_base_uri,
-		(SerdPrefixSink)set_prefix,
-		(SerdStatementSink)write_statement,
+		reinterpret_cast<SerdBaseSink>(set_base_uri),
+		reinterpret_cast<SerdPrefixSink>(set_prefix),
+		reinterpret_cast<SerdStatementSink>(write_statement),
 		nullptr);
 
 	serd_env_set_base_uri(_env, sord_node_to_serd_node(base_uri));
-	serd_reader_start_source_stream(
-		reader, c_recv, c_err, this, (const uint8_t*)"(socket)", 1);
+	serd_reader_start_source_stream(reader,
+	                                c_recv,
+	                                c_err,
+	                                this,
+	                                reinterpret_cast<const uint8_t*>(
+	                                    "(socket)"),
+	                                1);
 
 	// Make an AtomReader to call Ingen Interface methods based on Atom
 	AtomReader ar(_world.uri_map(), _world.uris(), _world.log(), _iface);

@@ -101,7 +101,7 @@ public:
 	 * less time to avoid a dropout when running in real time).
 	 */
 	inline uint64_t duration() const {
-		return (uint64_t)_nframes * 1e6 / _rate;
+		return static_cast<uint64_t>(_nframes) * 1e6 / _rate;
 	}
 
 	inline void locate(FrameTime s, SampleCount nframes) {

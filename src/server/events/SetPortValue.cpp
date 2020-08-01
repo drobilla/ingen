@@ -116,7 +116,7 @@ SetPortValue::apply(RunContext& context)
 		if (!buf->append_event(_time - context.start(),
 		                       _value.size(),
 		                       _value.type(),
-		                       (const uint8_t*)_value.get_body())) {
+		                       reinterpret_cast<const uint8_t*>(_value.get_body()))) {
 			_status = Status::NO_SPACE;
 		}
 	} else if (buf->type() == uris.atom_URID) {

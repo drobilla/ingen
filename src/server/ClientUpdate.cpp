@@ -69,7 +69,7 @@ ClientUpdate::put_block(const BlockImpl* block)
 	const URIs&             uris   = plugin->uris();
 
 	if (uris.ingen_Graph == plugin->type()) {
-		put_graph((const GraphImpl*)block);
+		put_graph(static_cast<const GraphImpl*>(block));
 	} else {
 		put(block->uri(), block->properties());
 		for (size_t j = 0; j < block->num_ports(); ++j) {

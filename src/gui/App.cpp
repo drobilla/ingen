@@ -354,7 +354,7 @@ App::status_text() const
 	return fmt(
 		"%2.1f kHz / %.1f ms, %s, %s DSP",
 		(_sample_rate / 1e3f),
-		(_block_length * 1e3f / (float)_sample_rate),
+		(_block_length * 1e3f / static_cast<float>(_sample_rate)),
 		((_n_threads == 1) ? "1 thread" : fmt("%1% threads", _n_threads)),
 		fraction_label(_max_run_load));
 }

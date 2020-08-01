@@ -51,7 +51,7 @@ public:
 			{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, nullptr }
 		};
 
-		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
+		LV2_Feature* f = static_cast<LV2_Feature*>(malloc(sizeof(LV2_Feature)));
 		f->URI  = LV2_OPTIONS__options;
 		f->data = malloc(sizeof(options));
 		memcpy(f->data, options, sizeof(options));
