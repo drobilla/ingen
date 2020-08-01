@@ -52,7 +52,7 @@ public:
 	Task(const Task&) = delete;
 	Task& operator=(const Task&) = delete;
 
-	Task(Task&& task)
+	Task(Task&& task) noexcept
 		: _children(std::move(task._children))
 		, _block(task._block)
 		, _mode(task._mode)
@@ -61,7 +61,7 @@ public:
 		, _done(task._done.load())
 	{}
 
-	Task& operator=(Task&& task)
+	Task& operator=(Task&& task) noexcept
 	{
 		_children = std::move(task._children);
 		_block    = task._block;

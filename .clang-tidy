@@ -3,7 +3,6 @@ Checks: >
   -*avoid-c-arrays,
   -*magic-numbers,
   -*narrowing-conversions,
-  -*noexcept-move*,
   -*non-private-member-variables-in-classes,
   -*special-member-functions,
   -*uppercase-literal-suffix,
