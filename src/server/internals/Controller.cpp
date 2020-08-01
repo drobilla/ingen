@@ -160,8 +160,8 @@ ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, F
 		if (min_port_val < 0) {
 			log_offset = fabs(min_port_val);
 		}
-		const Sample min = log(min_port_val + 1 + log_offset);
-		const Sample max = log(max_port_val + 1 + log_offset);
+		const Sample min = logf(min_port_val + 1 + log_offset);
+		const Sample max = logf(max_port_val + 1 + log_offset);
 		scaled_value = expf(nval * (max - min) + min) - 1 - log_offset;
 	} else {
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
