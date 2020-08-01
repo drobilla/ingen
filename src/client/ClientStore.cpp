@@ -84,7 +84,7 @@ ClientStore::add_object(SPtr<ObjectModel> object)
 		}
 	}
 
-	for (auto p : object->properties()) {
+	for (const auto& p : object->properties()) {
 		object->signal_property().emit(p.first, p.second);
 	}
 }
@@ -475,7 +475,7 @@ ClientStore::operator()(const DisconnectAll& msg)
 	}
 
 	const GraphModel::Arcs arcs = graph->arcs();
-	for (auto a : arcs) {
+	for (const auto& a : arcs) {
 		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(a.second);
 		if (arc->tail()->parent() == object
 		    || arc->head()->parent() == object

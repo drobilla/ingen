@@ -400,7 +400,7 @@ GraphCanvas::get_port_view(const SPtr<PortModel>& port)
 	} else {
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
-			for (const auto& p : *module) {
+			for (auto* p : *module) {
 				gui::Port* pv = dynamic_cast<gui::Port*>(p);
 				if (pv && pv->model() == port) {
 					return pv;
@@ -777,7 +777,7 @@ GraphCanvas::paste()
 	}
 
 	// Connect objects
-	for (auto a : clipboard.object(Raul::Path("/"))->arcs()) {
+	for (const auto& a : clipboard.object(Raul::Path("/"))->arcs()) {
 		_app.interface()->connect(
 			avoider.map_path(parent.child(a.second->tail_path())),
 			avoider.map_path(parent.child(a.second->head_path())));

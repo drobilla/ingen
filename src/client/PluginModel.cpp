@@ -161,7 +161,7 @@ PluginModel::set(SPtr<PluginModel> p)
 		_lilv_plugin = p->_lilv_plugin;
 	}
 
-	for (auto v : p->properties()) {
+	for (const auto& v : p->properties()) {
 		Resource::set_property(v.first, v.second);
 		_signal_property.emit(v.first, v.second);
 	}

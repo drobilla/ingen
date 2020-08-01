@@ -78,7 +78,6 @@ def configure(conf):
                 '-Wno-implicit-int-conversion',
                 '-Wno-inconsistent-missing-destructor-override',
                 '-Wno-padded',
-                '-Wno-range-loop-bind-reference',
                 '-Wno-reserved-id-macro',
                 '-Wno-return-std-move-in-c++11',
                 '-Wno-shadow',

@@ -181,7 +181,7 @@ LoadGraphWindow::ok_clicked()
 
 	} else {
 		std::list<Glib::ustring> uri_list = get_filenames();
-		for (auto u : uri_list) {
+		for (const auto& u : uri_list) {
 			// Cascade
 			Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 			x = _app->forge().make(x.get<float>() + 20.0f);

@@ -88,7 +88,7 @@ ObjectModel::set(const SPtr<ObjectModel>& o)
 		_parent = o->_parent;
 	}
 
-	for (auto v : o->properties()) {
+	for (const auto& v : o->properties()) {
 		Resource::set_property(v.first, v.second);
 		_signal_property.emit(v.first, v.second);
 	}
