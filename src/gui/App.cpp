@@ -151,12 +151,12 @@ App::run()
 	// with 'ingen -egl' we'd get a bunch of notifications about load
 	// immediately before even knowing about the root graph or plugins)
 	while (!_connect_window->attached()) {
-		if (_main->iteration()) {
+		if (Gtk::Main::iteration()) {
 			break;
 		}
 	}
 
-	_main->run();
+	Gtk::Main::run();
 }
 
 void

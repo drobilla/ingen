@@ -121,7 +121,7 @@ get_properties(ingen::World&                      world,
 				*world.rdf_world(), model.c_obj(), i.get_object().c_obj());
 			const LV2_Atom* atom = forge.atom();
 			Atom            atomm;
-			atomm = world.forge().alloc(
+			atomm = Forge::alloc(
 				atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 			props.emplace(i.get_predicate(), Property(atomm, ctx));
 		}

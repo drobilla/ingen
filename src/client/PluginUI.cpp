@@ -81,9 +81,9 @@ lv2_ui_write(SuilController controller,
 
 	} else if (format == uris.atom_eventTransfer.urid()) {
 		const auto* atom = static_cast<const LV2_Atom*>(buffer);
-		Atom        val  = ui->world().forge().alloc(atom->size,
-		                                             atom->type,
-		                                             LV2_ATOM_BODY_CONST(atom));
+		Atom        val  = Forge::alloc(atom->size,
+		                                atom->type,
+		                                LV2_ATOM_BODY_CONST(atom));
 		ui->signal_property_changed()(port->uri(),
 		                              uris.ingen_activity,
 		                              val,

@@ -69,7 +69,6 @@ Checks: >
   -readability-else-after-return,
   -readability-implicit-bool-conversion,
   -readability-named-parameter,
-  -readability-static-accessed-through-instance,
 WarningsAsErrors: '*'
 HeaderFilterRegex: 'ingen/.*|tests/.*|src/.*'
 FormatStyle: file
