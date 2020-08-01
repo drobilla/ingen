@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SOCKET_WRITER_HPP
-#define INGEN_SOCKET_WRITER_HPP
+#ifndef INGEN_SOCKETWRITER_HPP
+#define INGEN_SOCKETWRITER_HPP
 
 #include "ingen/Message.hpp"
 #include "ingen/TurtleWriter.hpp"
@@ -54,4 +54,4 @@ protected:
 
 }  // namespace ingen
 
-#endif  // INGEN_SOCKET_WRITER_HPP
+#endif  // INGEN_SOCKETWRITER_HPP

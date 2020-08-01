@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_INSTANCEACCESS_HPP
-#define INGEN_ENGINE_INSTANCEACCESS_HPP
+#ifndef INGEN_INSTANCEACCESS_HPP
+#define INGEN_INSTANCEACCESS_HPP
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/Node.hpp"
@@ -53,4 +53,4 @@ struct InstanceAccess : public ingen::LV2Features::Feature
 
 } // namespace ingen
 
-#endif // INGEN_ENGINE_INSTANCEACCESS_HPP
+#endif // INGEN_INSTANCEACCESS_HPP

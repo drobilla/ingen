@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_QUEUEDINTERFACE_HPP
-#define INGEN_ENGINE_QUEUEDINTERFACE_HPP
+#ifndef INGEN_QUEUEDINTERFACE_HPP
+#define INGEN_QUEUEDINTERFACE_HPP
 
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
@@ -63,4 +63,4 @@ private:
 
 } // namespace ingen
 
-#endif // INGEN_ENGINE_QUEUEDINTERFACE_HPP
+#endif // INGEN_QUEUEDINTERFACE_HPP

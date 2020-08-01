@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_H
-#define INGEN_H
+#ifndef INGEN_INGEN_H
+#define INGEN_INGEN_H
 
 #ifdef INGEN_SHARED
 #    ifdef _WIN32
@@ -72,4 +72,4 @@
 #define INGEN__uiEmbedded      INGEN_NS "uiEmbedded"
 #define INGEN__value           INGEN_NS "value"
 
-#endif // INGEN_H
+#endif // INGEN_INGEN_H

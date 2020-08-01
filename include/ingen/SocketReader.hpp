@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SOCKET_READER_HPP
-#define INGEN_SOCKET_READER_HPP
+#ifndef INGEN_SOCKETREADER_HPP
+#define INGEN_SOCKETREADER_HPP
 
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
@@ -82,4 +82,4 @@ private:
 
 }  // namespace ingen
 
-#endif  // INGEN_SOCKET_READER_HPP
+#endif  // INGEN_SOCKETREADER_HPP

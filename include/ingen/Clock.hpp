@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_CLOCK_HPP
-#define INGEN_ENGINE_CLOCK_HPP
+#ifndef INGEN_CLOCK_HPP
+#define INGEN_CLOCK_HPP
 
 #ifdef __MACH__
 #    include <mach/mach.h>
@@ -63,4 +63,4 @@ private:
 
 } // namespace ingen
 
-#endif // INGEN_ENGINE_CLOCK_HPP
+#endif // INGEN_CLOCK_HPP

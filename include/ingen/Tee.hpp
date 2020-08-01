@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_TEE_HPP
-#define INGEN_ENGINE_TEE_HPP
+#ifndef INGEN_TEE_HPP
+#define INGEN_TEE_HPP
 
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
@@ -60,4 +60,4 @@ private:
 
 } // namespace ingen
 
-#endif // INGEN_ENGINE_TEE_HPP
+#endif // INGEN_TEE_HPP

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_FILE_PATH_HPP
-#define INGEN_FILE_PATH_HPP
+#ifndef INGEN_FILEPATH_HPP
+#define INGEN_FILEPATH_HPP
 
 #include "ingen/ingen.h"
 
@@ -122,4 +122,4 @@ operator<<(std::basic_ostream<Char, Traits>& os, const FilePath& path)
 
 } // namespace ingen
 
-#endif // INGEN_FILE_PATH_HPP
+#endif // INGEN_FILEPATH_HPP

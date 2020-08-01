@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_DATAACCESS_HPP
-#define INGEN_ENGINE_DATAACCESS_HPP
+#ifndef INGEN_DATAACCESS_HPP
+#define INGEN_DATAACCESS_HPP
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/Node.hpp"
@@ -65,4 +65,4 @@ struct DataAccess : public ingen::LV2Features::Feature
 
 } // namespace ingen
 
-#endif // INGEN_ENGINE_DATAACCESS_HPP
+#endif // INGEN_DATAACCESS_HPP
