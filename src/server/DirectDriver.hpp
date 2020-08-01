@@ -40,7 +40,7 @@ public:
 		, _seq_size(seq_size)
 	{}
 
-	virtual ~DirectDriver() {
+	~DirectDriver() override {
 		_ports.clear_and_dispose([](EnginePort* p) { delete p; });
 	}
 

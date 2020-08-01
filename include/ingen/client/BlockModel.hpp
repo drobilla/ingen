@@ -46,7 +46,7 @@ class INGEN_API BlockModel : public ObjectModel
 {
 public:
 	BlockModel(const BlockModel& copy);
-	virtual ~BlockModel();
+	~BlockModel() override;
 
 	GraphType graph_type() const override { return Node::GraphType::BLOCK; }
 

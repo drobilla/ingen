@@ -41,7 +41,7 @@ public:
 	               GraphImpl*          parent,
 	               SampleRate          srate);
 
-	~BlockDelayNode();
+	~BlockDelayNode() override;
 
 	void activate(BufferFactory& bufs) override;
 

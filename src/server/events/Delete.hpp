@@ -50,7 +50,7 @@ public:
 	       FrameTime              timestamp,
 	       const ingen::Del&      msg);
 
-	~Delete();
+	~Delete() override;
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

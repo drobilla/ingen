@@ -42,7 +42,7 @@ class SubgraphModule : public NodeModule
 public:
 	SubgraphModule(GraphCanvas& canvas, SPtr<const client::GraphModel> graph);
 
-	virtual ~SubgraphModule() = default;
+	~SubgraphModule() override = default;
 
 	bool on_double_click(GdkEventButton* event) override;
 

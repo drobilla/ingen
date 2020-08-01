@@ -56,7 +56,7 @@ public:
 	         GraphImpl*          parent,
 	         SampleRate          srate);
 
-	~LV2Block();
+	~LV2Block() override;
 
 	bool instantiate(BufferFactory& bufs, const LilvState* state);
 
@@ -131,7 +131,7 @@ protected:
 			memcpy(data, d, s);
 		}
 
-		~Response() {
+		~Response() override {
 			free(data);
 		}
 

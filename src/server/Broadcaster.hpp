@@ -43,7 +43,7 @@ class Broadcaster : public Interface
 {
 public:
 	Broadcaster() = default;
-	~Broadcaster();
+	~Broadcaster() override;
 
 	void register_client(const SPtr<Interface>& client);
 	bool unregister_client(const SPtr<Interface>& client);

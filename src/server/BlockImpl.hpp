@@ -70,7 +70,7 @@ public:
 	          GraphImpl*          parent,
 	          SampleRate          rate);
 
-	virtual ~BlockImpl();
+	~BlockImpl() override;
 
 	GraphType graph_type() const override { return GraphType::BLOCK; }
 

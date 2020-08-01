@@ -57,7 +57,7 @@ public:
 	          SampleRate          srate,
 	          uint32_t            internal_poly);
 
-	virtual ~GraphImpl();
+	~GraphImpl() override;
 
 	GraphType graph_type() const override { return GraphType::GRAPH; }
 

@@ -6,7 +6,6 @@ Checks: >
   -*non-private-member-variables-in-classes,
   -*special-member-functions,
   -*uppercase-literal-suffix,
-  -*use-override,
   -android-cloexec-fopen,
   -bugprone-branch-clone,
   -bugprone-parent-virtual-call,

@@ -67,7 +67,8 @@ class INGEN_API GraphBox : public Gtk::VBox
 public:
 	GraphBox(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
-	~GraphBox();
+
+	~GraphBox() override;
 
 	static SPtr<GraphBox>
 	create(App& app, const SPtr<const client::GraphModel>& graph);

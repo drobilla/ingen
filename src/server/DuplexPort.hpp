@@ -69,7 +69,7 @@ public:
 	           const Atom&         value,
 	           bool                is_output);
 
-	virtual ~DuplexPort();
+	~DuplexPort() override;
 
 	DuplexPort* duplicate(Engine&             engine,
 	                      const Raul::Symbol& symbol,

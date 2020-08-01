@@ -59,7 +59,7 @@ public:
 	GraphView(BaseObjectType*                   cobject,
 	          const Glib::RefPtr<Gtk::Builder>& xml);
 
-	~GraphView();
+	~GraphView() override;
 
 	void init(App& app);
 

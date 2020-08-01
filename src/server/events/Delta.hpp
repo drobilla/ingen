@@ -62,7 +62,7 @@ public:
 	      SampleCount               timestamp,
 	      const ingen::SetProperty& msg);
 
-	~Delta() = default;
+	~Delta() override = default;
 
 	void add_set_event(const char* port_symbol,
 	                   const void* value,

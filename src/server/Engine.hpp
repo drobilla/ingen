@@ -79,7 +79,7 @@ class INGEN_API Engine final : public EngineBase
 {
 public:
 	explicit Engine(ingen::World& world);
-	virtual ~Engine();
+	~Engine() override;
 
 	Engine(const Engine&) = delete;
 	Engine& operator=(const Engine&) = delete;

@@ -53,7 +53,7 @@ class ArcImpl
 {
 public:
 	ArcImpl(PortImpl* tail, PortImpl* head);
-	~ArcImpl();
+	~ArcImpl() override;
 
 	inline PortImpl* tail() const { return _tail; }
 	inline PortImpl* head() const { return _head; }

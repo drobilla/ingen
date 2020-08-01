@@ -76,7 +76,6 @@ def configure(conf):
                 '-Wno-implicit-fallthrough',
                 '-Wno-implicit-float-conversion',
                 '-Wno-implicit-int-conversion',
-                '-Wno-inconsistent-missing-destructor-override',
                 '-Wno-padded',
                 '-Wno-reserved-id-macro',
                 '-Wno-return-std-move-in-c++11',

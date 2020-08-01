@@ -28,7 +28,8 @@ class TestClient : public ingen::Interface
 {
 public:
 	explicit TestClient(Log& log) : _log(log) {}
-	~TestClient() {}
+
+	~TestClient() override = default;
 
 	URI uri() const override { return URI("ingen:testClient"); }
 

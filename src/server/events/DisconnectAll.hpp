@@ -52,7 +52,7 @@ public:
 	              GraphImpl* parent,
 	              Node*      object);
 
-	~DisconnectAll();
+	~DisconnectAll() override;
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

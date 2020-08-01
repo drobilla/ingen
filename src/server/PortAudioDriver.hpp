@@ -51,7 +51,7 @@ class PortAudioDriver : public Driver
 {
 public:
 	explicit PortAudioDriver(Engine& engine);
-	~PortAudioDriver();
+	~PortAudioDriver() override;
 
 	bool attach();
 

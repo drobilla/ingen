@@ -51,7 +51,7 @@ public:
 		SPtr<const client::BlockModel> block,
 		bool                           human);
 
-	virtual ~NodeModule();
+	~NodeModule() override;
 
 	App& app() const;
 

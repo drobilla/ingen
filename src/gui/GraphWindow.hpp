@@ -44,7 +44,7 @@ public:
 	GraphWindow(BaseObjectType*                   cobject,
 	            const Glib::RefPtr<Gtk::Builder>& xml);
 
-	~GraphWindow();
+	~GraphWindow() override;
 
 	void init_window(App& app) override;
 

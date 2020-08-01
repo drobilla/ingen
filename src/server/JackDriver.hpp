@@ -60,7 +60,7 @@ class JackDriver : public Driver
 {
 public:
 	explicit JackDriver(Engine& engine);
-	~JackDriver();
+	~JackDriver() override;
 
 	bool attach(const std::string& server_name,
 	            const std::string& client_name,

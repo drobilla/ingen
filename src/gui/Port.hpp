@@ -50,7 +50,7 @@ public:
 		SPtr<const client::PortModel> pm,
 		bool                          flip = false);
 
-	~Port();
+	~Port() override;
 
 	SPtr<const client::PortModel> model() const { return _port_model.lock(); }
 
