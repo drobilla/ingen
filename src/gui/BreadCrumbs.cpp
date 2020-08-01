@@ -30,8 +30,7 @@ namespace gui {
 using std::string;
 
 BreadCrumbs::BreadCrumbs(App& app)
-	: Gtk::HBox()
-	, _active_path("/")
+	: _active_path("/")
 	, _full_path("/")
 	, _enable_signal(true)
 {
