@@ -61,8 +61,8 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 void
 TimeNode::run(RunContext& context)
 {
-	BufferRef          buf = _notify_port->buffer(0);
-	LV2_Atom_Sequence* seq = buf->get<LV2_Atom_Sequence>();
+	BufferRef buf = _notify_port->buffer(0);
+	auto*     seq = buf->get<LV2_Atom_Sequence>();
 
 	// Initialise output to the empty sequence
 	seq->atom.type = _notify_port->bufs().uris().atom_Sequence;

@@ -265,12 +265,12 @@ show_module_human_names(GanvNode* node, void* data)
 	bool b = *static_cast<bool*>(data);
 	if (GANV_IS_MODULE(node)) {
 		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
-		NodeModule* nmod = dynamic_cast<NodeModule*>(module);
+		auto* nmod = dynamic_cast<NodeModule*>(module);
 		if (nmod) {
 			nmod->show_human_names(b);
 		}
 
-		GraphPortModule* pmod = dynamic_cast<GraphPortModule*>(module);
+		auto* pmod = dynamic_cast<GraphPortModule*>(module);
 		if (pmod) {
 			pmod->show_human_names(b);
 		}
@@ -292,7 +292,7 @@ ensure_port_labels(GanvNode* node, void* data)
 	if (GANV_IS_MODULE(node)) {
 		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
 		for (Ganv::Port* p : *module) {
-			ingen::gui::Port* port = dynamic_cast<ingen::gui::Port*>(p);
+			auto* port = dynamic_cast<ingen::gui::Port*>(p);
 			if (port) {
 				port->ensure_label();
 			}
@@ -393,7 +393,7 @@ GraphCanvas::get_port_view(const SPtr<PortModel>& port)
 
 	// Port on this graph
 	if (module) {
-		GraphPortModule* ppm = dynamic_cast<GraphPortModule*>(module);
+		auto* ppm = dynamic_cast<GraphPortModule*>(module);
 		return ppm
 			? *ppm->begin()
 			: dynamic_cast<Ganv::Port*>(module);
@@ -401,7 +401,7 @@ GraphCanvas::get_port_view(const SPtr<PortModel>& port)
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
 			for (auto* p : *module) {
-				gui::Port* pv = dynamic_cast<gui::Port*>(p);
+				auto* pv = dynamic_cast<gui::Port*>(p);
 				if (pv && pv->model() == port) {
 					return pv;
 				}
@@ -437,7 +437,7 @@ GraphCanvas::disconnection(const SPtr<const ArcModel>& arc)
 	if (tail && head) {
 		remove_edge_between(tail, head);
 		if (arc->head()->is_a(_app.uris().lv2_AudioPort)) {
-			gui::Port* const h = dynamic_cast<gui::Port*>(head);
+			auto* const h = dynamic_cast<gui::Port*>(head);
 			if (h) {
 				h->activity(_app.forge().make(0.0f));  // Reset peaks
 			}
@@ -572,12 +572,12 @@ destroy_node(GanvNode* node, void* data)
 
 	App*          app         = static_cast<App*>(data);
 	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
-	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
+	auto*         node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
 		app->interface()->del(node_module->block()->uri());
 	} else {
-		GraphPortModule* port_module = dynamic_cast<GraphPortModule*>(module);
+		auto* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module &&
 		    strcmp(port_module->port()->path().symbol(), "control") &&
 		    strcmp(port_module->port()->path().symbol(), "notify")) {
@@ -612,18 +612,18 @@ GraphCanvas::destroy_selection()
 static void
 serialise_node(GanvNode* node, void* data)
 {
-	Serialiser* serialiser = static_cast<Serialiser*>(data);
+	auto* serialiser = static_cast<Serialiser*>(data);
 	if (!GANV_IS_MODULE(node)) {
 		return;
 	}
 
 	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
-	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
+	auto*         node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
 		serialiser->serialise(node_module->block());
 	} else {
-		GraphPortModule* port_module = dynamic_cast<GraphPortModule*>(module);
+		auto* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module) {
 			serialiser->serialise(port_module->port());
 		}
@@ -633,12 +633,12 @@ serialise_node(GanvNode* node, void* data)
 static void
 serialise_arc(GanvEdge* arc, void* data)
 {
-	Serialiser* serialiser = static_cast<Serialiser*>(data);
+	auto* serialiser = static_cast<Serialiser*>(data);
 	if (!GANV_IS_EDGE(arc)) {
 		return;
 	}
 
-	gui::Arc* garc = dynamic_cast<gui::Arc*>(Glib::wrap(GANV_EDGE(arc)));
+	auto* garc = dynamic_cast<gui::Arc*>(Glib::wrap(GANV_EDGE(arc)));
 	if (garc) {
 		serialiser->serialise_arc(Sord::Node(), garc->model());
 	}

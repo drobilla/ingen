@@ -97,7 +97,7 @@ SocketReader::write_statement(SocketReader*      iface,
 size_t
 SocketReader::c_recv(void* buf, size_t size, size_t nmemb, void* stream)
 {
-	SocketReader* self = static_cast<SocketReader*>(stream);
+	auto* self = static_cast<SocketReader*>(stream);
 
 	const ssize_t c = recv(self->_socket->fd(), buf, size * nmemb, MSG_WAITALL);
 	if (c < 0) {
@@ -111,7 +111,7 @@ SocketReader::c_recv(void* buf, size_t size, size_t nmemb, void* stream)
 int
 SocketReader::c_err(void* stream)
 {
-	SocketReader* self = static_cast<SocketReader*>(stream);
+	auto* self = static_cast<SocketReader*>(stream);
 
 	return self->_socket_error;
 }

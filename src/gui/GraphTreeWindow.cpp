@@ -50,7 +50,7 @@ GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
 
 	_graphs_treeview->append_column(*name_col);
 	_graphs_treeview->append_column(*enabled_col);
-	Gtk::CellRendererToggle* enabled_renderer = dynamic_cast<Gtk::CellRendererToggle*>(
+	auto* enabled_renderer = dynamic_cast<Gtk::CellRendererToggle*>(
 		_graphs_treeview->get_column_cell_renderer(1));
 	enabled_renderer->property_activatable() = true;
 

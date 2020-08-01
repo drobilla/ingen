@@ -106,17 +106,18 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 void
 TriggerNode::run(RunContext& context)
 {
-	const BufferRef          midi_in  = _midi_in_port->buffer(0);
-	LV2_Atom_Sequence* const seq      = midi_in->get<LV2_Atom_Sequence>();
-	const BufferRef          midi_out = _midi_out_port->buffer(0);
+	const BufferRef midi_in  = _midi_in_port->buffer(0);
+	auto* const     seq      = midi_in->get<LV2_Atom_Sequence>();
+	const BufferRef midi_out = _midi_out_port->buffer(0);
 
 	// Initialise output to the empty sequence
 	midi_out->prepare_write(context);
 
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		const int64_t  t    = ev->time.frames;
-		const uint8_t* buf  = static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));
-		bool           emit = false;
+		const int64_t t = ev->time.frames;
+		const auto*   buf =
+		    static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));
+		bool emit = false;
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
 			const FrameTime time = context.start() + t;

@@ -145,7 +145,7 @@ main(int argc, char** argv)
 		reinterpret_cast<const uint8_t*>(run_path.c_str()),
 		nullptr, &cmds_base, true);
 
-	Sord::Model* cmds =
+	auto* cmds =
 	    new Sord::Model(*world->rdf_world(),
 	                    reinterpret_cast<const char*>(cmds_file_uri.buf));
 

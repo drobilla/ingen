@@ -37,9 +37,9 @@ struct IngenJackModule : public ingen::Module {
 			return;
 		}
 
-		server::JackDriver* driver      = new server::JackDriver(*engine);
-		const Atom&         s           = world.conf().option("jack-server");
-		const std::string   server_name = s.is_valid() ? s.ptr<char>() : "";
+		auto*             driver      = new server::JackDriver(*engine);
+		const Atom&       s           = world.conf().option("jack-server");
+		const std::string server_name = s.is_valid() ? s.ptr<char>() : "";
 
 		driver->attach(server_name,
 		               world.conf().option("jack-name").ptr<char>(),

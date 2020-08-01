@@ -49,9 +49,9 @@ public:
 };
 
 static bool
-has_provider_with_many_dependants(BlockImpl* n)
+has_provider_with_many_dependants(const BlockImpl* n)
 {
-	for (BlockImpl* p : n->providers()) {
+	for (const auto* p : n->providers()) {
 		if (p->dependants().size() > 1) {
 			return true;
 		}
@@ -84,10 +84,10 @@ CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 }
 
 static size_t
-num_unvisited_dependants(BlockImpl* block)
+num_unvisited_dependants(const BlockImpl* block)
 {
 	size_t count = 0;
-	for (BlockImpl* b : block->dependants()) {
+	for (const BlockImpl* b : block->dependants()) {
 		if (b->get_mark() == BlockImpl::Mark::UNVISITED) {
 			++count;
 		}
@@ -96,14 +96,14 @@ num_unvisited_dependants(BlockImpl* block)
 }
 
 static size_t
-parallel_depth(BlockImpl* block)
+parallel_depth(const BlockImpl* block)
 {
 	if (has_provider_with_many_dependants(block)) {
 		return 2;
 	}
 
 	size_t min_provider_depth = std::numeric_limits<size_t>::max();
-	for (auto p : block->providers()) {
+	for (const auto* p : block->providers()) {
 		min_provider_depth = std::min(min_provider_depth, parallel_depth(p));
 	}
 
@@ -133,12 +133,12 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 
 		// Calculate maximum sequential depth to consume this phase
 		size_t depth = std::numeric_limits<size_t>::max();
-		for (auto i : blocks) {
+		for (const auto* i : blocks) {
 			depth = std::min(depth, parallel_depth(i));
 		}
 
 		Task par(Task::Mode::PARALLEL);
-		for (auto b : blocks) {
+		for (auto* b : blocks) {
 			assert(num_unvisited_dependants(b) == 0);
 			Task seq(Task::Mode::SEQUENTIAL);
 			compile_block(b, seq, depth, predecessors);
@@ -164,7 +164,7 @@ check_feedback(const BlockImpl* root, BlockImpl* provider)
 		throw FeedbackException(root);
 	}
 
-	for (auto p : provider->providers()) {
+	for (auto* p : provider->providers()) {
 		const BlockImpl::Mark mark = p->get_mark();
 		switch (mark) {
 		case BlockImpl::Mark::UNVISITED:
@@ -227,12 +227,12 @@ CompiledGraph::compile_block(BlockImpl*            n,
 
 		if (n->providers().size() < 2) {
 			// Single provider, prepend it to this sequential task
-			for (auto p : n->providers()) {
+			for (auto* p : n->providers()) {
 				compile_provider(n, p, task, max_depth - 1, k);
 			}
 		} else if (has_provider_with_many_dependants(n)) {
 			// Stop recursion and enqueue providers for the next round
-			for (auto p : n->providers()) {
+			for (auto* p : n->providers()) {
 				if (num_unvisited_dependants(p) == 0) {
 					k.insert(p);
 				}
@@ -241,7 +241,7 @@ CompiledGraph::compile_block(BlockImpl*            n,
 			// Multiple providers with only this node as dependant,
 			// make a new parallel task to execute them
 			Task par(Task::Mode::PARALLEL);
-			for (auto p : n->providers()) {
+			for (auto* p : n->providers()) {
 				compile_provider(n, p, par, max_depth - 1, k);
 			}
 			task.push_front(std::move(par));

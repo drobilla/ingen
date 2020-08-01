@@ -145,10 +145,12 @@ public:
 	virtual PortImpl* port_by_symbol(const char* symbol);
 
 	/** Blocks that are connected to this Block's inputs. */
-	std::set<BlockImpl*>& providers() { return _providers; }
+	std::set<BlockImpl*>&       providers() { return _providers; }
+	const std::set<BlockImpl*>& providers() const { return _providers; }
 
 	/** Blocks that are connected to this Block's outputs. */
-	std::set<BlockImpl*>& dependants() { return _dependants; }
+	std::set<BlockImpl*>&       dependants() { return _dependants; }
+	const std::set<BlockImpl*>& dependants() const { return _dependants; }
 
 	/** Flag block as polyphonic.
 	 *

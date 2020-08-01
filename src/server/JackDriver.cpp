@@ -225,7 +225,7 @@ JackDriver::add_port(RunContext& context, EnginePort* port)
 	DuplexPort* graph_port = port->graph_port();
 	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
 		const SampleCount nframes = context.nframes();
-		jack_port_t*      jport   = static_cast<jack_port_t*>(port->handle());
+		auto*             jport   = static_cast<jack_port_t*>(port->handle());
 		void*             jbuf    = jack_port_get_buffer(jport, nframes);
 
 		/* Jack fails to return a buffer if this is too soon after registering
@@ -301,7 +301,7 @@ JackDriver::port_property(const Raul::Path& path,
 #ifdef HAVE_JACK_METADATA
 	EnginePort* eport = get_port(path);
 	if (eport) {
-		const jack_port_t* const jport =
+		const auto* const jport =
 		    static_cast<const jack_port_t*>(eport->handle());
 
 		port_property_internal(jport, uri, value);
@@ -357,7 +357,7 @@ JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 {
 	const URIs&       uris       = context.engine().world().uris();
 	const SampleCount nframes    = context.nframes();
-	jack_port_t*      jack_port  = static_cast<jack_port_t*>(port->handle());
+	auto*             jack_port  = static_cast<jack_port_t*>(port->handle());
 	DuplexPort*       graph_port = port->graph_port();
 	Buffer*           graph_buf  = graph_port->buffer(0).get();
 	void*             jack_buf   = jack_port_get_buffer(jack_port, nframes);
@@ -392,7 +392,7 @@ JackDriver::post_process_port(RunContext& context, EnginePort* port) const
 {
 	const URIs&       uris       = context.engine().world().uris();
 	const SampleCount nframes    = context.nframes();
-	jack_port_t*      jack_port  = static_cast<jack_port_t*>(port->handle());
+	auto*             jack_port  = static_cast<jack_port_t*>(port->handle());
 	DuplexPort*       graph_port = port->graph_port();
 	void*             jack_buf   = port->buffer();
 
@@ -405,12 +405,12 @@ JackDriver::post_process_port(RunContext& context, EnginePort* port) const
 
 		if (graph_port->buffer_type() == uris.atom_Sequence) {
 			// Copy LV2 MIDI events to Jack MIDI buffer
-			Buffer* const      graph_buf = graph_port->buffer(0).get();
-			LV2_Atom_Sequence* seq       = graph_buf->get<LV2_Atom_Sequence>();
+			Buffer* const graph_buf = graph_port->buffer(0).get();
+			auto*         seq       = graph_buf->get<LV2_Atom_Sequence>();
 
 			jack_midi_clear_buffer(jack_buf);
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-				const uint8_t* buf =
+				const auto* buf =
 				    static_cast<const uint8_t*>(LV2_ATOM_BODY(&ev->body));
 
 				if (ev->body.type == this->_midi_event_type) {
@@ -474,7 +474,7 @@ JackDriver::append_time_events(RunContext& context,
 	}
 
 	// Append position to buffer at offset 0 (start of this cycle)
-	LV2_Atom* lpos = static_cast<LV2_Atom*>(pos_buf);
+	auto* lpos = static_cast<LV2_Atom*>(pos_buf);
 	buffer.append_event(0,
 	                    lpos->size,
 	                    lpos->type,

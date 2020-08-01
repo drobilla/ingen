@@ -65,8 +65,8 @@ GraphPortModule::GraphPortModule(GraphCanvas&                         canvas,
 GraphPortModule*
 GraphPortModule::create(GraphCanvas& canvas, const SPtr<const PortModel>& model)
 {
-	GraphPortModule* ret  = new GraphPortModule(canvas, model);
-	Port*            port = Port::create(canvas.app(), *ret, model, true);
+	auto* ret  = new GraphPortModule(canvas, model);
+	Port* port = Port::create(canvas.app(), *ret, model, true);
 
 	ret->set_port(port);
 	if (model->is_numeric()) {

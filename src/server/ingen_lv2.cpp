@@ -153,8 +153,7 @@ public:
 			                                  static_cast<LV2_Atom*>(lv2_buf)));
 
 			if (graph_port->symbol() == "control") {  // TODO: Safe to use index?
-				LV2_Atom_Sequence* seq =
-				    reinterpret_cast<LV2_Atom_Sequence*>(lv2_buf);
+				auto* seq = reinterpret_cast<LV2_Atom_Sequence*>(lv2_buf);
 
 				bool enqueued = false;
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev)
@@ -267,9 +266,8 @@ public:
 	}
 
 	void append_time_events(RunContext& context, Buffer& buffer) override {
-		const URIs&        uris = _engine.world().uris();
-		LV2_Atom_Sequence* seq =
-		    static_cast<LV2_Atom_Sequence*>(_ports[0]->buffer());
+		const URIs& uris = _engine.world().uris();
+		auto*       seq  = static_cast<LV2_Atom_Sequence*>(_ports[0]->buffer());
 
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 			if (ev->body.type == uris.atom_Object) {
@@ -347,9 +345,7 @@ public:
 			return;
 		}
 
-		LV2_Atom_Sequence* seq =
-		    static_cast<LV2_Atom_Sequence*>(_ports[1]->buffer());
-
+		auto* seq = static_cast<LV2_Atom_Sequence*>(_ports[1]->buffer());
 		if (!seq) {
 			_engine.log().rt_error("Notify output not connected\n");
 			return;
@@ -373,8 +369,9 @@ public:
 				break;  // Output port buffer full, resume next time
 			}
 
-			LV2_Atom_Event* ev = reinterpret_cast<LV2_Atom_Event*>(
-				reinterpret_cast<uint8_t*>(seq) + lv2_atom_total_size(&seq->atom));
+			auto* ev = reinterpret_cast<LV2_Atom_Event*>(
+				reinterpret_cast<uint8_t*>(seq) +
+				lv2_atom_total_size(&seq->atom));
 
 			ev->time.frames = 0;  // TODO: Time?
 			ev->body        = atom;
@@ -547,7 +544,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		return nullptr;
 	}
 
-	IngenPlugin* plugin = new IngenPlugin();
+	auto* plugin = new IngenPlugin();
 	plugin->map   = map;
 	plugin->world = UPtr<ingen::World>(new ingen::World(map, unmap, log));
 	plugin->world->load_configuration(plugin->argc, plugin->argv);
@@ -593,7 +590,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	server::ThreadManager::set_flag(server::THREAD_PRE_PROCESS);
 	server::ThreadManager::single_threaded = true;
 
-	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, seq_size, rate);
+	auto* driver = new LV2Driver(*engine.get(), block_length, seq_size, rate);
 	engine->set_driver(SPtr<ingen::server::Driver>(driver));
 
 	engine->activate();
@@ -634,7 +631,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
 	using namespace ingen::server;
 
-	IngenPlugin*           me     = static_cast<IngenPlugin*>(instance);
+	auto*                  me     = static_cast<IngenPlugin*>(instance);
 	server::Engine*        engine = static_cast<server::Engine*>(me->world->engine().get());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
@@ -647,7 +644,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 static void
 ingen_activate(LV2_Handle instance)
 {
-	IngenPlugin*           me     = static_cast<IngenPlugin*>(instance);
+	auto*                  me     = static_cast<IngenPlugin*>(instance);
 	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	engine->activate();
@@ -657,7 +654,7 @@ ingen_activate(LV2_Handle instance)
 static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
-	IngenPlugin*           me     = static_cast<IngenPlugin*>(instance);
+	auto*                  me     = static_cast<IngenPlugin*>(instance);
 	SPtr<server::Engine>   engine = static_ptr_cast<server::Engine>(me->world->engine());
 	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 
@@ -670,7 +667,7 @@ ingen_run(LV2_Handle instance, uint32_t sample_count)
 static void
 ingen_deactivate(LV2_Handle instance)
 {
-	IngenPlugin* me = static_cast<IngenPlugin*>(instance);
+	auto* me = static_cast<IngenPlugin*>(instance);
 	me->world->engine()->deactivate();
 	if (me->main) {
 		me->main->join();
@@ -681,7 +678,7 @@ ingen_deactivate(LV2_Handle instance)
 static void
 ingen_cleanup(LV2_Handle instance)
 {
-	IngenPlugin* me = static_cast<IngenPlugin*>(instance);
+	auto* me = static_cast<IngenPlugin*>(instance);
 	me->world->set_engine(SPtr<ingen::server::Engine>());
 	me->world->set_interface(SPtr<ingen::Interface>());
 	if (me->main) {
@@ -714,7 +711,7 @@ ingen_save(LV2_Handle                instance,
            uint32_t                  flags,
            const LV2_Feature* const* features)
 {
-	IngenPlugin* plugin = static_cast<IngenPlugin*>(instance);
+	auto* plugin = static_cast<IngenPlugin*>(instance);
 
 	LV2_State_Map_Path*  map_path  = nullptr;
 	LV2_State_Make_Path* make_path = nullptr;
@@ -761,7 +758,7 @@ ingen_restore(LV2_Handle                  instance,
               uint32_t                    flags,
               const LV2_Feature* const*   features)
 {
-	IngenPlugin* plugin = static_cast<IngenPlugin*>(instance);
+	auto* plugin = static_cast<IngenPlugin*>(instance);
 
 	LV2_State_Map_Path* map_path = nullptr;
 	get_state_features(features, &map_path, nullptr);
@@ -876,7 +873,7 @@ lv2_lib_descriptor(const char*              bundle_path,
 	Lib*                  lib       = new Lib(bundle_path);
 
 	// FIXME: memory leak.  I think the LV2_Lib_Descriptor API is botched :(
-	LV2_Lib_Descriptor* desc = static_cast<LV2_Lib_Descriptor*>(malloc(desc_size));
+	auto* desc = static_cast<LV2_Lib_Descriptor*>(malloc(desc_size));
 	desc->handle     = lib;
 	desc->size       = desc_size;
 	desc->cleanup    = lib_cleanup;

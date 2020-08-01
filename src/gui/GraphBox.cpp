@@ -426,7 +426,7 @@ GraphBox::show_status(const ObjectModel* model)
 		show_port_status(port, port->value());
 
 	} else if ((block = dynamic_cast<const BlockModel*>(model))) {
-		const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
+		const auto* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 		if (plugin) {
 			msg << fmt(" (%1%)", plugin->human_name());
 		}
@@ -442,7 +442,7 @@ GraphBox::show_port_status(const PortModel* port, const Atom& value)
 
 	const BlockModel* parent = dynamic_cast<const BlockModel*>(port->parent().get());
 	if (parent) {
-		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
+		const auto* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 		if (plugin) {
 			const std::string& human_name = plugin->port_human_name(port->index());
 			if (!human_name.empty()) {
@@ -681,8 +681,8 @@ GraphBox::event_export_image()
 		}
 	}
 
-	Gtk::CheckButton* bg_but = new Gtk::CheckButton("Draw _Background", true);
-	Gtk::Alignment*   extra  = new Gtk::Alignment(1.0, 0.5, 0.0, 0.0);
+	auto* bg_but = new Gtk::CheckButton("Draw _Background", true);
+	auto* extra  = new Gtk::Alignment(1.0, 0.5, 0.0, 0.0);
 	bg_but->set_active(true);
 	extra->add(*Gtk::manage(bg_but));
 	extra->show_all();

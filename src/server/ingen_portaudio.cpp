@@ -36,7 +36,7 @@ struct IngenPortAudioModule : public ingen::Module {
 			return;
 		}
 
-		server::PortAudioDriver* driver = new server::PortAudioDriver(*engine);
+		auto* driver = new server::PortAudioDriver(*engine);
 		driver->attach();
 		engine->set_driver(SPtr<server::Driver>(driver));
 	}

@@ -27,7 +27,7 @@ namespace server {
 static inline bool
 is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 {
-	const LV2_Atom* atom = buf->get<const LV2_Atom>();
+	const auto* atom = buf->get<const LV2_Atom>();
 	return lv2_atom_sequence_is_end(
 		static_cast<const LV2_Atom_Sequence_Body*>(LV2_ATOM_BODY_CONST(atom)),
 		atom->size,
@@ -74,7 +74,7 @@ mix(const RunContext&   context,
 		for (uint32_t i = 0; i < num_srcs; ++i) {
 			iters[i] = nullptr;
 			if (srcs[i]->is_sequence()) {
-				const LV2_Atom_Sequence* seq = srcs[i]->get<const LV2_Atom_Sequence>();
+				const auto* seq = srcs[i]->get<const LV2_Atom_Sequence>();
 				iters[i] = lv2_atom_sequence_begin(&seq->body);
 				if (is_end(srcs[i], iters[i])) {
 					iters[i] = nullptr;

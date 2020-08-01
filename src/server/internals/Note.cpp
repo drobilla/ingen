@@ -164,10 +164,11 @@ NoteNode::apply_poly(RunContext& context, uint32_t poly)
 void
 NoteNode::run(RunContext& context)
 {
-	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
-	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
+	Buffer* const midi_in = _midi_in_port->buffer(0).get();
+	auto*         seq     = midi_in->get<LV2_Atom_Sequence>();
+
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		const uint8_t* buf =
+		const auto* buf =
 		    static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));
 
 		const FrameTime time =

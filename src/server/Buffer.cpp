@@ -333,8 +333,10 @@ Buffer::append_event(int64_t frames, const LV2_Atom* body)
 bool
 Buffer::append_event_buffer(const Buffer* buf)
 {
-	auto* seq  = reinterpret_cast<LV2_Atom_Sequence*>(get<LV2_Atom>());
-	auto* bseq = reinterpret_cast<const LV2_Atom_Sequence*>(buf->get<LV2_Atom>());
+	auto*       seq = reinterpret_cast<LV2_Atom_Sequence*>(get<LV2_Atom>());
+	const auto* bseq =
+	    reinterpret_cast<const LV2_Atom_Sequence*>(buf->get<LV2_Atom>());
+
 	if (seq->atom.type == _factory.uris().atom_Chunk) {
 		clear();  // Chunk initialized with prepare_output_write(), clear
 	}

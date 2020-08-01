@@ -243,12 +243,12 @@ PortAudioDriver::pre_process_port(RunContext& context,
 	}
 
 	if (port->is_input()) {
-		const float* const* const ins =
+		const auto* const* const ins =
 		    static_cast<const float* const*>(inputs);
 
 		port->set_buffer(const_cast<float*>(ins[port->driver_index()]));
 	} else {
-		float* const* const outs = static_cast<float* const*>(inputs);
+		auto* const* const outs = static_cast<float* const*>(inputs);
 
 		port->set_buffer(outs[port->driver_index()]);
 		memset(port->buffer(), 0, _block_length * sizeof(float));
