@@ -67,7 +67,6 @@ Checks: >
   -modernize-use-default-member-init,
   -modernize-use-trailing-return-type,
   -modernize-use-using,
-  -performance-no-automatic-move,
   -performance-unnecessary-value-param,
   -portability-simd-intrinsics,
   -readability-avoid-const-params-in-decls,

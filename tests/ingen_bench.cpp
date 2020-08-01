@@ -51,7 +51,7 @@ static std::string
 real_path(const char* path)
 {
 	char* const c_real_path = realpath(path, nullptr);
-	const std::string result(c_real_path ? c_real_path : "");
+	std::string result(c_real_path ? c_real_path : "");
 	free(c_real_path);
 	return result;
 }

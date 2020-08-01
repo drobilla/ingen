@@ -75,8 +75,8 @@ inline FilePath current_path()
 	struct Freer { void operator()(char* const ptr) { free(ptr); } };
 
 	std::unique_ptr<char, Freer> cpath(realpath(".", nullptr));
-	const FilePath path(cpath.get());
-	return path;
+
+	return FilePath(cpath.get());
 }
 
 } // namespace filesystem

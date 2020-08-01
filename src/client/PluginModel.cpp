@@ -204,7 +204,7 @@ PluginModel::port_human_name(uint32_t i) const
 	if (_lilv_plugin) {
 		const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, i);
 		LilvNode*       name = lilv_port_get_name(_lilv_plugin, port);
-		const string    ret(lilv_node_as_string(name));
+		string          ret(lilv_node_as_string(name));
 		lilv_node_free(name);
 		return ret;
 	}
