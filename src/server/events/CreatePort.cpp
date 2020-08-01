@@ -180,7 +180,7 @@ CreatePort::pre_process(PreProcessContext&)
 }
 
 void
-CreatePort::execute(RunContext& context)
+CreatePort::execute(RunContext& ctx)
 {
 	if (_status == Status::SUCCESS) {
 		const MPtr<GraphImpl::Ports>& old_ports = _graph->external_ports();
@@ -196,7 +196,7 @@ CreatePort::execute(RunContext& context)
 		_graph->set_external_ports(std::move(_ports_array));
 
 		if (_engine_port) {
-			_engine.driver()->add_port(context, _engine_port);
+			_engine.driver()->add_port(ctx, _engine_port);
 		}
 	}
 }

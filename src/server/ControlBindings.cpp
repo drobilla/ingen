@@ -220,18 +220,18 @@ ControlBindings::start_learn(PortImpl* port)
 }
 
 static void
-get_range(RunContext& context, const PortImpl* port, float* min, float* max)
+get_range(RunContext& ctx, const PortImpl* port, float* min, float* max)
 {
 	*min = port->minimum().get<float>();
 	*max = port->maximum().get<float>();
 	if (port->is_sample_rate()) {
-		*min *= context.engine().sample_rate();
-		*max *= context.engine().sample_rate();
+		*min *= ctx.engine().sample_rate();
+		*max *= ctx.engine().sample_rate();
 	}
 }
 
 float
-ControlBindings::control_to_port_value(RunContext&     context,
+ControlBindings::control_to_port_value(RunContext&     ctx,
                                        const PortImpl* port,
                                        Type            type,
                                        int16_t         value)
@@ -258,13 +258,13 @@ ControlBindings::control_to_port_value(RunContext&     context,
 
 	float min = 0.0f;
 	float max = 1.0f;
-	get_range(context, port, &min, &max);
+	get_range(ctx, port, &min, &max);
 
 	return normal * (max - min) + min;
 }
 
 int16_t
-ControlBindings::port_value_to_control(RunContext& context,
+ControlBindings::port_value_to_control(RunContext& ctx,
                                        PortImpl*   port,
                                        Type        type,
                                        const Atom& value_atom)
@@ -275,7 +275,7 @@ ControlBindings::port_value_to_control(RunContext& context,
 
 	float min = 0.0f;
 	float max = 1.0f;
-	get_range(context, port, &min, &max);
+	get_range(ctx, port, &min, &max);
 
 	const float value  = value_atom.get<float>();
 	float       normal = (value - min) / (max - min);
@@ -337,29 +337,29 @@ forge_binding(const URIs&           uris,
 }
 
 void
-ControlBindings::set_port_value(RunContext& context,
+ControlBindings::set_port_value(RunContext& ctx,
                                 PortImpl*   port,
                                 Type        type,
                                 int16_t     value) const
 {
 	float min = 0.0f;
 	float max = 1.0f;
-	get_range(context, port, &min, &max);
+	get_range(ctx, port, &min, &max);
 
-	const float val = control_to_port_value(context, port, type, value);
+	const float val = control_to_port_value(ctx, port, type, value);
 
 	// TODO: Set port value property so it is saved
-	port->set_control_value(context, context.start(), val);
+	port->set_control_value(ctx, ctx.start(), val);
 
-	URIs& uris = context.engine().world().uris();
-	context.notify(uris.ingen_value, context.start(), port,
-	               sizeof(float), _forge.Float, &val);
+	URIs& uris = ctx.engine().world().uris();
+	ctx.notify(uris.ingen_value, ctx.start(), port,
+	           sizeof(float), _forge.Float, &val);
 }
 
 bool
-ControlBindings::finish_learn(RunContext& context, Key key)
+ControlBindings::finish_learn(RunContext& ctx, Key key)
 {
-	const ingen::URIs& uris    = context.engine().world().uris();
+	const ingen::URIs& uris    = ctx.engine().world().uris();
 	Binding*           binding = _learn_binding.exchange(nullptr);
 	if (!binding || (key.type == Type::MIDI_NOTE && !binding->port->is_toggled())) {
 		return false;
@@ -373,10 +373,10 @@ ControlBindings::finish_learn(RunContext& context, Key key)
 	lv2_atom_forge_set_buffer(&_forge, reinterpret_cast<uint8_t*>(buf), sizeof(buf));
 	forge_binding(uris, &_forge, key.type, key.num);
 	const LV2_Atom* atom = buf;
-	context.notify(uris.midi_binding,
-	               context.start(),
-	               binding->port,
-	               atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
+	ctx.notify(uris.midi_binding,
+	           ctx.start(),
+	           binding->port,
+	           atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 
 	return true;
 }

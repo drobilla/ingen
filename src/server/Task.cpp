@@ -27,16 +27,16 @@ namespace ingen {
 namespace server {
 
 void
-Task::run(RunContext& context)
+Task::run(RunContext& ctx)
 {
 	switch (_mode) {
 	case Mode::SINGLE:
 		// fprintf(stderr, "%u run %s\n", context.id(), _block->path().c_str());
-		_block->process(context);
+		_block->process(ctx);
 		break;
 	case Mode::SEQUENTIAL:
 		for (const auto& task : _children) {
-			task->run(context);
+			task->run(ctx);
 		}
 		break;
 	case Mode::PARALLEL:
@@ -48,16 +48,16 @@ Task::run(RunContext& context)
 		// Grab the first sub-task
 		_next     = 0;
 		_done_end = 0;
-		Task* t = steal(context);
+		Task* t = steal(ctx);
 
 		// Allow other threads to steal sub-tasks
-		context.claim_task(this);
+		ctx.claim_task(this);
 
 		// Run available tasks until this task is finished
-		for (; t; t = get_task(context)) {
-			t->run(context);
+		for (; t; t = get_task(ctx)) {
+			t->run(ctx);
 		}
-		context.claim_task(nullptr);
+		ctx.claim_task(nullptr);
 		break;
 	}
 
@@ -78,10 +78,10 @@ Task::steal(RunContext&)
 }
 
 Task*
-Task::get_task(RunContext& context)
+Task::get_task(RunContext& ctx)
 {
 	// Attempt to "steal" a task from ourselves
-	Task* t = steal(context);
+	Task* t = steal(ctx);
 	if (t) {
 		return t;
 	}
@@ -97,7 +97,7 @@ Task::get_task(RunContext& context)
 		}
 
 		// All child tasks claimed, but some are unfinished, steal a task
-		if ((t = context.steal_task())) {
+		if ((t = ctx.steal_task())) {
 			return t;
 		}
 

@@ -171,13 +171,13 @@ PortAudioDriver::get_port(const Raul::Path& path)
 }
 
 void
-PortAudioDriver::add_port(RunContext& context, EnginePort* port)
+PortAudioDriver::add_port(RunContext&, EnginePort* port)
 {
 	_ports.push_back(*port);
 }
 
 void
-PortAudioDriver::remove_port(RunContext& context, EnginePort* port)
+PortAudioDriver::remove_port(RunContext&, EnginePort* port)
 {
 	_ports.erase(_ports.iterator_to(*port));
 }
@@ -235,7 +235,7 @@ PortAudioDriver::create_port(DuplexPort* graph_port)
 }
 
 void
-PortAudioDriver::pre_process_port(RunContext& context,
+PortAudioDriver::pre_process_port(RunContext&,
                                   EnginePort* port,
                                   const void* inputs,
                                   void*       outputs)
@@ -261,7 +261,7 @@ PortAudioDriver::pre_process_port(RunContext& context,
 }
 
 void
-PortAudioDriver::post_process_port(RunContext& context,
+PortAudioDriver::post_process_port(RunContext&,
                                    EnginePort* port,
                                    const void* inputs,
                                    void*       outputs)

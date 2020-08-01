@@ -230,18 +230,18 @@ PortImpl::cache_properties()
 }
 
 void
-PortImpl::set_control_value(const RunContext& context,
+PortImpl::set_control_value(const RunContext& ctx,
                             FrameTime         time,
                             Sample            value)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
-		update_set_state(context, v);
-		set_voice_value(context, v, time, value);
+		update_set_state(ctx, v);
+		set_voice_value(ctx, v, time, value);
 	}
 }
 
 void
-PortImpl::set_voice_value(const RunContext& context,
+PortImpl::set_voice_value(const RunContext& ctx,
                           uint32_t          voice,
                           FrameTime         time,
                           Sample            value)
@@ -253,35 +253,35 @@ PortImpl::set_voice_value(const RunContext& context,
 			    reinterpret_cast<const LV2_Atom_Float*>(buffer(voice)->value()))
 			    ->body = value;
 		}
-		_voices->at(voice).set_state.set(context, context.start(), value);
+		_voices->at(voice).set_state.set(ctx, ctx.start(), value);
 		break;
 	case PortType::AUDIO:
 	case PortType::CV: {
 		// Time may be at end so internal blocks can set triggers
-		assert(time >= context.start());
-		assert(time <= context.start() + context.nframes());
+		assert(time >= ctx.start());
+		assert(time <= ctx.start() + ctx.nframes());
 
-		const FrameTime offset = time - context.start();
-		if (offset < context.nframes()) {
-			buffer(voice)->set_block(value, offset, context.nframes());
+		const FrameTime offset = time - ctx.start();
+		if (offset < ctx.nframes()) {
+			buffer(voice)->set_block(value, offset, ctx.nframes());
 		}
 		/* else, this is a set at context.nframes(), used to reset a CV port's
 		   value for the next block, particularly for triggers on the last
 		   frame of a block (set nframes-1 to 1, then nframes to 0). */
 
-		_voices->at(voice).set_state.set(context, time, value);
+		_voices->at(voice).set_state.set(ctx, time, value);
 	} break;
 	case PortType::ATOM:
 		if (buffer(voice)->is_sequence()) {
-			const FrameTime offset = time - context.start();
+			const FrameTime offset = time - ctx.start();
 			// Same deal as above
-			if (offset < context.nframes()) {
+			if (offset < ctx.nframes()) {
 				buffer(voice)->append_event(offset,
 				                            sizeof(value),
 				                            _bufs.uris().atom_Float,
 				                            reinterpret_cast<const uint8_t*>(&value));
 			}
-			_voices->at(voice).set_state.set(context, time, value);
+			_voices->at(voice).set_state.set(ctx, time, value);
 		} else {
 #ifndef NDEBUG
 			fprintf(stderr,
@@ -295,7 +295,7 @@ PortImpl::set_voice_value(const RunContext& context,
 }
 
 void
-PortImpl::update_set_state(const RunContext& context, uint32_t v)
+PortImpl::update_set_state(const RunContext& ctx, uint32_t v)
 {
 	Voice&    voice = _voices->at(v);
 	SetState& state = voice.set_state;
@@ -304,12 +304,12 @@ PortImpl::update_set_state(const RunContext& context, uint32_t v)
 	case SetState::State::SET:
 		break;
 	case SetState::State::SET_CYCLE_1:
-		if (state.time < context.start() &&
+		if (state.time < ctx.start() &&
 		    buf->is_sequence() &&
 		    buf->value_type() == _bufs.uris().atom_Float &&
 		    !_parent->is_main()) {
 			buf->clear();
-			state.time = context.start();
+			state.time = ctx.start();
 		}
 		state.state = SetState::State::SET;
 		break;
@@ -323,7 +323,7 @@ PortImpl::update_set_state(const RunContext& context, uint32_t v)
 				0, sizeof(float), _bufs.uris().atom_Float,
 				reinterpret_cast<const uint8_t*>(&state.value));
 		} else {
-			buf->set_block(state.value, 0, context.nframes());
+			buf->set_block(state.value, 0, ctx.nframes());
 		}
 		state.state = SetState::State::SET_CYCLE_1;
 		break;
@@ -355,7 +355,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-PortImpl::apply_poly(RunContext& context, uint32_t poly)
+PortImpl::apply_poly(RunContext& ctx, uint32_t poly)
 {
 	if (_parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
@@ -372,7 +372,7 @@ PortImpl::apply_poly(RunContext& context, uint32_t poly)
 	_voices = std::move(_prepared_voices);
 
 	if (is_a(PortType::CONTROL) || is_a(PortType::CV)) {
-		set_control_value(context, context.start(), _value.get<float>());
+		set_control_value(ctx, ctx.start(), _value.get<float>());
 	}
 
 	assert(_voices->size() >= poly);
@@ -444,14 +444,14 @@ PortImpl::clear_buffers(const RunContext& ctx)
 }
 
 void
-PortImpl::monitor(RunContext& context, bool send_now)
+PortImpl::monitor(RunContext& ctx, bool send_now)
 {
-	if (!context.must_notify(this)) {
+	if (!ctx.must_notify(this)) {
 		return;
 	}
 
-	const uint32_t period = monitor_period(context.engine());
-	_frames_since_monitor += context.nframes();
+	const uint32_t period = monitor_period(ctx.engine());
+	_frames_since_monitor += ctx.nframes();
 
 	const bool time_to_send = send_now || _frames_since_monitor >= period;
 	const bool is_sequence  = (_type.id() == PortType::ATOM &&
@@ -460,8 +460,8 @@ PortImpl::monitor(RunContext& context, bool send_now)
 		return;
 	}
 
-	Forge&   forge = context.engine().world().forge();
-	URIs&    uris  = context.engine().world().uris();
+	Forge&   forge = ctx.engine().world().forge();
+	URIs&    uris  = ctx.engine().world().uris();
 	LV2_URID key   = 0;
 	float    val   = 0.0f;
 	switch (_type.id()) {
@@ -469,7 +469,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 		break;
 	case PortType::AUDIO:
 		key = uris.ingen_activity;
-		val = _peak = std::max(_peak, buffer(0)->peak(context));
+		val = _peak = std::max(_peak, buffer(0)->peak(ctx));
 		break;
 	case PortType::CONTROL:
 	case PortType::CV:
@@ -487,12 +487,12 @@ PortImpl::monitor(RunContext& context, bool send_now)
 				/* Sequence explicitly monitored, send everything. */
 				const auto* seq = reinterpret_cast<const LV2_Atom_Sequence*>(atom);
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-					context.notify(uris.ingen_activity,
-					               context.start() + ev->time.frames,
-					               this,
-					               ev->body.size,
-					               ev->body.type,
-					               LV2_ATOM_BODY(&ev->body));
+					ctx.notify(uris.ingen_activity,
+					           ctx.start() + ev->time.frames,
+					           this,
+					           ev->body.size,
+					           ev->body.type,
+					           LV2_ATOM_BODY(&ev->body));
 				}
 			} else if (value && value->type == _bufs.uris().atom_Float) {
 				/* Float sequence, monitor as a control. */
@@ -501,12 +501,12 @@ PortImpl::monitor(RunContext& context, bool send_now)
 			} else if (atom->size > sizeof(LV2_Atom_Sequence_Body)) {
 				/* General sequence, send activity for blinkenlights. */
 				const int32_t one = 1;
-				context.notify(uris.ingen_activity,
-				               context.start(),
-				               this,
-				               sizeof(int32_t),
-				               static_cast<LV2_URID>(uris.atom_Bool),
-				               &one);
+				ctx.notify(uris.ingen_activity,
+				           ctx.start(),
+				           this,
+				           sizeof(int32_t),
+				           static_cast<LV2_URID>(uris.atom_Bool),
+				           &one);
 				_force_monitor_update = false;
 			}
 		}
@@ -514,8 +514,7 @@ PortImpl::monitor(RunContext& context, bool send_now)
 
 	_frames_since_monitor = _frames_since_monitor % period;
 	if (key && val != _monitor_value) {
-		if (context.notify(key, context.start(), this,
-		                   sizeof(float), forge.Float, &val)) {
+		if (ctx.notify(key, ctx.start(), this, sizeof(float), forge.Float, &val)) {
 			/* Update frames since last update to conceptually zero, but keep
 			   the remainder to preserve load balancing. */
 			_frames_since_monitor = _frames_since_monitor % period;
@@ -552,27 +551,32 @@ PortImpl::update_values(SampleCount offset, uint32_t voice) const
 }
 
 void
-PortImpl::pre_process(RunContext& context)
+PortImpl::pre_process(RunContext& ctx)
 {
 	if (!_connected_flag.test_and_set(std::memory_order_acquire)) {
 		connect_buffers();
-		clear_buffers(context);
+		clear_buffers(ctx);
 	}
 
 	for (uint32_t v = 0; v < _poly; ++v) {
-		_voices->at(v).buffer->prepare_output_write(context);
+		_voices->at(v).buffer->prepare_output_write(ctx);
 	}
 }
 
 void
-PortImpl::post_process(RunContext& context)
+PortImpl::pre_run(RunContext&)
+{
+}
+
+void
+PortImpl::post_process(RunContext& ctx)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
-		update_set_state(context, v);
+		update_set_state(ctx, v);
 		update_values(0, v);
 	}
 
-	monitor(context);
+	monitor(ctx);
 }
 
 } // namespace server

@@ -75,13 +75,13 @@ BlockDelayNode::activate(BufferFactory& bufs)
 }
 
 void
-BlockDelayNode::run(RunContext& context)
+BlockDelayNode::run(RunContext& ctx)
 {
 	// Copy buffer from last cycle to output
-	_out_port->buffer(0)->copy(context, _buffer.get());
+	_out_port->buffer(0)->copy(ctx, _buffer.get());
 
 	// Copy input from this cycle to buffer
-	_buffer->copy(context, _in_port->buffer(0).get());
+	_buffer->copy(ctx, _in_port->buffer(0).get());
 }
 
 } // namespace internals

@@ -45,7 +45,7 @@ public:
 
 	void activate(BufferFactory& bufs) override;
 
-	void run(RunContext& context) override;
+	void run(RunContext& ctx) override;
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 

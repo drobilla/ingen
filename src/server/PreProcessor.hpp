@@ -52,7 +52,7 @@ public:
 	/** Process events for a cycle.
 	 * @return The number of events processed.
 	 */
-	unsigned process(RunContext&    context,
+	unsigned process(RunContext&    ctx,
 	                 PostProcessor& dest,
 	                 size_t         limit = 0);
 

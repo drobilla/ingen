@@ -78,10 +78,10 @@ public:
 
 	/** Apply a new (external) polyphony value.
 	 *
-	 * \param context Process context (process thread only).
+	 * \param ctx Process context (process thread only).
 	 * \param poly Must be <= the most recent value passed to prepare_poly.
 	 */
-	virtual bool apply_poly(RunContext& context, uint32_t poly) = 0;
+	virtual bool apply_poly(RunContext& ctx, uint32_t poly) = 0;
 
 	/** Return true iff this is main (the top level Node).
 	 *

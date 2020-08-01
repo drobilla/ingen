@@ -72,9 +72,9 @@ public:
 	                                boost::intrusive::constant_time_size<true>>;
 
 	/** Return the maximum polyphony of an output connected to this input. */
-	virtual uint32_t max_tail_poly(RunContext& context) const;
+	virtual uint32_t max_tail_poly(RunContext& ctx) const;
 
-	bool apply_poly(RunContext& context, uint32_t poly) override;
+	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
 	/** Add an arc.  Realtime safe.
 	 *
@@ -83,7 +83,7 @@ public:
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	void add_arc(RunContext& context, ArcImpl& c);
+	void add_arc(RunContext& ctx, ArcImpl& c);
 
 	/** Remove an arc.  Realtime safe.
 	 *
@@ -105,13 +105,13 @@ public:
 	setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
 
 	/** Set up buffer pointers. */
-	void pre_process(RunContext& context) override;
+	void pre_process(RunContext& ctx) override;
 
 	/** Prepare buffer for access, mixing if necessary. */
-	void pre_run(RunContext& context) override;
+	void pre_run(RunContext& ctx) override;
 
 	/** Prepare buffer for next process cycle. */
-	void post_process(RunContext& context) override;
+	void post_process(RunContext& ctx) override;
 
 	SampleCount
 	next_value_offset(SampleCount offset, SampleCount end) const override;

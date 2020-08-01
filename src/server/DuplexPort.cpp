@@ -201,46 +201,46 @@ DuplexPort::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-DuplexPort::apply_poly(RunContext& context, uint32_t poly)
+DuplexPort::apply_poly(RunContext& ctx, uint32_t poly)
 {
 	if (!parent()->parent() ||
 	    poly != parent()->parent_graph()->internal_poly()) {
 		return false;
 	}
 
-	return PortImpl::apply_poly(context, poly);
+	return PortImpl::apply_poly(ctx, poly);
 }
 
 void
-DuplexPort::pre_process(RunContext& context)
+DuplexPort::pre_process(RunContext& ctx)
 {
 	if (_is_output) {
 		/* This is a graph output, which is an input from the internal
 		   perspective.  Prepare buffers for write so plugins can deliver to
 		   them */
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_voices->at(v).buffer->prepare_write(context);
+			_voices->at(v).buffer->prepare_write(ctx);
 		}
 	} else {
 		/* This is a a graph input, which is an output from the internal
 		   perspective.  Do whatever a normal block's input port does to
 		   prepare input for reading. */
-		InputPort::pre_process(context);
-		InputPort::pre_run(context);
+		InputPort::pre_process(ctx);
+		InputPort::pre_run(ctx);
 	}
 }
 
 void
-DuplexPort::post_process(RunContext& context)
+DuplexPort::post_process(RunContext& ctx)
 {
 	if (_is_output) {
 		/* This is a graph output, which is an input from the internal
 		   perspective.  Mix down input delivered by plugins so output
 		   (external perspective) is ready. */
-		InputPort::pre_process(context);
-		InputPort::pre_run(context);
+		InputPort::pre_process(ctx);
+		InputPort::pre_run(ctx);
 	}
-	monitor(context);
+	monitor(ctx);
 }
 
 SampleCount

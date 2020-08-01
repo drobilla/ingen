@@ -26,7 +26,7 @@ class Buffer;
 class RunContext;
 
 void
-mix(const RunContext&   context,
+mix(const RunContext&   ctx,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs);

@@ -258,9 +258,9 @@ CompiledGraph::compile_block(BlockImpl*            n,
 }
 
 void
-CompiledGraph::run(RunContext& context)
+CompiledGraph::run(RunContext& ctx)
 {
-	_master->run(context);
+	_master->run(ctx);
 }
 
 void

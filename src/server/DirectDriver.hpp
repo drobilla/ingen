@@ -60,11 +60,11 @@ public:
 		return nullptr;
 	}
 
-	void add_port(RunContext& context, EnginePort* port) override {
+	void add_port(RunContext&, EnginePort* port) override {
 		_ports.push_back(*port);
 	}
 
-	void remove_port(RunContext& context, EnginePort* port) override {
+	void remove_port(RunContext&, EnginePort* port) override {
 		_ports.erase(_ports.iterator_to(*port));
 	}
 
@@ -88,7 +88,7 @@ public:
 		return _engine.run_context().start();
 	}
 
-	void append_time_events(RunContext& context, Buffer& buffer) override {}
+	void append_time_events(RunContext&, Buffer&) override {}
 
 	int real_time_priority() override { return 60; }
 

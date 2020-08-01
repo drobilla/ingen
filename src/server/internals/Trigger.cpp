@@ -104,14 +104,14 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 }
 
 void
-TriggerNode::run(RunContext& context)
+TriggerNode::run(RunContext& ctx)
 {
 	const BufferRef midi_in  = _midi_in_port->buffer(0);
 	auto* const     seq      = midi_in->get<LV2_Atom_Sequence>();
 	const BufferRef midi_out = _midi_out_port->buffer(0);
 
 	// Initialise output to the empty sequence
-	midi_out->prepare_write(context);
+	midi_out->prepare_write(ctx);
 
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		const int64_t t = ev->time.frames;
@@ -120,23 +120,23 @@ TriggerNode::run(RunContext& context)
 		bool emit = false;
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
-			const FrameTime time = context.start() + t;
+			const FrameTime time = ctx.start() + t;
 			switch (lv2_midi_message_type(buf)) {
 			case LV2_MIDI_MSG_NOTE_ON:
 				if (buf[2] == 0) {
-					emit = note_off(context, buf[1], time);
+					emit = note_off(ctx, buf[1], time);
 				} else {
-					emit = note_on(context, buf[1], buf[2], time);
+					emit = note_on(ctx, buf[1], buf[2], time);
 				}
 				break;
 			case LV2_MIDI_MSG_NOTE_OFF:
-				emit = note_off(context, buf[1], time);
+				emit = note_off(ctx, buf[1], time);
 				break;
 			case LV2_MIDI_MSG_CONTROLLER:
 				switch (buf[1]) {
 				case LV2_MIDI_CTL_ALL_NOTES_OFF:
 				case LV2_MIDI_CTL_ALL_SOUNDS_OFF:
-					_gate_port->set_control_value(context, time, 0.0f);
+					_gate_port->set_control_value(ctx, time, 0.0f);
 					emit = true;
 				}
 			default:
@@ -151,35 +151,35 @@ TriggerNode::run(RunContext& context)
 }
 
 bool
-TriggerNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
+TriggerNode::note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
-	assert(time >= context.start() && time <= context.end());
-	const uint32_t offset = time - context.start();
+	assert(time >= ctx.start() && time <= ctx.end());
+	const uint32_t offset = time - ctx.start();
 
 	if (_learning) {
-		_note_port->set_control_value(context, time, static_cast<float>(note_num));
+		_note_port->set_control_value(ctx, time, static_cast<float>(note_num));
 		_note_port->force_monitor_update();
 		_learning = false;
 	}
 
 	if (note_num == lrintf(_note_port->buffer(0)->value_at(offset))) {
-		_gate_port->set_control_value(context, time, 1.0f);
-		_trig_port->set_control_value(context, time, 1.0f);
-		_trig_port->set_control_value(context, time + 1, 0.0f);
-		_vel_port->set_control_value(context, time, velocity / 127.0f);
+		_gate_port->set_control_value(ctx, time, 1.0f);
+		_trig_port->set_control_value(ctx, time, 1.0f);
+		_trig_port->set_control_value(ctx, time + 1, 0.0f);
+		_vel_port->set_control_value(ctx, time, velocity / 127.0f);
 		return true;
 	}
 	return false;
 }
 
 bool
-TriggerNode::note_off(RunContext& context, uint8_t note_num, FrameTime time)
+TriggerNode::note_off(RunContext& ctx, uint8_t note_num, FrameTime time)
 {
-	assert(time >= context.start() && time <= context.end());
-	const uint32_t offset = time - context.start();
+	assert(time >= ctx.start() && time <= ctx.end());
+	const uint32_t offset = time - ctx.start();
 
 	if (note_num == lrintf(_note_port->buffer(0)->value_at(offset))) {
-		_gate_port->set_control_value(context, time, 0.0f);
+		_gate_port->set_control_value(ctx, time, 0.0f);
 		return true;
 	}
 

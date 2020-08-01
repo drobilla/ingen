@@ -125,19 +125,19 @@ private:
 	static Key
 	midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
-	void set_port_value(RunContext& context,
+	void set_port_value(RunContext& ctx,
 	                    PortImpl*   port,
 	                    Type        type,
 	                    int16_t     value) const;
 
-	bool finish_learn(RunContext& context, Key key);
+	bool finish_learn(RunContext& ctx, Key key);
 
-	static float control_to_port_value(RunContext& context,
-	                            const PortImpl* port,
-	                            Type            type,
-	                            int16_t         value);
+	static float control_to_port_value(RunContext&     ctx,
+	                                   const PortImpl* port,
+	                                   Type            type,
+	                                   int16_t         value);
 
-	static int16_t port_value_to_control(RunContext& context,
+	static int16_t port_value_to_control(RunContext& ctx,
 	                                     PortImpl*   port,
 	                                     Type        type,
 	                                     const Atom& value_atom);

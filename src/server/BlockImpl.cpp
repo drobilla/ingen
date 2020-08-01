@@ -123,7 +123,7 @@ BlockImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-BlockImpl::apply_poly(RunContext& context, uint32_t poly)
+BlockImpl::apply_poly(RunContext& ctx, uint32_t poly)
 {
 	if (!_polyphonic) {
 		poly = 1;
@@ -133,7 +133,7 @@ BlockImpl::apply_poly(RunContext& context, uint32_t poly)
 
 	if (_ports) {
 		for (uint32_t i = 0; i < num_ports(); ++i) {
-			_ports->at(i)->apply_poly(context, poly);
+			_ports->at(i)->apply_poly(ctx, poly);
 		}
 	}
 
@@ -141,7 +141,7 @@ BlockImpl::apply_poly(RunContext& context, uint32_t poly)
 }
 
 void
-BlockImpl::set_buffer_size(RunContext&    context,
+BlockImpl::set_buffer_size(RunContext&    ctx,
                            BufferFactory& bufs,
                            LV2_URID       type,
                            uint32_t       size)
@@ -150,7 +150,7 @@ BlockImpl::set_buffer_size(RunContext&    context,
 		for (uint32_t i = 0; i < _ports->size(); ++i) {
 			PortImpl* const p = _ports->at(i);
 			if (p->buffer_type() == type) {
-				p->set_buffer_size(context, bufs, size);
+				p->set_buffer_size(ctx, bufs, size);
 			}
 		}
 	}
@@ -183,18 +183,18 @@ BlockImpl::port_by_symbol(const char* symbol)
 }
 
 void
-BlockImpl::pre_process(RunContext& context)
+BlockImpl::pre_process(RunContext& ctx)
 {
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
-		port->pre_process(context);
+		port->pre_process(ctx);
 		port->connect_buffers();
 	}
 }
 
 void
-BlockImpl::bypass(RunContext& context)
+BlockImpl::bypass(RunContext& ctx)
 {
 	if (!_ports) {
 		return;
@@ -203,7 +203,7 @@ BlockImpl::bypass(RunContext& context)
 	// Prepare port buffers for reading, converting/mixing if necessary
 	for (uint32_t i = 0; i < _ports->size(); ++i) {
 		_ports->at(i)->connect_buffers();
-		_ports->at(i)->pre_run(context);
+		_ports->at(i)->pre_run(ctx);
 	}
 
 	// Dumb bypass
@@ -216,7 +216,7 @@ BlockImpl::bypass(RunContext& context)
 			} else if (in) {
 				// Copy corresponding input to output
 				for (uint32_t v = 0; v < _polyphony; ++v) {
-					out->buffer(v)->copy(context, in->buffer(v).get());
+					out->buffer(v)->copy(ctx, in->buffer(v).get());
 				}
 			} else {
 				// Output but no corresponding input, clear
@@ -226,29 +226,29 @@ BlockImpl::bypass(RunContext& context)
 			}
 		}
 	}
-	post_process(context);
+	post_process(ctx);
 }
 
 void
-BlockImpl::process(RunContext& context)
+BlockImpl::process(RunContext& ctx)
 {
-	pre_process(context);
+	pre_process(ctx);
 
 	if (!_enabled) {
-		bypass(context);
-		post_process(context);
+		bypass(ctx);
+		post_process(ctx);
 		return;
 	}
 
-	RunContext subcontext(context);
-	for (SampleCount offset = 0; offset < context.nframes();) {
+	RunContext subcontext(ctx);
+	for (SampleCount offset = 0; offset < ctx.nframes();) {
 		// Find earliest offset of a value change
-		SampleCount chunk_end = context.nframes();
+		SampleCount chunk_end = ctx.nframes();
 		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
 			PortImpl* const port = _ports->at(i);
 			if (port->type() == PortType::CONTROL && port->is_input()) {
 				const SampleCount o = port->next_value_offset(
-					offset, context.nframes());
+					offset, ctx.nframes());
 				if (o < chunk_end) {
 					chunk_end = o;
 				}
@@ -282,15 +282,15 @@ BlockImpl::process(RunContext& context)
 		subcontext.slice(offset, chunk_end - offset);
 	}
 
-	post_process(context);
+	post_process(ctx);
 }
 
 void
-BlockImpl::post_process(RunContext& context)
+BlockImpl::post_process(RunContext& ctx)
 {
 	// Write output ports
 	for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
-		_ports->at(i)->post_process(context);
+		_ports->at(i)->post_process(ctx);
 	}
 }
 

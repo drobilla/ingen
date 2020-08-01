@@ -69,7 +69,7 @@ public:
 	virtual bool pre_process(PreProcessContext& ctx) = 0;
 
 	/** Execute this event in the audio thread (realtime). */
-	virtual void execute(RunContext& context) = 0;
+	virtual void execute(RunContext& ctx) = 0;
 
 	/** Post-process event after execution (non-realtime). */
 	virtual void post_process() = 0;

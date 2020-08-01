@@ -157,11 +157,11 @@ GraphImpl::deactivate()
 }
 
 void
-GraphImpl::disable(RunContext& context)
+GraphImpl::disable(RunContext& ctx)
 {
 	_process = false;
 	for (auto& o : _outputs) {
-		o.clear_buffers(context);
+		o.clear_buffers(ctx);
 	}
 }
 
@@ -181,7 +181,7 @@ GraphImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-GraphImpl::apply_internal_poly(RunContext&    context,
+GraphImpl::apply_internal_poly(RunContext&    ctx,
                                BufferFactory& bufs,
                                Raul::Maid&,
                                uint32_t poly)
@@ -189,14 +189,14 @@ GraphImpl::apply_internal_poly(RunContext&    context,
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
 	for (auto& b : _blocks) {
-		b.apply_poly(context, poly);
+		b.apply_poly(ctx, poly);
 	}
 
 	for (auto& b : _blocks) {
 		for (uint32_t j = 0; j < b.num_ports(); ++j) {
 			PortImpl* const port = b.port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect()) {
-				port->setup_buffers(context, bufs, port->poly());
+				port->setup_buffers(ctx, bufs, port->poly());
 			}
 			port->connect_buffers();
 		}
@@ -204,7 +204,7 @@ GraphImpl::apply_internal_poly(RunContext&    context,
 
 	const bool polyphonic = parent_graph() && (poly == parent_graph()->internal_poly_process());
 	for (auto& o : _outputs) {
-		o.setup_buffers(context, bufs, polyphonic ? poly : 1);
+		o.setup_buffers(ctx, bufs, polyphonic ? poly : 1);
 	}
 
 	_poly_process = poly;
@@ -212,52 +212,52 @@ GraphImpl::apply_internal_poly(RunContext&    context,
 }
 
 void
-GraphImpl::pre_process(RunContext& context)
+GraphImpl::pre_process(RunContext& ctx)
 {
 	// Mix down input ports and connect buffers
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
 		if (!port->is_driver_port()) {
-			port->pre_process(context);
-			port->pre_run(context);
+			port->pre_process(ctx);
+			port->pre_run(ctx);
 			port->connect_buffers();
 		}
 	}
 }
 
 void
-GraphImpl::process(RunContext& context)
+GraphImpl::process(RunContext& ctx)
 {
 	if (!_process) {
 		return;
 	}
 
-	pre_process(context);
-	run(context);
-	post_process(context);
+	pre_process(ctx);
+	run(ctx);
+	post_process(ctx);
 }
 
 void
-GraphImpl::run(RunContext& context)
+GraphImpl::run(RunContext& ctx)
 {
 	if (_compiled_graph) {
-		_compiled_graph->run(context);
+		_compiled_graph->run(ctx);
 	}
 }
 
 void
-GraphImpl::set_buffer_size(RunContext&    context,
+GraphImpl::set_buffer_size(RunContext&    ctx,
                            BufferFactory& bufs,
                            LV2_URID       type,
                            uint32_t       size)
 {
-	BlockImpl::set_buffer_size(context, bufs, type, size);
+	BlockImpl::set_buffer_size(ctx, bufs, type, size);
 
 	if (_compiled_graph) {
 		// FIXME
 		// for (size_t i = 0; i < _compiled_graph->size(); ++i) {
 		// 	const CompiledBlock& block = (*_compiled_graph)[i];
-		// 	block.block()->set_buffer_size(context, bufs, type, size);
+		// 	block.block()->set_buffer_size(ctx, bufs, type, size);
 		// }
 	}
 }

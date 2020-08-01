@@ -50,7 +50,7 @@ public:
 	/** Push a list of events on to the process queue.
 	    realtime-safe, not thread-safe.
 	*/
-	void append(RunContext& context, Event* first, Event* last);
+	void append(RunContext& ctx, Event* first, Event* last);
 
 	/** Post-process and delete all pending events */
 	void process();

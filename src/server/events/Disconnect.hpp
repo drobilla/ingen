@@ -43,7 +43,7 @@ public:
 	           const ingen::Disconnect& msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
-	void execute(RunContext& context) override;
+	void execute(RunContext& ctx) override;
 	void post_process() override;
 	void undo(Interface& target) override;
 
@@ -51,7 +51,7 @@ public:
 	public:
 		Impl(Engine& e, GraphImpl* graph, PortImpl* t, InputPort* h);
 
-		bool execute(RunContext& context, bool set_head_buffers);
+		bool execute(RunContext& ctx, bool set_head_buffers);
 
 		inline PortImpl*  tail() { return _tail; }
 		inline InputPort* head() { return _head; }

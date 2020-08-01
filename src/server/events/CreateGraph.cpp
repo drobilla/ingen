@@ -188,7 +188,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 }
 
 void
-CreateGraph::execute(RunContext& context)
+CreateGraph::execute(RunContext& ctx)
 {
 	if (_graph) {
 		if (_parent) {
@@ -201,7 +201,7 @@ CreateGraph::execute(RunContext& context)
 		}
 
 		for (const auto& ev : _child_events) {
-			ev->execute(context);
+			ev->execute(ctx);
 		}
 	}
 }

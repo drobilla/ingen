@@ -151,12 +151,12 @@ Connect::pre_process(PreProcessContext& ctx)
 }
 
 void
-Connect::execute(RunContext& context)
+Connect::execute(RunContext& ctx)
 {
 	if (_status == Status::SUCCESS) {
-		_head->add_arc(context, *_arc.get());
+		_head->add_arc(ctx, *_arc.get());
 		if (!_head->is_driver_port()) {
-			_head->set_voices(context, std::move(_voices));
+			_head->set_voices(ctx, std::move(_voices));
 		}
 		_head->connect_buffers();
 		if (_compiled_graph) {

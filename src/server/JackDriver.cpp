@@ -221,13 +221,13 @@ JackDriver::get_port(const Raul::Path& path)
 }
 
 void
-JackDriver::add_port(RunContext& context, EnginePort* port)
+JackDriver::add_port(RunContext& ctx, EnginePort* port)
 {
 	_ports.push_back(*port);
 
 	DuplexPort* graph_port = port->graph_port();
 	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
-		const SampleCount nframes = context.nframes();
+		const SampleCount nframes = ctx.nframes();
 		auto*             jport   = static_cast<jack_port_t*>(port->handle());
 		void*             jbuf    = jack_port_get_buffer(jport, nframes);
 
@@ -240,7 +240,7 @@ JackDriver::add_port(RunContext& context, EnginePort* port)
 }
 
 void
-JackDriver::remove_port(RunContext& context, EnginePort* port)
+JackDriver::remove_port(RunContext&, EnginePort* port)
 {
 	_ports.erase(_ports.iterator_to(*port));
 }
@@ -356,10 +356,10 @@ JackDriver::create_port(DuplexPort* graph_port)
 }
 
 void
-JackDriver::pre_process_port(RunContext& context, EnginePort* port)
+JackDriver::pre_process_port(RunContext& ctx, EnginePort* port)
 {
-	const URIs&       uris       = context.engine().world().uris();
-	const SampleCount nframes    = context.nframes();
+	const URIs&       uris       = ctx.engine().world().uris();
+	const SampleCount nframes    = ctx.nframes();
 	auto*             jack_port  = static_cast<jack_port_t*>(port->handle());
 	DuplexPort*       graph_port = port->graph_port();
 	Buffer*           graph_buf  = graph_port->buffer(0).get();
@@ -368,12 +368,12 @@ JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
 		graph_port->set_driver_buffer(jack_buf, nframes * sizeof(float));
 		if (graph_port->is_input()) {
-			graph_port->monitor(context);
+			graph_port->monitor(ctx);
 		} else {
 			graph_port->buffer(0)->clear(); // TODO: Avoid when possible
 		}
 	} else if (graph_port->buffer_type() == uris.atom_Sequence) {
-		graph_buf->prepare_write(context);
+		graph_buf->prepare_write(ctx);
 		if (graph_port->is_input()) {
 			// Copy events from Jack port buffer into graph port buffer
 			const jack_nframes_t event_count = jack_midi_get_event_count(jack_buf);
@@ -386,15 +386,15 @@ JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 				}
 			}
 		}
-		graph_port->monitor(context);
+		graph_port->monitor(ctx);
 	}
 }
 
 void
-JackDriver::post_process_port(RunContext& context, EnginePort* port) const
+JackDriver::post_process_port(RunContext& ctx, EnginePort* port) const
 {
-	const URIs&       uris       = context.engine().world().uris();
-	const SampleCount nframes    = context.nframes();
+	const URIs&       uris       = ctx.engine().world().uris();
+	const SampleCount nframes    = ctx.nframes();
 	auto*             jack_port  = static_cast<jack_port_t*>(port->handle());
 	DuplexPort*       graph_port = port->graph_port();
 	void*             jack_buf   = port->buffer();
@@ -431,10 +431,9 @@ JackDriver::post_process_port(RunContext& context, EnginePort* port) const
 }
 
 void
-JackDriver::append_time_events(RunContext& context,
-                               Buffer&     buffer)
+JackDriver::append_time_events(RunContext& ctx, Buffer& buffer)
 {
-	const URIs&            uris    = context.engine().world().uris();
+	const URIs&            uris    = ctx.engine().world().uris();
 	const jack_position_t* pos     = &_position;
 	const bool             rolling = (_transport_state == JackTransportRolling);
 

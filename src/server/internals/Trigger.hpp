@@ -50,10 +50,10 @@ public:
 	            GraphImpl*          parent,
 	            SampleRate          srate);
 
-	void run(RunContext& context) override;
+	void run(RunContext& ctx) override;
 
-	bool note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
-	bool note_off(RunContext& context, uint8_t note_num, FrameTime time);
+	bool note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time);
+	bool note_off(RunContext& ctx, uint8_t note_num, FrameTime time);
 
 	void learn() override { _learning = true; }
 

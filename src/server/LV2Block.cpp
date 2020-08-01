@@ -197,7 +197,7 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-LV2Block::apply_poly(RunContext& context, uint32_t poly)
+LV2Block::apply_poly(RunContext& ctx, uint32_t poly)
 {
 	if (!_polyphonic) {
 		poly = 1;
@@ -208,7 +208,7 @@ LV2Block::apply_poly(RunContext& context, uint32_t poly)
 	}
 	assert(poly <= _instances->size());
 
-	return BlockImpl::apply_poly(context, poly);
+	return BlockImpl::apply_poly(ctx, poly);
 }
 
 /** Instantiate self from LV2 plugin descriptor.
@@ -583,15 +583,15 @@ LV2Block::work(uint32_t size, const void* data)
 }
 
 void
-LV2Block::run(RunContext& context)
+LV2Block::run(RunContext& ctx)
 {
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		lilv_instance_run(instance(i), context.nframes());
+		lilv_instance_run(instance(i), ctx.nframes());
 	}
 }
 
 void
-LV2Block::post_process(RunContext& context)
+LV2Block::post_process(RunContext& ctx)
 {
 	/* Handle any worker responses.  Note that this may write to output ports,
 	   so must be done first to prevent clobbering worker responses and
@@ -602,7 +602,7 @@ LV2Block::post_process(RunContext& context)
 			Response& r = _responses.front();
 			_worker_iface->work_response(inst, r.size, r.data);
 			_responses.pop_front();
-			context.engine().maid()->dispose(&r);
+			ctx.engine().maid()->dispose(&r);
 		}
 
 		if (_worker_iface->end_run) {
@@ -611,7 +611,7 @@ LV2Block::post_process(RunContext& context)
 	}
 
 	/* Run cycle truly finished, finalise output ports. */
-	BlockImpl::post_process(context);
+	BlockImpl::post_process(ctx);
 }
 
 LilvState*

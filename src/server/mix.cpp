@@ -35,13 +35,13 @@ is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 }
 
 void
-mix(const RunContext&   context,
+mix(const RunContext&   ctx,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs)
 {
 	if (num_srcs == 1) {
-		dst->copy(context, srcs[0]);
+		dst->copy(ctx, srcs[0]);
 	} else if (dst->is_control()) {
 		Sample* const out = dst->samples();
 		out[0] = srcs[0]->value_at(0);
@@ -50,11 +50,11 @@ mix(const RunContext&   context,
 		}
 	} else if (dst->is_audio()) {
 		// Copy the first source
-		dst->copy(context, srcs[0]);
+		dst->copy(ctx, srcs[0]);
 
 		// Mix in the rest
 		Sample* __restrict const out = dst->samples();
-		const SampleCount        end = context.nframes();
+		const SampleCount        end = ctx.nframes();
 		for (uint32_t i = 1; i < num_srcs; ++i) {
 			const Sample* __restrict const in = srcs[i]->samples();
 			if (srcs[i]->is_control()) {  // control => audio
@@ -66,7 +66,7 @@ mix(const RunContext&   context,
 					out[i] += in[i];
 				}
 			} else if (srcs[i]->is_sequence()) {  // sequence => audio
-				dst->render_sequence(context, srcs[i], true);
+				dst->render_sequence(ctx, srcs[i], true);
 			}
 		}
 	} else if (dst->is_sequence()) {

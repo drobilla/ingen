@@ -45,7 +45,7 @@ public:
 	    const ingen::Get&      msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
-	void execute(RunContext& context) override {}
+	void execute(RunContext&) override;
 	void post_process() override;
 
 private:

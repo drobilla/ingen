@@ -45,7 +45,7 @@ Mark::Mark(Engine&                 engine,
 {}
 
 void
-Mark::mark(PreProcessContext& ctx)
+Mark::mark(PreProcessContext&)
 {
 	const UPtr<UndoStack>& stack = ((_mode == Mode::UNDO)
 	                                ? _engine.redo_stack()

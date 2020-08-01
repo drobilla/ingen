@@ -138,18 +138,18 @@ Delete::pre_process(PreProcessContext& ctx)
 }
 
 void
-Delete::execute(RunContext& context)
+Delete::execute(RunContext& ctx)
 {
 	if (_status != Status::SUCCESS) {
 		return;
 	}
 
 	if (_disconnect_event) {
-		_disconnect_event->execute(context);
+		_disconnect_event->execute(ctx);
 	}
 
 	if (!_removed_bindings.empty()) {
-		_engine.control_bindings()->remove(context, _removed_bindings);
+		_engine.control_bindings()->remove(ctx, _removed_bindings);
 	}
 
 	GraphImpl* parent = _block ? _block->parent_graph() : nullptr;
@@ -158,7 +158,7 @@ Delete::execute(RunContext& context)
 		for (size_t i = 0; i < _ports_array->size(); ++i) {
 			PortImpl* const port = _ports_array->at(i);
 			if (port->index() != i) {
-				port->set_index(context, i);
+				port->set_index(ctx, i);
 			}
 		}
 
@@ -167,7 +167,7 @@ Delete::execute(RunContext& context)
 		parent->set_external_ports(std::move(_ports_array));
 
 		if (_engine_port) {
-			_engine.driver()->remove_port(context, _engine_port);
+			_engine.driver()->remove_port(ctx, _engine_port);
 		}
 	}
 

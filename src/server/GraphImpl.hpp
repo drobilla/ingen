@@ -68,11 +68,11 @@ public:
 	void activate(BufferFactory& bufs) override;
 	void deactivate() override;
 
-	void pre_process(RunContext& context) override;
-	void process(RunContext& context) override;
-	void run(RunContext& context) override;
+	void pre_process(RunContext& ctx) override;
+	void process(RunContext& ctx) override;
+	void run(RunContext& ctx) override;
 
-	void set_buffer_size(RunContext&    context,
+	void set_buffer_size(RunContext&    ctx,
 	                     BufferFactory& bufs,
 	                     LV2_URID       type,
 	                     uint32_t       size) override;
@@ -88,12 +88,12 @@ public:
 	 *
 	 * Audio thread.
 	 *
-	 * \param context Process context
+	 * \param ctx  Process context
 	 * \param bufs New set of buffers
 	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	bool apply_internal_poly(RunContext&    context,
+	bool apply_internal_poly(RunContext&    ctx,
 	                         BufferFactory& bufs,
 	                         Raul::Maid&    maid,
 	                         uint32_t       poly);
@@ -178,7 +178,7 @@ public:
 	/** Whether to run this graph's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
 	void enable() { _process = true; }
-	void disable(RunContext& context);
+	void disable(RunContext& ctx);
 
 	uint32_t internal_poly()         const { return _poly_pre; }
 	uint32_t internal_poly_process() const { return _poly_process; }

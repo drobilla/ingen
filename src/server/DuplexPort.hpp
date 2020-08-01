@@ -81,11 +81,11 @@ public:
 
 	void on_property(const URI& uri, const Atom& value) override;
 
-	uint32_t max_tail_poly(RunContext& context) const override;
+	uint32_t max_tail_poly(RunContext& ctx) const override;
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
 
-	bool apply_poly(RunContext& context, uint32_t poly) override;
+	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
 	bool get_buffers(BufferFactory&      bufs,
 	                 PortImpl::GetFn     get,
@@ -105,8 +105,8 @@ public:
 	bool
 	setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
 
-	void pre_process(RunContext& context) override;
-	void post_process(RunContext& context) override;
+	void pre_process(RunContext& ctx) override;
+	void post_process(RunContext& ctx) override;
 
 	SampleCount
 	next_value_offset(SampleCount offset, SampleCount end) const override;

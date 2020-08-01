@@ -108,7 +108,7 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 }
 
 void
-ControllerNode::run(RunContext& context)
+ControllerNode::run(RunContext& ctx)
 {
 	const BufferRef midi_in  = _midi_in_port->buffer(0);
 	auto*           seq      = midi_in->get<LV2_Atom_Sequence>();
@@ -119,7 +119,7 @@ ControllerNode::run(RunContext& context)
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3 &&
 		    lv2_midi_message_type(buf) == LV2_MIDI_MSG_CONTROLLER) {
-			if (control(context, buf[1], buf[2], ev->time.frames + context.start())) {
+			if (control(ctx, buf[1], buf[2], ev->time.frames + ctx.start())) {
 				midi_out->append_event(ev->time.frames, &ev->body);
 			}
 		}
@@ -127,15 +127,15 @@ ControllerNode::run(RunContext& context)
 }
 
 bool
-ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, FrameTime time)
+ControllerNode::control(RunContext& ctx, uint8_t control_num, uint8_t val, FrameTime time)
 {
-	assert(time >= context.start() && time <= context.end());
-	const uint32_t offset = time - context.start();
+	assert(time >= ctx.start() && time <= ctx.end());
+	const uint32_t offset = time - ctx.start();
 
 	const Sample nval = (val / 127.0f); // normalized [0, 1]
 
 	if (_learning) {
-		_param_port->set_control_value(context, time, control_num);
+		_param_port->set_control_value(ctx, time, control_num);
 		_param_port->force_monitor_update();
 		_learning = false;
 	} else {
@@ -168,7 +168,7 @@ ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, F
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	_audio_port->set_control_value(context, time, scaled_value);
+	_audio_port->set_control_value(ctx, time, scaled_value);
 
 	return true;
 }

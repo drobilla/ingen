@@ -44,7 +44,7 @@ public:
 	                     const Raul::Symbol& symbol,
 	                     GraphImpl*          parent) override;
 
-	void pre_process(RunContext& context) override;
+	void pre_process(RunContext& ctx) override;
 };
 
 } // namespace server

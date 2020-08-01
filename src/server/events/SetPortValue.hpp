@@ -50,13 +50,13 @@ public:
 	             bool                   synthetic = false);
 
 	bool pre_process(PreProcessContext& ctx) override;
-	void execute(RunContext& context) override;
+	void execute(RunContext& ctx) override;
 	void post_process() override;
 
 	bool synthetic() const { return _synthetic; }
 
 private:
-	void apply(RunContext& context);
+	void apply(RunContext& ctx);
 
 	PortImpl*            _port;
 	const Atom           _value;

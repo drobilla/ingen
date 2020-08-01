@@ -143,11 +143,11 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 }
 
 void
-DisconnectAll::execute(RunContext& context)
+DisconnectAll::execute(RunContext& ctx)
 {
 	if (_status == Status::SUCCESS) {
 		for (auto& i : _impls) {
-			i->execute(context,
+			i->execute(ctx,
 			           !_deleting || (i->head()->parent_block() != _block));
 		}
 	}

@@ -127,13 +127,13 @@ Buffer::clear()
 }
 
 void
-Buffer::render_sequence(const RunContext& context, const Buffer* src, bool add)
+Buffer::render_sequence(const RunContext& ctx, const Buffer* src, bool add)
 {
 	const LV2_URID atom_Float = _factory.uris().atom_Float;
 	const auto*    seq        = src->get<const LV2_Atom_Sequence>();
 	const auto*    init       = reinterpret_cast<const LV2_Atom_Float*>(src->value());
 	float          value      = init ? init->body : 0.0f;
-	SampleCount    offset     = context.offset();
+	SampleCount    offset     = ctx.offset();
 
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames >= offset && ev->body.type == atom_Float) {
@@ -142,11 +142,11 @@ Buffer::render_sequence(const RunContext& context, const Buffer* src, bool add)
 			offset = ev->time.frames;
 		}
 	}
-	write_block(value, offset, context.offset() + context.nframes(), add);
+	write_block(value, offset, ctx.offset() + ctx.nframes(), add);
 }
 
 void
-Buffer::copy(const RunContext& context, const Buffer* src)
+Buffer::copy(const RunContext& ctx, const Buffer* src)
 {
 	if (!_buf) {
 		return;
@@ -160,10 +160,10 @@ Buffer::copy(const RunContext& context, const Buffer* src)
 	} else if (src->is_audio() && is_control()) {
 		samples()[0] = src->samples()[0];
 	} else if (src->is_control() && is_audio()) {
-		set_block(src->samples()[0], 0, context.nframes());
+		set_block(src->samples()[0], 0, ctx.nframes());
 	} else if (src->is_sequence() && is_audio() &&
 	           src->value_type() == _factory.uris().atom_Float) {
-		render_sequence(context, src, false);
+		render_sequence(ctx, src, false);
 	} else {
 		clear();
 	}
@@ -222,12 +222,12 @@ mm_abs_ps(__m128 x)
 #endif
 
 float
-Buffer::peak(const RunContext& context) const
+Buffer::peak(const RunContext& ctx) const
 {
 #ifdef __SSE__
 	const auto* const vbuf    = reinterpret_cast<const __m128*>(samples());
 	__m128            vpeak   = mm_abs_ps(vbuf[0]);
-	const SampleCount nblocks = context.nframes() / 4;
+	const SampleCount nblocks = ctx.nframes() / 4;
 
 	// First, find the vector absolute max of the buffer
 	for (SampleCount i = 1; i < nblocks; ++i) {
@@ -431,11 +431,11 @@ Buffer::update_value_buffer(SampleCount offset)
 
 #ifndef NDEBUG
 void
-Buffer::dump_cv(const RunContext& context) const
+Buffer::dump_cv(const RunContext& ctx) const
 {
 	float value = samples()[0];
 	fprintf(stderr, "{ 0000: %.02f\n", value);
-	for (uint32_t i = 0; i < context.nframes(); ++i) {
+	for (uint32_t i = 0; i < ctx.nframes(); ++i) {
 		if (samples()[i] != value) {
 			value = samples()[i];
 			fprintf(stderr, "  %4u: %.02f\n", i, value);

@@ -63,12 +63,12 @@ public:
 
 	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path) override;
 	void port_property(const Raul::Path& path, const URI& uri, const Atom& value) override;
-	void add_port(RunContext& context, EnginePort* port) override;
-	void remove_port(RunContext& context, EnginePort* port) override;
+	void add_port(RunContext& ctx, EnginePort* port) override;
+	void remove_port(RunContext& ctx, EnginePort* port) override;
 	void register_port(EnginePort& port) override;
 	void unregister_port(EnginePort& port) override;
 
-	void append_time_events(RunContext& context, Buffer& buffer) override {}
+	void append_time_events(RunContext& ctx, Buffer& buffer) override {}
 
 	SampleCount frame_time() const override;
 
@@ -98,12 +98,12 @@ private:
 	               const PaStreamCallbackTimeInfo* time,
 	               PaStreamCallbackFlags           flags);
 
-	void pre_process_port(RunContext&  context,
+	void pre_process_port(RunContext&  ctx,
 	                      EnginePort*  port,
 	                      const void*  inputs,
 	                      void*        outputs);
 
-	void post_process_port(RunContext& context,
+	void post_process_port(RunContext& ctx,
 	                       EnginePort* port,
 	                       const void* inputs,
 	                       void*       outputs);

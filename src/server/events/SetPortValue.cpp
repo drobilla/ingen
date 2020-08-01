@@ -80,15 +80,15 @@ SetPortValue::pre_process(PreProcessContext&)
 }
 
 void
-SetPortValue::execute(RunContext& context)
+SetPortValue::execute(RunContext& ctx)
 {
-	assert(_time >= context.start() && _time <= context.end());
-	apply(context);
-	_engine.control_bindings()->port_value_changed(context, _port, _binding, _value);
+	assert(_time >= ctx.start() && _time <= ctx.end());
+	apply(ctx);
+	_engine.control_bindings()->port_value_changed(ctx, _port, _binding, _value);
 }
 
 void
-SetPortValue::apply(RunContext& context)
+SetPortValue::apply(RunContext& ctx)
 {
 	if (_status != Status::SUCCESS) {
 		return;
@@ -98,22 +98,22 @@ SetPortValue::apply(RunContext& context)
 	Buffer*       buf  = _port->buffer(0).get();
 
 	if (_buffer) {
-		if (_port->user_buffer(context)) {
-			buf = _port->user_buffer(context).get();
+		if (_port->user_buffer(ctx)) {
+			buf = _port->user_buffer(ctx).get();
 		} else {
-			_port->set_user_buffer(context, _buffer);
+			_port->set_user_buffer(ctx, _buffer);
 			buf = _buffer.get();
 		}
 	}
 
 	if (buf->type() == uris.atom_Sound || buf->type() == uris.atom_Float) {
 		if (_value.type() == uris.forge.Float) {
-			_port->set_control_value(context, _time, _value.get<float>());
+			_port->set_control_value(ctx, _time, _value.get<float>());
 		} else {
 			_status = Status::TYPE_MISMATCH;
 		}
 	} else if (buf->type() == uris.atom_Sequence) {
-		if (!buf->append_event(_time - context.start(),
+		if (!buf->append_event(_time - ctx.start(),
 		                       _value.size(),
 		                       _value.type(),
 		                       reinterpret_cast<const uint8_t*>(_value.get_body()))) {

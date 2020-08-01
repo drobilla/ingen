@@ -118,19 +118,19 @@ public:
 	virtual void learn() {}
 
 	/** Do whatever needs doing in the process thread before process() is called */
-	virtual void pre_process(RunContext& context);
+	virtual void pre_process(RunContext& ctx);
 
 	/** Run block for an entire process cycle (calls run()). */
-	virtual void process(RunContext& context);
+	virtual void process(RunContext& ctx);
 
 	/** Bypass block for an entire process cycle (called from process()). */
-	virtual void bypass(RunContext& context);
+	virtual void bypass(RunContext& ctx);
 
 	/** Run block for a portion of process cycle (called from process()). */
-	virtual void run(RunContext& context) = 0;
+	virtual void run(RunContext& ctx) = 0;
 
 	/** Do whatever needs doing in the process thread after process() is called */
-	virtual void post_process(RunContext& context);
+	virtual void post_process(RunContext& ctx);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
 	virtual void set_port_buffer(uint32_t         voice,
@@ -161,7 +161,7 @@ public:
 	virtual void set_polyphonic(bool p) { _polyphonic = p; }
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
-	bool apply_poly(RunContext& context, uint32_t poly) override;
+	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
 	/** Information about the Plugin this Block is an instance of.
 	 * Not the best name - not all blocks come from plugins (ie Graph)
@@ -175,7 +175,7 @@ public:
 
 	virtual void plugin(PluginImpl* pi) { _plugin = pi; }
 
-	virtual void set_buffer_size(RunContext&    context,
+	virtual void set_buffer_size(RunContext&    ctx,
 	                             BufferFactory& bufs,
 	                             LV2_URID       type,
 	                             uint32_t       size);

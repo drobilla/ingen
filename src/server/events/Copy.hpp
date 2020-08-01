@@ -41,7 +41,7 @@ public:
 	     const ingen::Copy&     msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
-	void execute(RunContext& context) override;
+	void execute(RunContext& ctx) override;
 	void post_process() override;
 	void undo(Interface& target) override;
 

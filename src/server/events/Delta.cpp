@@ -474,7 +474,7 @@ Delta::pre_process(PreProcessContext& ctx)
 }
 
 void
-Delta::execute(RunContext& context)
+Delta::execute(RunContext& ctx)
 {
 	if (_status != Status::SUCCESS || _preset) {
 		return;
@@ -484,16 +484,16 @@ Delta::execute(RunContext& context)
 
 	if (_create_event) {
 		_create_event->set_time(_time);
-		_create_event->execute(context);
+		_create_event->execute(ctx);
 	}
 
 	for (auto& s : _set_events) {
 		s->set_time(_time);
-		s->execute(context);
+		s->execute(ctx);
 	}
 
 	if (!_removed_bindings.empty()) {
-		_engine.control_bindings()->remove(context, _removed_bindings);
+		_engine.control_bindings()->remove(ctx, _removed_bindings);
 	}
 
 	auto* const object = dynamic_cast<NodeImpl*>(_object);
@@ -518,7 +518,7 @@ Delta::execute(RunContext& context)
 					}
 					_graph->enable();
 				} else {
-					_graph->disable(context);
+					_graph->disable(ctx);
 				}
 			} else if (block) {
 				block->set_enabled(value.get<int32_t>());
@@ -528,15 +528,15 @@ Delta::execute(RunContext& context)
 			if (object) {
 				if (value.get<int32_t>()) {
 					auto* parent = reinterpret_cast<GraphImpl*>(object->parent());
-					object->apply_poly(context, parent->internal_poly_process());
+					object->apply_poly(ctx, parent->internal_poly_process());
 				} else {
-					object->apply_poly(context, 1);
+					object->apply_poly(ctx, 1);
 				}
 			}
 		} break;
 		case SpecialType::POLYPHONY:
 			if (_graph &&
-			    !_graph->apply_internal_poly(context,
+			    !_graph->apply_internal_poly(ctx,
 			                                 *_engine.buffer_factory(),
 			                                 *_engine.maid(),
 			                                 value.get<int32_t>())) {
@@ -545,12 +545,12 @@ Delta::execute(RunContext& context)
 			break;
 		case SpecialType::PORT_INDEX:
 			if (port) {
-				port->set_index(context, value.get<int32_t>());
+				port->set_index(ctx, value.get<int32_t>());
 			}
 			break;
 		case SpecialType::CONTROL_BINDING:
 			if (port) {
-				if (!_engine.control_bindings()->set_port_binding(context, port, _binding, value)) {
+				if (!_engine.control_bindings()->set_port_binding(ctx, port, _binding, value)) {
 					_status = Status::BAD_VALUE;
 				}
 			} else if (block) {

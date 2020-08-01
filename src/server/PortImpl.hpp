@@ -63,10 +63,10 @@ public:
 
 		SetState() : state(State::SET), value(0), time(0) {}
 
-		void set(const RunContext& context, FrameTime t, Sample v) {
+		void set(const RunContext& ctx, FrameTime t, Sample v) {
 			time  = t;
 			value = v;
-			state = (time == context.start()
+			state = (time == ctx.start()
 			         ? State::SET
 			         : State::HALF_SET_CYCLE_1);
 		}
@@ -102,7 +102,7 @@ public:
 	BlockImpl* parent_block() const { return reinterpret_cast<BlockImpl*>(_parent); }
 
 	/** Set the the voices (buffers) for this port in the audio thread. */
-	void set_voices(RunContext& context, MPtr<Voices>&& voices);
+	void set_voices(RunContext& ctx, MPtr<Voices>&& voices);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -115,7 +115,7 @@ public:
 	 * Audio thread.
 	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
-	bool apply_poly(RunContext& context, uint32_t poly) override;
+	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
 	/** Return the number of arcs (pre-process thraed). */
 	virtual size_t num_arcs() const { return 0; }
@@ -140,14 +140,14 @@ public:
 		return _prepared_voices->at(voice).buffer;
 	}
 
-	void update_set_state(const RunContext& context, uint32_t v);
+	void update_set_state(const RunContext& ctx, uint32_t v);
 
-	void set_voice_value(const RunContext& context,
+	void set_voice_value(const RunContext& ctx,
 	                     uint32_t          voice,
 	                     FrameTime         time,
 	                     Sample            value);
 
-	void set_control_value(const RunContext& context,
+	void set_control_value(const RunContext& ctx,
 	                       FrameTime         time,
 	                       Sample            value);
 
@@ -164,9 +164,9 @@ public:
 	bool is_driver_port() const { return _is_driver_port; }
 
 	/** Called once per process cycle */
-	virtual void pre_process(RunContext& context);
-	virtual void pre_run(RunContext& context) {}
-	virtual void post_process(RunContext& context);
+	virtual void pre_process(RunContext& ctx);
+	virtual void pre_run(RunContext& ctx);
+	virtual void post_process(RunContext& ctx);
 
 	/** Clear/silence all buffers */
 	virtual void clear_buffers(const RunContext& ctx);
@@ -212,7 +212,7 @@ public:
 		return (_prepared_voices) ? _prepared_voices->size() : 1;
 	}
 
-	void set_buffer_size(RunContext& context, BufferFactory& bufs, size_t size);
+	void set_buffer_size(RunContext& ctx, BufferFactory& bufs, size_t size);
 
 	/** Return true iff this port is explicitly monitored.
 	 *
@@ -226,7 +226,7 @@ public:
 	void enable_monitoring(bool monitored) { _monitored = monitored; }
 
 	/** Monitor port value and broadcast to clients periodically. */
-	void monitor(RunContext& context, bool send_now=false);
+	void monitor(RunContext& ctx, bool send_now=false);
 
 	BufferFactory& bufs() const { return _bufs; }
 

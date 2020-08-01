@@ -47,9 +47,9 @@ public:
 	               GraphImpl*           parent,
 	               SampleRate           srate);
 
-	void run(RunContext& context) override;
+	void run(RunContext& ctx) override;
 
-	bool control(RunContext& context, uint8_t control_num, uint8_t val, FrameTime time);
+	bool control(RunContext& ctx, uint8_t control_num, uint8_t val, FrameTime time);
 
 	void learn() override { _learning = true; }
 

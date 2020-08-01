@@ -68,15 +68,15 @@ public:
 	                     GraphImpl*          parent) override;
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
-	bool apply_poly(RunContext& context, uint32_t poly) override;
+	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
 	void activate(BufferFactory& bufs) override;
 	void deactivate() override;
 
 	LV2_Worker_Status work(uint32_t size, const void* data);
 
-	void run(RunContext& context) override;
-	void post_process(RunContext& context) override;
+	void run(RunContext& ctx) override;
+	void post_process(RunContext& ctx) override;
 
 	LilvState* load_preset(const URI& uri) override;
 

@@ -59,7 +59,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 }
 
 void
-TimeNode::run(RunContext& context)
+TimeNode::run(RunContext& ctx)
 {
 	BufferRef buf = _notify_port->buffer(0);
 	auto*     seq = buf->get<LV2_Atom_Sequence>();
@@ -71,8 +71,7 @@ TimeNode::run(RunContext& context)
 	seq->body.pad  = 0;
 
 	// Ask the driver to append any time events for this cycle
-	context.engine().driver()->append_time_events(
-		context, *_notify_port->buffer(0));
+	ctx.engine().driver()->append_time_events(ctx, *_notify_port->buffer(0));
 }
 
 } // namespace internals

@@ -48,20 +48,20 @@ public:
 	         SampleRate          srate);
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
-	bool apply_poly(RunContext& context, uint32_t poly) override;
+	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
-	void run(RunContext& context) override;
+	void run(RunContext& ctx) override;
 
-	void note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
-	void note_off(RunContext& context, uint8_t note_num, FrameTime time);
-	void all_notes_off(RunContext& context, FrameTime time);
+	void note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time);
+	void note_off(RunContext& ctx, uint8_t note_num, FrameTime time);
+	void all_notes_off(RunContext& ctx, FrameTime time);
 
-	void sustain_on(RunContext& context, FrameTime time);
-	void sustain_off(RunContext& context, FrameTime time);
+	void sustain_on(RunContext& ctx, FrameTime time);
+	void sustain_off(RunContext& ctx, FrameTime time);
 
-	void bend(RunContext& context, FrameTime time, float amount);
-	void note_pressure(RunContext& context, FrameTime time, uint8_t note_num, float amount);
-	void channel_pressure(RunContext& context, FrameTime time, float amount);
+	void bend(RunContext& ctx, FrameTime time, float amount);
+	void note_pressure(RunContext& ctx, FrameTime time, uint8_t note_num, float amount);
+	void channel_pressure(RunContext& ctx, FrameTime time, float amount);
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 
@@ -86,7 +86,7 @@ private:
 
 	using Voices = Raul::Array<Voice>;
 
-	void free_voice(RunContext& context, uint32_t voice, FrameTime time);
+	void free_voice(RunContext& ctx, uint32_t voice, FrameTime time);
 
 	MPtr<Voices> _voices;
 	MPtr<Voices> _prepared_voices;

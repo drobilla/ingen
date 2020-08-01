@@ -46,7 +46,7 @@ class CompiledGraph : public Raul::Maid::Disposable
 public:
 	static MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph);
 
-	void run(RunContext& context);
+	void run(RunContext& ctx);
 
 private:
 	friend class Raul::Maid;  ///< Allow make_managed to construct

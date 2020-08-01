@@ -56,7 +56,7 @@ public:
 	virtual EnginePort* get_port(const Raul::Path& path) = 0;
 
 	/** Add a system visible port (e.g. a port on the root graph). */
-	virtual void add_port(RunContext& context, EnginePort* port) = 0;
+	virtual void add_port(RunContext& ctx, EnginePort* port) = 0;
 
 	/** Remove a system visible port.
 	 *
@@ -64,7 +64,7 @@ public:
 	 * destroy the port.  To actually remove the system port, unregister_port()
 	 * must be called later in another thread.
 	 */
-	virtual void remove_port(RunContext& context, EnginePort* port) = 0;
+	virtual void remove_port(RunContext& ctx, EnginePort* port) = 0;
 
 	/** Return true iff driver supports dynamic adding/removing of ports. */
 	virtual bool dynamic_ports() const { return false; }
@@ -97,8 +97,7 @@ public:
 	virtual SampleCount frame_time() const = 0;
 
 	/** Append time events for this cycle to `buffer`. */
-	virtual void append_time_events(RunContext& context,
-	                                Buffer&     buffer) = 0;
+	virtual void append_time_events(RunContext& ctx, Buffer& buffer) = 0;
 
 	/** Return the real-time priority of the audio thread, or -1. */
 	virtual int real_time_priority() = 0;

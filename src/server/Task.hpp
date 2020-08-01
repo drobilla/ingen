@@ -70,7 +70,7 @@ public:
 	}
 
 	/** Run task in the given context. */
-	void run(RunContext& context);
+	void run(RunContext& ctx);
 
 	/** Pretty print task to the given stream (recursively). */
 	void dump(const std::function<void(const std::string&)>& sink,
@@ -84,7 +84,7 @@ public:
 	static std::unique_ptr<Task> simplify(std::unique_ptr<Task>&& task);
 
 	/** Steal a child task from this task (succeeds for PARALLEL only). */
-	Task* steal(RunContext& context);
+	Task* steal(RunContext& ctx);
 
 	/** Prepend a child to this task. */
 	void push_front(Task&& task) {
@@ -103,7 +103,7 @@ private:
 	Task(const Task&) = delete;
 	Task& operator=(const Task&) = delete;
 
-	Task* get_task(RunContext& context);
+	Task* get_task(RunContext& ctx);
 
 	void append(std::unique_ptr<Task>&& t) {
 		_children.emplace_back(std::move(t));

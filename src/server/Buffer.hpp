@@ -56,8 +56,8 @@ public:
 
 	void clear();
 	void resize(uint32_t capacity);
-	void copy(const RunContext& context, const Buffer* src);
-	void prepare_write(RunContext& context);
+	void copy(const RunContext& ctx, const Buffer* src);
+	void prepare_write(RunContext& ctx);
 
 	void*       port_data(PortType port_type, SampleCount offset);
 	const void* port_data(PortType port_type, SampleCount offset) const;
@@ -169,10 +169,10 @@ public:
 	}
 
 	/// Audio buffers only
-	float peak(const RunContext& context) const;
+	float peak(const RunContext& ctx) const;
 
 	/// Sequence buffers only
-	void prepare_output_write(RunContext& context);
+	void prepare_output_write(RunContext& ctx);
 
 	/// Sequence buffers only
 	bool append_event(int64_t        frames,
@@ -202,10 +202,10 @@ public:
 	void update_value_buffer(SampleCount offset);
 
 	/// Set/add to audio buffer from the Sequence of Float in `src`
-	void render_sequence(const RunContext& context, const Buffer* src, bool add);
+	void render_sequence(const RunContext& ctx, const Buffer* src, bool add);
 
 #ifndef NDEBUG
-	void dump_cv(const RunContext& context) const;
+	void dump_cv(const RunContext& ctx) const;
 #endif
 
 	void set_capacity(uint32_t capacity) { _capacity = capacity; }

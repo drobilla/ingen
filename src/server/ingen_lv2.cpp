@@ -97,7 +97,7 @@ namespace server {
 
 class LV2Driver;
 
-void signal_main(RunContext& context, LV2Driver* driver);
+void signal_main(RunContext& ctx, LV2Driver* driver);
 
 inline size_t
 ui_ring_size(SampleCount block_length)
@@ -138,9 +138,9 @@ public:
 
 	bool dynamic_ports() const override { return !_instantiated; }
 
-	void pre_process_port(RunContext& context, EnginePort* port) {
+	void pre_process_port(RunContext& ctx, EnginePort* port) {
 		const URIs&       uris       = _engine.world().uris();
-		const SampleCount nframes    = context.nframes();
+		const SampleCount nframes    = ctx.nframes();
 		DuplexPort*       graph_port = port->graph_port();
 		Buffer*           graph_buf  = graph_port->buffer(0).get();
 		void*             lv2_buf    = port->buffer();
@@ -171,13 +171,13 @@ public:
 		}
 
 		if (graph_port->is_input()) {
-			graph_port->monitor(context);
+			graph_port->monitor(ctx);
 		} else {
-			graph_buf->prepare_write(context);
+			graph_buf->prepare_write(ctx);
 		}
 	}
 
-	static void post_process_port(RunContext& context, EnginePort* port) {
+	static void post_process_port(RunContext&, EnginePort* port) {
 		DuplexPort* graph_port = port->graph_port();
 
 		// No copying necessary, host buffers are used directly
@@ -231,7 +231,7 @@ public:
 	}
 
 	/** Add a port.  Called only during init or restore. */
-	void add_port(RunContext& context, EnginePort* port) override {
+	void add_port(RunContext&, EnginePort* port) override {
 		const uint32_t index = port->graph_port()->index();
 		if (_ports.size() <= index) {
 			_ports.resize(index + 1);
@@ -240,7 +240,7 @@ public:
 	}
 
 	/** Remove a port.  Called only during init or restore. */
-	void remove_port(RunContext& context, EnginePort* port) override {
+	void remove_port(RunContext&, EnginePort* port) override {
 		const uint32_t index = port->graph_port()->index();
 		_ports[index] = nullptr;
 	}
@@ -265,7 +265,7 @@ public:
 		return new EnginePort(graph_port);
 	}
 
-	void append_time_events(RunContext& context, Buffer& buffer) override {
+	void append_time_events(RunContext&, Buffer& buffer) override {
 		const URIs& uris = _engine.world().uris();
 		auto*       seq  = static_cast<LV2_Atom_Sequence*>(_ports[0]->buffer());
 
@@ -339,7 +339,7 @@ public:
 		free(buf);
 	}
 
-	void flush_to_ui(RunContext& context) {
+	void flush_to_ui(RunContext&) {
 		if (_ports.size() < 2) {
 			_engine.log().rt_error("Standard control ports are not present\n");
 			return;

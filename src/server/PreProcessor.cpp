@@ -82,7 +82,7 @@ PreProcessor::event(Event* const ev, Event::Mode mode)
 }
 
 unsigned
-PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
+PreProcessor::process(RunContext& ctx, PostProcessor& dest, size_t limit)
 {
 	Event* const head        = _head.load();
 	size_t       n_processed = 0;
@@ -115,15 +115,15 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 
 		if (_block_state == BlockState::BLOCKED) {
 			break;  // Waiting for PRE_UNBLOCKED
-		} else if (ev->time() < context.start()) {
-			ev->set_time(context.start());  // Too late, nudge to context start
+		} else if (ev->time() < ctx.start()) {
+			ev->set_time(ctx.start());  // Too late, nudge to context start
 		} else if (_block_state != BlockState::PROCESSING &&
-		           ev->time() >= context.end()) {
+		           ev->time() >= ctx.end()) {
 			break;  // Event is for a future cycle
 		}
 
 		// Execute event
-		ev->execute(context);
+		ev->execute(ctx);
 		++n_processed;
 
 		// Unblock pre-processing if this is a non-bundled atomic event
@@ -144,9 +144,9 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 
 	if (n_processed > 0) {
 #ifndef NDEBUG
-		Engine& engine = context.engine();
+		Engine& engine = ctx.engine();
 		if (engine.world().conf().option("trace").get<int32_t>()) {
-			const uint64_t start = engine.cycle_start_time(context);
+			const uint64_t start = engine.cycle_start_time(ctx);
 			const uint64_t end   = engine.current_time();
 			fprintf(stderr, "Processed %zu events in %u us\n",
 			        n_processed, static_cast<unsigned>(end - start));
@@ -155,7 +155,7 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 
 		auto* next = static_cast<Event*>(last->next());
 		last->next(nullptr);
-		dest.append(context, head, last);
+		dest.append(ctx, head, last);
 
 		// Since _head was not null, we know it hasn't been changed since
 		_head = next;
