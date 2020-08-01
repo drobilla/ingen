@@ -2,7 +2,7 @@
 
 import os
 
-from waflib import Logs, Options, Utils
+from waflib import Build, Logs, Options, Utils
 from waflib.extras import autowaf
 
 # Package version
@@ -52,6 +52,12 @@ def configure(conf):
 
     conf.load('autowaf', cache=True)
     autowaf.set_cxx_lang(conf, 'c++11')
+
+    if Options.options.strict:
+        # Check for programs used by lint target
+        conf.find_program("flake8", var="FLAKE8", mandatory=False)
+        conf.find_program("clang-tidy", var="CLANG_TIDY", mandatory=False)
+        conf.find_program("iwyu_tool", var="IWYU_TOOL", mandatory=False)
 
     if Options.options.ultra_strict:
         autowaf.add_compiler_flags(conf.env, 'cxx', {
@@ -365,14 +371,18 @@ def build(bld):
     bld.add_post_fun(autowaf.run_ldconfig)
 
 
+class LintContext(Build.BuildContext):
+    fun = cmd = 'lint'
+
+
 def lint(ctx):
     "checks code for style issues"
     import subprocess
 
-    status = 0
+    st = 0
 
-    # Check Python style with flake8
-    try:
+    if "FLAKE8" in ctx.env:
+        Logs.info("Running flake8")
         for i in ["src/client/wscript",
                   "src/gui/wscript",
                   "src/server/wscript",
@@ -381,14 +391,15 @@ def lint(ctx):
                   "scripts/ingenish",
                   "scripts/ingenams",
                   "wscript"]:
-            status += subprocess.call(["flake8",
-                                       "--ignore", "E221,W504,E251,E501",
-                                       i])
-    except Exception:
-        Logs.warn('warning: Failed to call flake8')
+            st += subprocess.call([ctx.env.FLAKE8[0],
+                                   "--ignore", "E221,W504,E251,E501",
+                                   i])
+    else:
+        Logs.warn("Not running flake8")
 
-    # Check for C/C++ issues with clang-tidy
-    try:
+    if "CLANG_TIDY" in ctx.env and "clang" in ctx.env.CXX[0]:
+        Logs.info("Running clang-tidy")
+
         import json
         import sys
 
@@ -399,32 +410,28 @@ def lint(ctx):
         for step_files in zip(*(iter(files),) * Options.options.jobs):
             procs = []
             for f in step_files:
-                out_filename = f.replace('../', '').replace('/', '_') + '.tidy'
-                out_file = open(os.path.join('build', out_filename), 'w+')
-                procs += [(subprocess.Popen(['clang-tidy', '--quiet', f],
-                                            cwd='build',
-                                            stdout=out_file,
-                                            stderr=subprocess.STDOUT),
-                           out_file)]
+                cmd = [ctx.env.CLANG_TIDY[0], '--quiet', '-p=.', f]
+                procs += [subprocess.Popen(cmd, cwd='build')]
 
             for proc in procs:
-                proc[0].wait()
-                proc[1].seek(0)
-                for line in proc[1]:
-                    sys.stdout.write(line)
-                proc[1].close()
+                proc.communicate()
+                st += proc.returncode
+    else:
+        Logs.warn("Not running clang-tidy")
 
-    except Exception as e:
-        Logs.warn('warning: Failed to call clang-tidy (%s)' % e)
+    if "IWYU_TOOL" in ctx.env:
+        Logs.info("Running include-what-you-use")
+        cmd = [ctx.env.IWYU_TOOL[0], "-o", "clang", "-p", "build"]
+        output = subprocess.check_output(cmd).decode('utf-8')
+        if 'error: ' in output:
+            sys.stdout.write(output)
+            st += 1
+    else:
+        Logs.warn("Not running include-what-you-use")
 
-    # Check includes with include-what-you-use
-    try:
-        subprocess.call(['iwyu_tool.py', '-o', 'clang', '-p', 'build'])
-    except Exception:
-        Logs.warn('warning: Failed to call iwyu_tool.py')
-
-    if status != 0:
-        ctx.fatal("Lint checks failed")
+    if st != 0:
+        Logs.warn("Lint checks failed")
+        sys.exit(st)
 
 
 def upload_docs(ctx):
