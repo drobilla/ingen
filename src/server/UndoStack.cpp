@@ -40,7 +40,7 @@ int
 UndoStack::start_entry()
 {
 	if (_depth == 0) {
-		time_t now;
+		time_t now = {};
 		time(&now);
 		_stack.emplace_back(Entry(now));
 	}

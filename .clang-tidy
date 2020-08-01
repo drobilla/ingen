@@ -25,7 +25,6 @@ Checks: >
   -clang-analyzer-core.CallAndMessage,
   -clang-analyzer-optin.cplusplus.VirtualCall,
   -clang-analyzer-valist.Uninitialized,
-  -cppcoreguidelines-init-variables,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-no-malloc,
   -cppcoreguidelines-owning-memory,

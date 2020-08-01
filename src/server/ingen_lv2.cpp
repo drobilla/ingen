@@ -768,9 +768,9 @@ ingen_restore(LV2_Handle                  instance,
 	}
 
 	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
-	size_t   size;
-	uint32_t type;
-	uint32_t valflags;
+	size_t   size       = 0;
+	uint32_t type       = 0;
+	uint32_t valflags   = 0;
 
 	// Get abstract path to graph file
 	const char* path = static_cast<const char*>(

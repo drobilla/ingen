@@ -100,9 +100,14 @@ GraphView::set_graph(const SPtr<const GraphModel>& graph)
 SPtr<GraphView>
 GraphView::create(App& app, const SPtr<const GraphModel>& graph)
 {
-	GraphView* result = nullptr;
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
+	GraphView*                 result = nullptr;
+	Glib::RefPtr<Gtk::Builder> xml    = WidgetFactory::create("warehouse_win");
+
 	xml->get_widget_derived("graph_view_box", result);
+	if (!result) {
+		return nullptr;
+	}
+
 	result->init(app);
 	result->set_graph(graph);
 	return SPtr<GraphView>(result);

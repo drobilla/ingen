@@ -194,7 +194,7 @@ void
 RunContext::run()
 {
 	while (_engine.wait_for_tasks()) {
-		for (Task* t; (t = _engine.steal_task(0));) {
+		for (Task* t = nullptr; (t = _engine.steal_task(0));) {
 			t->run(*this);
 		}
 	}

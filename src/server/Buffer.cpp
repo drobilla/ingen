@@ -250,7 +250,7 @@ Buffer::peak(const RunContext& context) const
 	vpeak = _mm_max_ps(vpeak, tmp);
 
 	// peak = vpeak[0]
-	float peak;
+	float peak = 0.0f;
 	_mm_store_ss(&peak, vpeak);
 
 	return peak;
@@ -448,7 +448,7 @@ Buffer::dump_cv(const RunContext& context) const
 void* Buffer::aligned_alloc(size_t size)
 {
 #ifdef HAVE_POSIX_MEMALIGN
-	void* buf;
+	void* buf = nullptr;
 	if (!posix_memalign(static_cast<void**>(&buf), 16, size)) {
 		memset(buf, 0, size);
 		return buf;

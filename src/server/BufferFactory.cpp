@@ -116,7 +116,7 @@ BufferFactory::try_get_buffer(LV2_URID type)
 {
 	std::atomic<Buffer*>& head_ptr = free_list(type);
 	Buffer*               head     = nullptr;
-	Buffer*               next;
+	Buffer*               next     = nullptr;
 	do {
 		head = head_ptr.load();
 		if (!head) {
@@ -183,7 +183,7 @@ void
 BufferFactory::recycle(Buffer* buf)
 {
 	std::atomic<Buffer*>& head_ptr = free_list(buf->type());
-	Buffer* try_head;
+	Buffer*               try_head = nullptr;
 	do {
 		try_head = head_ptr.load();
 		buf->_next = try_head;

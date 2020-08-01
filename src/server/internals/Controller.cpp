@@ -154,7 +154,7 @@ ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, F
 	const Sample max_port_val = _max_port->buffer(0)->value_at(offset);
 	const Sample log_port_val = _log_port->buffer(0)->value_at(offset);
 
-	Sample scaled_value;
+	Sample scaled_value = 0.0f;
 	if (log_port_val > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
 		Sample log_offset = 0;

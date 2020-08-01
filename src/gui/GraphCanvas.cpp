@@ -324,8 +324,8 @@ GraphCanvas::remove_plugin(const URI& uri)
 void
 GraphCanvas::add_block(const SPtr<const BlockModel>& bm)
 {
-	SPtr<const GraphModel> pm = dynamic_ptr_cast<const GraphModel>(bm);
-	NodeModule*            module;
+	SPtr<const GraphModel> pm     = dynamic_ptr_cast<const GraphModel>(bm);
+	NodeModule*            module = nullptr;
 	if (pm) {
 		module = SubgraphModule::create(*this, pm, _human_names);
 	} else {
@@ -485,8 +485,8 @@ GraphCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 			*_app.window_factory()->graph_window(_graph),
 			64, 64, _menu_x, _menu_y);
 
-		int origin_x;
-		int origin_y;
+		int origin_x = 0;
+		int origin_y = 0;
 		widget().get_window()->get_origin(origin_x, origin_y);
 		_menu_x += origin_x;
 		_menu_y += origin_y;
@@ -865,8 +865,8 @@ GraphCanvas::load_plugin(const WPtr<PluginModel>& weak_plugin)
 void
 GraphCanvas::get_new_module_location(double& x, double& y)
 {
-	int scroll_x;
-	int scroll_y;
+	int scroll_x = 0;
+	int scroll_y = 0;
 	get_scroll_offsets(scroll_x, scroll_y);
 	x = scroll_x + 20;
 	y = scroll_y + 20;
