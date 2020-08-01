@@ -15,11 +15,11 @@
 */
 
 #include "App.hpp"
-#include "LoadPluginWindow.hpp"
-#include "NewSubgraphWindow.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphTreeWindow.hpp"
 #include "GraphView.hpp"
+#include "LoadPluginWindow.hpp"
+#include "NewSubgraphWindow.hpp"
 #include "WidgetFactory.hpp"
 
 #include "ingen/Interface.hpp"

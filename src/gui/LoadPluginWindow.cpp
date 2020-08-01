@@ -25,10 +25,10 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
-#include <string>
-#include <cstddef>
-#include <cassert>
 #include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <string>
 
 using std::string;
 

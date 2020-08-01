@@ -17,8 +17,8 @@
 #ifndef INGEN_ENGINE_LV2BLOCK_HPP
 #define INGEN_ENGINE_LV2BLOCK_HPP
 
-#include "BufferRef.hpp"
 #include "BlockImpl.hpp"
+#include "BufferRef.hpp"
 #include "types.hpp"
 
 #include "ingen/LV2Features.hpp"

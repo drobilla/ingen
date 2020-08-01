@@ -19,8 +19,8 @@
 
 #include "ingen/types.hpp"
 
-#include "NodeModule.hpp"
 #include "GraphPortModule.hpp"
+#include "NodeModule.hpp"
 
 namespace ingen { namespace client {
 class GraphModel;

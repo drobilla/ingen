@@ -15,13 +15,13 @@
 */
 
 #include "App.hpp"
-#include "Style.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphPortModule.hpp"
 #include "GraphWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
 #include "RenameWindow.hpp"
+#include "Style.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 

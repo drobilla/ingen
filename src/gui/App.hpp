@@ -31,8 +31,8 @@
 #include <gtkmm/main.h>
 #include <gtkmm/window.h>
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 namespace ingen {
 

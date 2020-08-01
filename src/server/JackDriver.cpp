@@ -35,13 +35,15 @@
 #include "lv2/atom/util.h"
 
 #include <jack/midiport.h>
+
 #ifdef INGEN_JACK_SESSION
-#include <jack/session.h>
 #include "ingen/Serialiser.hpp"
+#include <jack/session.h>
 #endif
+
 #ifdef HAVE_JACK_METADATA
-#include <jack/metadata.h>
 #include "jackey.h"
+#include <jack/metadata.h>
 #endif
 
 #include <cassert>

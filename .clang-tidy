@@ -59,7 +59,6 @@ Checks: >
   -hicpp-signed-bitwise,
   -hicpp-vararg,
   -llvm-header-guard,
-  -llvm-include-order,
   -llvm-namespace-comment,
   -misc-unused-parameters,
   -modernize-make-shared,

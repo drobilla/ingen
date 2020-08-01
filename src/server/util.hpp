@@ -26,8 +26,8 @@
 #include <xmmintrin.h>
 #endif
 
-#include <fenv.h>
 #include <cstdlib>
+#include <fenv.h>
 
 #ifdef __clang__
 #    define REALTIME __attribute__((annotate("realtime")))

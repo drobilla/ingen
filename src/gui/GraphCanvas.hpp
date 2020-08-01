@@ -27,9 +27,9 @@
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
 
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 
 namespace ingen {
 

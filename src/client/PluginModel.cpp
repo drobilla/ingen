@@ -19,8 +19,8 @@
 #include "ingen/Atom.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginUI.hpp"
-#include "raul/Path.hpp"
 #include "ingen_config.h"
+#include "raul/Path.hpp"
 
 #include <boost/optional/optional.hpp>
 

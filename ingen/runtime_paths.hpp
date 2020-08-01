@@ -17,8 +17,8 @@
 #ifndef INGEN_RUNTIME_PATHS_HPP
 #define INGEN_RUNTIME_PATHS_HPP
 
-#include "ingen/ingen.h"
 #include "ingen/FilePath.hpp"
+#include "ingen/ingen.h"
 
 #include <string>
 #include <vector>

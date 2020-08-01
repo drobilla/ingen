@@ -25,8 +25,8 @@
 #include "types.hpp"
 
 #include <atomic>
-#include <mutex>
 #include <cstdint>
+#include <mutex>
 
 namespace Raul { class Maid; }
 
