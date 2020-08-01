@@ -310,7 +310,7 @@ def build(bld):
     bld(features     = 'c cxx cxxprogram',
         source       = 'src/ingen/ingen.cpp',
         target       = 'ingen',
-        includes     = ['.'],
+        includes     = ['include'],
         use          = 'libingen',
         uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
         install_path = '${BINDIR}')
@@ -321,7 +321,7 @@ def build(bld):
             bld(features     = 'cxx cxxprogram',
                 source       = 'tests/%s.cpp' % i,
                 target       = 'tests/%s' % i,
-                includes     = ['.'],
+                includes     = ['include'],
                 use          = 'libingen',
                 uselib       = 'SERD SORD SRATOM RAUL LILV LV2',
                 install_path = '',

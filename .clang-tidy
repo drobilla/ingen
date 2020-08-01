@@ -55,5 +55,5 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-named-parameter,
 WarningsAsErrors: '*'
-HeaderFilterRegex: 'ingen/.*|tests/.*|src/.*'
+HeaderFilterRegex: 'include/ingen/.*|tests/.*|src/.*'
 FormatStyle: file

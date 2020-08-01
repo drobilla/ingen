@@ -4,8 +4,8 @@
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
               cflags          = ['-fvisibility=hidden'],
-              includes        = ['../..'],
-              export_includes = ['../..'],
+              includes        = ['../../include'],
+              export_includes = ['../../include'],
               name            = 'libingen_client',
               target          = 'ingen_client',
               install_path    = '${LIBDIR}',

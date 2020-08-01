@@ -57,8 +57,8 @@ def build(bld):
 
     bld(features        = 'cxx cxxshlib',
         source          = core_source,
-        export_includes = ['../..'],
-        includes        = ['.', '../..'],
+        export_includes = ['../../include'],
+        includes        = ['.', '../../include'],
         name            = 'libingen_server',
         target          = 'ingen_server',
         install_path    = '${LIBDIR}',
@@ -70,7 +70,7 @@ def build(bld):
     if bld.env.HAVE_JACK:
         bld(features        = 'cxx cxxshlib',
             source          = 'JackDriver.cpp ingen_jack.cpp',
-            includes        = ['.', '../..'],
+            includes        = ['.', '../../include'],
             name            = 'libingen_jack',
             target          = 'ingen_jack',
             install_path    = '${LIBDIR}',
@@ -82,7 +82,7 @@ def build(bld):
     if bld.env.HAVE_PORTAUDIO:
         bld(features        = 'cxx cxxshlib',
             source          = 'PortAudioDriver.cpp ingen_portaudio.cpp',
-            includes        = ['.', '../..'],
+            includes        = ['.', '../../include'],
             name            = 'libingen_portaudio',
             target          = 'ingen_portaudio',
             install_path    = '${LIBDIR}',
@@ -96,7 +96,7 @@ def build(bld):
         bld(features     = 'cxx cxxshlib',
             source       = ' ingen_lv2.cpp ',
             cflags       = ['-fvisibility=hidden'],
-            includes     = ['.', '../..'],
+            includes     = ['../../include'],
             name         = 'libingen_lv2',
             target       = 'ingen_lv2',
             install_path = '${LV2DIR}/ingen.lv2/',
