@@ -22,13 +22,14 @@
 #include "GraphPortModule.hpp"
 #include "NodeModule.hpp"
 
-namespace ingen { namespace client {
+namespace ingen {
+
+namespace client {
 class GraphModel;
 class GraphWindow;
 class PortModel;
-} }
+} // namespace client
 
-namespace ingen {
 namespace gui {
 
 class GraphCanvas;

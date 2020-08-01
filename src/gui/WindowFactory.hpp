@@ -29,7 +29,7 @@ namespace client {
 class BlockModel;
 class ObjectModel;
 class GraphModel;
-}
+} // namespace client
 
 namespace gui {
 

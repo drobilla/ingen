@@ -22,13 +22,13 @@
 
 #include "Port.hpp"
 
-namespace Raul { class Atom; }
-
-namespace ingen { namespace client {
+namespace ingen {
+namespace client {
 class BlockModel;
 class PluginUI;
 class PortModel;
-} }
+} // namespace client
+} // namespace ingen
 
 namespace ingen {
 namespace gui {

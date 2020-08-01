@@ -27,7 +27,7 @@
 
 namespace Raul {
 class Atom;
-}
+} // namespace Raul
 
 namespace ingen {
 

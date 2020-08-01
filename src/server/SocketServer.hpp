@@ -78,7 +78,7 @@ private:
 	SPtr<SocketWriter> _writer;
 };
 
-}  // namespace ingen
-}  // namespace Socket
+} // namespace server
+} // namespace ingen
 
 #endif  // INGEN_SERVER_SOCKET_SERVER_HPP

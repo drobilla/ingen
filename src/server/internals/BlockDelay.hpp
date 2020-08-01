@@ -55,8 +55,8 @@ private:
 	BufferRef   _buffer;
 };
 
+} // namespace internals
 } // namespace server
 } // namespace ingen
-} // namespace internals
 
 #endif // INGEN_INTERNALS_BLOCKDELAY_HPP

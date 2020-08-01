@@ -31,7 +31,7 @@
 namespace Raul {
 class Path;
 class Symbol;
-}
+} // namespace Raul
 
 namespace ingen {
 

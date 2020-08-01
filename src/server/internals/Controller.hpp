@@ -66,8 +66,8 @@ private:
 	bool        _learning;
 };
 
+} // namespace internals
 } // namespace server
 } // namespace ingen
-} // namespace internals
 
 #endif // INGEN_INTERNALS_CONTROLLER_HPP

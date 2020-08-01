@@ -70,8 +70,8 @@ private:
 	OutputPort* _vel_port;
 };
 
+} // namespace internals
 } // namespace server
 } // namespace ingen
-} // namespace internals
 
 #endif // INGEN_INTERNALS_TRIGGER_HPP

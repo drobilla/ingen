@@ -23,11 +23,11 @@
 
 #include <string>
 
-namespace Raul { class Atom; }
-
-namespace ingen { namespace client {
+namespace ingen {
+namespace client {
 class PortModel;
-} }
+} // namespace client
+} // namespace ingen
 
 namespace ingen {
 namespace gui {

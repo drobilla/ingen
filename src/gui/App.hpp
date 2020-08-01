@@ -51,7 +51,7 @@ class PluginModel;
 class PortModel;
 class SigClientInterface;
 
-}
+} // namespace client
 
 namespace gui {
 

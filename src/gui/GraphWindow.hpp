@@ -30,7 +30,7 @@ namespace ingen {
 
 namespace client {
 class GraphModel;
-}
+} // namespace client
 
 namespace gui {
 

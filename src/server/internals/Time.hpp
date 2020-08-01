@@ -52,8 +52,8 @@ private:
 	OutputPort* _notify_port;
 };
 
+} // namespace internals
 } // namespace server
 } // namespace ingen
-} // namespace internals
 
 #endif // INGEN_INTERNALS_TIME_HPP

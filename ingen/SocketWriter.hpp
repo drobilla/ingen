@@ -26,7 +26,7 @@
 
 namespace Raul {
 class Socket;
-}
+} // namespace Raul
 
 namespace ingen {
 

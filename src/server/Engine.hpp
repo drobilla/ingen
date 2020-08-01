@@ -38,7 +38,7 @@
 namespace Raul {
 class Maid;
 class RingBuffer;
-}
+} // namespace Raul
 
 namespace ingen {
 

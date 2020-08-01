@@ -28,7 +28,7 @@
 
 namespace Raul {
 class Path;
-}
+} // namespace Raul
 
 namespace ingen {
 

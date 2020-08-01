@@ -36,7 +36,7 @@
 namespace Raul {
 class Atom;
 class Path;
-}
+} // namespace Raul
 
 namespace ingen {
 
@@ -46,7 +46,7 @@ namespace client {
 class GraphModel;
 class PortModel;
 class ObjectModel;
-}
+} // namespace client
 
 namespace gui {
 

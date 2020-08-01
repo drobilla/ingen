@@ -40,7 +40,7 @@ class PortModel;
 class MetadataModel;
 class GraphModel;
 class ObjectModel;
-}
+} // namespace client
 
 namespace gui {
 

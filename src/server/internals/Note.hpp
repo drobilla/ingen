@@ -104,8 +104,8 @@ private:
 	OutputPort* _pressure_port;
 };
 
+} // namespace internals
 } // namespace server
 } // namespace ingen
-} // namespace internals
 
 #endif // INGEN_INTERNALS_NOTE_HPP
