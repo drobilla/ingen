@@ -92,8 +92,9 @@ private:
 			lab->show();
 			add(*lab);
 
-			if (_view && _view->graph()->path() != path)
+			if (_view && _view->graph()->path() != path) {
 				_view.reset();
+			}
 		}
 
 	private:

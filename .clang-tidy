@@ -1,7 +1,6 @@
 Checks: >
   *,
   -*avoid-c-arrays,
-  -*braces-around-statements,
   -*magic-numbers,
   -*move-const-arg,
   -*narrowing-conversions,

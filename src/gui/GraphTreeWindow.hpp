@@ -106,8 +106,9 @@ public:
 	bool on_button_press_event(GdkEventButton* ev) override {
 		bool ret = Gtk::TreeView::on_button_press_event(ev);
 
-		if ((ev->type == GDK_BUTTON_PRESS) && (ev->button == 3))
+		if ((ev->type == GDK_BUTTON_PRESS) && (ev->button == 3)) {
 			_window->show_graph_menu(ev);
+		}
 
 		return ret;
 	}
