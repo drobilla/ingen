@@ -35,7 +35,7 @@ def build(bld):
     bld(features        = 'cxx cxxshlib',
         source          = sources,
         export_includes = ['../include'],
-        includes        = ['../include'],
+        includes        = ['.', '..', '../include'],
         name            = 'libingen',
         target          = 'ingen-%s' % bld.env.INGEN_MAJOR_VERSION,
         vnum            = bld.env.INGEN_VERSION,
