@@ -36,7 +36,8 @@ class AtomForge : public LV2_Atom_Forge
 {
 public:
 	explicit AtomForge(LV2_URID_Map& map)
-	    : _size{0}
+		: LV2_Atom_Forge{}
+		, _size{0}
 	    , _capacity{8 * sizeof(LV2_Atom)}
 	    , _sratom{sratom_new(&map)}
 	    , _buf{static_cast<LV2_Atom*>(calloc(8, sizeof(LV2_Atom)))}

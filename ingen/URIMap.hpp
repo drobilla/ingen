@@ -49,10 +49,7 @@ public:
 
 	class Feature : public LV2Features::Feature {
 	public:
-		Feature(const char* URI, void* data) {
-			_feature.URI  = URI;
-			_feature.data = data;
-		}
+		Feature(const char* URI, void* data) : _feature{URI, data} {}
 
 		const char* uri() const override { return _feature.URI; }
 

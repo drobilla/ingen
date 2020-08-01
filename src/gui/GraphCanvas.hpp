@@ -130,26 +130,26 @@ private:
 	// Track pasted objects so they can be selected when they arrive
 	std::set<Raul::Path> _pastees;
 
-	Gtk::Menu*          _menu;
-	Gtk::Menu*          _internal_menu;
-	PluginMenu*         _plugin_menu;
-	Gtk::MenuItem*      _menu_add_audio_input;
-	Gtk::MenuItem*      _menu_add_audio_output;
-	Gtk::MenuItem*      _menu_add_control_input;
-	Gtk::MenuItem*      _menu_add_control_output;
-	Gtk::MenuItem*      _menu_add_cv_input;
-	Gtk::MenuItem*      _menu_add_cv_output;
-	Gtk::MenuItem*      _menu_add_event_input;
-	Gtk::MenuItem*      _menu_add_event_output;
-	Gtk::MenuItem*      _menu_load_plugin;
-	Gtk::MenuItem*      _menu_load_graph;
-	Gtk::MenuItem*      _menu_new_graph;
-	Gtk::MenuItem*      _menu_properties;
-	Gtk::CheckMenuItem* _menu_edit;
+	Gtk::Menu*          _menu                    = nullptr;
+	Gtk::Menu*          _internal_menu           = nullptr;
+	PluginMenu*         _plugin_menu             = nullptr;
+	Gtk::MenuItem*      _menu_add_audio_input    = nullptr;
+	Gtk::MenuItem*      _menu_add_audio_output   = nullptr;
+	Gtk::MenuItem*      _menu_add_control_input  = nullptr;
+	Gtk::MenuItem*      _menu_add_control_output = nullptr;
+	Gtk::MenuItem*      _menu_add_cv_input       = nullptr;
+	Gtk::MenuItem*      _menu_add_cv_output      = nullptr;
+	Gtk::MenuItem*      _menu_add_event_input    = nullptr;
+	Gtk::MenuItem*      _menu_add_event_output   = nullptr;
+	Gtk::MenuItem*      _menu_load_plugin        = nullptr;
+	Gtk::MenuItem*      _menu_load_graph         = nullptr;
+	Gtk::MenuItem*      _menu_new_graph          = nullptr;
+	Gtk::MenuItem*      _menu_properties         = nullptr;
+	Gtk::CheckMenuItem* _menu_edit               = nullptr;
 
-	bool _human_names;
-	bool _show_port_names;
-	bool _menu_dirty;
+	bool _human_names = true;
+	bool _show_port_names = true;
+	bool _menu_dirty = false;
 };
 
 } // namespace gui

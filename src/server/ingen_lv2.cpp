@@ -822,6 +822,7 @@ ingen_extension_data(const char* uri)
 
 LV2Graph::LV2Graph(Parser::ResourceRecord record)
 	: Parser::ResourceRecord(std::move(record))
+	, descriptor()
 {
 	descriptor.URI            = uri.c_str();
 	descriptor.instantiate    = ingen_instantiate;

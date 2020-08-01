@@ -33,6 +33,7 @@ namespace gui {
 GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
+	, _graphs_treeview(nullptr)
 	, _app(nullptr)
 	, _enable_signal(true)
 {

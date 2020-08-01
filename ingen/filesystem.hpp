@@ -49,7 +49,7 @@ inline bool exists(const FilePath& path)
 
 inline bool is_directory(const FilePath& path)
 {
-	struct stat info;
+	struct stat info{};
 	stat(path.c_str(), &info);
 	return S_ISDIR(info.st_mode);
 }

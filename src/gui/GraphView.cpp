@@ -37,9 +37,6 @@ namespace gui {
 GraphView::GraphView(BaseObjectType*                   cobject,
                      const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Box(cobject)
-	, _app(nullptr)
-	, _breadcrumb_container(nullptr)
-	, _enable_signal(true)
 {
 	property_visible() = false;
 

@@ -41,9 +41,6 @@ namespace gui {
 LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
-	, _name_offset(0)
-	, _has_shown(false)
-	, _refresh_list(true)
 {
 	xml->get_widget("load_plugin_plugins_treeview", _plugins_treeview);
 	xml->get_widget("load_plugin_polyphonic_checkbutton", _polyphonic_checkbutton);

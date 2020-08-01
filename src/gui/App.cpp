@@ -73,19 +73,18 @@ class Port;
 Gtk::Main* App::_main = nullptr;
 
 App::App(ingen::World& world)
-	: _style(new Style(*this))
-	, _about_dialog(nullptr)
-	, _window_factory(new WindowFactory(*this))
-	, _world(world)
-	, _sample_rate(48000)
-	, _block_length(1024)
-	, _n_threads(1)
-	, _mean_run_load(0.0f)
-	, _min_run_load(0.0f)
-	, _max_run_load(0.0f)
-	, _enable_signal(true)
-	, _requested_plugins(false)
-	, _is_plugin(false)
+    : _style(new Style(*this))
+    , _window_factory(new WindowFactory(*this))
+    , _world(world)
+    , _sample_rate(48000)
+    , _block_length(1024)
+    , _n_threads(1)
+    , _mean_run_load(0.0f)
+    , _min_run_load(0.0f)
+    , _max_run_load(0.0f)
+    , _enable_signal(true)
+    , _requested_plugins(false)
+    , _is_plugin(false)
 {
 	_world.conf().load_default("ingen", "gui.ttl");
 

@@ -97,13 +97,13 @@ private:
 	const double b;
 	const double c;
 
-	uint64_t nper;
-	double   e2;
-	double   t0;
-	double   t1;
-	uint64_t n0;
-	uint64_t n1;
-	bool     initialized;
+	uint64_t nper        = 0u;
+	double   e2          = 0.0;
+	double   t0          = 0.0;
+	double   t1          = 0.0;
+	uint64_t n0          = 0u;
+	uint64_t n1          = 0u;
+	bool     initialized = false;
 };
 
 } // namespace server

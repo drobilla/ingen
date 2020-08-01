@@ -84,12 +84,6 @@ GraphCanvas::GraphCanvas(App&                   app,
 	, _menu_x(0)
 	, _menu_y(0)
 	, _paste_count(0)
-	, _menu(nullptr)
-	, _internal_menu(nullptr)
-	, _plugin_menu(nullptr)
-	, _human_names(true)
-	, _show_port_names(true)
-	, _menu_dirty(false)
 {
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);

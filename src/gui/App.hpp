@@ -166,11 +166,11 @@ protected:
 
 	Style* _style;
 
-	ConnectWindow*    _connect_window;
-	MessagesWindow*   _messages_window;
-	GraphTreeWindow*  _graph_tree_window;
-	Gtk::AboutDialog* _about_dialog;
-	WindowFactory*    _window_factory;
+	ConnectWindow*    _connect_window = nullptr;
+	MessagesWindow*   _messages_window = nullptr;
+	GraphTreeWindow*  _graph_tree_window = nullptr;
+	Gtk::AboutDialog* _about_dialog = nullptr;
+	WindowFactory*    _window_factory = nullptr;
 
 	ingen::World& _world;
 

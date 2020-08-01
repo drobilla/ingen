@@ -70,25 +70,25 @@ private:
 	Raul::Symbol symbol_from_filename(const Glib::ustring& filename);
 	Raul::Symbol avoid_symbol_clash(const Raul::Symbol& symbol);
 
-	App* _app;
+	App* _app = nullptr;
 
 	Properties _initial_data;
 
 	SPtr<const client::GraphModel> _graph;
 
-	Gtk::Label*       _symbol_label;
-	Gtk::Entry*       _symbol_entry;
-	Gtk::Label*       _ports_label;
-	Gtk::RadioButton* _merge_ports_radio;
-	Gtk::RadioButton* _insert_ports_radio;
-	Gtk::RadioButton* _poly_voices_radio;
-	Gtk::RadioButton* _poly_from_file_radio;
-	Gtk::SpinButton*  _poly_spinbutton;
-	Gtk::Button*      _ok_button;
-	Gtk::Button*      _cancel_button;
+	Gtk::Label*       _symbol_label = nullptr;
+	Gtk::Entry*       _symbol_entry = nullptr;
+	Gtk::Label*       _ports_label = nullptr;
+	Gtk::RadioButton* _merge_ports_radio = nullptr;
+	Gtk::RadioButton* _insert_ports_radio = nullptr;
+	Gtk::RadioButton* _poly_voices_radio = nullptr;
+	Gtk::RadioButton* _poly_from_file_radio = nullptr;
+	Gtk::SpinButton*  _poly_spinbutton = nullptr;
+	Gtk::Button*      _ok_button = nullptr;
+	Gtk::Button*      _cancel_button = nullptr;
 
-	bool _import;
-	bool _merge_ports;
+	bool _import = false;
+	bool _merge_ports = false;
 };
 
 } // namespace gui

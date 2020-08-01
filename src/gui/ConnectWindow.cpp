@@ -463,7 +463,7 @@ ConnectWindow::gtk_callback()
 	}
 
 	// Timing stuff for repeated attach attempts
-	timeval now;
+	timeval now = {};
 	gettimeofday(&now, nullptr);
 	static const timeval start    = now;
 	static timeval       last     = now;

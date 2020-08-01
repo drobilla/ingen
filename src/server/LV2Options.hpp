@@ -60,9 +60,9 @@ public:
 
 private:
 	const URIs& _uris;
-	int32_t     _sample_rate;
-	int32_t     _block_length;
-	int32_t     _seq_size;
+	int32_t     _sample_rate  = 0;
+	int32_t     _block_length = 0;
+	int32_t     _seq_size     = 0;
 };
 
 } // namespace server

@@ -43,17 +43,18 @@ namespace ingen {
 */
 class INGEN_API Atom {
 public:
-	Atom() noexcept  { _atom.size = 0; _atom.type = 0; _body.ptr = nullptr; }
+	Atom() noexcept : _atom{0, 0}, _body{} {}
+
 	~Atom() { dealloc(); }
 
 	/** Construct a raw atom.
 	 *
 	 * Typically this is not used directly, use Forge methods to make atoms.
 	 */
-	Atom(uint32_t size, LV2_URID type, const void* body) {
-		_atom.size = size;
-		_atom.type = type;
-		_body.ptr  = nullptr;
+	Atom(uint32_t size, LV2_URID type, const void* body)
+	    : _atom{size, type}
+		, _body{}
+	{
 		if (is_reference()) {
 			_body.ptr = static_cast<LV2_Atom*>(malloc(sizeof(LV2_Atom) + size));
 			memcpy(_body.ptr, &_atom, sizeof(LV2_Atom));
@@ -64,7 +65,8 @@ public:
 	}
 
 	Atom(const Atom& copy)
-		: _atom(copy._atom)
+		: _atom{copy._atom}
+		, _body{}
 	{
 		if (is_reference()) {
 			_body.ptr =

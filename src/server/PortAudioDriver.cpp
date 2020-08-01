@@ -45,6 +45,8 @@ pa_error(const char* msg, PaError err)
 
 PortAudioDriver::PortAudioDriver(Engine& engine)
 	: _engine(engine)
+	, _inputParameters()
+	, _outputParameters()
 	, _sem(0)
 	, _stream(nullptr)
 	, _seq_size(4096)

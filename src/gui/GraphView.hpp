@@ -81,18 +81,18 @@ private:
 
 	void property_changed(const URI& predicate, const Atom& value);
 
-	App* _app;
+	App* _app = nullptr;
 
 	SPtr<const client::GraphModel> _graph;
 	SPtr<GraphCanvas>              _canvas;
 
-	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
-	Gtk::Toolbar*          _toolbar;
-	Gtk::ToggleToolButton* _process_but;
-	Gtk::SpinButton*       _poly_spin;
-	Gtk::ToolItem*         _breadcrumb_container;
+	Gtk::ScrolledWindow*   _canvas_scrolledwindow = nullptr;
+	Gtk::Toolbar*          _toolbar = nullptr;
+	Gtk::ToggleToolButton* _process_but = nullptr;
+	Gtk::SpinButton*       _poly_spin = nullptr;
+	Gtk::ToolItem*         _breadcrumb_container = nullptr;
 
-	bool _enable_signal;
+	bool _enable_signal = true;
 };
 
 } // namespace gui

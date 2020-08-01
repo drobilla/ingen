@@ -143,17 +143,17 @@ private:
 
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
-	int _name_offset; // see comments for generate_plugin_name
+	int _name_offset = 0; // see comments for generate_plugin_name
 
-	bool              _has_shown;
-	bool              _refresh_list;
-	Gtk::TreeView*    _plugins_treeview;
-	Gtk::CheckButton* _polyphonic_checkbutton;
-	Gtk::Entry*       _name_entry;
-	Gtk::Button*      _close_button;
-	Gtk::Button*      _add_button;
-	Gtk::ComboBox*    _filter_combo;
-	Gtk::Entry*       _search_entry;
+	bool              _has_shown              = false;
+	bool              _refresh_list           = true;
+	Gtk::TreeView*    _plugins_treeview       = nullptr;
+	Gtk::CheckButton* _polyphonic_checkbutton = nullptr;
+	Gtk::Entry*       _name_entry             = nullptr;
+	Gtk::Button*      _close_button           = nullptr;
+	Gtk::Button*      _add_button             = nullptr;
+	Gtk::ComboBox*    _filter_combo           = nullptr;
+	Gtk::Entry*       _search_entry           = nullptr;
 };
 
 } // namespace gui
