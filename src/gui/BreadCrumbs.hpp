@@ -47,7 +47,7 @@ public:
 
 	SPtr<GraphView> view(const Raul::Path& path);
 
-	void build(Raul::Path path, SPtr<GraphView> view);
+	void build(const Raul::Path& path, const SPtr<GraphView>& view);
 
 	sigc::signal<void, const Raul::Path&, SPtr<GraphView> > signal_graph_selected;
 
@@ -64,9 +64,10 @@ private:
 	class BreadCrumb : public Gtk::ToggleButton
 	{
 	public:
-		BreadCrumb(const Raul::Path& path, SPtr<GraphView> view = SPtr<GraphView>())
-			: _path(path)
-			, _view(view)
+		BreadCrumb(const Raul::Path&      path,
+		           const SPtr<GraphView>& view = SPtr<GraphView>())
+		    : _path(path)
+		    , _view(view)
 		{
 			assert(!view || view->graph()->path() == path);
 			set_border_width(0);
@@ -75,7 +76,7 @@ private:
 			show_all();
 		}
 
-		void set_view(SPtr<GraphView> view) {
+		void set_view(const SPtr<GraphView>& view) {
 			assert(!view || view->graph()->path() == _path);
 			_view = view;
 		}
@@ -100,8 +101,8 @@ private:
 		SPtr<GraphView> _view;
 	};
 
-	BreadCrumb* create_crumb(const Raul::Path& path,
-	                         SPtr<GraphView>   view = SPtr<GraphView>());
+	BreadCrumb* create_crumb(const Raul::Path&      path,
+	                         const SPtr<GraphView>& view = SPtr<GraphView>());
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 

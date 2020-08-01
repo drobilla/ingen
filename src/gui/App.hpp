@@ -75,7 +75,7 @@ public:
 
 	void error_message(const std::string& str);
 
-	void attach(SPtr<ingen::Interface> client);
+	void attach(const SPtr<ingen::Interface>& client);
 
 	void detach();
 

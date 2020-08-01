@@ -233,7 +233,11 @@ public:
 	BufferRef value_buffer(uint32_t voice) const;
 
 	BufferRef user_buffer(RunContext&) const { return _user_buffer; }
-	void      set_user_buffer(RunContext&, BufferRef b) { _user_buffer = b; }
+
+	void set_user_buffer(RunContext&, BufferRef b)
+	{
+		_user_buffer = std::move(b);
+	}
 
 	/** Return offset of the first value change after `offset`. */
 	virtual SampleCount next_value_offset(SampleCount offset,

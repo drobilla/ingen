@@ -35,9 +35,9 @@
 namespace ingen {
 namespace client {
 
-ClientStore::ClientStore(URIs&                    uris,
-                         Log&                     log,
-                         SPtr<SigClientInterface> emitter)
+ClientStore::ClientStore(URIs&                           uris,
+                         Log&                            log,
+                         const SPtr<SigClientInterface>& emitter)
 	: _uris(uris)
 	, _log(log)
 	, _emitter(emitter)
@@ -57,7 +57,7 @@ ClientStore::clear()
 }
 
 void
-ClientStore::add_object(SPtr<ObjectModel> object)
+ClientStore::add_object(const SPtr<ObjectModel>& object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
@@ -189,7 +189,7 @@ ClientStore::resource(const URI& uri) const
 }
 
 void
-ClientStore::add_plugin(SPtr<PluginModel> pm)
+ClientStore::add_plugin(const SPtr<PluginModel>& pm)
 {
 	SPtr<PluginModel> existing = _plugin(pm->uri());
 	if (existing) {

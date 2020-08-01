@@ -59,9 +59,9 @@ class INGEN_API ClientStore : public Store
                             , public INGEN_TRACKABLE {
 public:
 	ClientStore(
-		URIs&                    uris,
-		Log&                     log,
-		SPtr<SigClientInterface> emitter = SPtr<SigClientInterface>());
+	    URIs&                           uris,
+	    Log&                            log,
+	    const SPtr<SigClientInterface>& emitter = SPtr<SigClientInterface>());
 
 	URI uri() const override { return URI("ingen:/clients/store"); }
 
@@ -75,7 +75,7 @@ public:
 
 	SPtr<const Plugins> plugins() const              { return _plugins; }
 	SPtr<Plugins>       plugins()                    { return _plugins; }
-	void                set_plugins(SPtr<Plugins> p) { _plugins = p; }
+	void                set_plugins(SPtr<Plugins> p) { _plugins = std::move(p); }
 
 	URIs& uris() { return _uris; }
 
@@ -108,10 +108,10 @@ private:
 	SPtr<PluginModel> _plugin(const Atom& uri);
 	SPtr<Resource>    _resource(const URI& uri);
 
-	void add_object(SPtr<ObjectModel> object);
+	void add_object(const SPtr<ObjectModel>& object);
 	SPtr<ObjectModel> remove_object(const Raul::Path& path);
 
-	void add_plugin(SPtr<PluginModel> pm);
+	void add_plugin(const SPtr<PluginModel>& pm);
 
 	SPtr<GraphModel> connection_graph(const Raul::Path& tail_path,
 	                                  const Raul::Path& head_path);

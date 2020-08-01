@@ -58,7 +58,7 @@ BreadCrumbs::view(const Raul::Path& path)
  * children preserved.
  */
 void
-BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
+BreadCrumbs::build(const Raul::Path& path, const SPtr<GraphView>& view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -156,8 +156,7 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
  * match, otherwise ignoring `view`.
  */
 BreadCrumbs::BreadCrumb*
-BreadCrumbs::create_crumb(const Raul::Path& path,
-                          SPtr<GraphView>   view)
+BreadCrumbs::create_crumb(const Raul::Path& path, const SPtr<GraphView>& view)
 {
 	BreadCrumb* but = manage(
 		new BreadCrumb(path,

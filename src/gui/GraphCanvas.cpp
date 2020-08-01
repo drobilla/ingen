@@ -841,7 +841,7 @@ GraphCanvas::menu_add_port(const string& sym_base,
 }
 
 void
-GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
+GraphCanvas::load_plugin(const WPtr<PluginModel>& weak_plugin)
 {
 	SPtr<PluginModel> plugin = weak_plugin.lock();
 	if (!plugin) {

@@ -160,7 +160,7 @@ App::run()
 }
 
 void
-App::attach(SPtr<ingen::Interface> client)
+App::attach(const SPtr<ingen::Interface>& client)
 {
 	assert(!_client);
 	assert(!_store);

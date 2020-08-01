@@ -40,7 +40,7 @@ public:
 		return _sinks.front()->respondee();
 	}
 
-	void set_respondee(SPtr<Interface> respondee) override {
+	void set_respondee(const SPtr<Interface>& respondee) override {
 		_sinks.front()->set_respondee(respondee);
 	}
 

@@ -43,7 +43,7 @@ public:
 		return _respondee;
 	}
 
-	void set_respondee(SPtr<Interface> respondee) override {
+	void set_respondee(const SPtr<Interface>& respondee) override {
 		_respondee = respondee;
 	}
 

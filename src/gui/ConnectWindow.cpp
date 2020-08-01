@@ -129,7 +129,7 @@ ConnectWindow::ingen_response(int32_t            id,
 }
 
 void
-ConnectWindow::set_connected_to(SPtr<ingen::Interface> engine)
+ConnectWindow::set_connected_to(const SPtr<ingen::Interface>& engine)
 {
 	_app->world().set_interface(engine);
 

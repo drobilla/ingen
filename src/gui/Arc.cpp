@@ -24,12 +24,11 @@
 namespace ingen {
 namespace gui {
 
-Arc::Arc(Ganv::Canvas&                canvas,
-         SPtr<const client::ArcModel> model,
-         Ganv::Node*                  src,
-         Ganv::Node*                  dst)
-	: Ganv::Edge(canvas, src, dst)
-	, _arc_model(model)
+Arc::Arc(Ganv::Canvas&                       canvas,
+         const SPtr<const client::ArcModel>& model,
+         Ganv::Node*                         src,
+         Ganv::Node*                         dst)
+    : Ganv::Edge(canvas, src, dst), _arc_model(model)
 {
 	SPtr<const client::ObjectModel> tparent = model->tail()->parent();
 	SPtr<const client::BlockModel>  tparent_block;

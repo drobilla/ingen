@@ -70,15 +70,15 @@ public:
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 	~GraphBox();
 
-	static SPtr<GraphBox> create(
-		App& app, SPtr<const client::GraphModel> graph);
+	static SPtr<GraphBox>
+	create(App& app, const SPtr<const client::GraphModel>& graph);
 
 	void init_box(App& app);
 
 	void set_status_text(const std::string& text);
 
-	void set_graph(SPtr<const client::GraphModel> graph,
-	               SPtr<GraphView>                view);
+	void set_graph(const SPtr<const client::GraphModel>& graph,
+	               const SPtr<GraphView>&                view);
 
 	void set_window(GraphWindow* win) { _window = win; }
 
@@ -91,14 +91,15 @@ public:
 	void show_port_status(const client::PortModel* port,
 	                      const Atom&              value);
 
-	void set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view);
+	void
+	set_graph_from_path(const Raul::Path& path, const SPtr<GraphView>& view);
 
 	void object_entered(const client::ObjectModel* model);
 	void object_left(const client::ObjectModel* model);
 
 private:
-	void graph_port_added(SPtr<const client::PortModel> port);
-	void graph_port_removed(SPtr<const client::PortModel> port);
+	void graph_port_added(const SPtr<const client::PortModel>& port);
+	void graph_port_removed(const SPtr<const client::PortModel>& port);
 	void property_changed(const URI& predicate, const Atom& value);
 	void show_status(const client::ObjectModel* model);
 

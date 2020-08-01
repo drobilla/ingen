@@ -90,7 +90,7 @@ public:
 
 	void set_flush(bool f) { _flush = f; }
 	void set_trace(bool f) { _trace = f; }
-	void set_sink(Sink s)  { _sink = s; }
+	void set_sink(Sink s)  { _sink = std::move(s); }
 
 private:
 	void print(FILE* stream, const std::string& msg) const;

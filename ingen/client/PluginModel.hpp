@@ -82,8 +82,8 @@ public:
 
 	bool has_ui() const;
 
-	SPtr<PluginUI> ui(ingen::World&               world,
-	                  SPtr<const BlockModel> block) const;
+	SPtr<PluginUI>
+	ui(ingen::World& world, const SPtr<const BlockModel>& block) const;
 
 	std::string documentation(bool html) const;
 	std::string port_documentation(uint32_t index, bool html) const;
@@ -104,7 +104,7 @@ public:
 
 protected:
 	friend class ClientStore;
-	void set(SPtr<PluginModel> p);
+	void set(const SPtr<PluginModel>& p);
 
 	void add_preset(const URI& uri, const std::string& label);
 

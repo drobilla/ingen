@@ -53,9 +53,9 @@ public:
 	 * connected first.  The caller should connect to signal_property_changed,
 	 * then call instantiate().
 	 */
-	static SPtr<PluginUI> create(ingen::World&          world,
-	                             SPtr<const BlockModel> block,
-	                             const LilvPlugin*      plugin);
+	static SPtr<PluginUI> create(ingen::World&                 world,
+	                             const SPtr<const BlockModel>& block,
+	                             const LilvPlugin*             plugin);
 
 	/** Instantiate the UI.
 	 *

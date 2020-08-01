@@ -195,7 +195,7 @@ GraphBox::~GraphBox()
 }
 
 SPtr<GraphBox>
-GraphBox::create(App& app, SPtr<const GraphModel> graph)
+GraphBox::create(App& app, const SPtr<const GraphModel>& graph)
 {
 	GraphBox* result = nullptr;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
@@ -248,7 +248,8 @@ GraphBox::set_status_text(const std::string& text)
 }
 
 void
-GraphBox::set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view)
+GraphBox::set_graph_from_path(const Raul::Path&      path,
+                              const SPtr<GraphView>& view)
 {
 	if (view) {
 		assert(view->graph()->path() == path);
@@ -267,8 +268,8 @@ GraphBox::set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view)
  * If `view` is null, a new view will be created.
  */
 void
-GraphBox::set_graph(SPtr<const GraphModel> graph,
-                    SPtr<GraphView>        view)
+GraphBox::set_graph(const SPtr<const GraphModel>& graph,
+                    const SPtr<GraphView>&        view)
 {
 	if (!graph || graph == _graph) {
 		return;
@@ -355,7 +356,7 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 }
 
 void
-GraphBox::graph_port_added(SPtr<const PortModel> port)
+GraphBox::graph_port_added(const SPtr<const PortModel>& port)
 {
 	if (port->is_input() && _app->can_control(port.get())) {
 		_menu_view_control_window->property_sensitive() = true;
@@ -363,7 +364,7 @@ GraphBox::graph_port_added(SPtr<const PortModel> port)
 }
 
 void
-GraphBox::graph_port_removed(SPtr<const PortModel> port)
+GraphBox::graph_port_removed(const SPtr<const PortModel>& port)
 {
 	if (!(port->is_input() && _app->can_control(port.get()))) {
 		return;

@@ -89,9 +89,10 @@ public:
 	virtual bool run_module(const char* name);
 
 	/** A function to create a new remote Interface. */
-	typedef SPtr<Interface> (*InterfaceFactory)(World&          world,
-	                                            const URI&      engine_uri,
-	                                            SPtr<Interface> respondee);
+	typedef SPtr<Interface> (*InterfaceFactory)(
+	    World&                 world,
+	    const URI&             engine_uri,
+	    const SPtr<Interface>& respondee);
 
 	/** Register an InterfaceFactory (for module implementations). */
 	virtual void add_interface_factory(const std::string& scheme,

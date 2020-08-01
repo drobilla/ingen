@@ -29,27 +29,27 @@ namespace client {
 class INGEN_API SocketClient : public SocketWriter
 {
 public:
-	SocketClient(World&             world,
-	             const URI&         uri,
-	             SPtr<Raul::Socket> sock,
-	             SPtr<Interface>    respondee)
-		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
-		, _respondee(respondee)
-		, _reader(world, *respondee.get(), sock)
+	SocketClient(World&                    world,
+	             const URI&                uri,
+	             const SPtr<Raul::Socket>& sock,
+	             const SPtr<Interface>&    respondee)
+	    : SocketWriter(world.uri_map(), world.uris(), uri, sock)
+	    , _respondee(respondee)
+	    , _reader(world, *respondee.get(), sock)
 	{}
 
 	SPtr<Interface> respondee() const override {
 		return _respondee;
 	}
 
-	void set_respondee(SPtr<Interface> respondee) override {
+	void set_respondee(const SPtr<Interface>& respondee) override {
 		_respondee = respondee;
 	}
 
 	static SPtr<ingen::Interface>
-	new_socket_interface(ingen::World&          world,
-	                     const URI&             uri,
-	                     SPtr<ingen::Interface> respondee)
+	new_socket_interface(ingen::World&                 world,
+	                     const URI&                    uri,
+	                     const SPtr<ingen::Interface>& respondee)
 	{
 		const Raul::Socket::Type type = (uri.scheme() == "unix"
 		                                 ? Raul::Socket::Type::UNIX

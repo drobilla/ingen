@@ -54,13 +54,14 @@ public:
 	LoadPluginWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_graph(SPtr<const client::GraphModel> graph);
-	void set_plugins(SPtr<const client::ClientStore::Plugins> plugins);
+	void set_graph(const SPtr<const client::GraphModel>& graph);
 
-	void add_plugin(SPtr<const client::PluginModel> plugin);
+	void set_plugins(const SPtr<const client::ClientStore::Plugins>& plugins);
 
-	void present(SPtr<const client::GraphModel> graph,
-	             Properties                     data);
+	void add_plugin(const SPtr<const client::PluginModel>& plugin);
+
+	void present(const SPtr<const client::GraphModel>& graph,
+	             const Properties&                     data);
 
 protected:
 	void on_show() override;
@@ -109,10 +110,10 @@ private:
 	void name_changed();
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
 
-	void set_row(Gtk::TreeModel::Row&            row,
-	             SPtr<const client::PluginModel> plugin);
+	void set_row(Gtk::TreeModel::Row&                   row,
+	             const SPtr<const client::PluginModel>& plugin);
 
-	void new_plugin(SPtr<const client::PluginModel> pm);
+	void new_plugin(const SPtr<const client::PluginModel>& pm);
 
 	void plugin_property_changed(const URI&  plugin,
 	                             const URI&  predicate,
@@ -122,8 +123,8 @@ private:
 	void plugin_selection_changed();
 
 	static std::string
-	generate_module_name(SPtr<const client::PluginModel> plugin,
-	                     int                             offset = 0);
+	generate_module_name(const SPtr<const client::PluginModel>& plugin,
+	                     int                                    offset = 0);
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 

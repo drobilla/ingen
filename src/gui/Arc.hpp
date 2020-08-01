@@ -35,10 +35,10 @@ namespace gui {
 class Arc : public Ganv::Edge
 {
 public:
-	Arc(Ganv::Canvas&                canvas,
-	    SPtr<const client::ArcModel> model,
-	    Ganv::Node*                  src,
-	    Ganv::Node*                  dst);
+	Arc(Ganv::Canvas&                       canvas,
+	    const SPtr<const client::ArcModel>& model,
+	    Ganv::Node*                         src,
+	    Ganv::Node*                         dst);
 
 	SPtr<const client::ArcModel> model() const { return _arc_model; }
 

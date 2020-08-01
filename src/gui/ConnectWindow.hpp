@@ -57,7 +57,7 @@ public:
 	ConnectWindow(BaseObjectType*            cobject,
 	              Glib::RefPtr<Gtk::Builder> xml);
 
-	void set_connected_to(SPtr<ingen::Interface> engine);
+	void set_connected_to(const SPtr<ingen::Interface>& engine);
 	void start(App& app, ingen::World& world);
 
 	bool attached()  const { return _finished_connecting; }

@@ -96,7 +96,7 @@ private:
 	void menu_new_graph();
 	void menu_load_graph();
 	void menu_properties();
-	void load_plugin(WPtr<client::PluginModel> weak_plugin);
+	void load_plugin(const WPtr<client::PluginModel>& weak_plugin);
 
 	void build_menus();
 

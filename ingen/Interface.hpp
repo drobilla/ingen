@@ -57,7 +57,7 @@ public:
 
 	virtual SPtr<Interface> respondee() const { return SPtr<Interface>(); }
 
-	virtual void set_respondee(SPtr<Interface> respondee) {}
+	virtual void set_respondee(const SPtr<Interface>& respondee) {}
 
 	virtual void message(const Message& msg) = 0;
 

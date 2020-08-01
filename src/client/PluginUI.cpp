@@ -178,9 +178,9 @@ PluginUI::~PluginUI()
 }
 
 SPtr<PluginUI>
-PluginUI::create(ingen::World&          world,
-                 SPtr<const BlockModel> block,
-                 const LilvPlugin*      plugin)
+PluginUI::create(ingen::World&                 world,
+                 const SPtr<const BlockModel>& block,
+                 const LilvPlugin*             plugin)
 {
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write,

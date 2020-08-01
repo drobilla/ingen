@@ -153,7 +153,7 @@ PluginModel::get_property(const URI& key) const
 }
 
 void
-PluginModel::set(SPtr<PluginModel> p)
+PluginModel::set(const SPtr<PluginModel>& p)
 {
 	_type = p->_type;
 
@@ -242,8 +242,7 @@ PluginModel::has_ui() const
 }
 
 SPtr<PluginUI>
-PluginModel::ui(ingen::World&          world,
-                SPtr<const BlockModel> block) const
+PluginModel::ui(ingen::World& world, const SPtr<const BlockModel>& block) const
 {
 	if (!_lilv_plugin) {
 		return SPtr<PluginUI>();

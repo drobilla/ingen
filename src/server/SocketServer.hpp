@@ -36,9 +36,9 @@ namespace server {
 class SocketServer
 {
 public:
-	SocketServer(World&             world,
-	             server::Engine&    engine,
-	             SPtr<Raul::Socket> sock)
+	SocketServer(World&                    world,
+	             server::Engine&           engine,
+	             const SPtr<Raul::Socket>& sock)
 		: _engine(engine)
 		, _sink(world.conf().option("dump").get<int32_t>()
 		        ? SPtr<Interface>(
