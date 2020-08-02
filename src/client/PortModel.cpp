@@ -70,7 +70,7 @@ PortModel::set(const SPtr<ObjectModel>& model)
 {
 	ObjectModel::set(model);
 
-	SPtr<PortModel> port = std::dynamic_pointer_cast<PortModel>(model);
+	auto port = std::dynamic_pointer_cast<PortModel>(model);
 	if (port) {
 		_index = port->_index;
 		_direction = port->_direction;

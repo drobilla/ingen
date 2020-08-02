@@ -117,7 +117,7 @@ GraphImpl::duplicate(Engine&             engine,
 
 	// Add duplicates of all arcs
 	for (const auto& a : _arcs) {
-		SPtr<ArcImpl> arc = std::dynamic_pointer_cast<ArcImpl>(a.second);
+		auto arc = std::dynamic_pointer_cast<ArcImpl>(a.second);
 		if (arc) {
 			auto t = port_map.find(arc->tail());
 			auto h = port_map.find(arc->head());
@@ -288,7 +288,7 @@ GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	auto i = _arcs.find(std::make_pair(tail, dst_port));
 	if (i != _arcs.end()) {
-		SPtr<ArcImpl> arc = std::dynamic_pointer_cast<ArcImpl>(i->second);
+		auto arc = std::dynamic_pointer_cast<ArcImpl>(i->second);
 		_arcs.erase(i);
 		return arc;
 	} else {

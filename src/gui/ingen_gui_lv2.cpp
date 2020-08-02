@@ -168,9 +168,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->app->store()->put(ingen::main_uri(), props);
 
 	// Create a GraphBox for the root and set as the UI widget
-	SPtr<const ingen::client::GraphModel> root =
-		std::dynamic_pointer_cast<const ingen::client::GraphModel>(
-			ui->app->store()->object(Raul::Path("/")));
+	auto root = std::dynamic_pointer_cast<const ingen::client::GraphModel>(
+	    ui->app->store()->object(Raul::Path("/")));
+
 	ui->view = ingen::gui::GraphBox::create(*ui->app, root);
 	ui->view->unparent();
 	*widget = ui->view->gobj();

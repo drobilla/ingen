@@ -237,7 +237,7 @@ GraphCanvas::build()
 
 	// Create modules for blocks
 	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
-		SPtr<BlockModel> block = std::dynamic_pointer_cast<BlockModel>(i->second);
+		auto block = std::dynamic_pointer_cast<BlockModel>(i->second);
 		if (block && block->parent() == _graph) {
 			add_block(block);
 		}
@@ -325,8 +325,8 @@ GraphCanvas::remove_plugin(const URI& uri)
 void
 GraphCanvas::add_block(const SPtr<const BlockModel>& bm)
 {
-	SPtr<const GraphModel> pm     = std::dynamic_pointer_cast<const GraphModel>(bm);
-	NodeModule*            module = nullptr;
+	auto        pm     = std::dynamic_pointer_cast<const GraphModel>(bm);
+	NodeModule* module = nullptr;
 	if (pm) {
 		module = SubgraphModule::create(*this, pm, _human_names);
 	} else {

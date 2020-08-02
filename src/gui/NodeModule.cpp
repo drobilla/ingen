@@ -138,7 +138,7 @@ NodeModule::create(GraphCanvas&           canvas,
                    SPtr<const BlockModel> block,
                    bool                   human)
 {
-	SPtr<const GraphModel> graph = std::dynamic_pointer_cast<const GraphModel>(block);
+	auto graph = std::dynamic_pointer_cast<const GraphModel>(block);
 
 	NodeModule* ret = (graph)
 		? new SubgraphModule(canvas, graph)

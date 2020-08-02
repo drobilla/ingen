@@ -251,7 +251,7 @@ GraphBox::set_graph_from_path(const Raul::Path&      path,
 		assert(view->graph()->path() == path);
 		_app->window_factory()->present_graph(view->graph(), _window, view);
 	} else {
-		SPtr<const GraphModel> model = std::dynamic_pointer_cast<const GraphModel>(
+		auto model = std::dynamic_pointer_cast<const GraphModel>(
 			_app->store()->object(path));
 		if (model) {
 			_app->window_factory()->present_graph(model, _window);
@@ -810,7 +810,7 @@ GraphBox::event_arrange()
 void
 GraphBox::event_parent_activated()
 {
-	SPtr<client::GraphModel> parent =
+	auto parent =
 	    std::dynamic_pointer_cast<client::GraphModel>(_graph->parent());
 
 	if (parent) {

@@ -218,7 +218,7 @@ App::request_plugins_if_necessary()
 SPtr<SigClientInterface>
 App::sig_client()
 {
-	SPtr<QueuedInterface> qi = std::dynamic_pointer_cast<QueuedInterface>(_client);
+	auto qi = std::dynamic_pointer_cast<QueuedInterface>(_client);
 	if (qi) {
 		return std::dynamic_pointer_cast<SigClientInterface>(qi->sink());
 	}

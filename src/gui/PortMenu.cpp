@@ -108,9 +108,9 @@ PortMenu::on_menu_disconnect()
 void
 PortMenu::on_menu_set_min()
 {
-	const URIs&           uris  = _app->uris();
-	SPtr<const PortModel> model = std::dynamic_pointer_cast<const PortModel>(_object);
-	const Atom&           value = model->get_property(uris.ingen_value);
+	const URIs& uris  = _app->uris();
+	auto        model = std::dynamic_pointer_cast<const PortModel>(_object);
+	const Atom& value = model->get_property(uris.ingen_value);
 	if (value.is_valid()) {
 		_app->set_property(_object->uri(), uris.lv2_minimum, value);
 	}
@@ -119,9 +119,9 @@ PortMenu::on_menu_set_min()
 void
 PortMenu::on_menu_set_max()
 {
-	const URIs&           uris  = _app->uris();
-	SPtr<const PortModel> model = std::dynamic_pointer_cast<const PortModel>(_object);
-	const Atom&           value = model->get_property(uris.ingen_value);
+	const URIs& uris  = _app->uris();
+	auto        model = std::dynamic_pointer_cast<const PortModel>(_object);
+	const Atom& value = model->get_property(uris.ingen_value);
 	if (value.is_valid()) {
 		_app->set_property(_object->uri(), uris.lv2_maximum, value);
 	}
@@ -130,8 +130,8 @@ PortMenu::on_menu_set_max()
 void
 PortMenu::on_menu_reset_range()
 {
-	const URIs&           uris  = _app->uris();
-	SPtr<const PortModel> model = std::dynamic_pointer_cast<const PortModel>(_object);
+	const URIs& uris  = _app->uris();
+	auto        model = std::dynamic_pointer_cast<const PortModel>(_object);
 
 	// Remove lv2:minimum and lv2:maximum properties
 	Properties remove;
@@ -143,9 +143,9 @@ PortMenu::on_menu_reset_range()
 void
 PortMenu::on_menu_expose()
 {
-	const URIs&            uris  = _app->uris();
-	SPtr<const PortModel>  port  = std::dynamic_pointer_cast<const PortModel>(_object);
-	SPtr<const BlockModel> block = std::dynamic_pointer_cast<const BlockModel>(port->parent());
+	const URIs& uris = _app->uris();
+	auto        port = std::dynamic_pointer_cast<const PortModel>(_object);
+	auto block = std::dynamic_pointer_cast<const BlockModel>(port->parent());
 
 	const std::string label = block->label() + " " + block->port_label(port);
 	const Raul::Path  path  = Raul::Path(block->path() + Raul::Symbol("_" + port->symbol()));

@@ -77,7 +77,7 @@ GraphTreeWindow::init(App& app, ClientStore& store)
 void
 GraphTreeWindow::new_object(const SPtr<ObjectModel>& object)
 {
-	SPtr<GraphModel> graph = std::dynamic_pointer_cast<GraphModel>(object);
+	auto graph = std::dynamic_pointer_cast<GraphModel>(object);
 	if (graph) {
 		add_graph(graph);
 	}

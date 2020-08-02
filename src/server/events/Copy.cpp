@@ -144,7 +144,7 @@ bool
 Copy::engine_to_filesystem(PreProcessContext&)
 {
 	// Ensure source is a graph
-	SPtr<GraphImpl> graph = std::dynamic_pointer_cast<GraphImpl>(_old_block);
+	auto graph = std::dynamic_pointer_cast<GraphImpl>(_old_block);
 	if (!graph) {
 		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _msg.old_uri);
 	}

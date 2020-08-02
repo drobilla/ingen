@@ -231,7 +231,7 @@ ConnectWindow::connect(bool existing)
 		if (existing) {
 			uri_str = world.interface()->uri();
 			_connect_stage = 1;
-			SPtr<client::SocketClient> client = std::dynamic_pointer_cast<client::SocketClient>(
+			auto client = std::dynamic_pointer_cast<client::SocketClient>(
 				world.interface());
 			if (client) {
 				_app->attach(client->respondee());
@@ -528,7 +528,7 @@ ConnectWindow::gtk_callback()
 		next_stage();
 	} else if (_connect_stage == 4) {
 		if (!_app->store()->empty()) {
-			SPtr<const GraphModel> root = std::dynamic_pointer_cast<const GraphModel>(
+			auto root = std::dynamic_pointer_cast<const GraphModel>(
 				_app->store()->object(Raul::Path("/")));
 			if (root) {
 				set_connected_to(_app->interface());
