@@ -201,7 +201,7 @@ LoadPluginWindow::set_plugins(const SPtr<const ClientStore::Plugins>& plugins)
 	_rows.clear();
 	_plugins_liststore->clear();
 
-	for (const auto& p : *plugins.get()) {
+	for (const auto& p : *plugins) {
 		add_plugin(p.second);
 	}
 
@@ -432,9 +432,9 @@ LoadPluginWindow::filter_changed()
 	size_t                   num_visible = 0;
 	const URIs&              uris        = _app->uris();
 
-	for (const auto& p : *_app->store()->plugins().get()) {
-		const SPtr<PluginModel> plugin = p.second;
-		const Atom& name = plugin->get_property(uris.doap_name);
+	for (const auto& p : *_app->store()->plugins()) {
+		const auto  plugin = p.second;
+		const Atom& name   = plugin->get_property(uris.doap_name);
 
 		switch (criteria) {
 		case CriteriaColumns::Criteria::NAME:

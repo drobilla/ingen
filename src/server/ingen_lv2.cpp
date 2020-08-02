@@ -119,7 +119,7 @@ public:
 		, _reader(engine.world().uri_map(),
 		          engine.world().uris(),
 		          engine.world().log(),
-		          *engine.world().interface().get())
+		          *engine.world().interface())
 		, _writer(engine.world().uri_map(),
 		          engine.world().uris(),
 		          *this)
@@ -583,7 +583,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	server::ThreadManager::set_flag(server::THREAD_PRE_PROCESS);
 	server::ThreadManager::single_threaded = true;
 
-	auto* driver = new LV2Driver(*engine.get(), block_length, seq_size, rate);
+	auto* driver = new LV2Driver(*engine, block_length, seq_size, rate);
 	engine->set_driver(SPtr<ingen::server::Driver>(driver));
 
 	engine->activate();

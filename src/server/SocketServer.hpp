@@ -49,7 +49,7 @@ public:
 					                                          stderr,
 					                                          ColorContext::Color::CYAN))}))
 		        : SPtr<Interface>(new EventWriter(engine)))
-		, _reader(new SocketReader(world, *_sink.get(), sock))
+		, _reader(new SocketReader(world, *_sink, sock))
 		, _writer(new SocketWriter(world.uri_map(),
 		                           world.uris(),
 		                           URI(sock->uri()),

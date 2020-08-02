@@ -154,7 +154,7 @@ void
 Connect::execute(RunContext& ctx)
 {
 	if (_status == Status::SUCCESS) {
-		_head->add_arc(ctx, *_arc.get());
+		_head->add_arc(ctx, *_arc);
 		if (!_head->is_driver_port()) {
 			_head->set_voices(ctx, std::move(_voices));
 		}

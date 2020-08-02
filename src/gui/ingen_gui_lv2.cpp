@@ -155,11 +155,10 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->app->set_is_plugin(true);
 	ui->app->attach(ui->client);
 
-	ui->reader = SPtr<ingen::AtomReader>(
-		new ingen::AtomReader(ui->world->uri_map(),
-		                      ui->world->uris(),
-		                      ui->world->log(),
-		                      *ui->client.get()));
+	ui->reader = std::make_shared<ingen::AtomReader>(ui->world->uri_map(),
+	                                                 ui->world->uris(),
+	                                                 ui->world->log(),
+	                                                 *ui->client.get());
 
 	// Create empty root graph model
 	ingen::Properties props;

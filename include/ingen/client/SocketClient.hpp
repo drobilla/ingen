@@ -35,7 +35,7 @@ public:
 	             const SPtr<Interface>&    respondee)
 	    : SocketWriter(world.uri_map(), world.uris(), uri, sock)
 	    , _respondee(respondee)
-	    , _reader(world, *respondee.get(), sock)
+	    , _reader(world, *respondee, sock)
 	{}
 
 	SPtr<Interface> respondee() const override {

@@ -222,8 +222,8 @@ GraphCanvas::build_menus()
 	}
 
 	// Add known plugins to menu heirarchy
-	SPtr<const ClientStore::Plugins> plugins = _app.store()->plugins();
-	for (const auto& p : *plugins.get()) {
+	auto plugins = _app.store()->plugins();
+	for (const auto& p : *plugins) {
 		add_plugin(p.second);
 	}
 
@@ -726,7 +726,7 @@ GraphCanvas::paste()
 	_app.interface()->bundle_begin();
 
 	// Put each top level object in the clipboard store
-	ClashAvoider avoider(*_app.store().get());
+	ClashAvoider avoider(*_app.store());
 	for (const auto& c : clipboard) {
 		if (c.first.is_root() || c.first.parent() != Raul::Path("/")) {
 			continue;

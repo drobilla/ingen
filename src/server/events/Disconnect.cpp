@@ -171,7 +171,7 @@ Disconnect::Impl::execute(RunContext& ctx, bool set_head_buffers)
 		return false;
 	}
 
-	_head->remove_arc(*_arc.get());
+	_head->remove_arc(*_arc);
 	if (_head->is_driver_port()) {
 		return true;
 	}

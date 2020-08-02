@@ -161,7 +161,7 @@ Engine::~Engine()
 
 	const SPtr<Store> store = this->store();
 	if (store) {
-		for (auto& s : *store.get()) {
+		for (auto& s : *store) {
 			if (!std::dynamic_pointer_cast<NodeImpl>(s.second)->parent()) {
 				s.second.reset();
 			}

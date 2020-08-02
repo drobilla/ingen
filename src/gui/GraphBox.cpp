@@ -304,11 +304,11 @@ GraphBox::set_graph(const SPtr<const GraphModel>& graph,
 
 	// Add view to our alignment
 	if (_view->get_parent()) {
-		_view->get_parent()->remove(*_view.get());
+		_view->get_parent()->remove(*_view);
 	}
 
 	_alignment->remove();
-	_alignment->add(*_view.get());
+	_alignment->add(*_view);
 
 	if (_breadcrumbs->get_parent()) {
 		_breadcrumbs->get_parent()->remove(*_breadcrumbs);

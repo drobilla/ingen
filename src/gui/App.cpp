@@ -185,7 +185,7 @@ App::attach(const SPtr<ingen::Interface>& client)
 		                                         ColorContext::Color::CYAN);
 
 		sig_client()->signal_message().connect(
-			sigc::mem_fun(*_dumper.get(), &StreamWriter::message));
+			sigc::mem_fun(*_dumper, &StreamWriter::message));
 	}
 
 	_graph_tree_window->init(*this, *_store);
