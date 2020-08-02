@@ -199,7 +199,9 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 		if (_type != _factory.uris().atom_Sound) {
 			return _buf;
 		}
-	default: break;
+		break;
+	default:
+		break;
 	}
 	return nullptr;
 }

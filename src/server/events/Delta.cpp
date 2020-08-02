@@ -571,6 +571,7 @@ Delta::execute(RunContext& ctx)
 					port->set_maximum(value);
 				}
 			}
+			break;
 		case SpecialType::LOADED_BUNDLE:
 			break;
 		}

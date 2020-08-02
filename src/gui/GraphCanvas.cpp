@@ -533,6 +533,7 @@ GraphCanvas::on_event(GdkEvent* event)
 		case GDK_space:
 		case GDK_Menu:
 			show_menu(true, 3, event->key.time);
+			break;
 		default: break;
 		}
 		break;

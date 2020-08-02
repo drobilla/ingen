@@ -289,6 +289,7 @@ PortImpl::set_voice_value(const RunContext& ctx,
 			        path().c_str(), buffer(voice)->type());
 #endif
 		}
+		break;
 	default:
 		break;
 	}

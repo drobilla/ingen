@@ -139,6 +139,7 @@ TriggerNode::run(RunContext& ctx)
 					_gate_port->set_control_value(ctx, time, 0.0f);
 					emit = true;
 				}
+				break;
 			default:
 				break;
 			}
