@@ -65,7 +65,7 @@ private:
 	{
 	public:
 		BreadCrumb(const Raul::Path&      path,
-		           const SPtr<GraphView>& view = SPtr<GraphView>())
+		           const SPtr<GraphView>& view = nullptr)
 		    : _path(path)
 		    , _view(view)
 		{
@@ -103,7 +103,7 @@ private:
 	};
 
 	BreadCrumb* create_crumb(const Raul::Path&      path,
-	                         const SPtr<GraphView>& view = SPtr<GraphView>());
+	                         const SPtr<GraphView>& view = nullptr);
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 

@@ -63,7 +63,7 @@ public:
 	void present_graph(
 		SPtr<const client::GraphModel> graph,
 		GraphWindow*                   preferred = nullptr,
-		SPtr<GraphView>                view      = SPtr<GraphView>());
+		SPtr<GraphView>                view      = nullptr);
 
 	void present_load_plugin(SPtr<const client::GraphModel> graph, Properties data=Properties());
 	void present_load_graph(SPtr<const client::GraphModel> graph, Properties data=Properties());

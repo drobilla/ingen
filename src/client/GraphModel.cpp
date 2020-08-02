@@ -105,7 +105,7 @@ GraphModel::get_arc(const Node* tail, const Node* head)
 	if (i != _arcs.end()) {
 		return std::dynamic_pointer_cast<ArcModel>(i->second);
 	} else {
-		return SPtr<ArcModel>();
+		return nullptr;
 	}
 }
 

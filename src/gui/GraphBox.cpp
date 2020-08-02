@@ -197,7 +197,7 @@ GraphBox::create(App& app, const SPtr<const GraphModel>& graph)
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
 	xml->get_widget_derived("graph_win_vbox", result);
 	result->init_box(app);
-	result->set_graph(graph, SPtr<GraphView>());
+	result->set_graph(graph, nullptr);
 
 	if (app.is_plugin()) {
 		result->_menu_close->set_sensitive(false);

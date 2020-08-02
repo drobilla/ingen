@@ -202,7 +202,7 @@ App::detach()
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_world.set_interface(SPtr<Interface>());
+		_world.set_interface(nullptr);
 	}
 }
 

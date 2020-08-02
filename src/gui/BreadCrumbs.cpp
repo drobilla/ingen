@@ -49,7 +49,7 @@ BreadCrumbs::view(const Raul::Path& path)
 		}
 	}
 
-	return SPtr<GraphView>();
+	return nullptr;
 }
 
 /** Sets up the crumbs to display `path`.
@@ -158,10 +158,8 @@ BreadCrumbs::build(const Raul::Path& path, const SPtr<GraphView>& view)
 BreadCrumbs::BreadCrumb*
 BreadCrumbs::create_crumb(const Raul::Path& path, const SPtr<GraphView>& view)
 {
-	BreadCrumb* but = manage(
-		new BreadCrumb(path,
-		               ((view && path == view->graph()->path())
-		                ? view : SPtr<GraphView>())));
+	BreadCrumb* but = manage(new BreadCrumb(
+	    path, ((view && path == view->graph()->path()) ? view : nullptr)));
 
 	but->signal_toggled().connect(
 		sigc::bind(sigc::mem_fun(this, &BreadCrumbs::breadcrumb_clicked),

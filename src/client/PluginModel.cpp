@@ -245,7 +245,7 @@ SPtr<PluginUI>
 PluginModel::ui(ingen::World& world, const SPtr<const BlockModel>& block) const
 {
 	if (!_lilv_plugin) {
-		return SPtr<PluginUI>();
+		return nullptr;
 	}
 
 	return PluginUI::create(world, block, _lilv_plugin);

@@ -37,12 +37,12 @@ struct InstanceAccess : public ingen::LV2Features::Feature
 	SPtr<LV2_Feature> feature(World& world, Node* node) override {
 		Node* store_node = world.store()->get(node->path());
 		if (!store_node) {
-			return SPtr<LV2_Feature>();
+			return nullptr;
 		}
 
 		LilvInstance* instance = store_node->instance();
 		if (!instance) {
-			return SPtr<LV2_Feature>();
+			return nullptr;
 		}
 
 		return std::make_shared<LV2_Feature>(

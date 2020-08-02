@@ -57,7 +57,7 @@ protected:
 		const char* uri() const override { return _uri; }
 
 		SPtr<LV2_Feature> feature(World& world, Node* block) override {
-			return SPtr<LV2_Feature>();
+			return nullptr;
 		}
 
 		const char* _uri;

@@ -44,12 +44,12 @@ struct DataAccess : public ingen::LV2Features::Feature
 	SPtr<LV2_Feature> feature(World& world, Node* node) override {
 		Node* store_node = world.store()->get(node->path());
 		if (!store_node) {
-			return SPtr<LV2_Feature>();
+			return nullptr;
 		}
 
 		LilvInstance* inst = store_node->instance();
 		if (!inst) {
-			return SPtr<LV2_Feature>();
+			return nullptr;
 		}
 
 		const LV2_Descriptor* desc = lilv_instance_get_descriptor(inst);

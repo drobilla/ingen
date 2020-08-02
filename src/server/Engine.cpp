@@ -169,7 +169,7 @@ Engine::~Engine()
 		store->clear();
 	}
 
-	_world.set_store(SPtr<ingen::Store>());
+	_world.set_store(nullptr);
 }
 
 void
@@ -406,7 +406,7 @@ Engine::activate()
 
 		enqueue_event(
 			new events::CreateGraph(
-				*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), properties));
+				*this, nullptr, -1, 0, Raul::Path("/"), properties));
 
 		flush_events(std::chrono::milliseconds(10));
 		if (!_root_graph) {

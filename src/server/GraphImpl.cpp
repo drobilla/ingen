@@ -292,7 +292,7 @@ GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 		_arcs.erase(i);
 		return arc;
 	} else {
-		return SPtr<ArcImpl>();
+		return nullptr;
 	}
 }
 

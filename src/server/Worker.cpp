@@ -96,7 +96,7 @@ Worker::Schedule::feature(World&, Node* n)
 {
 	auto* block = dynamic_cast<LV2Block*>(n);
 	if (!block) {
-		return SPtr<LV2_Feature>();
+		return nullptr;
 	}
 
 	auto* data = static_cast<LV2_Worker_Schedule*>(malloc(sizeof(LV2_Worker_Schedule)));

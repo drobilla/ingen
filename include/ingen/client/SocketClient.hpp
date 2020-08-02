@@ -59,7 +59,7 @@ public:
 		if (!sock->connect(uri)) {
 			world.log().error("Failed to connect <%1%> (%2%)\n",
 			                  sock->uri(), strerror(errno));
-			return SPtr<Interface>();
+			return nullptr;
 		}
 		return SPtr<Interface>(new SocketClient(world, uri, sock, respondee));
 	}

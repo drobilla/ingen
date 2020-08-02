@@ -90,7 +90,7 @@ LV2Block::make_instance(URIs&      uris,
 	if (!inst) {
 		engine.log().error("Failed to instantiate <%1%>\n",
 		                   _lv2_plugin->uri().c_str());
-		return SPtr<Instance>();
+		return nullptr;
 	}
 
 	const LV2_Options_Interface* options_iface = nullptr;
@@ -148,7 +148,7 @@ LV2Block::make_instance(URIs&      uris,
 							"%1% auto-morphed to unknown type %2%\n",
 							port->path().c_str(),
 							type);
-						return SPtr<Instance>();
+						return nullptr;
 					}
 				} else {
 					parent_graph()->engine().log().error(
@@ -178,7 +178,7 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	const SampleRate rate = bufs.engine().sample_rate();
 	assert(!_prepared_instances);
 	_prepared_instances = bufs.maid().make_managed<Instances>(
-		poly, *_instances, SPtr<Instance>());
+		poly, *_instances, nullptr);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		SPtr<Instance> inst = make_instance(bufs.uris(), rate, i, true);
 		if (!inst) {
@@ -436,7 +436,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 	// Actually create plugin instances and port buffers.
 	const SampleRate rate = bufs.engine().sample_rate();
 	_instances = bufs.maid().make_managed<Instances>(
-		_polyphony, SPtr<Instance>());
+		_polyphony, nullptr);
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		_instances->at(i) = make_instance(bufs.uris(), rate, i, false);
 		if (!_instances->at(i)) {

@@ -67,7 +67,7 @@ public:
 		if (must_compile(graph)) {
 			return compile(maid, graph);
 		}
-		return MPtr<CompiledGraph>();
+		return nullptr;
 	}
 
 	/** Return all graphs that require compilation after an atomic bundle. */

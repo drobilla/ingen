@@ -55,7 +55,7 @@ public:
 
 	virtual URI uri() const = 0;
 
-	virtual SPtr<Interface> respondee() const { return SPtr<Interface>(); }
+	virtual SPtr<Interface> respondee() const { return nullptr; }
 
 	virtual void set_respondee(const SPtr<Interface>& respondee) {}
 

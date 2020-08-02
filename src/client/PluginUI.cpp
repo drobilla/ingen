@@ -40,7 +40,7 @@ get_port(PluginUI* ui, uint32_t port_index)
 		ui->world().log().error("%1% UI tried to access invalid port %2%\n",
 		                        ui->block()->plugin()->uri().c_str(),
 		                        port_index);
-		return SPtr<const PortModel>();
+		return nullptr;
 	}
 	return ui->block()->ports()[port_index];
 }
@@ -211,7 +211,7 @@ PluginUI::create(ingen::World&                 world,
 
 	if (!ui) {
 		lilv_node_free(gtk_ui);
-		return SPtr<PluginUI>();
+		return nullptr;
 	}
 
 	// Create the PluginUI, but don't instantiate yet

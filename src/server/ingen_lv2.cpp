@@ -672,8 +672,8 @@ static void
 ingen_cleanup(LV2_Handle instance)
 {
 	auto* me = static_cast<IngenPlugin*>(instance);
-	me->world->set_engine(SPtr<ingen::server::Engine>());
-	me->world->set_interface(SPtr<ingen::Interface>());
+	me->world->set_engine(nullptr);
+	me->world->set_interface(nullptr);
 	if (me->main) {
 		me->main->join();
 		me->main.reset();

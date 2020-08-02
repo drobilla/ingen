@@ -96,7 +96,7 @@ ClientStore::remove_object(const Raul::Path& path)
 	// Find the object, the "top" of the tree to remove
 	const iterator top = find(path);
 	if (top == end()) {
-		return SPtr<ObjectModel>();
+		return nullptr;
 	}
 
 	auto object = std::dynamic_pointer_cast<ObjectModel>(top->second);
@@ -158,7 +158,7 @@ ClientStore::_object(const Raul::Path& path)
 {
 	const iterator i = find(path);
 	if (i == end()) {
-		return SPtr<ObjectModel>();
+		return nullptr;
 	} else {
 		auto model = std::dynamic_pointer_cast<ObjectModel>(i->second);
 		assert(model);

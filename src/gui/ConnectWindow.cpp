@@ -292,7 +292,7 @@ ConnectWindow::disconnect()
 	_attached = false;
 
 	_app->detach();
-	set_connected_to(SPtr<ingen::Interface>());
+	set_connected_to(nullptr);
 
 	if (!_widgets_loaded) {
 		return;

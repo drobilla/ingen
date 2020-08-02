@@ -46,8 +46,9 @@ struct ResizeFeature : public ingen::LV2Features::Feature {
 
 	SPtr<LV2_Feature> feature(World& w, Node* n) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
-		if (!block)
-			return SPtr<LV2_Feature>();
+		if (!block) {
+			return nullptr;
+		}
 		LV2_Resize_Port_Resize* data
 			= (LV2_Resize_Port_Resize*)malloc(sizeof(LV2_Resize_Port_Resize));
 		data->data   = block;

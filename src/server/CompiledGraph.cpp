@@ -82,7 +82,7 @@ CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 		} else {
 			log.error("Feedback compiling %1%\n", e.node->path());
 		}
-		return MPtr<CompiledGraph>();
+		return nullptr;
 	}
 }
 

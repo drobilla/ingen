@@ -305,7 +305,7 @@ World::new_interface(const URI& engine_uri, const SPtr<Interface>& respondee)
 	        _impl->interface_factories.find(std::string(engine_uri.scheme()));
 	if (i == _impl->interface_factories.end()) {
 		log().warn("Unknown URI scheme `%1%'\n", engine_uri.scheme());
-		return SPtr<Interface>();
+		return nullptr;
 	}
 
 	return i->second(*this, engine_uri, respondee);
