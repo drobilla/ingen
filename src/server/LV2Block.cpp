@@ -406,10 +406,10 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		for (int p = 0; preds[p]; ++p) {
 			LilvNodes* values = lilv_port_get_value(plug, id, preds[p]);
 			LILV_FOREACH(nodes, v, values) {
-				const LilvNode* val = lilv_nodes_get(values, v);
-				if (lilv_node_is_uri(val)) {
+				const LilvNode* value = lilv_nodes_get(values, v);
+				if (lilv_node_is_uri(value)) {
 					port->add_property(URI(lilv_node_as_uri(preds[p])),
-					                   forge.make_urid(URI(lilv_node_as_uri(val))));
+					                   forge.make_urid(URI(lilv_node_as_uri(value))));
 				}
 			}
 			lilv_nodes_free(values);
@@ -713,13 +713,13 @@ LV2Block::save_preset(const URI&        uri,
 		lilv_state_save(lworld, lmap, lunmap, state, nullptr,
 		                dirname.c_str(), basename.c_str());
 
-		const URI         uri(lilv_node_as_uri(lilv_state_get_uri(state)));
+		const URI         state_uri(lilv_node_as_uri(lilv_state_get_uri(state)));
 		const std::string label(lilv_state_get_label(state)
 		                        ? lilv_state_get_label(state)
 		                        : basename);
 		lilv_state_free(state);
 
-		Resource preset(_uris, uri);
+		Resource preset(_uris, state_uri);
 		preset.set_property(_uris.rdf_type, _uris.pset_Preset);
 		preset.set_property(_uris.rdfs_label, world.forge().alloc(label));
 		preset.set_property(_uris.lv2_appliesTo,

@@ -588,8 +588,8 @@ GraphBox::event_save_as()
 			filename += ".ingen";
 			basename += ".ingen";
 		} else if (filename.substr(filename.length() - 4) == ".ttl") {
-			const Glib::ustring dir = Glib::path_get_dirname(filename);
-			if (dir.substr(dir.length() - 6) != ".ingen") {
+			const Glib::ustring dirname = Glib::path_get_dirname(filename);
+			if (dirname.substr(dirname.length() - 6) != ".ingen") {
 				error("<b>File does not appear to be in an Ingen bundle.");
 			}
 		} else if (filename.substr(filename.length() - 6) != ".ingen") {

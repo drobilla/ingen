@@ -55,8 +55,8 @@ public:
 
 	Atom make_urid(const ingen::URI& u);
 
-	static Atom alloc(uint32_t size, uint32_t type, const void* val) {
-		return Atom(size, type, val);
+	static Atom alloc(uint32_t s, uint32_t t, const void* v) {
+		return Atom(s, t, v);
 	}
 
 	Atom alloc(const char* v) {

@@ -86,7 +86,7 @@ class World::Impl {
 public:
 	Impl(LV2_URID_Map*   map,
 	     LV2_URID_Unmap* unmap,
-	     LV2_Log_Log*    lv2_log)
+	     LV2_Log_Log*    log_feature)
 		: argc(nullptr)
 		, argv(nullptr)
 		, lv2_features(nullptr)
@@ -95,9 +95,8 @@ public:
 		, uri_map(log, map, unmap)
 		, forge(uri_map)
 		, uris(forge, &uri_map, lilv_world.get())
-		, lv2_log()
 		, conf(forge)
-		, log(lv2_log, uris)
+		, log(log_feature, uris)
 	{
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map.urid_map_feature());
@@ -188,7 +187,6 @@ public:
 	URIMap            uri_map;
 	Forge             forge;
 	URIs              uris;
-	LV2_Log_Log*      lv2_log;
 	Configuration     conf;
 	Log               log;
 	SPtr<Interface>   interface;

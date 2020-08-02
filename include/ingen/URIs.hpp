@@ -39,10 +39,10 @@ class URIMap;
  */
 class INGEN_API URIs : public Raul::Noncopyable {
 public:
-	URIs(ingen::Forge& forge, URIMap* map, LilvWorld* lworld);
+	URIs(ingen::Forge& ingen_forge, URIMap* map, LilvWorld* lworld);
 
 	struct Quark : public URI {
-		Quark(ingen::Forge& forge,
+		Quark(ingen::Forge& ingen_forge,
 		      URIMap*       map,
 		      LilvWorld*    lworld,
 		      const char*   str);

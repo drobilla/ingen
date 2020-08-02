@@ -423,9 +423,8 @@ Delta::pre_process(PreProcessContext& ctx)
 				} else if (value.type() != uris.forge.Bool) {
 					_status = Status::BAD_VALUE_TYPE;
 				} else {
-					op     = SpecialType::POLYPHONIC;
+					op = SpecialType::POLYPHONIC;
 					obj->set_property(key, value, value.context());
-					auto* block = dynamic_cast<BlockImpl*>(obj);
 					if (block) {
 						block->set_polyphonic(value.get<int32_t>());
 					}
@@ -446,9 +445,9 @@ Delta::pre_process(PreProcessContext& ctx)
 				lilv_world_load_bundle(lworld, bundle);
 				const auto new_plugins = _engine.block_factory()->refresh();
 
-				for (const auto& p : new_plugins) {
-					if (p->bundle_uri() == lilv_node_as_string(bundle)) {
-						_update.put_plugin(p.get());
+				for (const auto& plugin : new_plugins) {
+					if (plugin->bundle_uri() == lilv_node_as_string(bundle)) {
+						_update.put_plugin(plugin.get());
 					}
 				}
 				lilv_node_free(bundle);

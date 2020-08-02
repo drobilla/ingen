@@ -118,7 +118,7 @@ UndoStack::pop()
 }
 
 struct BlankIDs {
-	explicit BlankIDs(char c='b') : c(c) {}
+	explicit BlankIDs(char prefix='b') : c(prefix) {}
 
 	SerdNode get() {
 		snprintf(buf, sizeof(buf), "%c%u", c, n++);
@@ -131,12 +131,16 @@ struct BlankIDs {
 };
 
 struct ListContext {
-	explicit ListContext(BlankIDs& ids, unsigned flags, const SerdNode* s, const SerdNode* p)
-		: ids(ids)
-		, s(*s)
-		, p(*p)
-		, flags(flags | SERD_LIST_O_BEGIN)
-	{}
+	explicit ListContext(BlankIDs&       blank_ids,
+	                     unsigned        statement_flags,
+	                     const SerdNode* subject,
+	                     const SerdNode* predicate)
+	    : ids(blank_ids)
+	    , s(*subject)
+	    , p(*predicate)
+	    , flags(statement_flags | SERD_LIST_O_BEGIN)
+	{
+	}
 
 	SerdNode start_node(SerdWriter* writer) {
 		const SerdNode node = ids.get();

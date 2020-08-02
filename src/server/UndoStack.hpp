@@ -41,7 +41,7 @@ namespace server {
 class INGEN_API UndoStack : public AtomSink {
 public:
 	struct Entry {
-		Entry(time_t time=0) : time(time) {}
+		Entry(time_t t=0) : time(t) {}
 
 		Entry(const Entry& copy)
 			: time(copy.time)

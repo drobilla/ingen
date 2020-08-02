@@ -324,6 +324,11 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
+		if (!subject_uri) {
+			_log.warn("Copy message has non-path subject\n");
+			return false;
+		}
+
 		const LV2_Atom* dest = nullptr;
 		lv2_atom_object_get(obj, _uris.patch_destination.urid(), &dest, 0);
 		if (!dest) {
@@ -331,11 +336,6 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		boost::optional<URI> subject_uri(atom_to_uri(subject));
-		if (!subject_uri) {
-			_log.warn("Copy message has non-path subject\n");
-			return false;
-		}
 
 		boost::optional<URI> dest_uri(atom_to_uri(dest));
 		if (!dest_uri) {
@@ -371,20 +371,18 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 
 		_iface(Move{seq, *subject_path, *dest_path});
 	} else if (obj->body.otype == _uris.patch_Response) {
-		const LV2_Atom* seq  = nullptr;
 		const LV2_Atom* body = nullptr;
 		lv2_atom_object_get(obj,
-		                    _uris.patch_sequenceNumber.urid(), &seq,
-		                    _uris.patch_body.urid(),           &body,
+		                    _uris.patch_body.urid(), &body,
 		                    0);
-		if (!seq || seq->type != _uris.atom_Int) {
+		if (!number || number->type != _uris.atom_Int) {
 			_log.warn("Response message has no sequence number\n");
 			return false;
 		} else if (!body || body->type != _uris.atom_Int) {
 			_log.warn("Response message body is not integer\n");
 			return false;
 		}
-		_iface(Response{reinterpret_cast<const LV2_Atom_Int*>(seq)->body,
+		_iface(Response{reinterpret_cast<const LV2_Atom_Int*>(number)->body,
 		                static_cast<ingen::Status>(
 		                    reinterpret_cast<const LV2_Atom_Int*>(body)->body),
 		                subject_uri ? subject_uri->c_str() : ""});

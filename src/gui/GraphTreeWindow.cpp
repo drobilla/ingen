@@ -36,7 +36,6 @@ GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 	, _graphs_treeview(nullptr)
-	, _app(nullptr)
 	, _enable_signal(true)
 {
 	xml->get_widget_derived("graphs_treeview", _graphs_treeview);
@@ -70,7 +69,7 @@ GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
 void
 GraphTreeWindow::init(App& app, ClientStore& store)
 {
-	_app = &app;
+	init_window(app);
 	store.signal_new_object().connect(
 		sigc::mem_fun(this, &GraphTreeWindow::new_object));
 }

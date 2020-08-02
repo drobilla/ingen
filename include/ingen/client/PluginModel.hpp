@@ -65,10 +65,10 @@ public:
 
 	Raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;
-	std::string  port_human_name(uint32_t i) const;
+	std::string  port_human_name(uint32_t index) const;
 
 	using ScalePoints = std::map<float, std::string>;
-	ScalePoints port_scale_points(uint32_t i) const;
+	ScalePoints port_scale_points(uint32_t index) const;
 
 	using Presets = std::map<URI, std::string>;
 	const Presets& presets() const { return _presets; }

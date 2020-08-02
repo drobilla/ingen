@@ -155,8 +155,8 @@ Engine::~Engine()
 	// Delete run contexts
 	_quit_flag = true;
 	_tasks_available.notify_all();
-	for (const auto& ctx : _run_contexts) {
-		ctx->join();
+	for (const auto& thread_ctx : _run_contexts) {
+		thread_ctx->join();
 	}
 
 	const SPtr<Store> store = this->store();

@@ -534,15 +534,14 @@ parse(ingen::World&                        world,
 	using Subjects = std::map< Sord::Node, std::set<Sord::Node> >;
 	Subjects subjects;
 	for (Sord::Iter i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
-		const Sord::Node& subject   = i.get_subject();
 		const Sord::Node& rdf_class = i.get_object();
 
 		assert(rdf_class.is_uri());
-		auto s = subjects.find(subject);
+		const auto s = subjects.find(i.get_subject());
 		if (s == subjects.end()) {
 			std::set<Sord::Node> types;
 			types.insert(rdf_class);
-			subjects.emplace(subject, types);
+			subjects.emplace(i.get_subject(), types);
 		} else {
 			s->second.insert(rdf_class);
 		}

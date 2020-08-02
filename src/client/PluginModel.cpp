@@ -123,22 +123,22 @@ PluginModel::get_property(const URI& key) const
 		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
 		lilv_node_free(lv2_pred);
 		LILV_FOREACH(nodes, i, values) {
-			const LilvNode* val = lilv_nodes_get(values, i);
-			if (lilv_node_is_uri(val)) {
+			const LilvNode* value = lilv_nodes_get(values, i);
+			if (lilv_node_is_uri(value)) {
 				ret = set_property(
-					key, _uris.forge.make_urid(URI(lilv_node_as_uri(val))));
+					key, _uris.forge.make_urid(URI(lilv_node_as_uri(value))));
 				break;
-			} else if (lilv_node_is_string(val)) {
+			} else if (lilv_node_is_string(value)) {
 				ret = set_property(
-					key, _uris.forge.alloc(lilv_node_as_string(val)));
+					key, _uris.forge.alloc(lilv_node_as_string(value)));
 				break;
-			} else if (lilv_node_is_float(val)) {
+			} else if (lilv_node_is_float(value)) {
 				ret = set_property(
-					key, _uris.forge.make(lilv_node_as_float(val)));
+					key, _uris.forge.make(lilv_node_as_float(value)));
 				break;
-			} else if (lilv_node_is_int(val)) {
+			} else if (lilv_node_is_int(value)) {
 				ret = set_property(
-					key, _uris.forge.make(lilv_node_as_int(val)));
+					key, _uris.forge.make(lilv_node_as_int(value)));
 				break;
 			}
 		}
@@ -199,10 +199,10 @@ PluginModel::human_name() const
 }
 
 string
-PluginModel::port_human_name(uint32_t i) const
+PluginModel::port_human_name(const uint32_t index) const
 {
 	if (_lilv_plugin) {
-		const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, i);
+		const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
 		LilvNode*       name = lilv_port_get_name(_lilv_plugin, port);
 		string          ret(lilv_node_as_string(name));
 		lilv_node_free(name);
@@ -212,12 +212,12 @@ PluginModel::port_human_name(uint32_t i) const
 }
 
 PluginModel::ScalePoints
-PluginModel::port_scale_points(uint32_t i) const
+PluginModel::port_scale_points(const uint32_t index) const
 {
 	// TODO: Non-float scale points
 	ScalePoints points;
 	if (_lilv_plugin) {
-		const LilvPort*  port = lilv_plugin_get_port_by_index(_lilv_plugin, i);
+		const LilvPort*  port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
 		LilvScalePoints* sp   = lilv_port_get_scale_points(_lilv_plugin, port);
 		LILV_FOREACH(scale_points, i, sp) {
 			const LilvScalePoint* p = lilv_scale_points_get(sp, i);

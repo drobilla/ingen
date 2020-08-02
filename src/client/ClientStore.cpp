@@ -313,10 +313,10 @@ ClientStore::operator()(const Put& msg)
 		SPtr<PluginModel> plug;
 		if (p->second.is_valid() && (p->second.type() == _uris.forge.URI ||
 		                             p->second.type() == _uris.forge.URID)) {
-			const URI uri(_uris.forge.str(p->second, false));
-			if (!(plug = _plugin(uri))) {
+			const URI plugin_uri(_uris.forge.str(p->second, false));
+			if (!(plug = _plugin(plugin_uri))) {
 				plug = std::make_shared<PluginModel>(uris(),
-				                                     uri,
+				                                     plugin_uri,
 				                                     Atom(),
 				                                     Properties());
 				add_plugin(plug);

@@ -73,11 +73,11 @@ public:
 
 	/** Set the buffer type and optional value type for this buffer.
 	 *
-	 * @param get Called to get auxiliary buffers if necessary.
+	 * @param get_func Called to get auxiliary buffers if necessary.
 	 * @param type Type of buffer.
 	 * @param value_type Type of values in buffer if applicable (for sequences).
 	 */
-	void set_type(GetFn get, LV2_URID type, LV2_URID value_type);
+	void set_type(GetFn get_func, LV2_URID type, LV2_URID value_type);
 
 	inline bool is_audio() const {
 		return _type == _factory.uris().atom_Sound;

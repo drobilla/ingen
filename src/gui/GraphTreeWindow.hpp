@@ -84,7 +84,6 @@ protected:
 		Gtk::TreeModelColumn<SPtr<client::GraphModel> > graph_model_col;
 	};
 
-	App*                             _app;
 	GraphTreeModelColumns            _graph_tree_columns;
 	Glib::RefPtr<Gtk::TreeStore>     _graph_treestore;
 	Glib::RefPtr<Gtk::TreeSelection> _graph_tree_selection;
@@ -115,8 +114,7 @@ public:
 
 private:
 	GraphTreeWindow* _window;
-
-}; // struct GraphTreeView
+};
 
 } // namespace gui
 } // namespace ingen

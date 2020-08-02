@@ -100,12 +100,12 @@ Buffer::recycle()
 }
 
 void
-Buffer::set_type(GetFn get, LV2_URID type, LV2_URID value_type)
+Buffer::set_type(GetFn get_func, LV2_URID type, LV2_URID value_type)
 {
 	_type       = type;
 	_value_type = value_type;
 	if (type == _factory.uris().atom_Sequence && value_type) {
-		_value_buffer = (_factory.*get)(value_type, 0, 0);
+		_value_buffer = (_factory.*get_func)(value_type, 0, 0);
 	}
 }
 

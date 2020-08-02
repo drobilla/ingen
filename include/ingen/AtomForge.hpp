@@ -73,7 +73,7 @@ private:
 	using SratomPtr = UPtr<Sratom, SratomDeleter>;
 
 	/// Append some data and return a reference to its start
-	intptr_t append(const void* buf, uint32_t len) {
+	intptr_t append(const void* data, uint32_t len) {
 		// Record offset of the start of this write (+1 to avoid null)
 		const intptr_t ref = _size + 1;
 
@@ -85,7 +85,7 @@ private:
 		}
 
 		// Append new data
-		memcpy(reinterpret_cast<uint8_t*>(_buf.get()) + _size, buf, len);
+		memcpy(reinterpret_cast<uint8_t*>(_buf.get()) + _size, data, len);
 		_size += len;
 		return ref;
 	}
@@ -103,13 +103,13 @@ private:
 	}
 
 	static LV2_Atom_Forge_Ref
-	c_append(void* handle, const void* buf, uint32_t len) {
-		return static_cast<AtomForge*>(handle)->append(buf, len);
+	c_append(void* self, const void* data, uint32_t len) {
+		return static_cast<AtomForge*>(self)->append(data, len);
 	}
 
 	static LV2_Atom*
-	c_deref(void* handle, LV2_Atom_Forge_Ref ref) {
-		return static_cast<AtomForge*>(handle)->deref(ref);
+	c_deref(void* self, LV2_Atom_Forge_Ref ref) {
+		return static_cast<AtomForge*>(self)->deref(ref);
 	}
 
 	size_t    _size;     ///< Current atom size
