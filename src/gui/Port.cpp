@@ -352,7 +352,7 @@ peak_color(float peak)
 	static const uint32_t peak_min = 0xFF561FC0;
 	static const uint32_t peak_max = 0xFF0A38C0;
 
-	if (peak < 1.0) {
+	if (peak < 1.0f) {
 		return rgba_interpolate(min, max, peak);
 	} else {
 		return rgba_interpolate(peak_min, peak_max, fminf(peak, 2.0f) - 1.0f);

@@ -135,9 +135,9 @@ GraphPortModule::property_changed(const URI& key, const Atom& value)
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {
 		if (key == uris.ingen_canvasX) {
-			move_to(value.get<float>(), get_y());
+			move_to(static_cast<double>(value.get<float>()), get_y());
 		} else if (key == uris.ingen_canvasY) {
-			move_to(get_x(), value.get<float>());
+			move_to(get_x(), static_cast<double>(value.get<float>()));
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name &&

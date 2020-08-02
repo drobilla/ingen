@@ -175,9 +175,12 @@ NodeMenu::on_menu_randomize()
 	const SPtr<const BlockModel> bm = block();
 	for (const auto& p : bm->ports()) {
 		if (p->is_input() && _app->can_control(p.get())) {
-			float min = 0.0f, max = 1.0f;
+			float min = 0.0f;
+			float max = 1.0f;
 			bm->port_value_range(p, min, max, _app->sample_rate());
-			const float val = g_random_double_range(0.0, 1.0) * (max - min) + min;
+
+			const float r = static_cast<float>(g_random_double_range(0.0, 1.0));
+			const float val = r * (max - min) + min;
 			_app->set_property(p->uri(),
 			                   _app->uris().ingen_value,
 			                   _app->forge().make(val));

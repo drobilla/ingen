@@ -157,9 +157,9 @@ ControllerNode::control(RunContext& ctx, uint8_t control_num, uint8_t val, Frame
 	Sample scaled_value = 0.0f;
 	if (log_port_val > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
-		Sample log_offset = 0;
+		Sample log_offset = 0.0f;
 		if (min_port_val < 0) {
-			log_offset = fabs(min_port_val);
+			log_offset = fabsf(min_port_val);
 		}
 		const Sample min = logf(min_port_val + 1 + log_offset);
 		const Sample max = logf(max_port_val + 1 + log_offset);

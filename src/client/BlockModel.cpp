@@ -223,7 +223,7 @@ BlockModel::port_value_range(const SPtr<const PortModel>& port,
 	}
 
 	if (max <= min) {
-		max = min + 1.0;
+		max = min + 1.0f;
 	}
 
 	if (port->port_property(_uris.lv2_sampleRate)) {

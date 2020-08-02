@@ -159,7 +159,7 @@ protected:
 	bool                   _is_activated;
 	jack_position_t        _position;
 	jack_transport_state_t _transport_state;
-	float                  _old_bpm;
+	double                 _old_bpm;
 	jack_nframes_t         _old_frame;
 	bool                   _old_rolling;
 };

@@ -305,10 +305,10 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 4));
 		widget->property_numeric() = true;
 		widget->set_snap_to_ticks(false);
-		widget->set_range(-FLT_MAX, FLT_MAX);
+		widget->set_range(-DBL_MAX, DBL_MAX);
 		widget->set_increments(0.1, 1.0);
 		if (value.is_valid()) {
-			widget->set_value(value.get<float>());
+			widget->set_value(static_cast<double>(value.get<float>()));
 		}
 		widget->signal_value_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));

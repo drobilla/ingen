@@ -71,7 +71,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _is_activated(false)
 	, _position()
 	, _transport_state()
-	, _old_bpm(120.0f)
+	, _old_bpm(120.0)
 	, _old_frame(0)
 	, _old_rolling(false)
 {
