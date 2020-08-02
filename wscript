@@ -117,15 +117,6 @@ def configure(conf):
         })
 
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
-    conf.check_cxx(msg='Checking for thread_local keyword',
-                   mandatory=False,
-                   fragment='thread_local int i = 0; int main() {}',
-                   define_name='INGEN_HAVE_THREAD_LOCAL')
-    if not conf.is_defined('INGEN_HAVE_THREAD_LOCAL'):
-        conf.check_cxx(msg='Checking for __thread keyword',
-                       mandatory=False,
-                       fragment='__thread int i = 0; int main() {}',
-                       define_name='INGEN_HAVE_THREAD_BUILTIN')
 
     conf.check_pkg('lv2 >= 1.16.0', uselib_store='LV2')
     conf.check_pkg('lilv-0 >= 0.21.5', uselib_store='LILV')

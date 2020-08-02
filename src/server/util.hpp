@@ -35,14 +35,6 @@
 #    define REALTIME
 #endif
 
-#if defined(INGEN_HAVE_THREAD_LOCAL)
-#    define INGEN_THREAD_LOCAL thread_local
-#elif defined(INGEN_HAVE_THREAD_BUILTIN)
-#    define INGEN_THREAD_LOCAL __thread
-#else
-#    define INGEN_THREAD_LOCAL
-#endif
-
 namespace ingen {
 namespace server {
 

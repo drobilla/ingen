@@ -65,8 +65,8 @@
 namespace ingen {
 namespace server {
 
-INGEN_THREAD_LOCAL unsigned ThreadManager::flags(0);
-bool               ThreadManager::single_threaded(true);
+thread_local unsigned ThreadManager::flags(0);
+bool                  ThreadManager::single_threaded(true);
 
 Engine::Engine(ingen::World& world)
 	: _world(world)
