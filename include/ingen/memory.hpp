@@ -37,9 +37,6 @@ template <class T>
 using SPtr = std::shared_ptr<T>;
 
 template <class T>
-using WPtr = std::weak_ptr<T>;
-
-template <class T>
 using MPtr = Raul::managed_ptr<T>;
 
 template <typename T, typename... Args>

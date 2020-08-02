@@ -25,6 +25,7 @@
 
 #include <cstddef>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -47,7 +48,7 @@ public:
 	void clear();
 	void add_plugin(SPtr<client::PluginModel> p);
 
-	sigc::signal< void, WPtr<client::PluginModel> > signal_load_plugin;
+	sigc::signal< void, std::weak_ptr<client::PluginModel> > signal_load_plugin;
 
 private:
 	struct MenuRecord {
@@ -68,7 +69,7 @@ private:
 
 	void add_plugin_to_menu(MenuRecord& menu, SPtr<client::PluginModel> p);
 
-	void load_plugin(WPtr<client::PluginModel> weak_plugin);
+	void load_plugin(std::weak_ptr<client::PluginModel> weak_plugin);
 
 	ingen::World& _world;
 	MenuRecord    _classless_menu;

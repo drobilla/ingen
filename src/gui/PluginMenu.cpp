@@ -18,6 +18,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/client/PluginModel.hpp"
 
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -169,7 +170,7 @@ PluginMenu::add_plugin_to_menu(MenuRecord& menu, SPtr<client::PluginModel> p)
 }
 
 void
-PluginMenu::load_plugin(WPtr<client::PluginModel> weak_plugin)
+PluginMenu::load_plugin(std::weak_ptr<client::PluginModel> weak_plugin)
 {
 	signal_load_plugin.emit(weak_plugin);
 }

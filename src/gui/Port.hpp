@@ -23,6 +23,7 @@
 #include <gtkmm/menu.h>
 
 #include <cassert>
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -87,10 +88,10 @@ private:
 	void port_properties_changed();
 	void set_type_tag();
 
-	App&                          _app;
-	WPtr<const client::PortModel> _port_model;
-	bool                          _entered : 1;
-	bool                          _flipped : 1;
+	App&                                   _app;
+	std::weak_ptr<const client::PortModel> _port_model;
+	bool                                   _entered : 1;
+	bool                                   _flipped : 1;
 };
 
 } // namespace gui
