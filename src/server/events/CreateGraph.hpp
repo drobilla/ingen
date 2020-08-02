@@ -21,7 +21,7 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <cstdint>
 #include <list>
@@ -63,7 +63,7 @@ private:
 	ClientUpdate                      _update;
 	GraphImpl*                        _graph;
 	GraphImpl*                        _parent;
-	MPtr<CompiledGraph>               _compiled_graph;
+	Raul::managed_ptr<CompiledGraph>  _compiled_graph;
 	std::list<std::unique_ptr<Event>> _child_events;
 };
 

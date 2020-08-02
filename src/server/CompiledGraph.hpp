@@ -19,7 +19,6 @@
 
 #include "Task.hpp"
 
-#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 
@@ -45,7 +44,7 @@ class CompiledGraph : public Raul::Maid::Disposable
                     , public Raul::Noncopyable
 {
 public:
-	static MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph);
+	static Raul::managed_ptr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph);
 
 	void run(RunContext& ctx);
 
@@ -74,7 +73,8 @@ private:
 	std::unique_ptr<Task> _master;
 };
 
-inline MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph)
+inline Raul::managed_ptr<CompiledGraph>
+compile(Raul::Maid& maid, GraphImpl& graph)
 {
 	return CompiledGraph::compile(maid, graph);
 }

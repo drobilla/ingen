@@ -21,8 +21,8 @@
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
+#include "raul/Maid.hpp"
 
 #include <boost/optional/optional.hpp>
 
@@ -97,21 +97,21 @@ private:
 
 	void init();
 
-	std::unique_ptr<Event>    _create_event;
-	SetEvents                 _set_events;
-	std::vector<SpecialType>  _types;
-	std::vector<SpecialType>  _remove_types;
-	URI                       _subject;
-	Properties                _properties;
-	Properties                _remove;
-	ClientUpdate              _update;
-	ingen::Resource*          _object;
-	GraphImpl*                _graph;
-	MPtr<CompiledGraph>       _compiled_graph;
-	ControlBindings::Binding* _binding;
-	LilvState*                _state;
-	Resource::Graph           _context;
-	Type                      _type;
+	std::unique_ptr<Event>           _create_event;
+	SetEvents                        _set_events;
+	std::vector<SpecialType>         _types;
+	std::vector<SpecialType>         _remove_types;
+	URI                              _subject;
+	Properties                       _properties;
+	Properties                       _remove;
+	ClientUpdate                     _update;
+	ingen::Resource*                 _object;
+	GraphImpl*                       _graph;
+	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	ControlBindings::Binding*        _binding;
+	LilvState*                       _state;
+	Resource::Graph                  _context;
+	Type                             _type;
 
 	Properties _added;
 	Properties _removed;

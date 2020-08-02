@@ -20,7 +20,7 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <memory>
 
@@ -54,11 +54,11 @@ private:
 	bool engine_to_filesystem(PreProcessContext& ctx);
 	bool filesystem_to_engine(PreProcessContext& ctx);
 
-	const ingen::Copy          _msg;
-	std::shared_ptr<BlockImpl> _old_block;
-	GraphImpl*                 _parent;
-	BlockImpl*                 _block;
-	MPtr<CompiledGraph>        _compiled_graph;
+	const ingen::Copy                _msg;
+	std::shared_ptr<BlockImpl>       _old_block;
+	GraphImpl*                       _parent;
+	BlockImpl*                       _block;
+	Raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace events

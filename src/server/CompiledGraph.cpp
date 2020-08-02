@@ -25,7 +25,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -70,7 +70,7 @@ CompiledGraph::CompiledGraph(GraphImpl* graph)
 	compile_graph(graph);
 }
 
-MPtr<CompiledGraph>
+Raul::managed_ptr<CompiledGraph>
 CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 {
 	try {

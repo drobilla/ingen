@@ -20,7 +20,7 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -91,8 +91,8 @@ private:
 
 	void free_voice(RunContext& ctx, uint32_t voice, FrameTime time);
 
-	MPtr<Voices> _voices;
-	MPtr<Voices> _prepared_voices;
+	Raul::managed_ptr<Voices> _voices;
+	Raul::managed_ptr<Voices> _prepared_voices;
 
 	Key  _keys[128];
 	bool _sustain;  ///< Whether or not hold pedal is depressed

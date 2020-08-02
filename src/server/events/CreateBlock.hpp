@@ -21,7 +21,7 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -54,12 +54,12 @@ public:
 	void undo(Interface& target) override;
 
 private:
-	Raul::Path          _path;
-	Properties&         _properties;
-	ClientUpdate        _update;
-	GraphImpl*          _graph;
-	BlockImpl*          _block;
-	MPtr<CompiledGraph> _compiled_graph;
+	Raul::Path                       _path;
+	Properties&                      _properties;
+	ClientUpdate                     _update;
+	GraphImpl*                       _graph;
+	BlockImpl*                       _block;
+	Raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace events

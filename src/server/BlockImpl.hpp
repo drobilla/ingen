@@ -26,10 +26,10 @@
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 
 #include <boost/intrusive/slist_hook.hpp>
 #include <boost/optional/optional.hpp>
@@ -202,15 +202,15 @@ public:
 protected:
 	PortImpl* nth_port_by_type(uint32_t n, bool input, PortType type);
 
-	PluginImpl*          _plugin;
-	MPtr<Ports>          _ports; ///< Access in audio thread only
-	uint32_t             _polyphony;
-	std::set<BlockImpl*> _providers; ///< Blocks connected to this one's input ports
-	std::set<BlockImpl*> _dependants; ///< Blocks this one's output ports are connected to
-	Mark                 _mark; ///< Mark for graph compilation algorithm
-	bool                 _polyphonic;
-	bool                 _activated;
-	bool                 _enabled;
+	PluginImpl*              _plugin;
+	Raul::managed_ptr<Ports> _ports; ///< Access in audio thread only
+	uint32_t                 _polyphony;
+	std::set<BlockImpl*>     _providers; ///< Blocks connected to this one's input ports
+	std::set<BlockImpl*>     _dependants; ///< Blocks this one's output ports are connected to
+	Mark                     _mark; ///< Mark for graph compilation algorithm
+	bool                     _polyphonic;
+	bool                     _activated;
+	bool                     _enabled;
 };
 
 } // namespace server

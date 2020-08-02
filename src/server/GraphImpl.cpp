@@ -29,7 +29,6 @@
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 
 #include <cassert>
@@ -306,7 +305,7 @@ GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 }
 
 void
-GraphImpl::set_compiled_graph(MPtr<CompiledGraph>&& cg)
+GraphImpl::set_compiled_graph(Raul::managed_ptr<CompiledGraph>&& cg)
 {
 	if (_compiled_graph && _compiled_graph != cg) {
 		_engine.reset_load();
@@ -359,13 +358,13 @@ GraphImpl::clear_ports()
 	_outputs.clear();
 }
 
-MPtr<BlockImpl::Ports>
+Raul::managed_ptr<BlockImpl::Ports>
 GraphImpl::build_ports_array(Raul::Maid& maid)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	const size_t n = _inputs.size() + _outputs.size();
-	MPtr<Ports> result = maid.make_managed<Ports>(n);
+	const size_t             n      = _inputs.size() + _outputs.size();
+	Raul::managed_ptr<Ports> result = maid.make_managed<Ports>(n);
 
 	std::map<size_t, DuplexPort*> ports;
 	for (auto& p : _inputs) {

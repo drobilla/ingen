@@ -23,8 +23,8 @@
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
-#include "ingen/memory.hpp"
 #include "lv2/urid/urid.h"
+#include "raul/Maid.hpp"
 
 #include <boost/intrusive/slist_hook.hpp>
 
@@ -89,11 +89,11 @@ public:
 
 	bool apply_poly(RunContext& ctx, uint32_t poly) override;
 
-	bool get_buffers(BufferFactory&      bufs,
-	                 PortImpl::GetFn     get,
-	                 const MPtr<Voices>& voices,
-	                 uint32_t            poly,
-	                 size_t              num_in_arcs) const override;
+	bool get_buffers(BufferFactory&                   bufs,
+	                 PortImpl::GetFn                  get,
+	                 const Raul::managed_ptr<Voices>& voices,
+	                 uint32_t                         poly,
+	                 size_t num_in_arcs) const override;
 
 	void set_is_driver_port(BufferFactory& bufs) override;
 

@@ -19,7 +19,7 @@
 
 #include "Event.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <map>
 #include <memory>
@@ -63,7 +63,8 @@ public:
 private:
 	enum class Type { BUNDLE_BEGIN, BUNDLE_END };
 
-	using CompiledGraphs = std::map<GraphImpl*, MPtr<CompiledGraph>>;
+	using CompiledGraphs =
+	    std::map<GraphImpl*, Raul::managed_ptr<CompiledGraph>>;
 
 	CompiledGraphs _compiled_graphs;
 	Type           _type;

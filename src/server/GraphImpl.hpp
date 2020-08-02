@@ -22,6 +22,7 @@
 #include "ThreadManager.hpp"
 
 #include "lv2/urid/urid.h"
+#include "raul/Maid.hpp"
 
 #include <cassert>
 #include <cstdint>
@@ -167,13 +168,13 @@ public:
 	bool has_arc(const PortImpl* tail, const PortImpl* dst_port) const;
 
 	/** Set a new compiled graph to run, and return the old one. */
-	void set_compiled_graph(MPtr<CompiledGraph>&& cg);
+	void set_compiled_graph(Raul::managed_ptr<CompiledGraph>&& cg);
 
-	const MPtr<Ports>& external_ports() { return _ports; }
+	const Raul::managed_ptr<Ports>& external_ports() { return _ports; }
 
-	void set_external_ports(MPtr<Ports>&& pa) { _ports = std::move(pa); }
+	void set_external_ports(Raul::managed_ptr<Ports>&& pa) { _ports = std::move(pa); }
 
-	MPtr<Ports> build_ports_array(Raul::Maid& maid);
+	Raul::managed_ptr<Ports> build_ports_array(Raul::Maid& maid);
 
 	/** Whether to run this graph's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
@@ -186,14 +187,14 @@ public:
 	Engine& engine() { return _engine; }
 
 private:
-	Engine&             _engine;
-	uint32_t            _poly_pre;        ///< Pre-process thread only
-	uint32_t            _poly_process;    ///< Process thread only
-	MPtr<CompiledGraph> _compiled_graph;  ///< Process thread only
-	PortList            _inputs;          ///< Pre-process thread only
-	PortList            _outputs;         ///< Pre-process thread only
-	Blocks              _blocks;          ///< Pre-process thread only
-	bool                _process;         ///< True iff graph is enabled
+	Engine&                          _engine;
+	uint32_t                         _poly_pre;     ///< Pre-process thread only
+	uint32_t                         _poly_process; ///< Process thread only
+	Raul::managed_ptr<CompiledGraph> _compiled_graph; ///< Process thread only
+	PortList                         _inputs;  ///< Pre-process thread only
+	PortList                         _outputs; ///< Pre-process thread only
+	Blocks                           _blocks;  ///< Pre-process thread only
+	bool                             _process; ///< True iff graph is enabled
 };
 
 } // namespace server

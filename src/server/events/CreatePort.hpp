@@ -21,8 +21,8 @@
 #include "Event.hpp"
 #include "PortType.hpp"
 
-#include "ingen/memory.hpp"
 #include "lv2/urid/urid.h"
+#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <boost/optional/optional.hpp>
@@ -64,16 +64,16 @@ private:
 		OUTPUT
 	};
 
-	Raul::Path             _path;
-	PortType               _port_type;
-	LV2_URID               _buf_type;
-	GraphImpl*             _graph;
-	DuplexPort*            _graph_port;
-	MPtr<BlockImpl::Ports> _ports_array; ///< New external port array for Graph
-	EnginePort*            _engine_port; ///< Driver port if on the root
-	Properties             _properties;
-	Properties             _update;
-	boost::optional<Flow>  _flow;
+	Raul::Path                          _path;
+	PortType                            _port_type;
+	LV2_URID                            _buf_type;
+	GraphImpl*                          _graph;
+	DuplexPort*                         _graph_port;
+	Raul::managed_ptr<BlockImpl::Ports> _ports_array; ///< New external port array for Graph
+	EnginePort*                         _engine_port; ///< Driver port if on the root
+	Properties                          _properties;
+	Properties                          _update;
+	boost::optional<Flow>               _flow;
 };
 
 } // namespace events

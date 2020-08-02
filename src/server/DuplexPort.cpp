@@ -29,8 +29,8 @@
 #include "ingen/Node.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 
 #include <algorithm>
 #include <map>
@@ -144,11 +144,11 @@ DuplexPort::on_property(const URI& uri, const Atom& value)
 }
 
 bool
-DuplexPort::get_buffers(BufferFactory&      bufs,
-                        PortImpl::GetFn     get,
-                        const MPtr<Voices>& voices,
-                        uint32_t            poly,
-                        size_t              num_in_arcs) const
+DuplexPort::get_buffers(BufferFactory&                   bufs,
+                        PortImpl::GetFn                  get,
+                        const Raul::managed_ptr<Voices>& voices,
+                        uint32_t                         poly,
+                        size_t                           num_in_arcs) const
 {
 	if (!_is_driver_port && is_output()) {
 		return InputPort::get_buffers(bufs, get, voices, poly, num_in_arcs);

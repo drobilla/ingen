@@ -29,8 +29,8 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 
 #include <cassert>
 #include <cstdlib>
@@ -69,11 +69,11 @@ InputPort::apply_poly(RunContext& ctx, const uint32_t poly)
 }
 
 bool
-InputPort::get_buffers(BufferFactory&      bufs,
-                       PortImpl::GetFn     get,
-                       const MPtr<Voices>& voices,
-                       uint32_t            poly,
-                       size_t              num_in_arcs) const
+InputPort::get_buffers(BufferFactory&                   bufs,
+                       PortImpl::GetFn                  get,
+                       const Raul::managed_ptr<Voices>& voices,
+                       uint32_t                         poly,
+                       size_t                           num_in_arcs) const
 {
 	if (is_a(PortType::ATOM) && !_value.is_valid()) {
 		poly = 1;
@@ -101,9 +101,9 @@ InputPort::get_buffers(BufferFactory&      bufs,
 }
 
 bool
-InputPort::pre_get_buffers(BufferFactory& bufs,
-                           MPtr<Voices>&  voices,
-                           uint32_t       poly) const
+InputPort::pre_get_buffers(BufferFactory&             bufs,
+                           Raul::managed_ptr<Voices>& voices,
+                           uint32_t                   poly) const
 {
 	return get_buffers(bufs, &BufferFactory::get_buffer, voices, poly, _num_arcs);
 }

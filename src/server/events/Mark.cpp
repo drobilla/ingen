@@ -20,8 +20,6 @@
 #include "PreProcessContext.hpp"
 #include "UndoStack.hpp"
 
-#include "ingen/memory.hpp"
-
 #include <memory>
 #include <utility>
 
@@ -79,7 +77,7 @@ Mark::pre_process(PreProcessContext& ctx)
 		ctx.set_in_bundle(false);
 		if (!ctx.dirty_graphs().empty()) {
 			for (GraphImpl* g : ctx.dirty_graphs()) {
-				MPtr<CompiledGraph> cg = compile(*_engine.maid(), *g);
+				auto cg = compile(*_engine.maid(), *g);
 				if (cg) {
 					_compiled_graphs.emplace(g, std::move(cg));
 				}

@@ -23,6 +23,7 @@
 #include "types.hpp"
 
 #include "lv2/urid/urid.h"
+#include "raul/Maid.hpp"
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
@@ -97,9 +98,9 @@ public:
 	 * pre-process thread to allocate buffers for application of a
 	 * connection/disconnection/etc in the next process cycle.
 	 */
-	bool pre_get_buffers(BufferFactory& bufs,
-	                     MPtr<Voices>&  voices,
-	                     uint32_t       poly) const;
+	bool pre_get_buffers(BufferFactory&             bufs,
+	                     Raul::managed_ptr<Voices>& voices,
+	                     uint32_t                   poly) const;
 
 	bool
 	setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
@@ -123,11 +124,11 @@ public:
 	bool direct_connect() const;
 
 protected:
-	bool get_buffers(BufferFactory&      bufs,
-	                 PortImpl::GetFn     get,
-	                 const MPtr<Voices>& voices,
-	                 uint32_t            poly,
-	                 size_t              num_in_arcs) const override;
+	bool get_buffers(BufferFactory&                   bufs,
+	                 PortImpl::GetFn                  get,
+	                 const Raul::managed_ptr<Voices>& voices,
+	                 uint32_t                         poly,
+	                 size_t num_in_arcs) const override;
 
 	size_t _num_arcs;  ///< Pre-process thread
 	Arcs   _arcs;      ///< Audio thread

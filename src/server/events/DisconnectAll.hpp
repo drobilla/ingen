@@ -21,7 +21,7 @@
 #include "Disconnect.hpp"
 #include "Event.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <list>
@@ -64,13 +64,13 @@ public:
 private:
 	using Impls = std::list<Disconnect::Impl*>;
 
-	const ingen::DisconnectAll _msg;
-	GraphImpl*                 _parent;
-	BlockImpl*                 _block;
-	PortImpl*                  _port;
-	Impls                      _impls;
-	MPtr<CompiledGraph>        _compiled_graph;
-	bool                       _deleting;
+	const ingen::DisconnectAll       _msg;
+	GraphImpl*                       _parent;
+	BlockImpl*                       _block;
+	PortImpl*                        _port;
+	Impls                            _impls;
+	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	bool                             _deleting;
 };
 
 } // namespace events

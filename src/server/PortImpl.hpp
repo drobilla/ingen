@@ -24,8 +24,8 @@
 #include "types.hpp"
 
 #include "ingen/Atom.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 
 #include <atomic>
 #include <cstdint>
@@ -104,7 +104,7 @@ public:
 	BlockImpl* parent_block() const { return reinterpret_cast<BlockImpl*>(_parent); }
 
 	/** Set the the voices (buffers) for this port in the audio thread. */
-	void set_voices(RunContext& ctx, MPtr<Voices>&& voices);
+	void set_voices(RunContext& ctx, Raul::managed_ptr<Voices>&& voices);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -277,37 +277,37 @@ protected:
 	 *
 	 * @return true iff buffers are locally owned by the port
 	 */
-	virtual bool get_buffers(BufferFactory&      bufs,
-	                         GetFn               get,
-	                         const MPtr<Voices>& voices,
-	                         uint32_t            poly,
-	                         size_t              num_in_arcs) const;
+	virtual bool get_buffers(BufferFactory&                   bufs,
+	                         GetFn                            get,
+	                         const Raul::managed_ptr<Voices>& voices,
+	                         uint32_t                         poly,
+	                         size_t num_in_arcs) const;
 
- 	BufferFactory&   _bufs;
-	uint32_t         _index;
-	uint32_t         _poly;
-	uint32_t         _buffer_size;
-	uint32_t         _frames_since_monitor;
-	float            _monitor_value;
-	float            _peak;
-	PortType         _type;
-	LV2_URID         _buffer_type;
-	Atom             _value;
-	Atom             _min;
-	Atom             _max;
-	MPtr<Voices>     _voices;
-	MPtr<Voices>     _prepared_voices;
-	BufferRef        _user_buffer;
-	std::atomic_flag _connected_flag;
-	bool             _monitored;
-	bool             _force_monitor_update;
-	bool             _is_morph;
-	bool             _is_auto_morph;
-	bool             _is_logarithmic;
-	bool             _is_sample_rate;
-	bool             _is_toggled;
-	bool             _is_driver_port;
-	bool             _is_output;
+	BufferFactory&            _bufs;
+	uint32_t                  _index;
+	uint32_t                  _poly;
+	uint32_t                  _buffer_size;
+	uint32_t                  _frames_since_monitor;
+	float                     _monitor_value;
+	float                     _peak;
+	PortType                  _type;
+	LV2_URID                  _buffer_type;
+	Atom                      _value;
+	Atom                      _min;
+	Atom                      _max;
+	Raul::managed_ptr<Voices> _voices;
+	Raul::managed_ptr<Voices> _prepared_voices;
+	BufferRef                 _user_buffer;
+	std::atomic_flag          _connected_flag;
+	bool                      _monitored;
+	bool                      _force_monitor_update;
+	bool                      _is_morph;
+	bool                      _is_auto_morph;
+	bool                      _is_logarithmic;
+	bool                      _is_sample_rate;
+	bool                      _is_toggled;
+	bool                      _is_driver_port;
+	bool                      _is_output;
 };
 
 } // namespace server

@@ -22,7 +22,7 @@
 #include "PortImpl.hpp"
 #include "types.hpp"
 
-#include "ingen/memory.hpp"
+#include "raul/Maid.hpp"
 
 #include <memory>
 
@@ -53,16 +53,16 @@ public:
 	void undo(Interface& target) override;
 
 private:
-	const ingen::Connect     _msg;
-	GraphImpl*               _graph;
-	InputPort*               _head;
-	MPtr<CompiledGraph>      _compiled_graph;
-	std::shared_ptr<ArcImpl> _arc;
-	MPtr<PortImpl::Voices>   _voices;
-	Properties               _tail_remove;
-	Properties               _tail_add;
-	Properties               _head_remove;
-	Properties               _head_add;
+	const ingen::Connect                _msg;
+	GraphImpl*                          _graph;
+	InputPort*                          _head;
+	Raul::managed_ptr<CompiledGraph>    _compiled_graph;
+	std::shared_ptr<ArcImpl>            _arc;
+	Raul::managed_ptr<PortImpl::Voices> _voices;
+	Properties                          _tail_remove;
+	Properties                          _tail_add;
+	Properties                          _head_remove;
+	Properties                          _head_add;
 };
 
 } // namespace events

@@ -26,7 +26,6 @@
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "lv2/atom/util.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
@@ -113,10 +112,10 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 }
 
 bool
-PortImpl::get_buffers(BufferFactory&      bufs,
-                      GetFn               get,
-                      const MPtr<Voices>& voices,
-                      uint32_t            poly,
+PortImpl::get_buffers(BufferFactory&                   bufs,
+                      GetFn                            get,
+                      const Raul::managed_ptr<Voices>& voices,
+                      uint32_t                         poly,
                       size_t) const
 {
 	for (uint32_t v = 0; v < poly; ++v) {
@@ -213,7 +212,7 @@ PortImpl::deactivate()
 }
 
 void
-PortImpl::set_voices(RunContext&, MPtr<Voices>&& voices)
+PortImpl::set_voices(RunContext&, Raul::managed_ptr<Voices>&& voices)
 {
 	_voices = std::move(voices);
 	connect_buffers();

@@ -22,7 +22,6 @@
 #include "types.hpp"
 
 #include "ingen/LV2Features.hpp"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "lv2/worker/worker.h"
 #include "raul/Array.hpp"
@@ -113,7 +112,7 @@ protected:
 
 	using Instances = Raul::Array<std::shared_ptr<Instance>>;
 
-	static void drop_instances(const MPtr<Instances>& instances) {
+	static void drop_instances(const Raul::managed_ptr<Instances>& instances) {
 		if (instances) {
 			for (size_t i = 0; i < instances->size(); ++i) {
 				(*instances)[i].reset();
@@ -149,8 +148,8 @@ protected:
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
 
 	LV2Plugin*                                 _lv2_plugin;
-	MPtr<Instances>                            _instances;
-	MPtr<Instances>                            _prepared_instances;
+	Raul::managed_ptr<Instances>               _instances;
+	Raul::managed_ptr<Instances>               _prepared_instances;
 	const LV2_Worker_Interface*                _worker_iface;
 	std::mutex                                 _work_mutex;
 	Responses                                  _responses;

@@ -20,8 +20,9 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "PortImpl.hpp"
-#include "ingen/memory.hpp"
 #include "types.hpp"
+
+#include "raul/Maid.hpp"
 
 #include <memory>
 
@@ -60,18 +61,18 @@ public:
 		inline InputPort* head() { return _head; }
 
 	private:
-		Engine&                  _engine;
-		PortImpl*                _tail;
-		InputPort*               _head;
-		std::shared_ptr<ArcImpl> _arc;
-		MPtr<PortImpl::Voices>   _voices;
+		Engine&                             _engine;
+		PortImpl*                           _tail;
+		InputPort*                          _head;
+		std::shared_ptr<ArcImpl>            _arc;
+		Raul::managed_ptr<PortImpl::Voices> _voices;
 	};
 
 private:
-	const ingen::Disconnect _msg;
-	GraphImpl*              _graph;
-	std::unique_ptr<Impl>   _impl;
-	MPtr<CompiledGraph>     _compiled_graph;
+	const ingen::Disconnect          _msg;
+	GraphImpl*                       _graph;
+	std::unique_ptr<Impl>            _impl;
+	Raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace events

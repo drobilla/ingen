@@ -30,8 +30,8 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <cassert>
@@ -185,7 +185,7 @@ void
 CreatePort::execute(RunContext& ctx)
 {
 	if (_status == Status::SUCCESS) {
-		const MPtr<GraphImpl::Ports>& old_ports = _graph->external_ports();
+		const auto& old_ports = _graph->external_ports();
 		if (old_ports) {
 			for (uint32_t i = 0; i < old_ports->size(); ++i) {
 				const auto* const old_port = (*old_ports)[i];
