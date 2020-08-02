@@ -22,9 +22,9 @@
 
 #include <boost/variant/get.hpp>
 
-using namespace ingen;
+namespace ingen {
 
-class TestClient : public ingen::Interface
+class TestClient : public Interface
 {
 public:
 	explicit TestClient(Log& log) : _log(log) {}
@@ -51,5 +51,7 @@ public:
 private:
 	Log& _log;
 };
+
+} // namespace ingen
 
 #endif // INGEN_TESTCLIENT_HPP

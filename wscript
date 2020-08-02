@@ -72,7 +72,6 @@ def configure(conf):
                 '-Wno-float-equal',
                 '-Wno-format-nonliteral',
                 '-Wno-global-constructors',
-                '-Wno-header-hygiene',
                 '-Wno-implicit-fallthrough',
                 '-Wno-implicit-float-conversion',
                 '-Wno-implicit-int-conversion',
