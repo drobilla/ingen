@@ -19,7 +19,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <cstddef>
 #include <mutex>

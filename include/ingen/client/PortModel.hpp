@@ -19,7 +19,7 @@
 
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/port-props/port-props.h"
 

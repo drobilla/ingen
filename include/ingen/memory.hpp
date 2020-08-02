@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2020 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_TYPES_HPP
-#define INGEN_TYPES_HPP
+#ifndef INGEN_MEMORY_HPP
+#define INGEN_MEMORY_HPP
 
 #include "raul/Maid.hpp"
 
@@ -51,4 +51,4 @@ make_unique(Args&&... args)
 
 } // namespace ingen
 
-#endif // INGEN_TYPES_HPP
+#endif // INGEN_MEMORY_HPP

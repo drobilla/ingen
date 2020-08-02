@@ -21,7 +21,7 @@
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "lv2/core/lv2.h"
 #include "lv2/data-access/data-access.h"

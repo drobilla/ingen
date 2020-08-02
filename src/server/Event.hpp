@@ -22,7 +22,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"

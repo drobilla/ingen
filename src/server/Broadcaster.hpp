@@ -22,7 +22,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/URI.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Noncopyable.hpp"
 
 #include <atomic>

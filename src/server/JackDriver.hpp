@@ -21,7 +21,7 @@
 #include "EnginePort.hpp"
 #include "ingen_config.h"
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/atom/forge.h"
 #include "raul/Semaphore.hpp"
 

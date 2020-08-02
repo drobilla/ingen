@@ -26,7 +26,7 @@
 #include "ingen/URIs.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 

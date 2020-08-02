@@ -23,7 +23,7 @@
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "raul/Deletable.hpp"
 

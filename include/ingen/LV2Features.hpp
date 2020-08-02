@@ -18,7 +18,7 @@
 #define INGEN_LV2FEATURES_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/core/lv2.h"
 #include "raul/Noncopyable.hpp"
 

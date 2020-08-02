@@ -19,7 +19,7 @@
 
 #include "Task.hpp"
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 

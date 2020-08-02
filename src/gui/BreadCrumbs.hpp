@@ -21,7 +21,7 @@
 
 #include "ingen/Message.hpp"
 #include "ingen/client/GraphModel.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 
 #include <gtkmm/box.h>

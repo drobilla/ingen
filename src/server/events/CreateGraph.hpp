@@ -21,7 +21,7 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <cstdint>
 #include <list>

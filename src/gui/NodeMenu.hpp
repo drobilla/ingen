@@ -20,7 +20,7 @@
 #include "ObjectMenu.hpp"
 
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/menu.h>

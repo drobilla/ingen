@@ -18,7 +18,7 @@
 #define INGEN_SOCKETREADER_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "serd/serd.h"
 #include "sord/sord.h"
 

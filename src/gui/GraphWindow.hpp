@@ -20,7 +20,7 @@
 #include "GraphBox.hpp"
 #include "Window.hpp"
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 

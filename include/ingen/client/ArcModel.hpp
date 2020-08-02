@@ -20,7 +20,7 @@
 #include "ingen/Arc.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 
 #include <cassert>

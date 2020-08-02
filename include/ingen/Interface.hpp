@@ -26,7 +26,7 @@
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <cstdint>
 #include <string>

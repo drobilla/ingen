@@ -22,7 +22,7 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <cstdint>
 

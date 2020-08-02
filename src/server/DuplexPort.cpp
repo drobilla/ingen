@@ -29,7 +29,7 @@
 #include "ingen/Node.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
 
 #include <algorithm>

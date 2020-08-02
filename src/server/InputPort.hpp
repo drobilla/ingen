@@ -22,7 +22,7 @@
 #include "PortType.hpp"
 #include "types.hpp"
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/urid/urid.h"
 
 #include <boost/intrusive/options.hpp>

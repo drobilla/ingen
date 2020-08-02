@@ -21,7 +21,7 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <algorithm>
 #include <cstdint>

@@ -18,7 +18,7 @@
 #define INGEN_ENGINEBASE_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <chrono>
 #include <cstddef>

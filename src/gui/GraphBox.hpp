@@ -29,7 +29,7 @@
 #include <gtkmm/statusbar.h>
 
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include "Window.hpp"
 

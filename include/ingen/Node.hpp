@@ -19,8 +19,8 @@
 
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
+#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
-#include "ingen/types.hpp"
 #include "lilv/lilv.h"
 
 #include <cstdint>

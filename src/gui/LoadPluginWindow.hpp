@@ -21,7 +21,7 @@
 
 #include "ingen/Node.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "ingen_config.h"
 
 #include <gtkmm/builder.h>

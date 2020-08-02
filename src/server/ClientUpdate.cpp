@@ -29,7 +29,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <algorithm>
 #include <cstddef>

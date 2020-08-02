@@ -18,7 +18,7 @@
 #define INGEN_GUI_ARC_HPP
 
 #include "ganv/Edge.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <cassert>
 

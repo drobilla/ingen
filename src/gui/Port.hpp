@@ -18,7 +18,7 @@
 #define INGEN_GUI_PORT_HPP
 
 #include "ganv/Port.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <gtkmm/menu.h>
 

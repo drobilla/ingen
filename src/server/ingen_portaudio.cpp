@@ -20,7 +20,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 namespace ingen { namespace server { class Driver; } }
 

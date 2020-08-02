@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_SUBGRAPHMODULE_HPP
 #define INGEN_GUI_SUBGRAPHMODULE_HPP
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include "GraphPortModule.hpp"
 #include "NodeModule.hpp"

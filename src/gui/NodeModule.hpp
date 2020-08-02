@@ -18,7 +18,7 @@
 #define INGEN_GUI_NODEMODULE_HPP
 
 #include "ganv/Module.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include "Port.hpp"
 

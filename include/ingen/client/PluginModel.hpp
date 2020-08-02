@@ -22,7 +22,7 @@
 #include "ingen/World.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"

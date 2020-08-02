@@ -18,7 +18,7 @@
 #define INGEN_GUI_PLUGINMENU_HPP
 
 #include "ingen/World.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 
 #include <gtkmm/menu.h>

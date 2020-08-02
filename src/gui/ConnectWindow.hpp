@@ -20,7 +20,7 @@
 #include "Window.hpp"
 
 #include "ingen/Message.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 
 #include <gtkmm/builder.h>

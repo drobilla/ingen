@@ -23,7 +23,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/URI.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 namespace ingen {
 namespace server {

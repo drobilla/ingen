@@ -48,7 +48,7 @@
 #include "ingen/Tee.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/buf-size/buf-size.h"
 #include "lv2/state/state.h"
 #include "raul/Maid.hpp"

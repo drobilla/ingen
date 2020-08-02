@@ -23,7 +23,7 @@
 #include "ganv/Module.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/client/ArcModel.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
 

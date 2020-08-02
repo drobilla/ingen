@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_GRAPHVIEW_HPP
 #define INGEN_GUI_GRAPHVIEW_HPP
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>

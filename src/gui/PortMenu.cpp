@@ -22,7 +22,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <memory>
 #include <string>

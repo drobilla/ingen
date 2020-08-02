@@ -24,7 +24,7 @@
 
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/atom/atom.h"
 #include "lv2/urid/urid.h"
 

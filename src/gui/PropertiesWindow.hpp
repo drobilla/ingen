@@ -20,7 +20,7 @@
 #include "Window.hpp"
 
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <gtkmm/alignment.h>
 #include <gtkmm/box.h>

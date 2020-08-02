@@ -22,7 +22,7 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "suil/suil.h"
 

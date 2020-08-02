@@ -19,7 +19,7 @@
 
 #include "BufferRef.hpp"
 
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/atom/forge.h"
 #include "raul/Maid.hpp"
 

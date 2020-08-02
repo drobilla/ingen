@@ -20,7 +20,7 @@
 #include "ingen/FilePath.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "sord/sordmm.hpp"
 
 #include <string>

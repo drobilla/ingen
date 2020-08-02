@@ -18,7 +18,7 @@
 #define INGEN_GUI_WINDOWFACTORY_HPP
 
 #include "ingen/Node.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <cstddef>
 #include <map>

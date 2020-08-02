@@ -20,7 +20,7 @@
 #include "ObjectMenu.hpp"
 
 #include "ingen/client/PortModel.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/menu.h>

@@ -18,7 +18,7 @@
 #define INGEN_ENGINE_WORKER_HPP
 
 #include "ingen/LV2Features.hpp"
-#include "ingen/types.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/worker/worker.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
