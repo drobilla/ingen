@@ -477,7 +477,7 @@ LV2Block::save_state(const FilePath& dir) const
 
 	LilvState* state = lilv_state_new_from_instance(
 		_lv2_plugin->lilv_plugin(), const_cast<LV2Block*>(this)->instance(0),
-		&world.uri_map().urid_map_feature()->urid_map,
+		&world.uri_map().urid_map(),
 		nullptr, dir.c_str(), dir.c_str(), dir.c_str(), nullptr, nullptr,
 		LV2_STATE_IS_POD|LV2_STATE_IS_PORTABLE, nullptr);
 
@@ -489,8 +489,8 @@ LV2Block::save_state(const FilePath& dir) const
 	}
 
 	lilv_state_save(lworld,
-	                &world.uri_map().urid_map_feature()->urid_map,
-	                &world.uri_map().urid_unmap_feature()->urid_unmap,
+	                &world.uri_map().urid_map(),
+	                &world.uri_map().urid_unmap(),
 	                state,
 	                nullptr,
 	                dir.c_str(),
@@ -511,7 +511,7 @@ LV2Block::duplicate(Engine&             engine,
 	// Get current state
 	LilvState* state = lilv_state_new_from_instance(
 		_lv2_plugin->lilv_plugin(), instance(0),
-		&engine.world().uri_map().urid_map_feature()->urid_map,
+		&engine.world().uri_map().urid_map(),
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, LV2_STATE_IS_NATIVE, nullptr);
 
 	// Duplicate and instantiate block
@@ -625,7 +625,7 @@ LV2Block::load_preset(const URI& uri)
 	lilv_world_load_resource(lworld, preset);
 
 	// Load preset from world
-	LV2_URID_Map* map   = &world.uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Map* map   = &world.uri_map().urid_map();
 	LilvState*    state = lilv_state_new_from_world(lworld, map, preset);
 
 	lilv_node_free(preset);
@@ -641,7 +641,7 @@ LV2Block::load_state(World& world, const FilePath& path)
 
 	LilvState* state = lilv_state_new_from_file(
 		lworld,
-		&world.uri_map().urid_map_feature()->urid_map,
+		&world.uri_map().urid_map(),
 		subject,
 		path.c_str());
 
@@ -692,8 +692,8 @@ LV2Block::save_preset(const URI&        uri,
 {
 	World&          world  = parent_graph()->engine().world();
 	LilvWorld*      lworld = world.lilv_world();
-	LV2_URID_Map*   lmap   = &world.uri_map().urid_map_feature()->urid_map;
-	LV2_URID_Unmap* lunmap = &world.uri_map().urid_unmap_feature()->urid_unmap;
+	LV2_URID_Map*   lmap   = &world.uri_map().urid_map();
+	LV2_URID_Unmap* lunmap = &world.uri_map().urid_unmap();
 
 	const FilePath path     = FilePath(uri.path());
 	const FilePath dirname  = path.parent_path();

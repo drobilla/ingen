@@ -35,15 +35,15 @@ URIMap::URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
                                        LV2_URID_Map* impl,
                                        Log&          log)
-	: Feature(LV2_URID__map, &urid_map)
-	, urid_map()
-	, log(log)
+	: Feature(LV2_URID__map, &_urid_map)
+	, _urid_map()
+	, _log(log)
 {
 	if (impl) {
-		urid_map = *impl;
+		_urid_map = *impl;
 	} else {
-		urid_map.map    = default_map;
-		urid_map.handle = map;
+		_urid_map.map    = default_map;
+		_urid_map.handle = map;
 	}
 }
 
@@ -69,22 +69,23 @@ LV2_URID
 URIMap::URIDMapFeature::map(const char* uri)
 {
 	if (!URI::is_valid(uri)) {
-		log.error("Attempt to map invalid URI <%1%>\n", uri);
+		_log.error("Attempt to map invalid URI <%1%>\n", uri);
 		return 0;
 	}
-	return urid_map.map(urid_map.handle, uri);
+
+	return _urid_map.map(_urid_map.handle, uri);
 }
 
 URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*         map,
                                            LV2_URID_Unmap* impl)
-	: Feature(LV2_URID__unmap, &urid_unmap)
-	, urid_unmap()
+	: Feature(LV2_URID__unmap, &_urid_unmap)
+	, _urid_unmap()
 {
 	if (impl) {
-		urid_unmap = *impl;
+		_urid_unmap = *impl;
 	} else {
-		urid_unmap.unmap  = default_unmap;
-		urid_unmap.handle = map;
+		_urid_unmap.unmap  = default_unmap;
+		_urid_unmap.handle = map;
 	}
 }
 
@@ -103,7 +104,7 @@ URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle h,
 const char*
 URIMap::URIDUnmapFeature::unmap(LV2_URID urid) const
 {
-	return urid_unmap.unmap(urid_unmap.handle, urid);
+	return _urid_unmap.unmap(_urid_unmap.handle, urid);
 }
 
 uint32_t

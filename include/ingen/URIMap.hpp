@@ -63,18 +63,35 @@ public:
 
 	struct URIDMapFeature : public Feature {
 		URIDMapFeature(URIMap* map, LV2_URID_Map* impl, Log& log);
+
 		LV2_URID        map(const char* uri);
 		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* c_uri);
-		LV2_URID_Map urid_map;
-		Log&         log;
+
+		LV2_URID_Map&       data() { return _urid_map; }
+		const LV2_URID_Map& data() const { return _urid_map; }
+
+	private:
+		LV2_URID_Map _urid_map;
+		Log&         _log;
 	};
 
 	struct URIDUnmapFeature : public Feature {
 		URIDUnmapFeature(URIMap* map, LV2_URID_Unmap* impl);
+
 		const char*        unmap(LV2_URID urid) const;
 		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID urid);
-		LV2_URID_Unmap urid_unmap;
+
+		LV2_URID_Unmap&       data() { return _urid_unmap; }
+		const LV2_URID_Unmap& data() const { return _urid_unmap; }
+
+	private:
+		LV2_URID_Unmap _urid_unmap;
 	};
+
+	const LV2_URID_Map&   urid_map() const { return _urid_map_feature->data(); }
+	LV2_URID_Map&         urid_map() { return _urid_map_feature->data(); }
+	const LV2_URID_Unmap& urid_unmap() const { return _urid_unmap_feature->data(); }
+	LV2_URID_Unmap&       urid_unmap() { return _urid_unmap_feature->data(); }
 
 	SPtr<URIDMapFeature>   urid_map_feature()   { return _urid_map_feature; }
 	SPtr<URIDUnmapFeature> urid_unmap_feature() { return _urid_unmap_feature; }

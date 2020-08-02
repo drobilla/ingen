@@ -76,8 +76,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _old_rolling(false)
 {
 	_midi_event_type = _engine.world().uris().midi_MidiEvent;
-	lv2_atom_forge_init(
-		&_forge, &engine.world().uri_map().urid_map_feature()->urid_map);
+	lv2_atom_forge_init(&_forge, &engine.world().uri_map().urid_map());
 }
 
 JackDriver::~JackDriver()

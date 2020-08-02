@@ -120,7 +120,7 @@ void
 SocketReader::run()
 {
 	Sord::World*  world = _world.rdf_world();
-	LV2_URID_Map& map   = _world.uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Map& map   = _world.uri_map().urid_map();
 
 	// Set up a forge to build LV2 atoms from model
 	SordNode*  base_uri = nullptr;

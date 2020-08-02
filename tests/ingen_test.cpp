@@ -124,7 +124,7 @@ main(int argc, char** argv)
 
 	// Read commands
 
-	AtomForge forge(world->uri_map().urid_map_feature()->urid_map);
+	AtomForge forge(world->uri_map().urid_map());
 
 	sratom_set_object_mode(&forge.sratom(), SRATOM_OBJECT_MODE_BLANK_SUBJECT);
 

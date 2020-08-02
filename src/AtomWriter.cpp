@@ -78,7 +78,7 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
 	, _sink(sink)
-	, _forge(map.urid_map_feature()->urid_map)
+	, _forge(map.urid_map())
 {
 }
 

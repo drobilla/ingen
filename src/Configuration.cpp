@@ -319,7 +319,7 @@ Configuration::save(URIMap&            uri_map,
 	                 writer);
 
 	// Create an atom serialiser and connect it to the Turtle writer
-	Sratom* sratom = sratom_new(&uri_map.urid_map_feature()->urid_map);
+	Sratom* sratom = sratom_new(&uri_map.urid_map());
 	sratom_set_pretty_numbers(sratom, true);
 	sratom_set_sink(sratom,
 	                reinterpret_cast<const char*>(base.buf),
@@ -340,7 +340,7 @@ Configuration::save(URIMap&            uri_map,
 		const std::string key(std::string("ingen:") + o.second.key);
 		SerdNode pred = serd_node_from_string(
 			SERD_CURIE, reinterpret_cast<const uint8_t*>(key.c_str()));
-		sratom_write(sratom, &uri_map.urid_unmap_feature()->urid_unmap, 0,
+		sratom_write(sratom, &uri_map.urid_unmap(), 0,
 		             &base, &pred, value.type(), value.size(), value.get_body());
 	}
 

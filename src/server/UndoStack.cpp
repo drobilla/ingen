@@ -203,7 +203,7 @@ UndoStack::write_entry(Sratom*                 sratom,
 		                                                           "first"));
 
 		ctx.flags = SERD_LIST_CONT;
-		sratom_write(sratom, &_map.urid_unmap_feature()->urid_unmap, SERD_LIST_CONT,
+		sratom_write(sratom, &_map.urid_unmap(), SERD_LIST_CONT,
 		             &node, &p,
 		             atom->type, atom->size, LV2_ATOM_BODY_CONST(atom));
 
@@ -236,7 +236,7 @@ UndoStack::save(FILE* stream, const char* name)
 	                    stream);
 
 	// Configure sratom to write directly to the writer (and thus the socket)
-	Sratom* sratom = sratom_new(&_map.urid_map_feature()->urid_map);
+	Sratom* sratom = sratom_new(&_map.urid_map());
 	sratom_set_sink(sratom,
 	                reinterpret_cast<const char*>(base.buf),
 	                reinterpret_cast<SerdStatementSink>(serd_writer_write_statement),

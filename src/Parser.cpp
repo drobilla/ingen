@@ -110,7 +110,7 @@ get_properties(ingen::World&                      world,
                Resource::Graph                    ctx,
                const boost::optional<Properties>& data = {})
 {
-	AtomForge forge(world.uri_map().urid_map_feature()->urid_map);
+	AtomForge forge(world.uri_map().urid_map());
 
 	const Sord::Node nil;
 	Properties       props;

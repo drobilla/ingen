@@ -40,7 +40,7 @@ write_prefix(void* handle, const SerdNode* name, const SerdNode* uri)
 TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
     : AtomWriter(map, uris, *this)
     , _map(map)
-    , _sratom(sratom_new(&map.urid_map_feature()->urid_map))
+    , _sratom(sratom_new(&map.urid_map()))
     , _base(SERD_NODE_NULL)
     , _base_uri(SERD_URI_NULL)
     , _uri(std::move(uri))
@@ -96,7 +96,7 @@ TurtleWriter::write(const LV2_Atom* msg, int32_t)
 		_wrote_prefixes = true;
 	}
 
-	sratom_write(_sratom, &_map.urid_unmap_feature()->urid_unmap, 0,
+	sratom_write(_sratom, &_map.urid_unmap(), 0,
 	             nullptr, nullptr, msg->type, msg->size, LV2_ATOM_BODY_CONST(msg));
 	serd_writer_finish(_writer);
 	return true;

@@ -59,7 +59,7 @@ struct Serialiser::Impl {
 		, _mode(Mode::TO_FILE)
 		, _world(world)
 		, _model(nullptr)
-		, _sratom(sratom_new(&_world.uri_map().urid_map_feature()->urid_map))
+		, _sratom(sratom_new(&_world.uri_map().urid_map()))
 	{}
 
 	~Impl() {
@@ -555,7 +555,7 @@ void
 Serialiser::Impl::serialise_properties(Sord::Node        id,
                                        const Properties& props)
 {
-	LV2_URID_Unmap* unmap = &_world.uri_map().urid_unmap_feature()->urid_unmap;
+	LV2_URID_Unmap* unmap = &_world.uri_map().urid_unmap();
 	SerdNode        base  = serd_node_from_string(SERD_URI,
                                           reinterpret_cast<const uint8_t*>(
                                               _base_uri.c_str()));
