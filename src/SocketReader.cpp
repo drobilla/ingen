@@ -37,18 +37,18 @@
 
 namespace ingen {
 
-SocketReader::SocketReader(ingen::World&      world,
-                           Interface&         iface,
-                           SPtr<Raul::Socket> sock)
-	: _world(world)
-	, _iface(iface)
-	, _env()
-	, _inserter(nullptr)
-	, _msg_node(nullptr)
-	, _socket(std::move(sock))
-	, _socket_error(0)
-	, _exit_flag(false)
-	, _thread(&SocketReader::run, this)
+SocketReader::SocketReader(ingen::World&                 world,
+                           Interface&                    iface,
+                           std::shared_ptr<Raul::Socket> sock)
+    : _world(world)
+    , _iface(iface)
+    , _env()
+    , _inserter(nullptr)
+    , _msg_node(nullptr)
+    , _socket(std::move(sock))
+    , _socket_error(0)
+    , _exit_flag(false)
+    , _thread(&SocketReader::run, this)
 {}
 
 SocketReader::~SocketReader()

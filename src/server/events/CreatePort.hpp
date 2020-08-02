@@ -21,12 +21,14 @@
 #include "Event.hpp"
 #include "PortType.hpp"
 
+#include "ingen/memory.hpp"
 #include "lv2/urid/urid.h"
 #include "raul/Path.hpp"
 
 #include <boost/optional/optional.hpp>
 
 #include <cstdint>
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -44,12 +46,12 @@ namespace events {
 class CreatePort : public Event
 {
 public:
-	CreatePort(Engine&                engine,
-	           const SPtr<Interface>& client,
-	           int32_t                id,
-	           SampleCount            timestamp,
-	           const Raul::Path&      path,
-	           const Properties&      properties);
+	CreatePort(Engine&                           engine,
+	           const std::shared_ptr<Interface>& client,
+	           int32_t                           id,
+	           SampleCount                       timestamp,
+	           const Raul::Path&                 path,
+	           const Properties&                 properties);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

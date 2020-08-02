@@ -21,7 +21,6 @@
 
 #include "ingen/Message.hpp"
 #include "ingen/client/GraphModel.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 
 #include <gtkmm/box.h>
@@ -30,6 +29,7 @@
 
 #include <cassert>
 #include <list>
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -45,11 +45,12 @@ class BreadCrumbs : public Gtk::HBox
 public:
 	explicit BreadCrumbs(App& app);
 
-	SPtr<GraphView> view(const Raul::Path& path);
+	std::shared_ptr<GraphView> view(const Raul::Path& path);
 
-	void build(const Raul::Path& path, const SPtr<GraphView>& view);
+	void build(const Raul::Path& path, const std::shared_ptr<GraphView>& view);
 
-	sigc::signal<void, const Raul::Path&, SPtr<GraphView> > signal_graph_selected;
+	sigc::signal<void, const Raul::Path&, std::shared_ptr<GraphView>>
+	    signal_graph_selected;
 
 private:
 	/** Breadcrumb button.
@@ -64,10 +65,9 @@ private:
 	class BreadCrumb : public Gtk::ToggleButton
 	{
 	public:
-		BreadCrumb(const Raul::Path&      path,
-		           const SPtr<GraphView>& view = nullptr)
-		    : _path(path)
-		    , _view(view)
+		BreadCrumb(const Raul::Path&                 path,
+		           const std::shared_ptr<GraphView>& view = nullptr)
+		    : _path(path), _view(view)
 		{
 			assert(!view || view->graph()->path() == path);
 			set_border_width(0);
@@ -76,13 +76,13 @@ private:
 			show_all();
 		}
 
-		void set_view(const SPtr<GraphView>& view) {
+		void set_view(const std::shared_ptr<GraphView>& view) {
 			assert(!view || view->graph()->path() == _path);
 			_view = view;
 		}
 
-		const Raul::Path& path() const { return _path; }
-		SPtr<GraphView>   view() const { return _view; }
+		const Raul::Path&          path() const { return _path; }
+		std::shared_ptr<GraphView> view() const { return _view; }
 
 		void set_path(const Raul::Path& path) {
 			remove();
@@ -98,12 +98,12 @@ private:
 		}
 
 	private:
-		Raul::Path      _path;
-		SPtr<GraphView> _view;
+		Raul::Path                 _path;
+		std::shared_ptr<GraphView> _view;
 	};
 
-	BreadCrumb* create_crumb(const Raul::Path&      path,
-	                         const SPtr<GraphView>& view = nullptr);
+	BreadCrumb* create_crumb(const Raul::Path&                 path,
+	                         const std::shared_ptr<GraphView>& view = nullptr);
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 

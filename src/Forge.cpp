@@ -20,7 +20,6 @@
 #include "lv2/atom/forge.h"
 #include "lv2/urid/urid.h"
 
-#include <memory>
 #include <sstream>
 
 namespace ingen {

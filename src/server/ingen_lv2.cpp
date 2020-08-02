@@ -88,7 +88,7 @@ class Lib {
 public:
 	explicit Lib(const char* bundle_path);
 
-	using Graphs = std::vector<SPtr<const LV2Graph>>;
+	using Graphs = std::vector<std::shared_ptr<const LV2Graph>>;
 
 	Graphs graphs;
 };
@@ -434,7 +434,8 @@ using namespace ingen;
 using namespace ingen::server;
 
 static void
-ingen_lv2_main(const SPtr<Engine>& engine, const SPtr<LV2Driver>& driver)
+ingen_lv2_main(const std::shared_ptr<Engine>&    engine,
+               const std::shared_ptr<LV2Driver>& driver)
 {
 	while (true) {
 		// Wait until there is work to be done
@@ -452,7 +453,7 @@ ingen_lv2_main(const SPtr<Engine>& engine, const SPtr<LV2Driver>& driver)
 
 struct IngenPlugin {
 	std::unique_ptr<ingen::World> world;
-	SPtr<Engine>                  engine;
+	std::shared_ptr<Engine>       engine;
 	std::unique_ptr<std::thread>  main;
 	LV2_URID_Map*                 map  = nullptr;
 	int                           argc = 0;
@@ -472,7 +473,7 @@ find_graphs(const URI& manifest_uri)
 
 	Lib::Graphs graphs;
 	for (const auto& r : resources) {
-		graphs.push_back(SPtr<const LV2Graph>(new LV2Graph(r)));
+		graphs.push_back(std::make_shared<LV2Graph>(r));
 	}
 
 	return graphs;
@@ -572,11 +573,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		"queue-size",
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
-	SPtr<server::Engine> engine(new server::Engine(*plugin->world));
+	auto engine = std::make_shared<server::Engine>(*plugin->world);
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
-	SPtr<Interface> interface = engine->interface();
+	std::shared_ptr<Interface> interface = engine->interface();
 
 	plugin->world->set_interface(interface);
 
@@ -584,7 +585,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	server::ThreadManager::single_threaded = true;
 
 	auto* driver = new LV2Driver(*engine, block_length, seq_size, rate);
-	engine->set_driver(SPtr<ingen::server::Driver>(driver));
+	engine->set_driver(std::shared_ptr<ingen::server::Driver>(driver));
 
 	engine->activate();
 	server::ThreadManager::single_threaded = true;
@@ -611,7 +612,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	/* Register client after loading graph so the to-ui ring does not overflow.
 	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
-	SPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
+	std::shared_ptr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);
 	engine->register_client(client);
 
@@ -780,7 +781,7 @@ ingen_restore(LV2_Handle                  instance,
 
 #if 0
 	// Remove existing root graph contents
-	SPtr<Engine> engine = plugin->engine;
+	std::shared_ptr<Engine> engine = plugin->engine;
 	for (const auto& b : engine->root_graph()->blocks()) {
 		plugin->world->interface()->del(b.uri());
 	}

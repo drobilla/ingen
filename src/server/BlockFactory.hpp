@@ -18,10 +18,10 @@
 #define INGEN_ENGINE_BLOCKFACTORY_HPP
 
 #include "ingen/URI.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Noncopyable.hpp"
 
 #include <map>
+#include <memory>
 #include <set>
 
 namespace ingen {
@@ -47,11 +47,11 @@ public:
 	 *
 	 * @return The set of newly loaded plugins.
 	 */
-	std::set<SPtr<PluginImpl>> refresh();
+	std::set<std::shared_ptr<PluginImpl>> refresh();
 
 	void load_plugin(const URI& uri);
 
-	using Plugins = std::map<URI, SPtr<PluginImpl>>;
+	using Plugins = std::map<URI, std::shared_ptr<PluginImpl>>;
 	const Plugins& plugins();
 
 	PluginImpl* plugin(const URI& uri);

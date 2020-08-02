@@ -19,12 +19,12 @@
 
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
 #include "lilv/lilv.h"
 
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -62,7 +62,7 @@ public:
 	};
 
 	using ArcsKey = std::pair<const Node*, const Node*>;
-	using Arcs    = std::map<ArcsKey, SPtr<Arc>>;
+	using Arcs    = std::map<ArcsKey, std::shared_ptr<Arc>>;
 
 	// Graphs only
 	Arcs&       arcs()       { return _arcs; }

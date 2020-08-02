@@ -20,13 +20,14 @@
 #include "Window.hpp"
 
 #include "ingen/Node.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
+
+#include <memory>
 
 namespace ingen {
 
@@ -46,18 +47,18 @@ public:
 	NewSubgraphWindow(BaseObjectType*                   cobject,
 	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_graph(SPtr<const client::GraphModel> graph);
+	void set_graph(std::shared_ptr<const client::GraphModel> graph);
 
-	void present(SPtr<const client::GraphModel> graph,
-	             Properties                     data);
+	void
+	present(std::shared_ptr<const client::GraphModel> graph, Properties data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	Properties                     _initial_data;
-	SPtr<const client::GraphModel> _graph;
+	Properties                                _initial_data;
+	std::shared_ptr<const client::GraphModel> _graph;
 
 	Gtk::Entry*      _name_entry;
 	Gtk::Label*      _message_label;

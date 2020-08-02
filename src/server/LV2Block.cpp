@@ -76,7 +76,7 @@ LV2Block::~LV2Block()
 	drop_instances(_prepared_instances);
 }
 
-SPtr<LV2Block::Instance>
+std::shared_ptr<LV2Block::Instance>
 LV2Block::make_instance(URIs&      uris,
                         SampleRate rate,
                         uint32_t   voice,
@@ -180,7 +180,7 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	_prepared_instances = bufs.maid().make_managed<Instances>(
 		poly, *_instances, nullptr);
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		SPtr<Instance> inst = make_instance(bufs.uris(), rate, i, true);
+		auto inst = make_instance(bufs.uris(), rate, i, true);
 		if (!inst) {
 			_prepared_instances.reset();
 			return false;
@@ -653,8 +653,8 @@ void
 LV2Block::apply_state(const std::unique_ptr<Worker>& worker,
                       const LilvState*               state)
 {
-	World&            world = parent_graph()->engine().world();
-	SPtr<LV2_Feature> sched;
+	World&                       world = parent_graph()->engine().world();
+	std::shared_ptr<LV2_Feature> sched;
 	if (worker) {
 		sched = worker->schedule_feature()->feature(world, this);
 	}

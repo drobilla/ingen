@@ -30,7 +30,7 @@ namespace ingen {
 namespace client {
 
 void
-GraphModel::add_child(const SPtr<ObjectModel>& c)
+GraphModel::add_child(const std::shared_ptr<ObjectModel>& c)
 {
 	assert(c->parent().get() == this);
 
@@ -47,7 +47,7 @@ GraphModel::add_child(const SPtr<ObjectModel>& c)
 }
 
 bool
-GraphModel::remove_child(const SPtr<ObjectModel>& o)
+GraphModel::remove_child(const std::shared_ptr<ObjectModel>& o)
 {
 	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
@@ -67,7 +67,7 @@ GraphModel::remove_child(const SPtr<ObjectModel>& o)
 }
 
 void
-GraphModel::remove_arcs_on(const SPtr<PortModel>& p)
+GraphModel::remove_arcs_on(const std::shared_ptr<PortModel>& p)
 {
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
@@ -98,7 +98,7 @@ GraphModel::clear()
 	assert(_ports.empty());
 }
 
-SPtr<ArcModel>
+std::shared_ptr<ArcModel>
 GraphModel::get_arc(const Node* tail, const Node* head)
 {
 	auto i = _arcs.find(std::make_pair(tail, head));
@@ -117,7 +117,7 @@ GraphModel::get_arc(const Node* tail, const Node* head)
  * this graph is a fatal error.
  */
 void
-GraphModel::add_arc(const SPtr<ArcModel>& arc)
+GraphModel::add_arc(const std::shared_ptr<ArcModel>& arc)
 {
 	// Store should have 'resolved' the connection already
 	assert(arc);
@@ -131,7 +131,7 @@ GraphModel::add_arc(const SPtr<ArcModel>& arc)
 	assert(arc->head()->parent().get() == this
 	       || arc->head()->parent()->parent().get() == this);
 
-	SPtr<ArcModel> existing = get_arc(
+	std::shared_ptr<ArcModel> existing = get_arc(
 		arc->tail().get(), arc->head().get());
 
 	if (existing) {

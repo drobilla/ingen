@@ -65,7 +65,7 @@ PluginMenu::clear()
 }
 
 void
-PluginMenu::add_plugin(SPtr<client::PluginModel> p)
+PluginMenu::add_plugin(std::shared_ptr<client::PluginModel> p)
 {
 	using iterator = ClassMenus::iterator;
 
@@ -144,7 +144,8 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 }
 
 void
-PluginMenu::add_plugin_to_menu(MenuRecord& menu, SPtr<client::PluginModel> p)
+PluginMenu::add_plugin_to_menu(MenuRecord&                          menu,
+                               std::shared_ptr<client::PluginModel> p)
 {
 	const URIs& uris        = _world.uris();
 	LilvWorld*  lworld      = _world.lilv_world();

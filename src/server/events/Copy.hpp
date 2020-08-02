@@ -20,6 +20,10 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
+#include "ingen/memory.hpp"
+
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -35,10 +39,10 @@ namespace events {
 class Copy : public Event
 {
 public:
-	Copy(Engine&                engine,
-	     const SPtr<Interface>& client,
-	     SampleCount            timestamp,
-	     const ingen::Copy&     msg);
+	Copy(Engine&                           engine,
+	     const std::shared_ptr<Interface>& client,
+	     SampleCount                       timestamp,
+	     const ingen::Copy&                msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;
@@ -50,11 +54,11 @@ private:
 	bool engine_to_filesystem(PreProcessContext& ctx);
 	bool filesystem_to_engine(PreProcessContext& ctx);
 
-	const ingen::Copy   _msg;
-	SPtr<BlockImpl>     _old_block;
-	GraphImpl*          _parent;
-	BlockImpl*          _block;
-	MPtr<CompiledGraph> _compiled_graph;
+	const ingen::Copy          _msg;
+	std::shared_ptr<BlockImpl> _old_block;
+	GraphImpl*                 _parent;
+	BlockImpl*                 _block;
+	MPtr<CompiledGraph>        _compiled_graph;
 };
 
 } // namespace events

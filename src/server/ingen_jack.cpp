@@ -23,6 +23,7 @@
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
 
+#include <memory>
 #include <string>
 
 using namespace ingen;
@@ -45,7 +46,7 @@ struct IngenJackModule : public ingen::Module {
 		               world.conf().option("jack-name").ptr<char>(),
 		               nullptr);
 
-		engine->set_driver(SPtr<server::Driver>(driver));
+		engine->set_driver(std::shared_ptr<server::Driver>(driver));
 	}
 };
 

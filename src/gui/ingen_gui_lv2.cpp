@@ -30,7 +30,6 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lv2/atom/atom.h"
@@ -84,16 +83,16 @@ struct IngenLV2UI {
 		, sink(nullptr)
 	{}
 
-	int                              argc;
-	char**                           argv;
-	Forge*                           forge;
-	World*                           world;
-	IngenLV2AtomSink*                sink;
-	SPtr<gui::App>                   app;
-	SPtr<gui::GraphBox>              view;
-	SPtr<Interface>                  engine;
-	SPtr<AtomReader>                 reader;
-	SPtr<client::SigClientInterface> client;
+	int                                         argc;
+	char**                                      argv;
+	Forge*                                      forge;
+	World*                                      world;
+	IngenLV2AtomSink*                           sink;
+	std::shared_ptr<gui::App>                   app;
+	std::shared_ptr<gui::GraphBox>              view;
+	std::shared_ptr<Interface>                  engine;
+	std::shared_ptr<AtomReader>                 reader;
+	std::shared_ptr<client::SigClientInterface> client;
 };
 
 } // namespace ingen
@@ -107,10 +106,6 @@ instantiate(const LV2UI_Descriptor*   descriptor,
             LV2UI_Widget*             widget,
             const LV2_Feature* const* features)
 {
-#if __cplusplus >= 201103L
-	using ingen::SPtr;
-#endif
-
 	ingen::set_bundle_path(bundle_path);
 
 	ingen::IngenLV2UI* ui = new ingen::IngenLV2UI();
@@ -142,16 +137,15 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		ui->world->uris(), write_function, controller);
 
 	// Set up an engine interface that writes LV2 atoms
-	ui->engine = SPtr<ingen::Interface>(
+	ui->engine = std::shared_ptr<ingen::Interface>(
 		new ingen::AtomWriter(
 			ui->world->uri_map(), ui->world->uris(), *ui->sink));
 
 	ui->world->set_interface(ui->engine);
 
 	// Create App and client
-	ui->app = ingen::gui::App::create(*ui->world);
-	ui->client = SPtr<ingen::client::SigClientInterface>(
-		new ingen::client::SigClientInterface());
+	ui->app    = ingen::gui::App::create(*ui->world);
+	ui->client = std::make_shared<ingen::client::SigClientInterface>();
 	ui->app->set_is_plugin(true);
 	ui->app->attach(ui->client);
 

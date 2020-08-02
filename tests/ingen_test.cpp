@@ -136,7 +136,7 @@ main(int argc, char** argv)
 	                       *world->interface().get());
 
 	// AtomWriter to serialise responses from the engine
-	SPtr<Interface> client(new TestClient(world->log()));
+	std::shared_ptr<Interface> client(new TestClient(world->log()));
 
 	world->interface()->set_respondee(client);
 	world->engine()->register_client(client);

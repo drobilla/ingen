@@ -32,23 +32,24 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include <memory>
 #include <utility>
 
 namespace ingen {
 namespace server {
 namespace events {
 
-CreateBlock::CreateBlock(Engine&                engine,
-                         const SPtr<Interface>& client,
-                         int32_t                id,
-                         SampleCount            timestamp,
-                         const Raul::Path&      path,
-                         Properties&            properties)
-	: Event(engine, client, id, timestamp)
-	, _path(path)
-	, _properties(properties)
-	, _graph(nullptr)
-	, _block(nullptr)
+CreateBlock::CreateBlock(Engine&                           engine,
+                         const std::shared_ptr<Interface>& client,
+                         int32_t                           id,
+                         SampleCount                       timestamp,
+                         const Raul::Path&                 path,
+                         Properties&                       properties)
+    : Event(engine, client, id, timestamp)
+    , _path(path)
+    , _properties(properties)
+    , _graph(nullptr)
+    , _block(nullptr)
 {}
 
 bool
@@ -56,8 +57,8 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 {
 	using iterator = Properties::const_iterator;
 
-	const ingen::URIs& uris  = _engine.world().uris();
-	const SPtr<Store>  store = _engine.store();
+	const ingen::URIs&           uris  = _engine.world().uris();
+	const std::shared_ptr<Store> store = _engine.store();
 
 	// Check sanity of target path
 	if (_path.is_root()) {

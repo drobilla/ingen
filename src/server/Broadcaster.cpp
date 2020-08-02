@@ -22,6 +22,7 @@
 #include "ingen/Interface.hpp"
 
 #include <cstddef>
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -37,7 +38,7 @@ Broadcaster::~Broadcaster()
 /** Register a client to receive messages over the notification band.
  */
 void
-Broadcaster::register_client(const SPtr<Interface>& client)
+Broadcaster::register_client(const std::shared_ptr<Interface>& client)
 {
 	std::lock_guard<std::mutex> lock(_clients_mutex);
 	_clients.insert(client);
@@ -48,7 +49,7 @@ Broadcaster::register_client(const SPtr<Interface>& client)
  * @return true if client was found and removed.
  */
 bool
-Broadcaster::unregister_client(const SPtr<Interface>& client)
+Broadcaster::unregister_client(const std::shared_ptr<Interface>& client)
 {
 	std::lock_guard<std::mutex> lock(_clients_mutex);
 	const size_t erased = _clients.erase(client);
@@ -57,7 +58,8 @@ Broadcaster::unregister_client(const SPtr<Interface>& client)
 }
 
 void
-Broadcaster::set_broadcast(const SPtr<Interface>& client, bool broadcast)
+Broadcaster::set_broadcast(const std::shared_ptr<Interface>& client,
+                           bool                              broadcast)
 {
 	if (broadcast) {
 		_broadcastees.insert(client);

@@ -36,10 +36,9 @@ using namespace client;
 
 namespace gui {
 
-SubgraphModule::SubgraphModule(GraphCanvas&           canvas,
-                               SPtr<const GraphModel> graph)
-	: NodeModule(canvas, graph)
-	, _graph(graph)
+SubgraphModule::SubgraphModule(GraphCanvas&                      canvas,
+                               std::shared_ptr<const GraphModel> graph)
+    : NodeModule(canvas, graph), _graph(graph)
 {
 	assert(graph);
 }

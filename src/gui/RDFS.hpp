@@ -18,10 +18,10 @@
 #define INGEN_GUI_RDF_HPP
 
 #include "ingen/URI.hpp"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 
@@ -61,10 +61,12 @@ void datatypes(World& world, URISet& types, bool super);
 Objects instances(World& world, const URISet& types);
 
 /** Get all the types which `model` is an instance of. */
-URISet types(World& world, SPtr<const client::ObjectModel> model);
+URISet
+types(World& world, std::shared_ptr<const client::ObjectModel> model);
 
 /** Get all the properties with domains appropriate for `model`. */
-URISet properties(World& world, SPtr<const client::ObjectModel> model);
+URISet
+properties(World& world, std::shared_ptr<const client::ObjectModel> model);
 
 /** Return the range (value types) of `prop`.
  * @param recursive If true, include all subclasses.

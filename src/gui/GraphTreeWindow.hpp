@@ -47,16 +47,17 @@ public:
 
 	void init(App& app, client::ClientStore& store);
 
-	void new_object(const SPtr<client::ObjectModel>& object);
+	void new_object(const std::shared_ptr<client::ObjectModel>& object);
 
-	void graph_property_changed(const URI&                      key,
-	                            const Atom&                     value,
-	                            const SPtr<client::GraphModel>& graph);
+	void
+	graph_property_changed(const URI&                                 key,
+	                       const Atom&                                value,
+	                       const std::shared_ptr<client::GraphModel>& graph);
 
-	void graph_moved(const SPtr<client::GraphModel>& graph);
+	void graph_moved(const std::shared_ptr<client::GraphModel>& graph);
 
-	void add_graph(const SPtr<client::GraphModel>& pm);
-	void remove_graph(const SPtr<client::GraphModel>& pm);
+	void add_graph(const std::shared_ptr<client::GraphModel>& pm);
+	void remove_graph(const std::shared_ptr<client::GraphModel>& pm);
 	void show_graph_menu(GdkEventButton* ev);
 
 protected:
@@ -65,9 +66,9 @@ protected:
 
 	void event_graph_enabled_toggled(const Glib::ustring& path_str);
 
-	Gtk::TreeModel::iterator find_graph(
-		Gtk::TreeModel::Children  root,
-		const SPtr<client::ObjectModel>& graph);
+	Gtk::TreeModel::iterator
+	find_graph(Gtk::TreeModel::Children                    root,
+	           const std::shared_ptr<client::ObjectModel>& graph);
 
 	GraphTreeView* _graphs_treeview;
 
@@ -79,9 +80,9 @@ protected:
 			add(graph_model_col);
 		}
 
-		Gtk::TreeModelColumn<Glib::ustring>             name_col;
-		Gtk::TreeModelColumn<bool>                      enabled_col;
-		Gtk::TreeModelColumn<SPtr<client::GraphModel> > graph_model_col;
+		Gtk::TreeModelColumn<Glib::ustring> name_col;
+		Gtk::TreeModelColumn<bool>          enabled_col;
+		Gtk::TreeModelColumn<std::shared_ptr<client::GraphModel>> graph_model_col;
 	};
 
 	GraphTreeModelColumns            _graph_tree_columns;

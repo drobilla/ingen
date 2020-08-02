@@ -32,6 +32,7 @@
 #include <glibmm/miscutils.h>
 
 #include <list>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <utility>
@@ -95,9 +96,9 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 }
 
 void
-LoadGraphWindow::present(const SPtr<const GraphModel>& graph,
-                         bool                          import,
-                         const Properties&             data)
+LoadGraphWindow::present(const std::shared_ptr<const GraphModel>& graph,
+                         bool                                     import,
+                         const Properties&                        data)
 {
 	_import = import;
 	set_graph(graph);
@@ -115,7 +116,7 @@ LoadGraphWindow::present(const SPtr<const GraphModel>& graph,
  * This function MUST be called before using the window in any way!
  */
 void
-LoadGraphWindow::set_graph(const SPtr<const GraphModel>& graph)
+LoadGraphWindow::set_graph(const std::shared_ptr<const GraphModel>& graph)
 {
 	_graph = graph;
 	_symbol_entry->set_text("");

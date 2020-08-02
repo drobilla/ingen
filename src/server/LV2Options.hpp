@@ -21,6 +21,8 @@
 #include "ingen/URIs.hpp"
 #include "lv2/options/options.h"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -38,7 +40,7 @@ public:
 
 	const char* uri() const override { return LV2_OPTIONS__options; }
 
-	SPtr<LV2_Feature> feature(World& w, Node* n) override {
+	std::shared_ptr<LV2_Feature> feature(World& w, Node* n) override {
 		const LV2_Options_Option options[] = {
 			{ LV2_OPTIONS_INSTANCE, 0, _uris.bufsz_minBlockLength,
 			  sizeof(int32_t), _uris.atom_Int, &_block_length },
@@ -55,7 +57,7 @@ public:
 		f->URI  = LV2_OPTIONS__options;
 		f->data = malloc(sizeof(options));
 		memcpy(f->data, options, sizeof(options));
-		return SPtr<LV2_Feature>(f, &free_feature);
+		return std::shared_ptr<LV2_Feature>(f, &free_feature);
 	}
 
 private:

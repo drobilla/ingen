@@ -31,9 +31,6 @@ template <class T>
 struct FreeDeleter { void operator()(T* const ptr) { free(ptr); } };
 
 template <class T>
-using SPtr = std::shared_ptr<T>;
-
-template <class T>
 using MPtr = Raul::managed_ptr<T>;
 
 template <typename T, typename... Args>

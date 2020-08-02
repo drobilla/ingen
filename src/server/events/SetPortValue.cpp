@@ -31,20 +31,21 @@
 #include "ingen/World.hpp"
 
 #include <cassert>
+#include <memory>
 
 namespace ingen {
 namespace server {
 namespace events {
 
 /** Internal */
-SetPortValue::SetPortValue(Engine&                engine,
-                           const SPtr<Interface>& client,
-                           int32_t                id,
-                           SampleCount            timestamp,
-                           PortImpl*              port,
-                           const Atom&            value,
-                           bool                   activity,
-                           bool                   synthetic)
+SetPortValue::SetPortValue(Engine&                           engine,
+                           const std::shared_ptr<Interface>& client,
+                           int32_t                           id,
+                           SampleCount                       timestamp,
+                           PortImpl*                         port,
+                           const Atom&                       value,
+                           bool                              activity,
+                           bool                              synthetic)
 	: Event(engine, client, id, timestamp)
 	, _port(port)
 	, _value(value)

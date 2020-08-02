@@ -40,7 +40,7 @@ BreadCrumbs::BreadCrumbs(App& app)
 	set_can_focus(false);
 }
 
-SPtr<GraphView>
+std::shared_ptr<GraphView>
 BreadCrumbs::view(const Raul::Path& path)
 {
 	for (const auto& b : _breadcrumbs) {
@@ -58,7 +58,8 @@ BreadCrumbs::view(const Raul::Path& path)
  * children preserved.
  */
 void
-BreadCrumbs::build(const Raul::Path& path, const SPtr<GraphView>& view)
+BreadCrumbs::build(const Raul::Path&                 path,
+                   const std::shared_ptr<GraphView>& view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -156,7 +157,8 @@ BreadCrumbs::build(const Raul::Path& path, const SPtr<GraphView>& view)
  * match, otherwise ignoring `view`.
  */
 BreadCrumbs::BreadCrumb*
-BreadCrumbs::create_crumb(const Raul::Path& path, const SPtr<GraphView>& view)
+BreadCrumbs::create_crumb(const Raul::Path&                 path,
+                          const std::shared_ptr<GraphView>& view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(
 	    path, ((view && path == view->graph()->path()) ? view : nullptr)));

@@ -20,7 +20,6 @@
 #include "ingen/FilePath.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "sord/sordmm.hpp"
 
 #include <memory>
@@ -48,8 +47,8 @@ public:
 	virtual ~Serialiser();
 
 	/** Write a graph and all its contents as a complete bundle. */
-	virtual void write_bundle(const SPtr<const Node>& graph,
-	                          const URI&              uri);
+	virtual void
+	write_bundle(const std::shared_ptr<const Node>& graph, const URI& uri);
 
 	/** Begin a serialization to a string.
 	 *
@@ -78,15 +77,15 @@ public:
 	 *
 	 * @throw std::logic_error
 	 */
-	virtual void serialise(const SPtr<const Node>& object,
-	                       Property::Graph         context = Property::Graph::DEFAULT);
+	virtual void serialise(const std::shared_ptr<const Node>& object,
+	                       Property::Graph context = Property::Graph::DEFAULT);
 
 	/** Serialize an arc.
 	 *
 	 * @throw std::logic_error
 	 */
-	virtual void serialise_arc(const Sord::Node&      parent,
-	                           const SPtr<const Arc>& arc);
+	virtual void serialise_arc(const Sord::Node&                 parent,
+	                           const std::shared_ptr<const Arc>& arc);
 
 	/** Finish serialization.
 	 *

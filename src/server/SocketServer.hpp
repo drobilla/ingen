@@ -29,6 +29,8 @@
 #include "ingen/World.hpp"
 #include "raul/Socket.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -36,19 +38,19 @@ namespace server {
 class SocketServer
 {
 public:
-	SocketServer(World&                    world,
-	             server::Engine&           engine,
-	             const SPtr<Raul::Socket>& sock)
+	SocketServer(World&                               world,
+	             server::Engine&                      engine,
+	             const std::shared_ptr<Raul::Socket>& sock)
 		: _engine(engine)
 		, _sink(world.conf().option("dump").get<int32_t>()
-		        ? SPtr<Interface>(
-			        new Tee({SPtr<Interface>(new EventWriter(engine)),
-					         SPtr<Interface>(new StreamWriter(world.uri_map(),
+		        ? std::shared_ptr<Interface>(
+			        new Tee({std::shared_ptr<Interface>(new EventWriter(engine)),
+					         std::shared_ptr<Interface>(new StreamWriter(world.uri_map(),
 					                                          world.uris(),
 					                                          URI("ingen:/engine"),
 					                                          stderr,
 					                                          ColorContext::Color::CYAN))}))
-		        : SPtr<Interface>(new EventWriter(engine)))
+		        : std::shared_ptr<Interface>(new EventWriter(engine)))
 		, _reader(new SocketReader(world, *_sink, sock))
 		, _writer(new SocketWriter(world.uri_map(),
 		                           world.uris(),
@@ -72,10 +74,10 @@ protected:
 	}
 
 private:
-	server::Engine&    _engine;
-	SPtr<Interface>    _sink;
-	SPtr<SocketReader> _reader;
-	SPtr<SocketWriter> _writer;
+	server::Engine&               _engine;
+	std::shared_ptr<Interface>    _sink;
+	std::shared_ptr<SocketReader> _reader;
+	std::shared_ptr<SocketWriter> _writer;
 };
 
 } // namespace server

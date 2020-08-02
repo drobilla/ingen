@@ -24,6 +24,8 @@
 #include "ingen/LV2Features.hpp"
 #include "lv2/resize-port/resize-port.h"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -44,7 +46,7 @@ struct ResizeFeature : public ingen::LV2Features::Feature {
 
 	const char* uri() const { return LV2_RESIZE_PORT_URI; }
 
-	SPtr<LV2_Feature> feature(World& w, Node* n) {
+	std::shared_ptr<LV2_Feature> feature(World& w, Node* n) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
 		if (!block) {
 			return nullptr;
@@ -56,7 +58,7 @@ struct ResizeFeature : public ingen::LV2Features::Feature {
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 		f->URI  = LV2_RESIZE_PORT_URI;
 		f->data = data;
-		return SPtr<LV2_Feature>(f, &free_feature);
+		return std::shared_ptr<LV2_Feature>(f, &free_feature);
 	}
 };
 

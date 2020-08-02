@@ -20,10 +20,9 @@
 #include "GraphBox.hpp"
 #include "Window.hpp"
 
-#include "ingen/memory.hpp"
-
 #include <gtkmm/builder.h>
 
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -48,8 +47,12 @@ public:
 
 	void init_window(App& app) override;
 
-	SPtr<const client::GraphModel> graph() const { return _box->graph(); }
-	GraphBox*                      box()   const { return _box; }
+	std::shared_ptr<const client::GraphModel> graph() const
+	{
+		return _box->graph();
+	}
+
+	GraphBox* box() const { return _box; }
 
 	bool documentation_is_visible() { return _box->documentation_is_visible(); }
 

@@ -31,7 +31,7 @@ LV2Features::Feature::free_feature(LV2_Feature* feature)
 }
 
 void
-LV2Features::add_feature(const SPtr<Feature>& feature)
+LV2Features::add_feature(const std::shared_ptr<Feature>& feature)
 {
 	_features.push_back(feature);
 }
@@ -68,12 +68,12 @@ LV2Features::is_supported(const std::string& uri) const
 	return false;
 }
 
-SPtr<LV2Features::FeatureArray>
+std::shared_ptr<LV2Features::FeatureArray>
 LV2Features::lv2_features(World& world, Node* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (const auto& f : _features) {
-		SPtr<LV2_Feature> fptr = f->feature(world, node);
+		std::shared_ptr<LV2_Feature> fptr = f->feature(world, node);
 		if (fptr) {
 			vec.push_back(fptr);
 		}

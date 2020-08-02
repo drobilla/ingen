@@ -24,11 +24,13 @@
 #include "types.hpp"
 
 #include "ingen/Atom.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
 
 #include <atomic>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 
 namespace ingen {
 namespace server {

@@ -18,12 +18,13 @@
 #define INGEN_GUI_OBJECTMENU_HPP
 
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
+
+#include <memory>
 
 namespace ingen {
 namespace gui {
@@ -43,10 +44,14 @@ public:
 	ObjectMenu(BaseObjectType*                   cobject,
 	           const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SPtr<const client::ObjectModel> object);
+	void init(App& app, std::shared_ptr<const client::ObjectModel> object);
 
-	SPtr<const client::ObjectModel> object() const { return _object; }
-	App*                            app()    const { return _app; }
+	std::shared_ptr<const client::ObjectModel> object() const
+	{
+		return _object;
+	}
+
+	App* app() const { return _app; }
 
 protected:
 	void         on_menu_learn();
@@ -58,16 +63,16 @@ protected:
 
 	void property_changed(const URI& predicate, const Atom& value);
 
-	App*                            _app;
-	SPtr<const client::ObjectModel> _object;
-	Gtk::MenuItem*                  _learn_menuitem;
-	Gtk::MenuItem*                  _unlearn_menuitem;
-	Gtk::CheckMenuItem*             _polyphonic_menuitem;
-	Gtk::MenuItem*                  _disconnect_menuitem;
-	Gtk::MenuItem*                  _rename_menuitem;
-	Gtk::MenuItem*                  _destroy_menuitem;
-	Gtk::MenuItem*                  _properties_menuitem;
-	Gtk::SeparatorMenuItem*         _separator_menuitem;
+	App*                                       _app;
+	std::shared_ptr<const client::ObjectModel> _object;
+	Gtk::MenuItem*                             _learn_menuitem;
+	Gtk::MenuItem*                             _unlearn_menuitem;
+	Gtk::CheckMenuItem*                        _polyphonic_menuitem;
+	Gtk::MenuItem*                             _disconnect_menuitem;
+	Gtk::MenuItem*                             _rename_menuitem;
+	Gtk::MenuItem*                             _destroy_menuitem;
+	Gtk::MenuItem*                             _properties_menuitem;
+	Gtk::SeparatorMenuItem*                    _separator_menuitem;
 
 	bool _enable_signal;
 };

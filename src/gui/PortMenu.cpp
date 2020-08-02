@@ -22,7 +22,6 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "ingen/memory.hpp"
 
 #include <memory>
 #include <string>
@@ -46,7 +45,9 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 }
 
 void
-PortMenu::init(App& app, SPtr<const PortModel> port, bool internal_graph_port)
+PortMenu::init(App&                             app,
+               std::shared_ptr<const PortModel> port,
+               bool                             internal_graph_port)
 {
 	const URIs& uris = app.uris();
 

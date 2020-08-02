@@ -20,12 +20,13 @@
 #include "Window.hpp"
 
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/label.h>
+
+#include <memory>
 
 namespace ingen {
 namespace gui {
@@ -40,16 +41,16 @@ public:
 	RenameWindow(BaseObjectType*                   cobject,
 	             const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SPtr<const client::ObjectModel> object);
+	void present(std::shared_ptr<const client::ObjectModel> object);
 
 private:
-	void set_object(SPtr<const client::ObjectModel> object);
+	void set_object(std::shared_ptr<const client::ObjectModel> object);
 
 	void values_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
-	SPtr<const client::ObjectModel> _object;
+	std::shared_ptr<const client::ObjectModel> _object;
 
 	Gtk::Entry*  _symbol_entry;
 	Gtk::Entry*  _label_entry;

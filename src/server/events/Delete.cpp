@@ -31,6 +31,7 @@
 #include "ingen/Forge.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -44,10 +45,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Delete::Delete(Engine&                engine,
-               const SPtr<Interface>& client,
-               FrameTime              timestamp,
-               const ingen::Del&      msg)
+Delete::Delete(Engine&                           engine,
+               const std::shared_ptr<Interface>& client,
+               FrameTime                         timestamp,
+               const ingen::Del&                 msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _engine_port(nullptr)

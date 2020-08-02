@@ -22,23 +22,24 @@
 #include "ingen/AtomReader.hpp"
 
 #include <deque>
+#include <memory>
 
 namespace ingen {
 namespace server {
 namespace events {
 
-Undo::Undo(Engine&                engine,
-           const SPtr<Interface>& client,
-           SampleCount            timestamp,
-           const ingen::Undo&     msg)
+Undo::Undo(Engine&                           engine,
+           const std::shared_ptr<Interface>& client,
+           SampleCount                       timestamp,
+           const ingen::Undo&                msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _is_redo(false)
 {}
 
-Undo::Undo(Engine&                engine,
-           const SPtr<Interface>& client,
-           SampleCount            timestamp,
-           const ingen::Redo&     msg)
+Undo::Undo(Engine&                           engine,
+           const std::shared_ptr<Interface>& client,
+           SampleCount                       timestamp,
+           const ingen::Redo&                msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _is_redo(true)
 {}

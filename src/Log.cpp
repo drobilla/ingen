@@ -148,7 +148,7 @@ free_log_feature(LV2_Feature* feature) {
 	free(feature);
 }
 
-SPtr<LV2_Feature>
+std::shared_ptr<LV2_Feature>
 Log::Feature::feature(World& world, Node* block)
 {
 	auto* handle = static_cast<Handle*>(calloc(1, sizeof(Handle)));
@@ -162,7 +162,7 @@ Log::Feature::feature(World& world, Node* block)
 	f->URI  = LV2_LOG__log;
 	f->data = &handle->lv2_log;
 
-	return SPtr<LV2_Feature>(f, &free_log_feature);
+	return std::shared_ptr<LV2_Feature>(f, &free_log_feature);
 }
 
 }  // namespace ingen

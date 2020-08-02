@@ -22,6 +22,7 @@
 #include "GraphImpl.hpp"
 
 #include "ingen/Store.hpp"
+#include "ingen/memory.hpp"
 
 #include <cstdint>
 #include <map>
@@ -46,10 +47,10 @@ class DisconnectAll;
 class Delete : public Event
 {
 public:
-	Delete(Engine&                engine,
-	       const SPtr<Interface>& client,
-	       FrameTime              timestamp,
-	       const ingen::Del&      msg);
+	Delete(Engine&                           engine,
+	       const std::shared_ptr<Interface>& client,
+	       FrameTime                         timestamp,
+	       const ingen::Del&                 msg);
 
 	~Delete() override;
 
@@ -64,8 +65,8 @@ private:
 
 	const ingen::Del               _msg;
 	Raul::Path                     _path;
-	SPtr<BlockImpl>                _block; ///< Non-null iff a block
-	SPtr<DuplexPort>               _port; ///< Non-null iff a port
+	std::shared_ptr<BlockImpl>     _block; ///< Non-null iff a block
+	std::shared_ptr<DuplexPort>    _port; ///< Non-null iff a port
 	EnginePort*                    _engine_port;
 	MPtr<GraphImpl::Ports>         _ports_array; ///< New (external) ports for Graph
 	MPtr<CompiledGraph>            _compiled_graph; ///< Graph's new process order

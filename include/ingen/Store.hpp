@@ -18,12 +18,12 @@
 #define INGEN_STORE_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"
 
 #include <map>
+#include <memory>
 #include <mutex>
 #include <utility>
 
@@ -36,9 +36,10 @@ class Node;
 /** Store of objects in the graph hierarchy.
  * @ingroup IngenShared
  */
-class INGEN_API Store : public Raul::Noncopyable
-                      , public Raul::Deletable
-                      , public std::map< const Raul::Path, SPtr<Node> > {
+class INGEN_API Store : public Raul::Noncopyable,
+                        public Raul::Deletable,
+                        public std::map<const Raul::Path, std::shared_ptr<Node>>
+{
 public:
 	void add(Node* o);
 
@@ -48,13 +49,13 @@ public:
 	}
 
 	using const_range = std::pair<const_iterator, const_iterator>;
-	using Objects     = std::map<Raul::Path, SPtr<Node>>;
+	using Objects     = std::map<Raul::Path, std::shared_ptr<Node>>;
 	using Mutex       = std::recursive_mutex;
 
 	iterator       find_descendants_end(Store::iterator parent);
 	const_iterator find_descendants_end(Store::const_iterator parent) const;
 
-	const_range children_range(const SPtr<const Node>& o) const;
+	const_range children_range(const std::shared_ptr<const Node>& o) const;
 
 	/** Remove the object at `top` and all its children from the store.
 	 *

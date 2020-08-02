@@ -25,16 +25,17 @@
 #include "GraphImpl.hpp"
 #include "events/Move.hpp"
 
+#include <memory>
 #include <mutex>
 
 namespace ingen {
 namespace server {
 namespace events {
 
-Move::Move(Engine&                engine,
-           const SPtr<Interface>& client,
-           SampleCount            timestamp,
-           const ingen::Move&     msg)
+Move::Move(Engine&                           engine,
+           const std::shared_ptr<Interface>& client,
+           SampleCount                       timestamp,
+           const ingen::Move&                msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 {

@@ -21,6 +21,8 @@
 #include "UndoStack.hpp"
 #include "types.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 namespace events {
@@ -32,15 +34,15 @@ namespace events {
 class Undo : public Event
 {
 public:
-	Undo(Engine&                engine,
-	     const SPtr<Interface>& client,
-	     SampleCount            timestamp,
-	     const ingen::Undo&     msg);
+	Undo(Engine&                           engine,
+	     const std::shared_ptr<Interface>& client,
+	     SampleCount                       timestamp,
+	     const ingen::Undo&                msg);
 
-	Undo(Engine&                engine,
-	     const SPtr<Interface>& client,
-	     SampleCount            timestamp,
-	     const ingen::Redo&     msg);
+	Undo(Engine&                           engine,
+	     const std::shared_ptr<Interface>& client,
+	     SampleCount                       timestamp,
+	     const ingen::Redo&                msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

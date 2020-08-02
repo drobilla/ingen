@@ -35,6 +35,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -61,12 +62,12 @@ BlockFactory::plugins()
 	return _plugins;
 }
 
-std::set<SPtr<PluginImpl>>
+std::set<std::shared_ptr<PluginImpl>>
 BlockFactory::refresh()
 {
 	// Record current plugins, and those that are currently zombies
-	const Plugins              old_plugins(_plugins);
-	std::set<SPtr<PluginImpl>> zombies;
+	const Plugins                         old_plugins(_plugins);
+	std::set<std::shared_ptr<PluginImpl>> zombies;
 	for (const auto& p : _plugins) {
 		if (p.second->is_zombie()) {
 			zombies.insert(p.second);
@@ -77,7 +78,7 @@ BlockFactory::refresh()
 	load_lv2_plugins();
 
 	// Add any new plugins to response
-	std::set<SPtr<PluginImpl>> new_plugins;
+	std::set<std::shared_ptr<PluginImpl>> new_plugins;
 	for (const auto& p : _plugins) {
 		auto o = old_plugins.find(p.first);
 		if (o == old_plugins.end()) {
@@ -146,13 +147,12 @@ void
 BlockFactory::load_lv2_plugins()
 {
 	// Build an array of port type nodes for checking compatibility
-	using Types = std::vector<SPtr<LilvNode>>;
+	using Types = std::vector<std::shared_ptr<LilvNode>>;
 	Types types;
 	for (unsigned t = PortType::ID::AUDIO; t <= PortType::ID::ATOM; ++t) {
 		const URI& uri(PortType(static_cast<PortType::ID>(t)).uri());
-		types.push_back(
-			SPtr<LilvNode>(lilv_new_uri(_world.lilv_world(), uri.c_str()),
-			               lilv_node_free));
+		types.push_back(std::shared_ptr<LilvNode>(
+		    lilv_new_uri(_world.lilv_world(), uri.c_str()), lilv_node_free));
 	}
 
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world.lilv_world());

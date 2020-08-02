@@ -21,7 +21,6 @@
 #include "ingen/Forge.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "ingen/runtime_paths.hpp"
 
 #include <chrono>

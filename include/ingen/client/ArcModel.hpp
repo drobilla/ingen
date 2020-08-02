@@ -20,10 +20,10 @@
 #include "ingen/Arc.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 
 #include <cassert>
+#include <memory>
 
 namespace ingen {
 namespace client {
@@ -37,8 +37,8 @@ class ClientStore;
 class INGEN_API ArcModel : public Arc
 {
 public:
-	SPtr<PortModel> tail() const { return _tail; }
-	SPtr<PortModel> head() const { return _head; }
+	std::shared_ptr<PortModel> tail() const { return _tail; }
+	std::shared_ptr<PortModel> head() const { return _head; }
 
 	const Raul::Path& tail_path() const override { return _tail->path(); }
 	const Raul::Path& head_path() const override { return _head->path(); }
@@ -46,7 +46,7 @@ public:
 private:
 	friend class ClientStore;
 
-	ArcModel(SPtr<PortModel> tail, SPtr<PortModel> head)
+	ArcModel(std::shared_ptr<PortModel> tail, std::shared_ptr<PortModel> head)
 		: _tail(std::move(tail))
 		, _head(std::move(head))
 	{
@@ -57,8 +57,8 @@ private:
 		assert(_tail->path() != _head->path());
 	}
 
-	const SPtr<PortModel> _tail;
-	const SPtr<PortModel> _head;
+	const std::shared_ptr<PortModel> _tail;
+	const std::shared_ptr<PortModel> _head;
 };
 
 } // namespace client

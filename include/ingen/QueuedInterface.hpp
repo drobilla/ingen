@@ -20,6 +20,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 
+#include <memory>
 #include <mutex>
 #include <vector>
 
@@ -32,7 +33,10 @@ namespace ingen {
 class QueuedInterface : public Interface
 {
 public:
-	explicit QueuedInterface(SPtr<Interface> sink) : _sink(std::move(sink)) {}
+	explicit QueuedInterface(std::shared_ptr<Interface> sink)
+	    : _sink(std::move(sink))
+	{
+	}
 
 	URI uri() const override { return URI("ingen:/QueuedInterface"); }
 
@@ -53,12 +57,12 @@ public:
 		}
 	}
 
-	const SPtr<Interface>& sink() const { return _sink; }
+	const std::shared_ptr<Interface>& sink() const { return _sink; }
 
 private:
-	std::mutex           _mutex;
-	SPtr<Interface>      _sink;
-	std::vector<Message> _messages;
+	std::mutex                 _mutex;
+	std::shared_ptr<Interface> _sink;
+	std::vector<Message>       _messages;
 };
 
 } // namespace ingen

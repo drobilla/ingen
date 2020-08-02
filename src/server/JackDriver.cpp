@@ -32,6 +32,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "ingen/fmt.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/atom/util.h"
 
 #include <jack/midiport.h>
@@ -568,11 +569,10 @@ JackDriver::_session_cb(jack_session_event_t* event)
 	                            jack_get_client_name(_client),
 	                            event->client_uuid);
 
-	SPtr<Serialiser> serialiser = _engine.world().serialiser();
-	if (serialiser) {
+	if (auto serialiser = _engine.world().serialiser()) {
 		std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
 
-		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
+		std::shared_ptr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root,
 		                         URI(std::string("file://") + event->session_dir));
 	}

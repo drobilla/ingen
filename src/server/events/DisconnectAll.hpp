@@ -21,9 +21,11 @@
 #include "Disconnect.hpp"
 #include "Event.hpp"
 
+#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 
 #include <list>
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -43,10 +45,10 @@ class Disconnect;
 class DisconnectAll : public Event
 {
 public:
-	DisconnectAll(Engine&                     engine,
-	              const SPtr<Interface>&      client,
-	              SampleCount                 timestamp,
-	              const ingen::DisconnectAll& msg);
+	DisconnectAll(Engine&                           engine,
+	              const std::shared_ptr<Interface>& client,
+	              SampleCount                       timestamp,
+	              const ingen::DisconnectAll&       msg);
 
 	DisconnectAll(Engine&    engine,
 	              GraphImpl* parent,

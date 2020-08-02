@@ -24,6 +24,7 @@
 #include "raul/Deletable.hpp"
 
 #include <cassert>
+#include <utility>
 
 namespace ingen {
 

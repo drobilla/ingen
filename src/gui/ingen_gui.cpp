@@ -46,12 +46,15 @@ struct GUIModule : public Module {
 		app->run();
 	}
 
-	SPtr<Interface> make_client(World& world) {
-		SPtr<SigClientInterface> sci(new SigClientInterface());
-		return world.engine() ? sci : SPtr<Interface>(new QueuedInterface(sci));
+	std::shared_ptr<Interface> make_client(World& world)
+	{
+		auto sci = std::make_shared<SigClientInterface>();
+		return world.engine()
+		           ? sci
+		           : std::shared_ptr<Interface>(new QueuedInterface(sci));
 	}
 
-	SPtr<gui::App> app;
+	std::shared_ptr<gui::App> app;
 };
 
 } // namespace gui

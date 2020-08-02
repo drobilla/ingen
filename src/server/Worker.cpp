@@ -25,6 +25,7 @@
 #include "lv2/worker/worker.h"
 
 #include <cstdlib>
+#include <memory>
 
 namespace ingen {
 
@@ -91,7 +92,7 @@ Worker::request(LV2Block*   block,
 	return LV2_WORKER_SUCCESS;
 }
 
-SPtr<LV2_Feature>
+std::shared_ptr<LV2_Feature>
 Worker::Schedule::feature(World&, Node* n)
 {
 	auto* block = dynamic_cast<LV2Block*>(n);
@@ -108,7 +109,7 @@ Worker::Schedule::feature(World&, Node* n)
 	f->URI  = LV2_WORKER__schedule;
 	f->data = data;
 
-	return SPtr<LV2_Feature>(f, &free_feature);
+	return std::shared_ptr<LV2_Feature>(f, &free_feature);
 }
 
 Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)

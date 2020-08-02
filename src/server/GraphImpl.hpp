@@ -21,7 +21,6 @@
 #include "DuplexPort.hpp"
 #include "ThreadManager.hpp"
 
-#include "ingen/memory.hpp"
 #include "lv2/urid/urid.h"
 
 #include <cassert>
@@ -157,12 +156,13 @@ public:
 	/** Add an arc to this graph.
 	 * Pre-processing thread only.
 	 */
-	void add_arc(const SPtr<ArcImpl>& a);
+	void add_arc(const std::shared_ptr<ArcImpl>& a);
 
 	/** Remove an arc from this graph.
 	 * Pre-processing thread only.
 	 */
-	SPtr<ArcImpl> remove_arc(const PortImpl* tail, const PortImpl* dst_port);
+	std::shared_ptr<ArcImpl>
+	remove_arc(const PortImpl* tail, const PortImpl* dst_port);
 
 	bool has_arc(const PortImpl* tail, const PortImpl* dst_port) const;
 

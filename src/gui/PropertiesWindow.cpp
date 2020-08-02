@@ -33,6 +33,7 @@
 #include <cfloat>
 #include <climits>
 #include <cstdint>
+#include <memory>
 #include <set>
 #include <utility>
 
@@ -96,7 +97,7 @@ PropertiesWindow::reset()
 }
 
 void
-PropertiesWindow::present(SPtr<const ObjectModel> model)
+PropertiesWindow::present(std::shared_ptr<const ObjectModel> model)
 {
 	set_object(model);
 	Gtk::Window::present();
@@ -200,7 +201,7 @@ PropertiesWindow::class_supported(const rdfs::URISet& types)
  * This function MUST be called before using this object in any way.
  */
 void
-PropertiesWindow::set_object(SPtr<const ObjectModel> model)
+PropertiesWindow::set_object(std::shared_ptr<const ObjectModel> model)
 {
 	reset();
 	_model = model;

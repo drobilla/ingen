@@ -25,7 +25,6 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 
 #include <chrono>
 #include <condition_variable>
@@ -94,15 +93,15 @@ public:
 	unsigned run(uint32_t sample_count) override;
 	void quit() override;
 	bool main_iteration() override;
-	void register_client(const SPtr<Interface>& client) override;
-	bool unregister_client(const SPtr<Interface>& client) override;
+	void register_client(const std::shared_ptr<Interface>& client) override;
+	bool unregister_client(const std::shared_ptr<Interface>& client) override;
 
 	void listen() override;
 
 	/** Return a random [0..1] float with uniform distribution */
 	float frand() { return _uniform_dist(_rand_engine); }
 
-	void set_driver(const SPtr<Driver>& driver);
+	void set_driver(const std::shared_ptr<Driver>& driver);
 
 	/** Return the frame time to execute an event that arrived now.
 	 *
@@ -137,14 +136,14 @@ public:
 	ingen::World& world() const { return _world; }
 	Log&          log()   const;
 
-	const SPtr<Interface>&                  interface()        const { return _interface; }
-	const SPtr<EventWriter>&                event_writer()     const { return _event_writer; }
+	const std::shared_ptr<Interface>&       interface()        const { return _interface; }
+	const std::shared_ptr<EventWriter>&     event_writer()     const { return _event_writer; }
 	const std::unique_ptr<AtomReader>&      atom_interface()   const { return _atom_interface; }
     const std::unique_ptr<BlockFactory>&    block_factory()    const { return _block_factory; }
     const std::unique_ptr<Broadcaster>&     broadcaster()      const { return _broadcaster; }
     const std::unique_ptr<BufferFactory>&   buffer_factory()   const { return _buffer_factory; }
     const std::unique_ptr<ControlBindings>& control_bindings() const { return _control_bindings; }
-    const SPtr<Driver>&                     driver()           const { return _driver; }
+    const std::shared_ptr<Driver>&          driver()           const { return _driver; }
     const std::unique_ptr<PostProcessor>&   post_processor()   const { return _post_processor; }
     const std::unique_ptr<Raul::Maid>&      maid()             const { return _maid; }
     const std::unique_ptr<UndoStack>&       undo_stack()       const { return _undo_stack; }
@@ -167,7 +166,7 @@ public:
 	void  signal_tasks_available();
 	Task* steal_task(unsigned start_thread);
 
-	SPtr<Store> store() const;
+	std::shared_ptr<Store> store() const;
 
 	SampleRate  sample_rate() const;
 	SampleCount block_length() const;
@@ -183,10 +182,10 @@ public:
 private:
 	ingen::World& _world;
 
-	SPtr<LV2Options>                 _options;
+	std::shared_ptr<LV2Options>      _options;
 	std::unique_ptr<BufferFactory>   _buffer_factory;
 	std::unique_ptr<Raul::Maid>      _maid;
-	SPtr<Driver>                     _driver;
+	std::shared_ptr<Driver>          _driver;
 	std::unique_ptr<Worker>          _worker;
 	std::unique_ptr<Worker>          _sync_worker;
 	std::unique_ptr<Broadcaster>     _broadcaster;
@@ -197,8 +196,8 @@ private:
 	std::unique_ptr<PostProcessor>   _post_processor;
 	std::unique_ptr<PreProcessor>    _pre_processor;
 	std::unique_ptr<SocketListener>  _listener;
-	SPtr<EventWriter>                _event_writer;
-	SPtr<Interface>                  _interface;
+	std::shared_ptr<EventWriter>     _event_writer;
+	std::shared_ptr<Interface>       _interface;
 	std::unique_ptr<AtomReader>      _atom_interface;
 	GraphImpl*                       _root_graph;
 

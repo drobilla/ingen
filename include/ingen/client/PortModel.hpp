@@ -19,11 +19,11 @@
 
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/port-props/port-props.h"
 
 #include <cstdlib>
+#include <memory>
 #include <string>
 
 namespace Raul { class Path; }
@@ -82,10 +82,10 @@ private:
 		, _direction(dir)
 	{}
 
-	void add_child(const SPtr<ObjectModel>& c) override    { throw; }
-	bool remove_child(const SPtr<ObjectModel>& c) override { throw; }
+	void add_child(const std::shared_ptr<ObjectModel>& c) override { throw; }
+	bool remove_child(const std::shared_ptr<ObjectModel>& c) override { throw; }
 
-	void set(const SPtr<ObjectModel>& model) override;
+	void set(const std::shared_ptr<ObjectModel>& model) override;
 
 	uint32_t  _index;
 	Direction _direction;

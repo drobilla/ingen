@@ -25,6 +25,7 @@
 #include "ingen/client/ObjectModel.hpp"
 
 #include <cstdint>
+#include <memory>
 
 namespace ingen {
 
@@ -54,7 +55,7 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 }
 
 void
-ObjectMenu::init(App& app, SPtr<const ObjectModel> object)
+ObjectMenu::init(App& app, std::shared_ptr<const ObjectModel> object)
 {
 	_app = &app;
 	_object = object;

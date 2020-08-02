@@ -26,6 +26,8 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 

@@ -112,7 +112,7 @@ App::~App()
 	delete _window_factory;
 }
 
-SPtr<App>
+std::shared_ptr<App>
 App::create(ingen::World& world)
 {
 	suil_init(&world.argc(), &world.argv(), SUIL_ARG_NONE);
@@ -128,7 +128,7 @@ App::create(ingen::World& world)
 		_main = new Gtk::Main(&world.argc(), &world.argv());
 	}
 
-	auto app = SPtr<App>{new App(world)};
+	auto app = std::shared_ptr<App>(new App(world));
 
 	// Load configuration settings
 	app->style()->load_settings();
@@ -160,7 +160,7 @@ App::run()
 }
 
 void
-App::attach(const SPtr<ingen::Interface>& client)
+App::attach(const std::shared_ptr<ingen::Interface>& client)
 {
 	assert(!_client);
 	assert(!_store);
@@ -215,7 +215,7 @@ App::request_plugins_if_necessary()
 	}
 }
 
-SPtr<SigClientInterface>
+std::shared_ptr<SigClientInterface>
 App::sig_client()
 {
 	auto qi = std::dynamic_pointer_cast<QueuedInterface>(_client);
@@ -225,7 +225,7 @@ App::sig_client()
 	return std::dynamic_pointer_cast<SigClientInterface>(_client);
 }
 
-SPtr<Serialiser>
+std::shared_ptr<Serialiser>
 App::serialiser()
 {
 	return _world.serialiser();

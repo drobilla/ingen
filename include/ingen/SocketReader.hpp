@@ -18,10 +18,10 @@
 #define INGEN_SOCKETREADER_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "serd/serd.h"
 #include "sord/sord.h"
 
+#include <memory>
 #include <thread>
 
 namespace Raul { class Socket; }
@@ -35,9 +35,9 @@ class World;
 class INGEN_API SocketReader
 {
 public:
-	SocketReader(World&             world,
-	             Interface&         iface,
-	             SPtr<Raul::Socket> sock);
+	SocketReader(World&                        world,
+	             Interface&                    iface,
+	             std::shared_ptr<Raul::Socket> sock);
 
 	virtual ~SocketReader();
 
@@ -69,15 +69,15 @@ private:
 	                                  const SerdNode*    object_datatype,
 	                                  const SerdNode*    object_lang);
 
-	World&             _world;
-	Interface&         _iface;
-	SerdEnv*           _env;
-	SordInserter*      _inserter;
-	SordNode*          _msg_node;
-	SPtr<Raul::Socket> _socket;
-	int                _socket_error;
-	bool               _exit_flag;
-	std::thread        _thread;
+	World&                        _world;
+	Interface&                    _iface;
+	SerdEnv*                      _env;
+	SordInserter*                 _inserter;
+	SordNode*                     _msg_node;
+	std::shared_ptr<Raul::Socket> _socket;
+	int                           _socket_error;
+	bool                          _exit_flag;
+	std::thread                   _thread;
 };
 
 }  // namespace ingen

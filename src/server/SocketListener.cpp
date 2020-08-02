@@ -33,6 +33,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -170,14 +171,14 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 		}
 
 		if (pfds[0].revents & POLLIN) {
-			SPtr<Raul::Socket> conn = unix_sock->accept();
+			auto conn = unix_sock->accept();
 			if (conn) {
 				new SocketServer(world, *engine, conn);
 			}
 		}
 
 		if (pfds[1].revents & POLLIN) {
-			SPtr<Raul::Socket> conn = net_sock->accept();
+			auto conn = net_sock->accept();
 			if (conn) {
 				new SocketServer(world, *engine, conn);
 			}

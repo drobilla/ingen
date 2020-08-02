@@ -44,28 +44,29 @@ namespace ingen {
 namespace gui {
 
 Port*
-Port::create(App&                  app,
-             Ganv::Module&         module,
-             SPtr<const PortModel> pm,
-             bool                  flip)
+Port::create(App&                             app,
+             Ganv::Module&                    module,
+             std::shared_ptr<const PortModel> pm,
+             bool                             flip)
 {
 	return new Port(app, module, pm, port_label(app, pm), flip);
 }
 
 /** @param flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(App&                  app,
-           Ganv::Module&         module,
-           SPtr<const PortModel> pm,
-           const std::string&    name,
-           bool                  flip)
-	: Ganv::Port(module, name,
-	             flip ? (!pm->is_input()) : pm->is_input(),
-	             app.style()->get_port_color(pm.get()))
-	, _app(app)
-	, _port_model(pm)
-	, _entered(false)
-	, _flipped(flip)
+Port::Port(App&                             app,
+           Ganv::Module&                    module,
+           std::shared_ptr<const PortModel> pm,
+           const std::string&               name,
+           bool                             flip)
+    : Ganv::Port(module,
+                 name,
+                 flip ? (!pm->is_input()) : pm->is_input(),
+                 app.style()->get_port_color(pm.get()))
+    , _app(app)
+    , _port_model(pm)
+    , _entered(false)
+    , _flipped(flip)
 {
 	assert(pm);
 
@@ -112,7 +113,7 @@ Port::~Port()
 }
 
 std::string
-Port::port_label(App& app, SPtr<const PortModel> pm)
+Port::port_label(App& app, std::shared_ptr<const PortModel> pm)
 {
 	if (!pm) {
 		return "";
@@ -149,7 +150,7 @@ Port::ensure_label()
 void
 Port::update_metadata()
 {
-	SPtr<const PortModel> pm = _port_model.lock();
+	auto pm = _port_model.lock();
 	if (pm && _app.can_control(pm.get()) && pm->is_numeric()) {
 		auto parent = std::dynamic_pointer_cast<const BlockModel>(pm->parent());
 		if (parent) {
@@ -513,7 +514,7 @@ bool
 Port::on_selected(gboolean b)
 {
 	if (b) {
-		SPtr<const PortModel> pm = _port_model.lock();
+		auto pm = _port_model.lock();
 		if (pm) {
 			auto block =
 			    std::dynamic_pointer_cast<const BlockModel>(pm->parent());

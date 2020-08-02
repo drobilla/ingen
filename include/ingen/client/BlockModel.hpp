@@ -21,10 +21,10 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 
 #include <algorithm>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -50,60 +50,60 @@ public:
 
 	GraphType graph_type() const override { return Node::GraphType::BLOCK; }
 
-	using Ports = std::vector<SPtr<const PortModel>>;
+	using Ports = std::vector<std::shared_ptr<const PortModel>>;
 
-	SPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
-	SPtr<const PortModel> get_port(uint32_t index) const;
+	std::shared_ptr<const PortModel> get_port(const Raul::Symbol& symbol) const;
+	std::shared_ptr<const PortModel> get_port(uint32_t index) const;
 
 	Node* port(uint32_t index) const override;
 
-	const URI&        plugin_uri()   const          { return _plugin_uri; }
-	const Resource*   plugin()       const override { return _plugin.get(); }
-	Resource*         plugin()                      { return _plugin.get(); }
-	SPtr<PluginModel> plugin_model() const          { return _plugin; }
-	uint32_t          num_ports()    const override { return _ports.size(); }
-	const Ports&      ports()        const          { return _ports; }
+	const URI&                   plugin_uri()   const          { return _plugin_uri; }
+	const Resource*              plugin()       const override { return _plugin.get(); }
+	Resource*                    plugin()                      { return _plugin.get(); }
+	std::shared_ptr<PluginModel> plugin_model() const          { return _plugin; }
+	uint32_t                     num_ports()    const override { return _ports.size(); }
+	const Ports&                 ports()        const          { return _ports; }
 
-	void default_port_value_range(const SPtr<const PortModel>& port,
-	                              float&                       min,
-	                              float&                       max,
-	                              uint32_t                     srate = 1) const;
+	void default_port_value_range(const std::shared_ptr<const PortModel>& port,
+	                              float&                                  min,
+	                              float&                                  max,
+	                              uint32_t srate = 1) const;
 
-	void port_value_range(const SPtr<const PortModel>& port,
-	                      float&                       min,
-	                      float&                       max,
-	                      uint32_t                     srate = 1) const;
+	void port_value_range(const std::shared_ptr<const PortModel>& port,
+	                      float&                                  min,
+	                      float&                                  max,
+	                      uint32_t srate = 1) const;
 
 	std::string label() const;
-	std::string port_label(const SPtr<const PortModel>& port) const;
+	std::string port_label(const std::shared_ptr<const PortModel>& port) const;
 
 	// Signals
-	INGEN_SIGNAL(new_port, void, SPtr<const PortModel>)
-	INGEN_SIGNAL(removed_port, void, SPtr<const PortModel>)
+	INGEN_SIGNAL(new_port, void, std::shared_ptr<const PortModel>)
+	INGEN_SIGNAL(removed_port, void, std::shared_ptr<const PortModel>)
 
 protected:
 	friend class ClientStore;
 
 	BlockModel(URIs& uris, URI plugin_uri, const Raul::Path& path);
 
-	BlockModel(URIs&                    uris,
-	           const SPtr<PluginModel>& plugin,
-	           const Raul::Path&        path);
+	BlockModel(URIs&                               uris,
+	           const std::shared_ptr<PluginModel>& plugin,
+	           const Raul::Path&                   path);
 
 	explicit BlockModel(const Raul::Path& path);
 
-	void add_child(const SPtr<ObjectModel>& c) override;
-	bool remove_child(const SPtr<ObjectModel>& c) override;
-	void add_port(const SPtr<PortModel>& pm);
-	void remove_port(const SPtr<PortModel>& port);
+	void add_child(const std::shared_ptr<ObjectModel>& c) override;
+	bool remove_child(const std::shared_ptr<ObjectModel>& c) override;
+	void add_port(const std::shared_ptr<PortModel>& pm);
+	void remove_port(const std::shared_ptr<PortModel>& port);
 	void remove_port(const Raul::Path& port_path);
-	void set(const SPtr<ObjectModel>& model) override;
+	void set(const std::shared_ptr<ObjectModel>& model) override;
 
 	virtual void clear();
 
-	Ports             _ports;      ///< Vector of ports
-	URI               _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SPtr<PluginModel> _plugin;     ///< The plugin this block is an instance of
+	Ports _ports;      ///< Vector of ports
+	URI   _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	std::shared_ptr<PluginModel> _plugin; ///< Plugin this is an instance of
 
 private:
 	mutable uint32_t _num_values; ///< Size of _min_values and _max_values

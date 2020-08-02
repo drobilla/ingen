@@ -22,6 +22,8 @@
 #include "Event.hpp"
 #include "types.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -39,10 +41,10 @@ namespace events {
 class Get : public Event
 {
 public:
-	Get(Engine&                engine,
-	    const SPtr<Interface>& client,
-	    SampleCount            timestamp,
-	    const ingen::Get&      msg);
+	Get(Engine&                           engine,
+	    const std::shared_ptr<Interface>& client,
+	    SampleCount                       timestamp,
+	    const ingen::Get&                 msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext&) override;

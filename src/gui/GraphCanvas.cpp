@@ -74,17 +74,17 @@ port_order(const GanvPort* a, const GanvPort* b, void* data)
 	return 0;
 }
 
-GraphCanvas::GraphCanvas(App&                   app,
-                         SPtr<const GraphModel> graph,
-                         int                    width,
-                         int                    height)
-	: Canvas(width, height)
-	, _app(app)
-	, _graph(std::move(graph))
-	, _auto_position_count(0)
-	, _menu_x(0)
-	, _menu_y(0)
-	, _paste_count(0)
+GraphCanvas::GraphCanvas(App&                              app,
+                         std::shared_ptr<const GraphModel> graph,
+                         int                               width,
+                         int                               height)
+    : Canvas(width, height)
+    , _app(app)
+    , _graph(std::move(graph))
+    , _auto_position_count(0)
+    , _menu_x(0)
+    , _menu_y(0)
+    , _paste_count(0)
 {
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);
@@ -303,7 +303,7 @@ GraphCanvas::show_port_names(bool b)
 }
 
 void
-GraphCanvas::add_plugin(const SPtr<PluginModel>& p)
+GraphCanvas::add_plugin(const std::shared_ptr<PluginModel>& p)
 {
 	if (_internal_menu && _app.uris().ingen_Internal == p->type()) {
 		_internal_menu->items().push_back(
@@ -323,7 +323,7 @@ GraphCanvas::remove_plugin(const URI& uri)
 }
 
 void
-GraphCanvas::add_block(const SPtr<const BlockModel>& bm)
+GraphCanvas::add_block(const std::shared_ptr<const BlockModel>& bm)
 {
 	auto        pm     = std::dynamic_pointer_cast<const GraphModel>(bm);
 	NodeModule* module = nullptr;
@@ -341,7 +341,7 @@ GraphCanvas::add_block(const SPtr<const BlockModel>& bm)
 }
 
 void
-GraphCanvas::remove_block(const SPtr<const BlockModel>& bm)
+GraphCanvas::remove_block(const std::shared_ptr<const BlockModel>& bm)
 {
 	auto i = _views.find(bm);
 
@@ -356,7 +356,7 @@ GraphCanvas::remove_block(const SPtr<const BlockModel>& bm)
 }
 
 void
-GraphCanvas::add_port(const SPtr<const PortModel>& pm)
+GraphCanvas::add_port(const std::shared_ptr<const PortModel>& pm)
 {
 	GraphPortModule* view = GraphPortModule::create(*this, pm);
 	_views.emplace(pm, view);
@@ -364,7 +364,7 @@ GraphCanvas::add_port(const SPtr<const PortModel>& pm)
 }
 
 void
-GraphCanvas::remove_port(const SPtr<const PortModel>& pm)
+GraphCanvas::remove_port(const std::shared_ptr<const PortModel>& pm)
 {
 	auto i = _views.find(pm);
 
@@ -382,7 +382,7 @@ GraphCanvas::remove_port(const SPtr<const PortModel>& pm)
 }
 
 Ganv::Port*
-GraphCanvas::get_port_view(const SPtr<PortModel>& port)
+GraphCanvas::get_port_view(const std::shared_ptr<PortModel>& port)
 {
 	Ganv::Module* module = _views[port];
 
@@ -409,7 +409,7 @@ GraphCanvas::get_port_view(const SPtr<PortModel>& port)
 
 /** Called when a connection is added to the model. */
 void
-GraphCanvas::connection(const SPtr<const ArcModel>& arc)
+GraphCanvas::connection(const std::shared_ptr<const ArcModel>& arc)
 {
 	Ganv::Port* const tail = get_port_view(arc->tail());
 	Ganv::Port* const head = get_port_view(arc->head());
@@ -424,7 +424,7 @@ GraphCanvas::connection(const SPtr<const ArcModel>& arc)
 
 /** Called when a connection is removed from the model. */
 void
-GraphCanvas::disconnection(const SPtr<const ArcModel>& arc)
+GraphCanvas::disconnection(const std::shared_ptr<const ArcModel>& arc)
 {
 	Ganv::Port* const tail = get_port_view(arc->tail());
 	Ganv::Port* const head = get_port_view(arc->head());
@@ -664,7 +664,7 @@ GraphCanvas::paste()
 	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
 	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
-	SPtr<Parser>        parser = _app.loader()->parser();
+	auto                parser = _app.loader()->parser();
 	const URIs&         uris   = _app.uris();
 	const Raul::Path&   parent = _graph->path();
 	if (!parser) {
@@ -732,10 +732,11 @@ GraphCanvas::paste()
 			continue;
 		}
 
-		const SPtr<Node>  node     = c.second;
+		const auto        node     = c.second;
 		const Raul::Path& old_path = copy_root.child(node->path());
 		const URI&        old_uri  = path_to_uri(old_path);
-		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
+		const Raul::Path& new_path =
+		    avoider.map_path(parent.child(node->path()));
 
 		// Copy properties, except those that should not be inherited in copies
 		Properties props = node->properties();
@@ -839,7 +840,7 @@ GraphCanvas::menu_add_port(const string& sym_base,
 void
 GraphCanvas::load_plugin(const std::weak_ptr<PluginModel>& weak_plugin)
 {
-	SPtr<PluginModel> plugin = weak_plugin.lock();
+	auto plugin = weak_plugin.lock();
 	if (!plugin) {
 		return;
 	}

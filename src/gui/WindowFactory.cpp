@@ -99,7 +99,7 @@ WindowFactory::num_open_graph_windows()
 }
 
 GraphBox*
-WindowFactory::graph_box(SPtr<const GraphModel> graph)
+WindowFactory::graph_box(std::shared_ptr<const GraphModel> graph)
 {
 	GraphWindow* window = graph_window(graph);
 	if (window) {
@@ -110,7 +110,7 @@ WindowFactory::graph_box(SPtr<const GraphModel> graph)
 }
 
 GraphWindow*
-WindowFactory::graph_window(SPtr<const GraphModel> graph)
+WindowFactory::graph_window(std::shared_ptr<const GraphModel> graph)
 {
 	if (!graph) {
 		return nullptr;
@@ -122,7 +122,7 @@ WindowFactory::graph_window(SPtr<const GraphModel> graph)
 }
 
 GraphWindow*
-WindowFactory::parent_graph_window(SPtr<const BlockModel> block)
+WindowFactory::parent_graph_window(std::shared_ptr<const BlockModel> block)
 {
 	if (!block) {
 		return nullptr;
@@ -138,9 +138,9 @@ WindowFactory::parent_graph_window(SPtr<const BlockModel> block)
  * presented and `preferred` left unmodified.
  */
 void
-WindowFactory::present_graph(SPtr<const GraphModel> graph,
-                             GraphWindow*           preferred,
-                             SPtr<GraphView>        view)
+WindowFactory::present_graph(std::shared_ptr<const GraphModel> graph,
+                             GraphWindow*                      preferred,
+                             std::shared_ptr<GraphView>        view)
 {
 	assert(!view || view->graph() == graph);
 
@@ -164,8 +164,8 @@ WindowFactory::present_graph(SPtr<const GraphModel> graph,
 }
 
 GraphWindow*
-WindowFactory::new_graph_window(SPtr<const GraphModel> graph,
-                                SPtr<GraphView>        view)
+WindowFactory::new_graph_window(std::shared_ptr<const GraphModel> graph,
+                                std::shared_ptr<GraphView>        view)
 {
 	assert(!view || view->graph() == graph);
 
@@ -206,8 +206,8 @@ WindowFactory::remove_graph_window(GraphWindow* win, GdkEventAny* ignored)
 }
 
 void
-WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
-                                   Properties             data)
+WindowFactory::present_load_plugin(std::shared_ptr<const GraphModel> graph,
+                                   Properties                        data)
 {
 	_app.request_plugins_if_necessary();
 
@@ -230,7 +230,7 @@ WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_load_graph(SPtr<const GraphModel> graph,
+WindowFactory::present_load_graph(std::shared_ptr<const GraphModel> graph,
                                   Properties             data)
 {
 	auto w = _graph_windows.find(graph->path());
@@ -243,8 +243,8 @@ WindowFactory::present_load_graph(SPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_load_subgraph(SPtr<const GraphModel> graph,
-                                     Properties             data)
+WindowFactory::present_load_subgraph(std::shared_ptr<const GraphModel> graph,
+                                     Properties                        data)
 {
 	auto w = _graph_windows.find(graph->path());
 
@@ -256,8 +256,8 @@ WindowFactory::present_load_subgraph(SPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_new_subgraph(SPtr<const GraphModel> graph,
-                                    Properties             data)
+WindowFactory::present_new_subgraph(std::shared_ptr<const GraphModel> graph,
+                                    Properties                        data)
 {
 	auto w = _graph_windows.find(graph->path());
 
@@ -269,7 +269,7 @@ WindowFactory::present_new_subgraph(SPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_rename(SPtr<const ObjectModel> object)
+WindowFactory::present_rename(std::shared_ptr<const ObjectModel> object)
 {
 	auto w = _graph_windows.find(object->path());
 	if (w == _graph_windows.end()) {
@@ -284,7 +284,7 @@ WindowFactory::present_rename(SPtr<const ObjectModel> object)
 }
 
 void
-WindowFactory::present_properties(SPtr<const ObjectModel> object)
+WindowFactory::present_properties(std::shared_ptr<const ObjectModel> object)
 {
 	auto w = _graph_windows.find(object->path());
 	if (w == _graph_windows.end()) {

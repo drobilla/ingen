@@ -20,7 +20,6 @@
 #include "Window.hpp"
 
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/alignment.h>
 #include <gtkmm/box.h>
@@ -54,8 +53,8 @@ public:
 	PropertiesWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SPtr<const client::ObjectModel> model);
-	void set_object(SPtr<const client::ObjectModel> model);
+	void present(std::shared_ptr<const client::ObjectModel> model);
+	void set_object(std::shared_ptr<const client::ObjectModel> model);
 
 private:
 	/** Record of a property (row in the table) */
@@ -108,21 +107,21 @@ private:
 	using Records = std::map<URI, Record>;
 	Records _records;
 
-	SPtr<const client::ObjectModel> _model;
-	ComboColumns                    _combo_columns;
-	Glib::RefPtr<Gtk::ListStore>    _key_store;
-	sigc::connection                _property_connection;
-	sigc::connection                _property_removed_connection;
-	Gtk::VBox*                      _vbox;
-	Gtk::ScrolledWindow*            _scrolledwindow;
-	Gtk::Table*                     _table;
-	Gtk::ComboBox*                  _key_combo;
-	LV2_URID                        _value_type;
-	Gtk::Bin*                       _value_bin;
-	Gtk::Button*                    _add_button;
-	Gtk::Button*                    _cancel_button;
-	Gtk::Button*                    _apply_button;
-	Gtk::Button*                    _ok_button;
+	std::shared_ptr<const client::ObjectModel> _model;
+	ComboColumns                               _combo_columns;
+	Glib::RefPtr<Gtk::ListStore>               _key_store;
+	sigc::connection                           _property_connection;
+	sigc::connection                           _property_removed_connection;
+	Gtk::VBox*                                 _vbox;
+	Gtk::ScrolledWindow*                       _scrolledwindow;
+	Gtk::Table*                                _table;
+	Gtk::ComboBox*                             _key_combo;
+	LV2_URID                                   _value_type;
+	Gtk::Bin*                                  _value_bin;
+	Gtk::Button*                               _add_button;
+	Gtk::Button*                               _cancel_button;
+	Gtk::Button*                               _apply_button;
+	Gtk::Button*                               _ok_button;
 };
 
 } // namespace gui

@@ -26,6 +26,7 @@
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
@@ -34,6 +35,7 @@
 #include <boost/optional/optional.hpp>
 
 #include <cstdint>
+#include <memory>
 #include <set>
 
 namespace Raul {

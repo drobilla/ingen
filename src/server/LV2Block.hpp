@@ -22,6 +22,7 @@
 #include "types.hpp"
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "lv2/worker/worker.h"
 #include "raul/Array.hpp"
@@ -103,16 +104,14 @@ protected:
 		LilvInstance* const instance;
 	};
 
-	SPtr<Instance> make_instance(URIs&      uris,
-	                             SampleRate rate,
-	                             uint32_t   voice,
-	                             bool       preparing);
+	std::shared_ptr<Instance>
+	make_instance(URIs& uris, SampleRate rate, uint32_t voice, bool preparing);
 
 	inline LilvInstance* instance(uint32_t voice) {
 		return static_cast<LilvInstance*>((*_instances)[voice]->instance);
 	}
 
-	using Instances = Raul::Array<SPtr<Instance>>;
+	using Instances = Raul::Array<std::shared_ptr<Instance>>;
 
 	static void drop_instances(const MPtr<Instances>& instances) {
 		if (instances) {
@@ -149,13 +148,13 @@ protected:
 	static LV2_Worker_Status work_respond(
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
 
-	LV2Plugin*                      _lv2_plugin;
-	MPtr<Instances>                 _instances;
-	MPtr<Instances>                 _prepared_instances;
-	const LV2_Worker_Interface*     _worker_iface;
-	std::mutex                      _work_mutex;
-	Responses                       _responses;
-	SPtr<LV2Features::FeatureArray> _features;
+	LV2Plugin*                                 _lv2_plugin;
+	MPtr<Instances>                            _instances;
+	MPtr<Instances>                            _prepared_instances;
+	const LV2_Worker_Interface*                _worker_iface;
+	std::mutex                                 _work_mutex;
+	Responses                                  _responses;
+	std::shared_ptr<LV2Features::FeatureArray> _features;
 };
 
 } // namespace server

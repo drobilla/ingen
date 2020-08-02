@@ -24,6 +24,7 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "lv2/core/lv2.h"
 
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -58,7 +59,7 @@ RenameWindow::RenameWindow(BaseObjectType*                   cobject,
  * This function MUST be called before using this object in any way.
  */
 void
-RenameWindow::set_object(SPtr<const ObjectModel> object)
+RenameWindow::set_object(std::shared_ptr<const ObjectModel> object)
 {
 	_object = object;
 	_symbol_entry->set_text(object->path().symbol());
@@ -68,7 +69,7 @@ RenameWindow::set_object(SPtr<const ObjectModel> object)
 }
 
 void
-RenameWindow::present(SPtr<const ObjectModel> object)
+RenameWindow::present(std::shared_ptr<const ObjectModel> object)
 {
 	set_object(object);
 	_symbol_entry->grab_focus();

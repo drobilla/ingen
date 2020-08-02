@@ -18,9 +18,9 @@
 #define INGEN_GUI_ARC_HPP
 
 #include "ganv/Edge.hpp"
-#include "ingen/memory.hpp"
 
 #include <cassert>
+#include <memory>
 
 namespace ingen {
 
@@ -35,15 +35,15 @@ namespace gui {
 class Arc : public Ganv::Edge
 {
 public:
-	Arc(Ganv::Canvas&                       canvas,
-	    const SPtr<const client::ArcModel>& model,
-	    Ganv::Node*                         src,
-	    Ganv::Node*                         dst);
+	Arc(Ganv::Canvas&                                  canvas,
+	    const std::shared_ptr<const client::ArcModel>& model,
+	    Ganv::Node*                                    src,
+	    Ganv::Node*                                    dst);
 
-	SPtr<const client::ArcModel> model() const { return _arc_model; }
+	std::shared_ptr<const client::ArcModel> model() const { return _arc_model; }
 
 private:
-	SPtr<const client::ArcModel> _arc_model;
+	std::shared_ptr<const client::ArcModel> _arc_model;
 };
 
 } // namespace gui

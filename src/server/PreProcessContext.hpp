@@ -20,6 +20,8 @@
 #include "CompiledGraph.hpp"
 #include "GraphImpl.hpp"
 
+#include "ingen/memory.hpp"
+
 #include <unordered_set>
 
 namespace Raul { class Maid; }

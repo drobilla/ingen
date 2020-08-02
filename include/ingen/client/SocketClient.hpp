@@ -22,6 +22,8 @@
 #include "ingen/ingen.h"
 #include "raul/Socket.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace client {
 
@@ -29,39 +31,41 @@ namespace client {
 class INGEN_API SocketClient : public SocketWriter
 {
 public:
-	SocketClient(World&                    world,
-	             const URI&                uri,
-	             const SPtr<Raul::Socket>& sock,
-	             const SPtr<Interface>&    respondee)
+	SocketClient(World&                               world,
+	             const URI&                           uri,
+	             const std::shared_ptr<Raul::Socket>& sock,
+	             const std::shared_ptr<Interface>&    respondee)
 	    : SocketWriter(world.uri_map(), world.uris(), uri, sock)
 	    , _respondee(respondee)
 	    , _reader(world, *respondee, sock)
 	{}
 
-	SPtr<Interface> respondee() const override {
+	std::shared_ptr<Interface> respondee() const override {
 		return _respondee;
 	}
 
-	void set_respondee(const SPtr<Interface>& respondee) override {
+	void set_respondee(const std::shared_ptr<Interface>& respondee) override
+	{
 		_respondee = respondee;
 	}
 
-	static SPtr<ingen::Interface>
-	new_socket_interface(ingen::World&                 world,
-	                     const URI&                    uri,
-	                     const SPtr<ingen::Interface>& respondee)
+	static std::shared_ptr<ingen::Interface>
+	new_socket_interface(ingen::World&                            world,
+	                     const URI&                               uri,
+	                     const std::shared_ptr<ingen::Interface>& respondee)
 	{
 		const Raul::Socket::Type type = (uri.scheme() == "unix"
 		                                 ? Raul::Socket::Type::UNIX
 		                                 : Raul::Socket::Type::TCP);
 
-		SPtr<Raul::Socket> sock(new Raul::Socket(type));
+		std::shared_ptr<Raul::Socket> sock(new Raul::Socket(type));
 		if (!sock->connect(uri)) {
 			world.log().error("Failed to connect <%1%> (%2%)\n",
 			                  sock->uri(), strerror(errno));
 			return nullptr;
 		}
-		return SPtr<Interface>(new SocketClient(world, uri, sock, respondee));
+		return std::shared_ptr<Interface>(
+		    new SocketClient(world, uri, sock, respondee));
 	}
 
 	static void register_factories(World& world) {
@@ -70,8 +74,8 @@ public:
 	}
 
 private:
-	SPtr<Interface> _respondee;
-	SocketReader    _reader;
+	std::shared_ptr<Interface> _respondee;
+	SocketReader               _reader;
 };
 
 }  // namespace client

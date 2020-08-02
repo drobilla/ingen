@@ -32,6 +32,7 @@
 #include <cassert>
 #include <cmath>
 #include <initializer_list>
+#include <memory>
 
 namespace ingen {
 namespace server {

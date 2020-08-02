@@ -29,6 +29,7 @@
 #include "ThreadManager.hpp"
 
 #include "ingen/Store.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -43,10 +44,10 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Disconnect::Disconnect(Engine&                  engine,
-                       const SPtr<Interface>&   client,
-                       SampleCount              timestamp,
-                       const ingen::Disconnect& msg)
+Disconnect::Disconnect(Engine&                           engine,
+                       const std::shared_ptr<Interface>& client,
+                       SampleCount                       timestamp,
+                       const ingen::Disconnect&          msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
 	, _graph(nullptr)

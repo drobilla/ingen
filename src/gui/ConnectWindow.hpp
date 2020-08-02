@@ -20,7 +20,6 @@
 #include "Window.hpp"
 
 #include "ingen/Message.hpp"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 
 #include <gtkmm/builder.h>
@@ -33,6 +32,7 @@
 #include <gtkmm/spinbutton.h>
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -57,7 +57,7 @@ public:
 	ConnectWindow(BaseObjectType*            cobject,
 	              Glib::RefPtr<Gtk::Builder> xml);
 
-	void set_connected_to(const SPtr<ingen::Interface>& engine);
+	void set_connected_to(const std::shared_ptr<ingen::Interface>& engine);
 	void start(App& app, ingen::World& world);
 
 	bool attached()  const { return _finished_connecting; }

@@ -27,6 +27,7 @@
 #include <sigc++/sigc++.h>
 
 #include <list>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <utility>
@@ -56,7 +57,7 @@ class ThreadedLoader
 {
 public:
 	ThreadedLoader(App&            app,
-	               SPtr<Interface> engine);
+	               std::shared_ptr<Interface> engine);
 
 	~ThreadedLoader();
 
@@ -66,9 +67,10 @@ public:
 	                boost::optional<Raul::Symbol> engine_symbol,
 	                boost::optional<Properties>   engine_data);
 
-	void save_graph(SPtr<const client::GraphModel> model, const URI& uri);
+	void
+	save_graph(std::shared_ptr<const client::GraphModel> model, const URI& uri);
 
-	SPtr<Parser> parser();
+	std::shared_ptr<Parser> parser();
 
 private:
 	void load_graph_event(const FilePath&               file_path,
@@ -76,21 +78,21 @@ private:
 	                      boost::optional<Raul::Symbol> engine_symbol,
 	                      boost::optional<Properties>   engine_data);
 
-	void save_graph_event(SPtr<const client::GraphModel> model,
-	                      const URI&                     filename);
+	void save_graph_event(std::shared_ptr<const client::GraphModel> model,
+	                      const URI&                                filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	using Closure = sigc::slot<void>;
 
 	void run();
 
-	App&               _app;
-	Raul::Semaphore    _sem;
-	SPtr<Interface>    _engine;
-	std::mutex         _mutex;
-	std::list<Closure> _events;
-	bool               _exit_flag;
-	std::thread        _thread;
+	App&                       _app;
+	Raul::Semaphore            _sem;
+	std::shared_ptr<Interface> _engine;
+	std::mutex                 _mutex;
+	std::list<Closure>         _events;
+	bool                       _exit_flag;
+	std::thread                _thread;
 };
 
 } // namespace gui

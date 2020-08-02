@@ -22,12 +22,12 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"
 
 #include <atomic>
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -107,7 +107,7 @@ public:
 	inline Engine& engine() { return _engine; }
 
 protected:
-	Event(Engine& engine, SPtr<Interface> client, int32_t id, FrameTime time)
+	Event(Engine& engine, std::shared_ptr<Interface> client, int32_t id, FrameTime time)
 	    : _engine(engine)
 	    , _next(nullptr)
 	    , _request_client(std::move(client))
@@ -149,14 +149,14 @@ protected:
 		return _status;
 	}
 
-	Engine&             _engine;
-	std::atomic<Event*> _next;
-	SPtr<Interface>     _request_client;
-	int32_t             _request_id;
-	FrameTime           _time;
-	Status              _status;
-	std::string         _err_subject;
-	Mode                _mode;
+	Engine&                    _engine;
+	std::atomic<Event*>        _next;
+	std::shared_ptr<Interface> _request_client;
+	int32_t                    _request_id;
+	FrameTime                  _time;
+	Status                     _status;
+	std::string                _err_subject;
+	Mode                       _mode;
 };
 
 } // namespace server

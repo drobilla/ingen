@@ -33,6 +33,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
+#include "ingen/memory.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "lv2/log/log.h"
@@ -189,11 +190,11 @@ public:
 	URIs                         uris;
 	Configuration                conf;
 	Log                          log;
-	SPtr<Interface>              interface;
-	SPtr<EngineBase>             engine;
-	SPtr<Serialiser>             serialiser;
-	SPtr<Parser>                 parser;
-	SPtr<Store>                  store;
+	std::shared_ptr<Interface>   interface;
+	std::shared_ptr<EngineBase>  engine;
+	std::shared_ptr<Serialiser>  serialiser;
+	std::shared_ptr<Parser>      parser;
+	std::shared_ptr<Store>       store;
 	std::mutex                   rdf_mutex;
 	std::string                  jack_uuid;
 };
@@ -228,15 +229,29 @@ World::load_configuration(int& argc, char**& argv)
 	_impl->log.set_trace(_impl->conf.option("trace").get<int32_t>());
 }
 
-void World::set_engine(const SPtr<EngineBase>& e)   { _impl->engine     = e; }
-void World::set_interface(const SPtr<Interface>& i) { _impl->interface  = i; }
-void World::set_store(const SPtr<Store>& s)         { _impl->store      = s; }
+void
+World::set_engine(const std::shared_ptr<EngineBase>& e)
+{
+	_impl->engine = e;
+}
 
-SPtr<EngineBase> World::engine()     { return _impl->engine; }
-SPtr<Interface>  World::interface()  { return _impl->interface; }
-SPtr<Parser>     World::parser()     { return _impl->parser; }
-SPtr<Serialiser> World::serialiser() { return _impl->serialiser; }
-SPtr<Store>      World::store()      { return _impl->store; }
+void
+World::set_interface(const std::shared_ptr<Interface>& i)
+{
+	_impl->interface = i;
+}
+
+void
+World::set_store(const std::shared_ptr<Store>& s)
+{
+	_impl->store = s;
+}
+
+std::shared_ptr<EngineBase> World::engine()     { return _impl->engine; }
+std::shared_ptr<Interface>  World::interface()  { return _impl->interface; }
+std::shared_ptr<Parser>     World::parser()     { return _impl->parser; }
+std::shared_ptr<Serialiser> World::serialiser() { return _impl->serialiser; }
+std::shared_ptr<Store>      World::store()      { return _impl->store; }
 
 int&           World::argc() { return *_impl->argc; }
 char**&        World::argv() { return *_impl->argv; }
@@ -298,8 +313,9 @@ World::run_module(const char* name)
 
 /** Get an interface for a remote engine at `engine_uri`
  */
-SPtr<Interface>
-World::new_interface(const URI& engine_uri, const SPtr<Interface>& respondee)
+std::shared_ptr<Interface>
+World::new_interface(const URI&                        engine_uri,
+                     const std::shared_ptr<Interface>& respondee)
 {
 	const Impl::InterfaceFactories::const_iterator i =
 	        _impl->interface_factories.find(std::string(engine_uri.scheme()));

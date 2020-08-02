@@ -19,7 +19,10 @@
 
 #include "Event.hpp"
 
+#include "ingen/memory.hpp"
+
 #include <map>
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -40,15 +43,15 @@ namespace events {
 class Mark : public Event
 {
 public:
-	Mark(Engine&                   engine,
-	     const SPtr<Interface>&    client,
-	     SampleCount               timestamp,
-	     const ingen::BundleBegin& msg);
+	Mark(Engine&                           engine,
+	     const std::shared_ptr<Interface>& client,
+	     SampleCount                       timestamp,
+	     const ingen::BundleBegin&         msg);
 
-	Mark(Engine&                 engine,
-	     const SPtr<Interface>&  client,
-	     SampleCount             timestamp,
-	     const ingen::BundleEnd& msg);
+	Mark(Engine&                           engine,
+	     const std::shared_ptr<Interface>& client,
+	     SampleCount                       timestamp,
+	     const ingen::BundleEnd&           msg);
 
 	void mark(PreProcessContext& ctx) override;
 	bool pre_process(PreProcessContext& ctx) override;

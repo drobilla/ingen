@@ -49,8 +49,8 @@ NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
 }
 
 void
-NewSubgraphWindow::present(SPtr<const client::GraphModel> graph,
-                           Properties                     data)
+NewSubgraphWindow::present(std::shared_ptr<const client::GraphModel> graph,
+                           Properties                                data)
 {
 	set_graph(graph);
 	_initial_data = data;
@@ -62,7 +62,7 @@ NewSubgraphWindow::present(SPtr<const client::GraphModel> graph,
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubgraphWindow::set_graph(SPtr<const client::GraphModel> graph)
+NewSubgraphWindow::set_graph(std::shared_ptr<const client::GraphModel> graph)
 {
 	_graph = graph;
 }

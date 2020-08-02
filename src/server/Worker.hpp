@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_WORKER_HPP
 
 #include "ingen/LV2Features.hpp"
-#include "ingen/memory.hpp"
 #include "lv2/worker/worker.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
@@ -46,7 +45,7 @@ public:
 
 		const char* uri() const override { return LV2_WORKER__schedule; }
 
-		SPtr<LV2_Feature> feature(World& world, Node* n) override;
+		std::shared_ptr<LV2_Feature> feature(World& world, Node* n) override;
 
 		const bool synchronous;
 	};
@@ -55,10 +54,10 @@ public:
 	                          uint32_t    size,
 	                          const void* data);
 
-	SPtr<Schedule> schedule_feature() { return _schedule; }
+	std::shared_ptr<Schedule> schedule_feature() { return _schedule; }
 
 private:
-	SPtr<Schedule> _schedule;
+	std::shared_ptr<Schedule> _schedule;
 
 	Log&                         _log;
 	Raul::Semaphore              _sem;

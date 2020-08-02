@@ -23,7 +23,6 @@
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "raul/Deletable.hpp"
 
@@ -74,7 +73,7 @@ public:
 
 	void error_message(const std::string& str);
 
-	void attach(const SPtr<ingen::Interface>& client);
+	void attach(const std::shared_ptr<ingen::Interface>& client);
 
 	void detach();
 
@@ -117,17 +116,17 @@ public:
 	Style*           style()           const { return _style; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
-	ingen::Forge&             forge()     const { return _world.forge(); }
-	SPtr<ingen::Interface>    interface() const { return _world.interface(); }
-	SPtr<ingen::Interface>    client()    const { return _client; }
-	SPtr<client::ClientStore> store()     const { return _store; }
-	SPtr<ThreadedLoader>      loader()    const { return _loader; }
+	ingen::Forge&                        forge()     const { return _world.forge(); }
+	std::shared_ptr<ingen::Interface>    interface() const { return _world.interface(); }
+	std::shared_ptr<ingen::Interface>    client()    const { return _client; }
+	std::shared_ptr<client::ClientStore> store()     const { return _store; }
+	std::shared_ptr<ThreadedLoader>      loader()    const { return _loader; }
 
-	SPtr<client::SigClientInterface> sig_client();
+	std::shared_ptr<client::SigClientInterface> sig_client();
 
-	SPtr<Serialiser> serialiser();
+	std::shared_ptr<Serialiser> serialiser();
 
-	static SPtr<App> create(ingen::World& world);
+	static std::shared_ptr<App> create(ingen::World& world);
 
 	void run();
 
@@ -158,10 +157,10 @@ protected:
 
 	static Gtk::Main* _main;
 
-	SPtr<ingen::Interface>    _client;
-	SPtr<client::ClientStore> _store;
-	SPtr<ThreadedLoader>      _loader;
-	SPtr<StreamWriter>        _dumper;
+	std::shared_ptr<ingen::Interface>    _client;
+	std::shared_ptr<client::ClientStore> _store;
+	std::shared_ptr<ThreadedLoader>      _loader;
+	std::shared_ptr<StreamWriter>        _dumper;
 
 	Style* _style;
 

@@ -29,6 +29,8 @@
 #include "lv2/atom/util.h"
 #include "lv2/midi/midi.h"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 namespace internals {

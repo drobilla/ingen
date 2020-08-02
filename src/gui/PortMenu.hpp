@@ -20,7 +20,6 @@
 #include "ObjectMenu.hpp"
 
 #include "ingen/client/PortModel.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/menu.h>
@@ -39,9 +38,9 @@ public:
 	PortMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App&                          app,
-	          SPtr<const client::PortModel> port,
-	          bool                          internal_graph_port = false);
+	void init(App&                                     app,
+	          std::shared_ptr<const client::PortModel> port,
+	          bool internal_graph_port = false);
 
 private:
 	void on_menu_disconnect() override;

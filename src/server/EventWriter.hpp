@@ -23,7 +23,8 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/URI.hpp"
-#include "ingen/memory.hpp"
+
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -39,11 +40,12 @@ public:
 
 	URI uri() const override { return URI("ingen:/clients/event_writer"); }
 
-	SPtr<Interface> respondee() const override {
+	std::shared_ptr<Interface> respondee() const override {
 		return _respondee;
 	}
 
-	void set_respondee(const SPtr<Interface>& respondee) override {
+	void set_respondee(const std::shared_ptr<Interface>& respondee) override
+	{
 		_respondee = respondee;
 	}
 
@@ -70,9 +72,9 @@ public:
 	void operator()(const Undo&);
 
 protected:
-	Engine&         _engine;
-	SPtr<Interface> _respondee;
-	Event::Mode     _event_mode;
+	Engine&                    _engine;
+	std::shared_ptr<Interface> _respondee;
+	Event::Mode                _event_mode;
 
 private:
 	SampleCount now() const;

@@ -17,7 +17,6 @@
 #ifndef INGEN_ENGINE_RUNCONTEXT_HPP
 #define INGEN_ENGINE_RUNCONTEXT_HPP
 
-#include "ingen/memory.hpp"
 #include "types.hpp"
 
 #include "lv2/urid/urid.h"

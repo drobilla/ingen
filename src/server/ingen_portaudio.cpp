@@ -20,7 +20,8 @@
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
+
+#include <memory>
 
 namespace ingen { namespace server { class Driver; } }
 
@@ -38,7 +39,7 @@ struct IngenPortAudioModule : public ingen::Module {
 
 		auto* driver = new server::PortAudioDriver(*engine);
 		driver->attach();
-		engine->set_driver(SPtr<server::Driver>(driver));
+		engine->set_driver(std::shared_ptr<server::Driver>(driver));
 	}
 };
 

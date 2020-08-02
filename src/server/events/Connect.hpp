@@ -22,6 +22,10 @@
 #include "PortImpl.hpp"
 #include "types.hpp"
 
+#include "ingen/memory.hpp"
+
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -38,10 +42,10 @@ namespace events {
 class Connect : public Event
 {
 public:
-	Connect(Engine&                engine,
-	        const SPtr<Interface>& client,
-	        SampleCount            timestamp,
-	        const ingen::Connect&  msg);
+	Connect(Engine&                           engine,
+	        const std::shared_ptr<Interface>& client,
+	        SampleCount                       timestamp,
+	        const ingen::Connect&             msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;
@@ -49,16 +53,16 @@ public:
 	void undo(Interface& target) override;
 
 private:
-	const ingen::Connect   _msg;
-	GraphImpl*             _graph;
-	InputPort*             _head;
-	MPtr<CompiledGraph>    _compiled_graph;
-	SPtr<ArcImpl>          _arc;
-	MPtr<PortImpl::Voices> _voices;
-	Properties             _tail_remove;
-	Properties             _tail_add;
-	Properties             _head_remove;
-	Properties             _head_add;
+	const ingen::Connect     _msg;
+	GraphImpl*               _graph;
+	InputPort*               _head;
+	MPtr<CompiledGraph>      _compiled_graph;
+	std::shared_ptr<ArcImpl> _arc;
+	MPtr<PortImpl::Voices>   _voices;
+	Properties               _tail_remove;
+	Properties               _tail_add;
+	Properties               _head_remove;
+	Properties               _head_add;
 };
 
 } // namespace events

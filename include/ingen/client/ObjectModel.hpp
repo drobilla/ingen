@@ -26,9 +26,10 @@
 #include "ingen/URIs.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
+
+#include <memory>
 
 namespace ingen {
 
@@ -60,14 +61,14 @@ public:
 	const Raul::Path&   path()   const override { return _path; }
 	const Raul::Symbol& symbol() const override { return _symbol; }
 
-	SPtr<ObjectModel> parent()     const { return _parent; }
-	bool              polyphonic() const;
+	std::shared_ptr<ObjectModel> parent() const { return _parent; }
+	bool                         polyphonic() const;
 
 	Node* graph_parent() const override { return _parent.get(); }
 
 	// Signals
-	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>)
-	INGEN_SIGNAL(removed_child, void, SPtr<ObjectModel>)
+	INGEN_SIGNAL(new_child, void, std::shared_ptr<ObjectModel>)
+	INGEN_SIGNAL(removed_child, void, std::shared_ptr<ObjectModel>)
 	INGEN_SIGNAL(property, void, const URI&, const Atom&)
 	INGEN_SIGNAL(property_removed, void, const URI&, const Atom&)
 	INGEN_SIGNAL(destroyed, void)
@@ -80,13 +81,13 @@ protected:
 	ObjectModel(const ObjectModel& copy);
 
 	void set_path(const Raul::Path& p) override;
-	virtual void set_parent(const SPtr<ObjectModel>& p);
-	virtual void add_child(const SPtr<ObjectModel>& c) {}
-	virtual bool remove_child(const SPtr<ObjectModel>& c) { return true; }
+	virtual void set_parent(const std::shared_ptr<ObjectModel>& p);
+	virtual void add_child(const std::shared_ptr<ObjectModel>& c) {}
+	virtual bool remove_child(const std::shared_ptr<ObjectModel>& c) { return true; }
 
-	virtual void set(const SPtr<ObjectModel>& o);
+	virtual void set(const std::shared_ptr<ObjectModel>& o);
 
-	SPtr<ObjectModel> _parent;
+	std::shared_ptr<ObjectModel> _parent;
 
 private:
 	Raul::Path   _path;

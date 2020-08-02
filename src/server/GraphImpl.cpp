@@ -29,6 +29,7 @@
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 
 #include <cassert>
@@ -276,13 +277,13 @@ GraphImpl::remove_block(BlockImpl& block)
 }
 
 void
-GraphImpl::add_arc(const SPtr<ArcImpl>& a)
+GraphImpl::add_arc(const std::shared_ptr<ArcImpl>& a)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_arcs.emplace(std::make_pair(a->tail(), a->head()), a);
 }
 
-SPtr<ArcImpl>
+std::shared_ptr<ArcImpl>
 GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);

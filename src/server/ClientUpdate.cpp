@@ -29,11 +29,11 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/memory.hpp"
 
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -101,8 +101,8 @@ ClientUpdate::put_graph(const GraphImpl* graph)
 
 	// Enqueue arcs
 	for (const auto& a : graph->arcs()) {
-		const SPtr<const Arc> arc     = a.second;
-		const Connect         connect = { arc->tail_path(), arc->head_path() };
+		const auto    arc     = a.second;
+		const Connect connect = {arc->tail_path(), arc->head_path()};
 		connects.push_back(connect);
 	}
 }

@@ -25,6 +25,7 @@
 #include "lv2/ui/ui.h"
 
 #include <cstring>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -33,7 +34,7 @@ namespace client {
 
 SuilHost* PluginUI::ui_host = nullptr;
 
-static SPtr<const PortModel>
+static std::shared_ptr<const PortModel>
 get_port(PluginUI* ui, uint32_t port_index)
 {
 	if (port_index >= ui->block()->ports().size()) {
@@ -52,9 +53,9 @@ lv2_ui_write(SuilController controller,
              uint32_t       format,
              const void*    buffer)
 {
-	auto* const           ui   = static_cast<PluginUI*>(controller);
-	const URIs&           uris = ui->world().uris();
-	SPtr<const PortModel> port = get_port(ui, port_index);
+	auto* const ui   = static_cast<PluginUI*>(controller);
+	const URIs& uris = ui->world().uris();
+	auto        port = get_port(ui, port_index);
 	if (!port) {
 		return;
 	}
@@ -116,7 +117,7 @@ lv2_ui_subscribe(SuilController            controller,
                  const LV2_Feature* const* features)
 {
 	auto* const           ui   = static_cast<PluginUI*>(controller);
-	SPtr<const PortModel> port = get_port(ui, port_index);
+	std::shared_ptr<const PortModel> port = get_port(ui, port_index);
 	if (!port) {
 		return 1;
 	}
@@ -136,8 +137,8 @@ lv2_ui_unsubscribe(SuilController            controller,
                    uint32_t                  protocol,
                    const LV2_Feature* const* features)
 {
-	auto* const           ui   = static_cast<PluginUI*>(controller);
-	SPtr<const PortModel> port = get_port(ui, port_index);
+	auto* const ui   = static_cast<PluginUI*>(controller);
+	auto        port = get_port(ui, port_index);
 	if (!port) {
 		return 1;
 	}
@@ -151,18 +152,18 @@ lv2_ui_unsubscribe(SuilController            controller,
 	return 0;
 }
 
-PluginUI::PluginUI(ingen::World&          world,
-                   SPtr<const BlockModel> block,
-                   LilvUIs*               uis,
-                   const LilvUI*          ui,
-                   const LilvNode*        ui_type)
-	: _world(world)
-	, _block(std::move(block))
-	, _instance(nullptr)
-	, _uis(uis)
-	, _ui(ui)
-	, _ui_node(lilv_node_duplicate(lilv_ui_get_uri(ui)))
-	, _ui_type(lilv_node_duplicate(ui_type))
+PluginUI::PluginUI(ingen::World&                     world,
+                   std::shared_ptr<const BlockModel> block,
+                   LilvUIs*                          uis,
+                   const LilvUI*                     ui,
+                   const LilvNode*                   ui_type)
+    : _world(world)
+    , _block(std::move(block))
+    , _instance(nullptr)
+    , _uis(uis)
+    , _ui(ui)
+    , _ui_node(lilv_node_duplicate(lilv_ui_get_uri(ui)))
+    , _ui_type(lilv_node_duplicate(ui_type))
 {
 }
 
@@ -178,10 +179,10 @@ PluginUI::~PluginUI()
 	lilv_world_unload_resource(_world.lilv_world(), lilv_ui_get_uri(_ui));
 }
 
-SPtr<PluginUI>
-PluginUI::create(ingen::World&                 world,
-                 const SPtr<const BlockModel>& block,
-                 const LilvPlugin*             plugin)
+std::shared_ptr<PluginUI>
+PluginUI::create(ingen::World&                            world,
+                 const std::shared_ptr<const BlockModel>& block,
+                 const LilvPlugin*                        plugin)
 {
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write,
@@ -215,7 +216,7 @@ PluginUI::create(ingen::World&                 world,
 	}
 
 	// Create the PluginUI, but don't instantiate yet
-	SPtr<PluginUI> ret(new PluginUI(world, block, uis, ui, ui_type));
+	std::shared_ptr<PluginUI> ret(new PluginUI(world, block, uis, ui, ui_type));
 	ret->_features = world.lv2_features().lv2_features(
 		world, const_cast<BlockModel*>(block.get()));
 

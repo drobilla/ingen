@@ -41,12 +41,12 @@ namespace events {
 class CreateGraph : public Event
 {
 public:
-	CreateGraph(Engine&                engine,
-	            const SPtr<Interface>& client,
-	            int32_t                id,
-	            SampleCount            timestamp,
-	            const Raul::Path&      path,
-	            const Properties&      properties);
+	CreateGraph(Engine&                           engine,
+	            const std::shared_ptr<Interface>& client,
+	            int32_t                           id,
+	            SampleCount                       timestamp,
+	            const Raul::Path&                 path,
+	            const Properties&                 properties);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

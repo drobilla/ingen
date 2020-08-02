@@ -20,7 +20,6 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/fmt.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/log/log.h"
 #include "lv2/urid/urid.h"
@@ -28,6 +27,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <functional>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -46,7 +46,8 @@ public:
 	struct Feature : public LV2Features::Feature {
 		const char* uri() const override { return LV2_LOG__log; }
 
-		SPtr<LV2_Feature> feature(World& world, Node* block) override;
+		std::shared_ptr<LV2_Feature>
+		feature(World& world, Node* block) override;
 
 		struct Handle {
 			LV2_Log_Log lv2_log;

@@ -18,11 +18,11 @@
 #define INGEN_WORLD_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "lv2/log/log.h"
 #include "lv2/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 
+#include <memory>
 #include <mutex>
 #include <string>
 
@@ -89,10 +89,10 @@ public:
 	virtual bool run_module(const char* name);
 
 	/** A function to create a new remote Interface. */
-	using InterfaceFactory =
-	    SPtr<Interface> (*)(World&                 world,
-	                        const URI&             engine_uri,
-	                        const SPtr<Interface>& respondee);
+	using InterfaceFactory = std::shared_ptr<Interface> (*)(
+	    World&                            world,
+	    const URI&                        engine_uri,
+	    const std::shared_ptr<Interface>& respondee);
 
 	/** Register an InterfaceFactory (for module implementations). */
 	virtual void add_interface_factory(const std::string& scheme,
@@ -103,22 +103,23 @@ public:
 	 * @param respondee The Interface that will receive responses to commands
 	 *                  and broadcasts, if applicable.
 	 */
-	virtual SPtr<Interface> new_interface(const URI& engine_uri,
-	                                      const SPtr<Interface>& respondee);
+	virtual std::shared_ptr<Interface>
+	new_interface(const URI&                        engine_uri,
+	              const std::shared_ptr<Interface>& respondee);
 
 	/** Run a script. */
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
-	virtual void set_engine(const SPtr<EngineBase>& e);
-	virtual void set_interface(const SPtr<Interface>& i);
-	virtual void set_store(const SPtr<Store>& s);
+	virtual void set_engine(const std::shared_ptr<EngineBase>& e);
+	virtual void set_interface(const std::shared_ptr<Interface>& i);
+	virtual void set_store(const std::shared_ptr<Store>& s);
 
-	virtual SPtr<EngineBase> engine();
-	virtual SPtr<Interface>  interface();
-	virtual SPtr<Parser>     parser();
-	virtual SPtr<Serialiser> serialiser();
-	virtual SPtr<Store>      store();
+	virtual std::shared_ptr<EngineBase> engine();
+	virtual std::shared_ptr<Interface>  interface();
+	virtual std::shared_ptr<Parser>     parser();
+	virtual std::shared_ptr<Serialiser> serialiser();
+	virtual std::shared_ptr<Store>      store();
 
 	virtual int&           argc();
 	virtual char**&        argv();

@@ -26,9 +26,9 @@
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 namespace Raul {
@@ -55,9 +55,9 @@ public:
 
 	virtual URI uri() const = 0;
 
-	virtual SPtr<Interface> respondee() const { return nullptr; }
+	virtual std::shared_ptr<Interface> respondee() const { return nullptr; }
 
-	virtual void set_respondee(const SPtr<Interface>& respondee) {}
+	virtual void set_respondee(const std::shared_ptr<Interface>& respondee) {}
 
 	virtual void message(const Message& msg) = 0;
 

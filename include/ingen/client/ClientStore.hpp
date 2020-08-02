@@ -23,10 +23,10 @@
 #include "ingen/URI.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "raul/Path.hpp"
 
 #include <map>
+#include <memory>
 
 namespace Raul {
 class Path;
@@ -57,24 +57,25 @@ class INGEN_API ClientStore : public Store
                             , public Interface
                             , public INGEN_TRACKABLE {
 public:
-	ClientStore(
-	    URIs&                           uris,
-	    Log&                            log,
-	    const SPtr<SigClientInterface>& emitter = SPtr<SigClientInterface>());
+	ClientStore(URIs&                                      uris,
+	            Log&                                       log,
+	            const std::shared_ptr<SigClientInterface>& emitter =
+	                std::shared_ptr<SigClientInterface>());
 
 	URI uri() const override { return URI("ingen:/clients/store"); }
 
-	SPtr<const ObjectModel> object(const Raul::Path& path) const;
-	SPtr<const PluginModel> plugin(const URI& uri)   const;
-	SPtr<const Resource>    resource(const URI& uri) const;
+	std::shared_ptr<const ObjectModel> object(const Raul::Path& path) const;
+	std::shared_ptr<const PluginModel> plugin(const URI& uri)   const;
+	std::shared_ptr<const Resource>    resource(const URI& uri) const;
 
 	void clear();
 
-	using Plugins = std::map<const URI, SPtr<PluginModel>>;
+	using Plugins = std::map<const URI, std::shared_ptr<PluginModel>>;
 
-	SPtr<const Plugins> plugins() const              { return _plugins; }
-	SPtr<Plugins>       plugins()                    { return _plugins; }
-	void                set_plugins(SPtr<Plugins> p) { _plugins = std::move(p); }
+	std::shared_ptr<const Plugins> plugins() const { return _plugins; }
+	std::shared_ptr<Plugins>       plugins() { return _plugins; }
+
+	void set_plugins(std::shared_ptr<Plugins> p) { _plugins = std::move(p); }
 
 	URIs& uris() { return _uris; }
 
@@ -97,33 +98,33 @@ public:
 	void operator()(const SetProperty&);
 	void operator()(const Undo&) {}
 
-	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>)
-	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>)
+	INGEN_SIGNAL(new_object, void, std::shared_ptr<ObjectModel>)
+	INGEN_SIGNAL(new_plugin, void, std::shared_ptr<PluginModel>)
 	INGEN_SIGNAL(plugin_deleted, void, URI)
 
 private:
-	SPtr<ObjectModel> _object(const Raul::Path& path);
-	SPtr<PluginModel> _plugin(const URI& uri);
-	SPtr<PluginModel> _plugin(const Atom& uri);
-	SPtr<Resource>    _resource(const URI& uri);
+	std::shared_ptr<ObjectModel> _object(const Raul::Path& path);
+	std::shared_ptr<PluginModel> _plugin(const URI& uri);
+	std::shared_ptr<PluginModel> _plugin(const Atom& uri);
+	std::shared_ptr<Resource>    _resource(const URI& uri);
 
-	void add_object(const SPtr<ObjectModel>& object);
-	SPtr<ObjectModel> remove_object(const Raul::Path& path);
+	void add_object(const std::shared_ptr<ObjectModel>& object);
+	std::shared_ptr<ObjectModel> remove_object(const Raul::Path& path);
 
-	void add_plugin(const SPtr<PluginModel>& pm);
+	void add_plugin(const std::shared_ptr<PluginModel>& pm);
 
-	SPtr<GraphModel> connection_graph(const Raul::Path& tail_path,
+	std::shared_ptr<GraphModel> connection_graph(const Raul::Path& tail_path,
 	                                  const Raul::Path& head_path);
 
 	// Slots for SigClientInterface signals
 	bool attempt_connection(const Raul::Path& tail_path,
 	                        const Raul::Path& head_path);
 
-	URIs&                    _uris;
-	Log&                     _log;
-	SPtr<SigClientInterface> _emitter;
+	URIs&                               _uris;
+	Log&                                _log;
+	std::shared_ptr<SigClientInterface> _emitter;
 
-	SPtr<Plugins> _plugins; ///< Map, keyed by plugin URI
+	std::shared_ptr<Plugins> _plugins; ///< Map, keyed by plugin URI
 };
 
 } // namespace client

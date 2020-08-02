@@ -190,8 +190,8 @@ GraphBox::~GraphBox()
 	delete _breadcrumbs;
 }
 
-SPtr<GraphBox>
-GraphBox::create(App& app, const SPtr<const GraphModel>& graph)
+std::shared_ptr<GraphBox>
+GraphBox::create(App& app, const std::shared_ptr<const GraphModel>& graph)
 {
 	GraphBox* result = nullptr;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
@@ -204,7 +204,7 @@ GraphBox::create(App& app, const SPtr<const GraphModel>& graph)
 		result->_menu_quit->set_sensitive(false);
 	}
 
-	return SPtr<GraphBox>(result);
+	return std::shared_ptr<GraphBox>(result);
 }
 
 void
@@ -244,8 +244,8 @@ GraphBox::set_status_text(const std::string& text)
 }
 
 void
-GraphBox::set_graph_from_path(const Raul::Path&      path,
-                              const SPtr<GraphView>& view)
+GraphBox::set_graph_from_path(const Raul::Path&                 path,
+                              const std::shared_ptr<GraphView>& view)
 {
 	if (view) {
 		assert(view->graph()->path() == path);
@@ -264,8 +264,8 @@ GraphBox::set_graph_from_path(const Raul::Path&      path,
  * If `view` is null, a new view will be created.
  */
 void
-GraphBox::set_graph(const SPtr<const GraphModel>& graph,
-                    const SPtr<GraphView>&        view)
+GraphBox::set_graph(const std::shared_ptr<const GraphModel>& graph,
+                    const std::shared_ptr<GraphView>&        view)
 {
 	if (!graph || graph == _graph) {
 		return;
@@ -352,7 +352,7 @@ GraphBox::set_graph(const SPtr<const GraphModel>& graph,
 }
 
 void
-GraphBox::graph_port_added(const SPtr<const PortModel>& port)
+GraphBox::graph_port_added(const std::shared_ptr<const PortModel>& port)
 {
 	if (port->is_input() && _app->can_control(port.get())) {
 		_menu_view_control_window->property_sensitive() = true;
@@ -360,7 +360,7 @@ GraphBox::graph_port_added(const SPtr<const PortModel>& port)
 }
 
 void
-GraphBox::graph_port_removed(const SPtr<const PortModel>& port)
+GraphBox::graph_port_removed(const std::shared_ptr<const PortModel>& port)
 {
 	if (!(port->is_input() && _app->can_control(port.get()))) {
 		return;

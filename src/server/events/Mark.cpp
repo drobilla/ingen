@@ -20,6 +20,8 @@
 #include "PreProcessContext.hpp"
 #include "UndoStack.hpp"
 
+#include "ingen/memory.hpp"
+
 #include <memory>
 #include <utility>
 
@@ -27,19 +29,19 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Mark::Mark(Engine&                   engine,
-           const SPtr<Interface>&    client,
-           SampleCount               timestamp,
-           const ingen::BundleBegin& msg)
+Mark::Mark(Engine&                           engine,
+           const std::shared_ptr<Interface>& client,
+           SampleCount                       timestamp,
+           const ingen::BundleBegin&         msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _type(Type::BUNDLE_BEGIN)
 	, _depth(-1)
 {}
 
-Mark::Mark(Engine&                 engine,
-           const SPtr<Interface>&  client,
-           SampleCount             timestamp,
-           const ingen::BundleEnd& msg)
+Mark::Mark(Engine&                           engine,
+           const std::shared_ptr<Interface>& client,
+           SampleCount                       timestamp,
+           const ingen::BundleEnd&           msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _type(Type::BUNDLE_END)
 	, _depth(-1)

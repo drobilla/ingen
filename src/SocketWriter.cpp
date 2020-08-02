@@ -21,6 +21,7 @@
 
 #include <boost/variant/get.hpp>
 
+#include <memory>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <utility>
@@ -31,10 +32,10 @@
 
 namespace ingen {
 
-SocketWriter::SocketWriter(URIMap&            map,
-                           URIs&              uris,
-                           const URI&         uri,
-                           SPtr<Raul::Socket> sock)
+SocketWriter::SocketWriter(URIMap&                       map,
+                           URIs&                         uris,
+                           const URI&                    uri,
+                           std::shared_ptr<Raul::Socket> sock)
 	: TurtleWriter(map, uris, uri)
 	, _socket(std::move(sock))
 {}

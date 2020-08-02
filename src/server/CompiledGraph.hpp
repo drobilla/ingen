@@ -24,6 +24,7 @@
 #include "raul/Noncopyable.hpp"
 
 #include <cstddef>
+#include <memory>
 #include <set>
 #include <string>
 

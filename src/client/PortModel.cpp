@@ -66,7 +66,7 @@ PortModel::is_uri() const
 }
 
 void
-PortModel::set(const SPtr<ObjectModel>& model)
+PortModel::set(const std::shared_ptr<ObjectModel>& model)
 {
 	ObjectModel::set(model);
 

@@ -20,7 +20,6 @@
 #include "ObjectMenu.hpp"
 
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/menu.h>
@@ -42,7 +41,7 @@ public:
 	NodeMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SPtr<const client::BlockModel> block);
+	void init(App& app, std::shared_ptr<const client::BlockModel> block);
 
 	bool has_control_inputs();
 
@@ -50,7 +49,7 @@ public:
 	sigc::signal<void, bool> signal_embed_gui;
 
 protected:
-	SPtr<const client::BlockModel> block() const {
+	std::shared_ptr<const client::BlockModel> block() const {
 		return std::dynamic_pointer_cast<const client::BlockModel>(_object);
 	}
 

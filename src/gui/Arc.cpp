@@ -26,14 +26,14 @@
 namespace ingen {
 namespace gui {
 
-Arc::Arc(Ganv::Canvas&                       canvas,
-         const SPtr<const client::ArcModel>& model,
-         Ganv::Node*                         src,
-         Ganv::Node*                         dst)
+Arc::Arc(Ganv::Canvas&                                  canvas,
+         const std::shared_ptr<const client::ArcModel>& model,
+         Ganv::Node*                                    src,
+         Ganv::Node*                                    dst)
     : Ganv::Edge(canvas, src, dst), _arc_model(model)
 {
-	SPtr<const client::ObjectModel> tparent = model->tail()->parent();
-	SPtr<const client::BlockModel>  tparent_block;
+	std::shared_ptr<const client::ObjectModel> tparent = model->tail()->parent();
+	std::shared_ptr<const client::BlockModel>  tparent_block;
 	if ((tparent_block = std::dynamic_pointer_cast<const client::BlockModel>(tparent))) {
 		if (tparent_block->plugin_uri() == NS_INTERNALS "BlockDelay") {
 			g_object_set(_gobj, "dash-length", 4.0, nullptr);

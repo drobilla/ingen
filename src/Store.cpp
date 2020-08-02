@@ -22,6 +22,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -34,7 +35,7 @@ Store::add(Node* o)
 		return;
 	}
 
-	emplace(o->path(), SPtr<Node>(o));
+	emplace(o->path(), std::shared_ptr<Node>(o));
 
 	for (uint32_t i = 0; i < o->num_ports(); ++i) {
 		add(o->port(i));
@@ -77,7 +78,7 @@ Store::find_descendants_end(const const_iterator parent) const
 }
 
 Store::const_range
-Store::children_range(const SPtr<const Node>& o) const
+Store::children_range(const std::shared_ptr<const Node>& o) const
 {
 	const const_iterator parent = find(o->path());
 	if (parent != end()) {

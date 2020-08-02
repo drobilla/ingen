@@ -18,11 +18,11 @@
 #define INGEN_ENGINEBASE_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 namespace ingen {
 
@@ -132,12 +132,13 @@ public:
 	/**
 	   Register a client to receive updates about engine changes.
 	*/
-	virtual void register_client(const SPtr<Interface>& client) = 0;
+	virtual void register_client(const std::shared_ptr<Interface>& client) = 0;
 
 	/**
 	   Unregister a client.
 	*/
-	virtual bool unregister_client(const SPtr<Interface>& client) = 0;
+	virtual bool
+	unregister_client(const std::shared_ptr<Interface>& client) = 0;
 };
 
 } // namespace ingen

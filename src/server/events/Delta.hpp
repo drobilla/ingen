@@ -21,6 +21,7 @@
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 
+#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 
 #include <boost/optional/optional.hpp>
@@ -48,20 +49,20 @@ class SetPortValue;
 class Delta : public Event
 {
 public:
-	Delta(Engine&                engine,
-	      const SPtr<Interface>& client,
-	      SampleCount            timestamp,
-	      const ingen::Put&      msg);
+	Delta(Engine&                           engine,
+	      const std::shared_ptr<Interface>& client,
+	      SampleCount                       timestamp,
+	      const ingen::Put&                 msg);
 
-	Delta(Engine&                engine,
-	      const SPtr<Interface>& client,
-	      SampleCount            timestamp,
-	      const ingen::Delta&    msg);
+	Delta(Engine&                           engine,
+	      const std::shared_ptr<Interface>& client,
+	      SampleCount                       timestamp,
+	      const ingen::Delta&               msg);
 
-	Delta(Engine&                   engine,
-	      const SPtr<Interface>&    client,
-	      SampleCount               timestamp,
-	      const ingen::SetProperty& msg);
+	Delta(Engine&                           engine,
+	      const std::shared_ptr<Interface>& client,
+	      SampleCount                       timestamp,
+	      const ingen::SetProperty&         msg);
 
 	~Delta() override = default;
 
@@ -78,11 +79,7 @@ public:
 	Execution get_execution() const override;
 
 private:
-	enum class Type {
-		SET,
-		PUT,
-		PATCH
-	};
+	enum class Type { SET, PUT, PATCH };
 
 	enum class SpecialType {
 		NONE,

@@ -19,7 +19,6 @@
 
 #include "BufferRef.hpp"
 
-#include "ingen/memory.hpp"
 #include "lv2/atom/forge.h"
 #include "raul/Maid.hpp"
 
@@ -142,11 +141,11 @@ private:
 	                                     Type        type,
 	                                     const Atom& value_atom);
 
-	Engine&               _engine;
-	std::atomic<Binding*> _learn_binding;
-	SPtr<Bindings>        _bindings;
-	BufferRef             _feedback;
-	LV2_Atom_Forge        _forge;
+	Engine&                   _engine;
+	std::atomic<Binding*>     _learn_binding;
+	std::shared_ptr<Bindings> _bindings;
+	BufferRef                 _feedback;
+	LV2_Atom_Forge            _forge;
 };
 
 } // namespace server

@@ -33,8 +33,10 @@
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Maid.hpp"
 
+#include <memory>
 #include <mutex>
 #include <set>
 #include <string>
@@ -48,10 +50,10 @@ class PreProcessContext;
 
 namespace events {
 
-Delta::Delta(Engine&                engine,
-             const SPtr<Interface>& client,
-             SampleCount            timestamp,
-             const ingen::Put&      msg)
+Delta::Delta(Engine&                           engine,
+             const std::shared_ptr<Interface>& client,
+             SampleCount                       timestamp,
+             const ingen::Put&                 msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.uri)
@@ -67,10 +69,10 @@ Delta::Delta(Engine&                engine,
 	init();
 }
 
-Delta::Delta(Engine&                engine,
-             const SPtr<Interface>& client,
-             SampleCount            timestamp,
-             const ingen::Delta&    msg)
+Delta::Delta(Engine&                           engine,
+             const std::shared_ptr<Interface>& client,
+             SampleCount                       timestamp,
+             const ingen::Delta&               msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(nullptr)
 	, _subject(msg.uri)
@@ -87,10 +89,10 @@ Delta::Delta(Engine&                engine,
 	init();
 }
 
-Delta::Delta(Engine&                   engine,
-             const SPtr<Interface>&    client,
-             SampleCount               timestamp,
-             const ingen::SetProperty& msg)
+Delta::Delta(Engine&                           engine,
+             const std::shared_ptr<Interface>& client,
+             SampleCount                       timestamp,
+             const ingen::SetProperty&         msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _subject(msg.subject)
 	, _properties{{msg.predicate, msg.value}}

@@ -110,17 +110,17 @@ Engine::Engine(ingen::World& world)
 	_world.lv2_features().add_feature(_worker->schedule_feature());
 	_world.lv2_features().add_feature(_options);
 	_world.lv2_features().add_feature(
-		SPtr<LV2Features::Feature>(
-			new LV2Features::EmptyFeature(LV2_BUF_SIZE__powerOf2BlockLength)));
+	    std::make_shared<LV2Features::EmptyFeature>(
+	        LV2_BUF_SIZE__powerOf2BlockLength));
 	_world.lv2_features().add_feature(
-		SPtr<LV2Features::Feature>(
-			new LV2Features::EmptyFeature(LV2_BUF_SIZE__fixedBlockLength)));
+	    std::make_shared<LV2Features::EmptyFeature>(
+	        LV2_BUF_SIZE__fixedBlockLength));
 	_world.lv2_features().add_feature(
-		SPtr<LV2Features::Feature>(
-			new LV2Features::EmptyFeature(LV2_BUF_SIZE__boundedBlockLength)));
+	    std::make_shared<LV2Features::EmptyFeature>(
+	        LV2_BUF_SIZE__boundedBlockLength));
 	_world.lv2_features().add_feature(
-		SPtr<LV2Features::Feature>(
-			new LV2Features::EmptyFeature(LV2_STATE__loadDefaultState)));
+	    std::make_shared<LV2Features::EmptyFeature>(
+	        LV2_STATE__loadDefaultState));
 
 	if (world.conf().option("dump").get<int32_t>()) {
 		_interface = std::make_shared<Tee>(
@@ -159,7 +159,7 @@ Engine::~Engine()
 		thread_ctx->join();
 	}
 
-	const SPtr<Store> store = this->store();
+	const auto store = this->store();
 	if (store) {
 		for (auto& s : *store) {
 			if (!std::dynamic_pointer_cast<NodeImpl>(s.second)->parent()) {
@@ -273,7 +273,7 @@ Engine::steal_task(unsigned start_thread)
 	return nullptr;
 }
 
-SPtr<Store>
+std::shared_ptr<Store>
 Engine::store() const
 {
 	return _world.store();
@@ -337,7 +337,7 @@ Engine::main_iteration()
 }
 
 void
-Engine::set_driver(const SPtr<Driver>& driver)
+Engine::set_driver(const std::shared_ptr<Driver>& driver)
 {
 	_driver = driver;
 	for (const auto& ctx : _run_contexts) {
@@ -376,7 +376,8 @@ Engine::reset_load()
 void
 Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
 {
-	set_driver(SPtr<Driver>(new DirectDriver(*this, sample_rate, block_length, seq_size)));
+	set_driver(std::make_shared<DirectDriver>(
+	    *this, sample_rate, block_length, seq_size));
 }
 
 bool
@@ -511,14 +512,14 @@ Engine::log() const
 }
 
 void
-Engine::register_client(const SPtr<Interface>& client)
+Engine::register_client(const std::shared_ptr<Interface>& client)
 {
 	log().info("Registering client <%1%>\n", client->uri().c_str());
 	_broadcaster->register_client(client);
 }
 
 bool
-Engine::unregister_client(const SPtr<Interface>& client)
+Engine::unregister_client(const std::shared_ptr<Interface>& client)
 {
 	log().info("Unregistering client <%1%>\n", client->uri().c_str());
 	return _broadcaster->unregister_client(client);

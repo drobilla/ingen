@@ -39,15 +39,16 @@ namespace ingen {
 namespace server {
 namespace events {
 
-Connect::Connect(Engine&                engine,
-                 const SPtr<Interface>& client,
-                 SampleCount            timestamp,
-                 const ingen::Connect&  msg)
-	: Event(engine, client, msg.seq, timestamp)
-	, _msg(msg)
-	, _graph(nullptr)
-	, _head(nullptr)
-{}
+Connect::Connect(Engine&                           engine,
+                 const std::shared_ptr<Interface>& client,
+                 SampleCount                       timestamp,
+                 const ingen::Connect&             msg)
+    : Event(engine, client, msg.seq, timestamp)
+    , _msg(msg)
+    , _graph(nullptr)
+    , _head(nullptr)
+{
+}
 
 bool
 Connect::pre_process(PreProcessContext& ctx)

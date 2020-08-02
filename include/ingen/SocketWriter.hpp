@@ -20,9 +20,9 @@
 #include "ingen/Message.hpp"
 #include "ingen/TurtleWriter.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 
 #include <cstddef>
+#include <memory>
 
 namespace Raul {
 class Socket;
@@ -39,17 +39,17 @@ class URIs;
 class INGEN_API SocketWriter : public TurtleWriter
 {
 public:
-	SocketWriter(URIMap&            map,
-	             URIs&              uris,
-	             const URI&         uri,
-	             SPtr<Raul::Socket> sock);
+	SocketWriter(URIMap&                       map,
+	             URIs&                         uris,
+	             const URI&                    uri,
+	             std::shared_ptr<Raul::Socket> sock);
 
 	void message(const Message& message) override;
 
 	size_t text_sink(const void* buf, size_t len) override;
 
 protected:
-	SPtr<Raul::Socket> _socket;
+	std::shared_ptr<Raul::Socket> _socket;
 };
 
 }  // namespace ingen

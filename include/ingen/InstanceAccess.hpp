@@ -21,7 +21,6 @@
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "lv2/core/lv2.h"
 
@@ -34,7 +33,7 @@ struct InstanceAccess : public ingen::LV2Features::Feature
 {
 	const char* uri() const override { return "http://lv2plug.in/ns/ext/instance-access"; }
 
-	SPtr<LV2_Feature> feature(World& world, Node* node) override {
+	std::shared_ptr<LV2_Feature> feature(World& world, Node* node) override {
 		Node* store_node = world.store()->get(node->path());
 		if (!store_node) {
 			return nullptr;

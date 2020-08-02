@@ -26,6 +26,7 @@
 #include "lv2/urid/urid.h"
 
 #include <algorithm>
+#include <memory>
 
 namespace ingen {
 namespace server {

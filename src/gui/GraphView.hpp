@@ -17,8 +17,6 @@
 #ifndef INGEN_GUI_GRAPHVIEW_HPP
 #define INGEN_GUI_GRAPHVIEW_HPP
 
-#include "ingen/memory.hpp"
-
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/scrolledwindow.h>
@@ -27,6 +25,8 @@
 #include <gtkmm/toolbar.h>
 #include <gtkmm/toolitem.h>
 #include <gtkmm/toolitem.h>
+
+#include <memory>
 
 namespace ingen {
 
@@ -63,15 +63,19 @@ public:
 
 	void init(App& app);
 
-	SPtr<GraphCanvas>              canvas()               const { return _canvas; }
-	SPtr<const client::GraphModel> graph()                const { return _graph; }
-	Gtk::ToolItem*                 breadcrumb_container() const { return _breadcrumb_container; }
+	std::shared_ptr<GraphCanvas>              canvas() const { return _canvas; }
+	std::shared_ptr<const client::GraphModel> graph() const { return _graph; }
 
-	static SPtr<GraphView>
-	create(App& app, const SPtr<const client::GraphModel>& graph);
+	Gtk::ToolItem* breadcrumb_container() const
+	{
+		return _breadcrumb_container;
+	}
+
+	static std::shared_ptr<GraphView>
+	create(App& app, const std::shared_ptr<const client::GraphModel>& graph);
 
 private:
-	void set_graph(const SPtr<const client::GraphModel>& graph);
+	void set_graph(const std::shared_ptr<const client::GraphModel>& graph);
 
 	void process_toggled();
 	void poly_changed();
@@ -81,8 +85,8 @@ private:
 
 	App* _app = nullptr;
 
-	SPtr<const client::GraphModel> _graph;
-	SPtr<GraphCanvas>              _canvas;
+	std::shared_ptr<const client::GraphModel> _graph;
+	std::shared_ptr<GraphCanvas>              _canvas;
 
 	Gtk::ScrolledWindow*   _canvas_scrolledwindow = nullptr;
 	Gtk::Toolbar*          _toolbar = nullptr;

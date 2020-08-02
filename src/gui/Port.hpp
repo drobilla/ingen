@@ -18,7 +18,6 @@
 #define INGEN_GUI_PORT_HPP
 
 #include "ganv/Port.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/menu.h>
 
@@ -45,15 +44,17 @@ class GraphBox;
 class Port : public Ganv::Port
 {
 public:
-	static Port* create(
-		App&                          app,
-		Ganv::Module&                 module,
-		SPtr<const client::PortModel> pm,
-		bool                          flip = false);
+	static Port* create(App&                                     app,
+	                    Ganv::Module&                            module,
+	                    std::shared_ptr<const client::PortModel> pm,
+	                    bool                                     flip = false);
 
 	~Port() override;
 
-	SPtr<const client::PortModel> model() const { return _port_model.lock(); }
+	std::shared_ptr<const client::PortModel> model() const
+	{
+		return _port_model.lock();
+	}
 
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
@@ -65,13 +66,14 @@ public:
 	bool on_selected(gboolean b) override;
 
 private:
-	Port(App&                          app,
-	     Ganv::Module&                 module,
-	     SPtr<const client::PortModel> pm,
-	     const std::string&            name,
-	     bool                          flip = false);
+	Port(App&                                     app,
+	     Ganv::Module&                            module,
+	     std::shared_ptr<const client::PortModel> pm,
+	     const std::string&                       name,
+	     bool                                     flip = false);
 
-	static std::string port_label(App& app, SPtr<const client::PortModel> pm);
+	static std::string
+	port_label(App& app, std::shared_ptr<const client::PortModel> pm);
 
 	Gtk::Menu* build_enum_menu();
 	Gtk::Menu* build_uri_menu();

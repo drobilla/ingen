@@ -21,7 +21,10 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 
+#include "ingen/memory.hpp"
+
 #include <cstdint>
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -38,12 +41,12 @@ namespace events {
 class CreateBlock : public Event
 {
 public:
-	CreateBlock(Engine&                engine,
-	            const SPtr<Interface>& client,
-	            int32_t                id,
-	            SampleCount            timestamp,
-	            const Raul::Path&      path,
-	            Properties&            properties);
+	CreateBlock(Engine&                           engine,
+	            const std::shared_ptr<Interface>& client,
+	            int32_t                           id,
+	            SampleCount                       timestamp,
+	            const Raul::Path&                 path,
+	            Properties&                       properties);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

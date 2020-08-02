@@ -17,10 +17,10 @@
 #ifndef INGEN_GUI_SUBGRAPHMODULE_HPP
 #define INGEN_GUI_SUBGRAPHMODULE_HPP
 
-#include "ingen/memory.hpp"
-
 #include "GraphPortModule.hpp"
 #include "NodeModule.hpp"
+
+#include <memory>
 
 namespace ingen {
 
@@ -40,7 +40,8 @@ class GraphCanvas;
 class SubgraphModule : public NodeModule
 {
 public:
-	SubgraphModule(GraphCanvas& canvas, SPtr<const client::GraphModel> graph);
+	SubgraphModule(GraphCanvas&                              canvas,
+	               std::shared_ptr<const client::GraphModel> graph);
 
 	~SubgraphModule() override = default;
 
@@ -51,10 +52,10 @@ public:
 	void browse_to_graph();
 	void menu_remove();
 
-	SPtr<const client::GraphModel> graph() const { return _graph; }
+	std::shared_ptr<const client::GraphModel> graph() const { return _graph; }
 
 protected:
-	SPtr<const client::GraphModel> _graph;
+	std::shared_ptr<const client::GraphModel> _graph;
 };
 
 } // namespace gui

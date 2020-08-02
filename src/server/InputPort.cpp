@@ -29,6 +29,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
 
 #include <cassert>

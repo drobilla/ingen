@@ -18,7 +18,6 @@
 #define INGEN_GUI_LOADGRAPHWINDOW_HPP
 
 #include "ingen/Node.hpp"
-#include "ingen/memory.hpp"
 
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
@@ -50,11 +49,11 @@ public:
 
 	void init(App& app) { _app = &app; }
 
-	void set_graph(const SPtr<const client::GraphModel>& graph);
+	void set_graph(const std::shared_ptr<const client::GraphModel>& graph);
 
-	void present(const SPtr<const client::GraphModel>& graph,
-	             bool                                  import,
-	             const Properties&                     data);
+	void present(const std::shared_ptr<const client::GraphModel>& graph,
+	             bool                                             import,
+	             const Properties&                                data);
 
 protected:
 	void on_show() override;
@@ -74,7 +73,7 @@ private:
 
 	Properties _initial_data;
 
-	SPtr<const client::GraphModel> _graph;
+	std::shared_ptr<const client::GraphModel> _graph;
 
 	Gtk::Label*       _symbol_label = nullptr;
 	Gtk::Entry*       _symbol_entry = nullptr;

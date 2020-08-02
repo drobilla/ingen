@@ -30,15 +30,15 @@
 namespace ingen {
 namespace client {
 
-BlockModel::BlockModel(URIs&                    uris,
-                       const SPtr<PluginModel>& plugin,
-                       const Raul::Path&        path)
-	: ObjectModel(uris, path)
-	, _plugin_uri(plugin->uri())
-	, _plugin(plugin)
-	, _num_values(0)
-	, _min_values(nullptr)
-	, _max_values(nullptr)
+BlockModel::BlockModel(URIs&                               uris,
+                       const std::shared_ptr<PluginModel>& plugin,
+                       const Raul::Path&                   path)
+    : ObjectModel(uris, path)
+    , _plugin_uri(plugin->uri())
+    , _plugin(plugin)
+    , _num_values(0)
+    , _min_values(nullptr)
+    , _max_values(nullptr)
 {
 }
 
@@ -68,7 +68,7 @@ BlockModel::~BlockModel()
 }
 
 void
-BlockModel::remove_port(const SPtr<PortModel>& port)
+BlockModel::remove_port(const std::shared_ptr<PortModel>& port)
 {
 	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i) == port) {
@@ -102,7 +102,7 @@ BlockModel::clear()
 }
 
 void
-BlockModel::add_child(const SPtr<ObjectModel>& c)
+BlockModel::add_child(const std::shared_ptr<ObjectModel>& c)
 {
 	assert(c->parent().get() == this);
 
@@ -114,7 +114,7 @@ BlockModel::add_child(const SPtr<ObjectModel>& c)
 }
 
 bool
-BlockModel::remove_child(const SPtr<ObjectModel>& c)
+BlockModel::remove_child(const std::shared_ptr<ObjectModel>& c)
 {
 	assert(c->path().is_child_of(path()));
 	assert(c->parent().get() == this);
@@ -130,7 +130,7 @@ BlockModel::remove_child(const SPtr<ObjectModel>& c)
 }
 
 void
-BlockModel::add_port(const SPtr<PortModel>& pm)
+BlockModel::add_port(const std::shared_ptr<PortModel>& pm)
 {
 	assert(pm);
 	assert(pm->path().is_child_of(path()));
@@ -143,7 +143,7 @@ BlockModel::add_port(const SPtr<PortModel>& pm)
 	_signal_new_port.emit(pm);
 }
 
-SPtr<const PortModel>
+std::shared_ptr<const PortModel>
 BlockModel::get_port(const Raul::Symbol& symbol) const
 {
 	for (auto p : _ports) {
@@ -151,10 +151,10 @@ BlockModel::get_port(const Raul::Symbol& symbol) const
 			return p;
 		}
 	}
-	return SPtr<PortModel>();
+	return std::shared_ptr<PortModel>();
 }
 
-SPtr<const PortModel>
+std::shared_ptr<const PortModel>
 BlockModel::get_port(uint32_t index) const
 {
 	return _ports[index];
@@ -169,10 +169,11 @@ BlockModel::port(uint32_t index) const
 }
 
 void
-BlockModel::default_port_value_range(const SPtr<const PortModel>& port,
-                                     float&                       min,
-                                     float&                       max,
-                                     uint32_t                     srate) const
+BlockModel::default_port_value_range(
+    const std::shared_ptr<const PortModel>& port,
+    float&                                  min,
+    float&                                  max,
+    uint32_t                                srate) const
 {
 	// Default control values
 	min = 0.0;
@@ -203,10 +204,10 @@ BlockModel::default_port_value_range(const SPtr<const PortModel>& port,
 }
 
 void
-BlockModel::port_value_range(const SPtr<const PortModel>& port,
-                             float&                       min,
-                             float&                       max,
-                             uint32_t                     srate) const
+BlockModel::port_value_range(const std::shared_ptr<const PortModel>& port,
+                             float&                                  min,
+                             float&                                  max,
+                             uint32_t srate) const
 {
 	assert(port->parent().get() == this);
 
@@ -246,7 +247,7 @@ BlockModel::label() const
 }
 
 std::string
-BlockModel::port_label(const SPtr<const PortModel>& port) const
+BlockModel::port_label(const std::shared_ptr<const PortModel>& port) const
 {
 	const Atom& name = port->get_property(URI(LV2_CORE__name));
 	if (name.is_valid() && name.type() == _uris.forge.String) {
@@ -273,7 +274,7 @@ BlockModel::port_label(const SPtr<const PortModel>& port) const
 }
 
 void
-BlockModel::set(const SPtr<ObjectModel>& model)
+BlockModel::set(const std::shared_ptr<ObjectModel>& model)
 {
 	auto block = std::dynamic_pointer_cast<BlockModel>(model);
 	if (block) {

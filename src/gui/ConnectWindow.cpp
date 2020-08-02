@@ -130,7 +130,7 @@ ConnectWindow::ingen_response(int32_t            id,
 }
 
 void
-ConnectWindow::set_connected_to(const SPtr<ingen::Interface>& engine)
+ConnectWindow::set_connected_to(const std::shared_ptr<ingen::Interface>& engine)
 {
 	_app->world().set_interface(engine);
 
@@ -196,10 +196,10 @@ ConnectWindow::connect_remote(const URI& uri)
 {
 	ingen::World& world = _app->world();
 
-	SPtr<SigClientInterface> sci(new SigClientInterface());
-	SPtr<QueuedInterface>    qi(new QueuedInterface(sci));
+	auto sci = std::make_shared<SigClientInterface>();
+	auto qi  = std::make_shared<QueuedInterface>(sci);
 
-	SPtr<ingen::Interface> iface(world.new_interface(uri, qi));
+	std::shared_ptr<ingen::Interface> iface(world.new_interface(uri, qi));
 	if (iface) {
 		world.set_interface(iface);
 		_app->attach(qi);
@@ -486,7 +486,7 @@ ConnectWindow::gtk_callback()
 		if (ms_since_last >= 250) {
 			last = now;
 			if (_mode == Mode::INTERNAL) {
-				SPtr<SigClientInterface> client(new SigClientInterface());
+				auto client = std::make_shared<SigClientInterface>();
 				_app->world().interface()->set_respondee(client);
 				_app->attach(client);
 				_app->register_callbacks();

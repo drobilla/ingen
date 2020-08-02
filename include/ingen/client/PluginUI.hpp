@@ -22,11 +22,11 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "lilv/lilv.h"
 #include "suil/suil.h"
 
 #include <cstdint>
+#include <memory>
 #include <set>
 
 namespace ingen {
@@ -53,9 +53,10 @@ public:
 	 * connected first.  The caller should connect to signal_property_changed,
 	 * then call instantiate().
 	 */
-	static SPtr<PluginUI> create(ingen::World&                 world,
-	                             const SPtr<const BlockModel>& block,
-	                             const LilvPlugin*             plugin);
+	static std::shared_ptr<PluginUI>
+	create(ingen::World&                            world,
+	       const std::shared_ptr<const BlockModel>& block,
+	       const LilvPlugin*                        plugin);
 
 	/** Instantiate the UI.
 	 *
@@ -86,28 +87,28 @@ public:
 	             const Atom&,       // Object
 	             Resource::Graph)   // Context
 
-	ingen::World&          world() const { return _world; }
-	SPtr<const BlockModel> block() const { return _block; }
+	ingen::World&                     world() const { return _world; }
+	std::shared_ptr<const BlockModel> block() const { return _block; }
 
 private:
-	PluginUI(ingen::World&          world,
-	         SPtr<const BlockModel> block,
-	         LilvUIs*               uis,
-	         const LilvUI*          ui,
-	         const LilvNode*        ui_type);
+	PluginUI(ingen::World&                     world,
+	         std::shared_ptr<const BlockModel> block,
+	         LilvUIs*                          uis,
+	         const LilvUI*                     ui,
+	         const LilvNode*                   ui_type);
 
-	ingen::World&          _world;
-	SPtr<const BlockModel> _block;
-	SuilInstance*          _instance;
-	LilvUIs*               _uis;
-	const LilvUI*          _ui;
-	LilvNode*              _ui_node;
-	LilvNode*              _ui_type;
-	std::set<uint32_t>     _subscribed_ports;
+	ingen::World&                     _world;
+	std::shared_ptr<const BlockModel> _block;
+	SuilInstance*                     _instance;
+	LilvUIs*                          _uis;
+	const LilvUI*                     _ui;
+	LilvNode*                         _ui_node;
+	LilvNode*                         _ui_type;
+	std::set<uint32_t>                _subscribed_ports;
 
 	static SuilHost* ui_host;
 
-	SPtr<LV2Features::FeatureArray> _features;
+	std::shared_ptr<LV2Features::FeatureArray> _features;
 };
 
 } // namespace client

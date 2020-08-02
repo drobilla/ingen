@@ -32,6 +32,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include <memory>
 #include <mutex>
 #include <set>
 #include <utility>
@@ -40,16 +41,16 @@ namespace ingen {
 namespace server {
 namespace events {
 
-DisconnectAll::DisconnectAll(Engine&                     engine,
-                             const SPtr<Interface>&      client,
-                             SampleCount                 timestamp,
-                             const ingen::DisconnectAll& msg)
-	: Event(engine, client, msg.seq, timestamp)
-	, _msg(msg)
-	, _parent(nullptr)
-	, _block(nullptr)
-	, _port(nullptr)
-	, _deleting(false)
+DisconnectAll::DisconnectAll(Engine&                           engine,
+                             const std::shared_ptr<Interface>& client,
+                             SampleCount                       timestamp,
+                             const ingen::DisconnectAll&       msg)
+    : Event(engine, client, msg.seq, timestamp)
+    , _msg(msg)
+    , _parent(nullptr)
+    , _block(nullptr)
+    , _port(nullptr)
+    , _deleting(false)
 {
 }
 

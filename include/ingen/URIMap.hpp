@@ -25,6 +25,7 @@
 #include "raul/Noncopyable.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <unordered_map>
@@ -53,8 +54,10 @@ public:
 
 		const char* uri() const override { return _feature.URI; }
 
-		SPtr<LV2_Feature> feature(World&, Node*) override {
-			return SPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
+		std::shared_ptr<LV2_Feature> feature(World&, Node*) override
+		{
+			return std::shared_ptr<LV2_Feature>(&_feature,
+			                                    NullDeleter<LV2_Feature>);
 		}
 
 	private:
@@ -93,15 +96,22 @@ public:
 	const LV2_URID_Unmap& urid_unmap() const { return _urid_unmap_feature->data(); }
 	LV2_URID_Unmap&       urid_unmap() { return _urid_unmap_feature->data(); }
 
-	SPtr<URIDMapFeature>   urid_map_feature()   { return _urid_map_feature; }
-	SPtr<URIDUnmapFeature> urid_unmap_feature() { return _urid_unmap_feature; }
+	std::shared_ptr<URIDMapFeature> urid_map_feature()
+	{
+		return _urid_map_feature;
+	}
+
+	std::shared_ptr<URIDUnmapFeature> urid_unmap_feature()
+	{
+		return _urid_unmap_feature;
+	}
 
 private:
 	friend struct URIDMapFeature;
 	friend struct URIDUnMapFeature;
 
-	SPtr<URIDMapFeature>   _urid_map_feature;
-	SPtr<URIDUnmapFeature> _urid_unmap_feature;
+	std::shared_ptr<URIDMapFeature>   _urid_map_feature;
+	std::shared_ptr<URIDUnmapFeature> _urid_unmap_feature;
 
 	std::mutex                                _mutex;
 	std::unordered_map<std::string, LV2_URID> _map;

@@ -22,9 +22,9 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 
 #include <cstdint>
+#include <memory>
 
 namespace ingen {
 namespace client {
@@ -43,18 +43,18 @@ public:
 
 	GraphType graph_type() const override { return Node::GraphType::GRAPH; }
 
-	SPtr<ArcModel> get_arc(const ingen::Node* tail,
-	                       const ingen::Node* head);
+	std::shared_ptr<ArcModel>
+	get_arc(const ingen::Node* tail, const ingen::Node* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
 	uint32_t internal_poly() const;
 
 	// Signals
-	INGEN_SIGNAL(new_block, void, SPtr<BlockModel>)
-	INGEN_SIGNAL(removed_block, void, SPtr<BlockModel>)
-	INGEN_SIGNAL(new_arc, void, SPtr<ArcModel>)
-	INGEN_SIGNAL(removed_arc, void, SPtr<ArcModel>)
+	INGEN_SIGNAL(new_block, void, std::shared_ptr<BlockModel>)
+	INGEN_SIGNAL(removed_block, void, std::shared_ptr<BlockModel>)
+	INGEN_SIGNAL(new_arc, void, std::shared_ptr<ArcModel>)
+	INGEN_SIGNAL(removed_arc, void, std::shared_ptr<ArcModel>)
 
 private:
 	friend class ClientStore;
@@ -67,11 +67,11 @@ private:
 	}
 
 	void clear() override;
-	void add_child(const SPtr<ObjectModel>& c) override;
-	bool remove_child(const SPtr<ObjectModel>& o) override;
-	void remove_arcs_on(const SPtr<PortModel>& p);
+	void add_child(const std::shared_ptr<ObjectModel>& c) override;
+	bool remove_child(const std::shared_ptr<ObjectModel>& o) override;
+	void remove_arcs_on(const std::shared_ptr<PortModel>& p);
 
-	void add_arc(const SPtr<ArcModel>& arc);
+	void add_arc(const std::shared_ptr<ArcModel>& arc);
 	void remove_arc(const ingen::Node* tail,
 	                const ingen::Node* head);
 };

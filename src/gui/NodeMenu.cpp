@@ -35,6 +35,7 @@
 #include <gtkmm/stock.h>
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -56,7 +57,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(App& app, SPtr<const client::BlockModel> block)
+NodeMenu::init(App& app, std::shared_ptr<const client::BlockModel> block)
 {
 	ObjectMenu::init(app, block);
 
@@ -71,7 +72,7 @@ NodeMenu::init(App& app, SPtr<const client::BlockModel> block)
 	_randomize_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &NodeMenu::on_menu_randomize));
 
-	SPtr<PluginModel> plugin = block->plugin_model();
+	auto plugin = block->plugin_model();
 	if (plugin) {
 		// Get the plugin to receive related presets
 		_preset_connection = plugin->signal_preset().connect(
@@ -172,7 +173,7 @@ NodeMenu::on_menu_randomize()
 {
 	_app->interface()->bundle_begin();
 
-	const SPtr<const BlockModel> bm = block();
+	const auto bm = block();
 	for (const auto& p : bm->ports()) {
 		if (p->is_input() && _app->can_control(p.get())) {
 			float min = 0.0f;

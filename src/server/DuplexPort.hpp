@@ -23,12 +23,14 @@
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
+#include "ingen/memory.hpp"
 #include "lv2/urid/urid.h"
 
 #include <boost/intrusive/slist_hook.hpp>
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 namespace Raul { class Symbol; }
 

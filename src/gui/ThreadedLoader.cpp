@@ -24,6 +24,7 @@
 #include "ingen/client/GraphModel.hpp"
 
 #include <cassert>
+#include <memory>
 #include <string>
 
 using boost::optional;
@@ -31,7 +32,7 @@ using boost::optional;
 namespace ingen {
 namespace gui {
 
-ThreadedLoader::ThreadedLoader(App& app, SPtr<Interface> engine)
+ThreadedLoader::ThreadedLoader(App& app, std::shared_ptr<Interface> engine)
     : _app(app)
     , _sem(0)
     , _engine(std::move(engine))
@@ -52,7 +53,7 @@ ThreadedLoader::~ThreadedLoader()
 	}
 }
 
-SPtr<Parser>
+std::shared_ptr<Parser>
 ThreadedLoader::parser()
 {
 	return _app.world().parser();
@@ -115,7 +116,8 @@ ThreadedLoader::load_graph_event(const FilePath&        file_path,
 }
 
 void
-ThreadedLoader::save_graph(SPtr<const client::GraphModel> model, const URI& uri)
+ThreadedLoader::save_graph(std::shared_ptr<const client::GraphModel> model,
+                           const URI&                                uri)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
@@ -128,8 +130,9 @@ ThreadedLoader::save_graph(SPtr<const client::GraphModel> model, const URI& uri)
 }
 
 void
-ThreadedLoader::save_graph_event(SPtr<const client::GraphModel> model,
-                                 const URI&                     uri)
+ThreadedLoader::save_graph_event(
+    std::shared_ptr<const client::GraphModel> model,
+    const URI&                                uri)
 {
 	assert(uri.scheme() == "file");
 	if (_app.serialiser()) {

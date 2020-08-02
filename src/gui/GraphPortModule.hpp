@@ -21,6 +21,7 @@
 
 #include "ganv/Module.hpp"
 
+#include <memory>
 #include <string>
 
 namespace ingen {
@@ -46,7 +47,8 @@ class GraphPortModule : public Ganv::Module
 {
 public:
 	static GraphPortModule*
-	create(GraphCanvas& canvas, const SPtr<const client::PortModel>& model);
+	create(GraphCanvas&                                    canvas,
+	       const std::shared_ptr<const client::PortModel>& model);
 
 	App& app() const;
 
@@ -55,11 +57,11 @@ public:
 
 	void set_name(const std::string& n);
 
-	SPtr<const client::PortModel> port() const { return _model; }
+	std::shared_ptr<const client::PortModel> port() const { return _model; }
 
 protected:
-	GraphPortModule(GraphCanvas&                         canvas,
-	                const SPtr<const client::PortModel>& model);
+	GraphPortModule(GraphCanvas&                                    canvas,
+	                const std::shared_ptr<const client::PortModel>& model);
 
 	bool show_menu(GdkEventButton* ev);
 	void set_selected(gboolean b) override;
@@ -68,8 +70,8 @@ protected:
 
 	void property_changed(const URI& key, const Atom& value);
 
-	SPtr<const client::PortModel> _model;
-	Port*                         _port;
+	std::shared_ptr<const client::PortModel> _model;
+	Port*                                    _port;
 };
 
 } // namespace gui

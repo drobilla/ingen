@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <memory>
 #include <string>
 
 using std::string;
@@ -122,8 +123,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 }
 
 void
-LoadPluginWindow::present(const SPtr<const GraphModel>& graph,
-                          const Properties&             data)
+LoadPluginWindow::present(const std::shared_ptr<const GraphModel>& graph,
+                          const Properties&                        data)
 {
 	set_graph(graph);
 	_initial_data = data;
@@ -161,7 +162,7 @@ LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton*
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPluginWindow::set_graph(const SPtr<const GraphModel>& graph)
+LoadPluginWindow::set_graph(const std::shared_ptr<const GraphModel>& graph)
 {
 	if (_graph) {
 		_graph = graph;
@@ -196,7 +197,8 @@ LoadPluginWindow::on_show()
 }
 
 void
-LoadPluginWindow::set_plugins(const SPtr<const ClientStore::Plugins>& plugins)
+LoadPluginWindow::set_plugins(
+    const std::shared_ptr<const ClientStore::Plugins>& plugins)
 {
 	_rows.clear();
 	_plugins_liststore->clear();
@@ -210,7 +212,7 @@ LoadPluginWindow::set_plugins(const SPtr<const ClientStore::Plugins>& plugins)
 }
 
 void
-LoadPluginWindow::new_plugin(const SPtr<const PluginModel>& pm)
+LoadPluginWindow::new_plugin(const std::shared_ptr<const PluginModel>& pm)
 {
 	if (is_visible()) {
 		add_plugin(pm);
@@ -220,7 +222,7 @@ LoadPluginWindow::new_plugin(const SPtr<const PluginModel>& pm)
 }
 
 static std::string
-get_project_name(const SPtr<const PluginModel>& plugin)
+get_project_name(const std::shared_ptr<const PluginModel>& plugin)
 {
 	std::string name;
 	if (plugin->lilv_plugin()) {
@@ -246,7 +248,7 @@ get_project_name(const SPtr<const PluginModel>& plugin)
 }
 
 static std::string
-get_author_name(const SPtr<const PluginModel>& plugin)
+get_author_name(const std::shared_ptr<const PluginModel>& plugin)
 {
 	std::string name;
 	if (plugin->lilv_plugin()) {
@@ -260,8 +262,8 @@ get_author_name(const SPtr<const PluginModel>& plugin)
 }
 
 void
-LoadPluginWindow::set_row(Gtk::TreeModel::Row&           row,
-                          const SPtr<const PluginModel>& plugin)
+LoadPluginWindow::set_row(Gtk::TreeModel::Row&                      row,
+                          const std::shared_ptr<const PluginModel>& plugin)
 {
 	const URIs&       uris = _app->uris();
 	const Atom& name = plugin->get_property(uris.doap_name);
@@ -291,7 +293,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&           row,
 }
 
 void
-LoadPluginWindow::add_plugin(const SPtr<const PluginModel>& plugin)
+LoadPluginWindow::add_plugin(const std::shared_ptr<const PluginModel>& plugin)
 {
 	if (plugin->lilv_plugin() && lilv_plugin_is_replaced(plugin->lilv_plugin())) {
 		return;
@@ -330,8 +332,7 @@ LoadPluginWindow::plugin_selection_changed()
 			*_selection->get_selected_rows().begin());
 		if (iter) {
 			Gtk::TreeModel::Row row = *iter;
-			SPtr<const PluginModel> p = row.get_value(
-				_plugins_columns._col_plugin);
+			auto                p = row.get_value(_plugins_columns._col_plugin);
 			_name_offset = _app->store()->child_name_offset(
 				_graph->path(), p->default_block_symbol());
 			_name_entry->set_text(generate_module_name(p, _name_offset));
@@ -354,8 +355,9 @@ LoadPluginWindow::plugin_selection_changed()
  * sends the notification back.
  */
 string
-LoadPluginWindow::generate_module_name(const SPtr<const PluginModel>& plugin,
-                                       int                            offset)
+LoadPluginWindow::generate_module_name(
+    const std::shared_ptr<const PluginModel>& plugin,
+    int                                       offset)
 {
 	std::stringstream ss;
 	ss << plugin->default_block_symbol();
@@ -368,11 +370,11 @@ LoadPluginWindow::generate_module_name(const SPtr<const PluginModel>& plugin,
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 {
-	const URIs&             uris       = _app->uris();
-	Gtk::TreeModel::Row     row        = *iter;
-	SPtr<const PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
-	bool                    polyphonic = _polyphonic_checkbutton->get_active();
-	string                  name       = _name_entry->get_text();
+	const URIs&         uris       = _app->uris();
+	Gtk::TreeModel::Row row        = *iter;
+	auto                plugin     = row.get_value(_plugins_columns._col_plugin);
+	bool                polyphonic = _polyphonic_checkbutton->get_active();
+	string              name       = _name_entry->get_text();
 
 	if (name.empty()) {
 		name = generate_module_name(plugin, _name_offset);

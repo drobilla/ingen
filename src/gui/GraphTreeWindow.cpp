@@ -75,7 +75,7 @@ GraphTreeWindow::init(App& app, ClientStore& store)
 }
 
 void
-GraphTreeWindow::new_object(const SPtr<ObjectModel>& object)
+GraphTreeWindow::new_object(const std::shared_ptr<ObjectModel>& object)
 {
 	auto graph = std::dynamic_pointer_cast<GraphModel>(object);
 	if (graph) {
@@ -84,7 +84,7 @@ GraphTreeWindow::new_object(const SPtr<ObjectModel>& object)
 }
 
 void
-GraphTreeWindow::add_graph(const SPtr<GraphModel>& pm)
+GraphTreeWindow::add_graph(const std::shared_ptr<GraphModel>& pm)
 {
 	if (!pm->parent()) {
 		Gtk::TreeModel::iterator iter = _graph_treestore->append();
@@ -125,7 +125,7 @@ GraphTreeWindow::add_graph(const SPtr<GraphModel>& pm)
 }
 
 void
-GraphTreeWindow::remove_graph(const SPtr<GraphModel>& pm)
+GraphTreeWindow::remove_graph(const std::shared_ptr<GraphModel>& pm)
 {
 	Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), pm);
 	if (i != _graph_treestore->children().end()) {
@@ -134,11 +134,11 @@ GraphTreeWindow::remove_graph(const SPtr<GraphModel>& pm)
 }
 
 Gtk::TreeModel::iterator
-GraphTreeWindow::find_graph(Gtk::TreeModel::Children         root,
-                            const SPtr<client::ObjectModel>& graph)
+GraphTreeWindow::find_graph(Gtk::TreeModel::Children                    root,
+                            const std::shared_ptr<client::ObjectModel>& graph)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
-		SPtr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
+		std::shared_ptr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
 		if (graph == pm) {
 			return c;
 		} else if (!(*c)->children().empty()) {
@@ -158,8 +158,8 @@ GraphTreeWindow::show_graph_menu(GdkEventButton* ev)
 {
 	Gtk::TreeModel::iterator active = _graph_tree_selection->get_selected();
 	if (active) {
-		Gtk::TreeModel::Row row = *active;
-		SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+		Gtk::TreeModel::Row         row = *active;
+		std::shared_ptr<GraphModel> pm  = row[_graph_tree_columns.graph_model_col];
 		if (pm) {
 			_app->log().warn("TODO: graph menu from tree window");
 		}
@@ -170,9 +170,9 @@ void
 GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
                                        Gtk::TreeView::Column*      col)
 {
-	Gtk::TreeModel::iterator active = _graph_treestore->get_iter(path);
-	Gtk::TreeModel::Row row = *active;
-	SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+	Gtk::TreeModel::iterator    active = _graph_treestore->get_iter(path);
+	Gtk::TreeModel::Row         row    = *active;
+	std::shared_ptr<GraphModel> pm     = row[_graph_tree_columns.graph_model_col];
 
 	_app->window_factory()->present_graph(pm);
 }
@@ -180,11 +180,11 @@ GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
 void
 GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 {
-	Gtk::TreeModel::Path path(path_str);
+	Gtk::TreeModel::Path     path(path_str);
 	Gtk::TreeModel::iterator active = _graph_treestore->get_iter(path);
-	Gtk::TreeModel::Row row = *active;
+	Gtk::TreeModel::Row      row    = *active;
 
-	SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+	std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 	assert(pm);
 
 	if (_enable_signal) {
@@ -195,9 +195,10 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 }
 
 void
-GraphTreeWindow::graph_property_changed(const URI&              key,
-                                        const Atom&             value,
-                                        const SPtr<GraphModel>& graph)
+GraphTreeWindow::graph_property_changed(
+    const URI&                         key,
+    const Atom&                        value,
+    const std::shared_ptr<GraphModel>& graph)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
@@ -214,7 +215,7 @@ GraphTreeWindow::graph_property_changed(const URI&              key,
 }
 
 void
-GraphTreeWindow::graph_moved(const SPtr<GraphModel>& graph)
+GraphTreeWindow::graph_moved(const std::shared_ptr<GraphModel>& graph)
 {
 	_enable_signal = false;
 

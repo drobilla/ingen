@@ -20,6 +20,7 @@
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "PortImpl.hpp"
+#include "ingen/memory.hpp"
 #include "types.hpp"
 
 #include <memory>
@@ -39,10 +40,10 @@ namespace events {
 class Disconnect : public Event
 {
 public:
-	Disconnect(Engine&                  engine,
-	           const SPtr<Interface>&   client,
-	           SampleCount              timestamp,
-	           const ingen::Disconnect& msg);
+	Disconnect(Engine&                           engine,
+	           const std::shared_ptr<Interface>& client,
+	           SampleCount                       timestamp,
+	           const ingen::Disconnect&          msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;
@@ -59,11 +60,11 @@ public:
 		inline InputPort* head() { return _head; }
 
 	private:
-		Engine&                _engine;
-		PortImpl*              _tail;
-		InputPort*             _head;
-		SPtr<ArcImpl>          _arc;
-		MPtr<PortImpl::Voices> _voices;
+		Engine&                  _engine;
+		PortImpl*                _tail;
+		InputPort*               _head;
+		std::shared_ptr<ArcImpl> _arc;
+		MPtr<PortImpl::Voices>   _voices;
 	};
 
 private:

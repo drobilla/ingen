@@ -25,6 +25,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
+#include "ingen/memory.hpp"
 
 #include <algorithm>
 #include <cassert>

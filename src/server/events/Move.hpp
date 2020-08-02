@@ -22,6 +22,8 @@
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -36,10 +38,10 @@ namespace events {
 class Move : public Event
 {
 public:
-	Move(Engine&                engine,
-	     const SPtr<Interface>& client,
-	     SampleCount            timestamp,
-	     const ingen::Move&     msg);
+	Move(Engine&                           engine,
+	     const std::shared_ptr<Interface>& client,
+	     SampleCount                       timestamp,
+	     const ingen::Move&                msg);
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

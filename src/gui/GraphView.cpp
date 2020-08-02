@@ -64,7 +64,7 @@ GraphView::init(App& app)
 }
 
 void
-GraphView::set_graph(const SPtr<const GraphModel>& graph)
+GraphView::set_graph(const std::shared_ptr<const GraphModel>& graph)
 {
 	assert(!_canvas); // FIXME: remove
 
@@ -98,8 +98,8 @@ GraphView::set_graph(const SPtr<const GraphModel>& graph)
 	_canvas->widget().grab_focus();
 }
 
-SPtr<GraphView>
-GraphView::create(App& app, const SPtr<const GraphModel>& graph)
+std::shared_ptr<GraphView>
+GraphView::create(App& app, const std::shared_ptr<const GraphModel>& graph)
 {
 	GraphView*                 result = nullptr;
 	Glib::RefPtr<Gtk::Builder> xml    = WidgetFactory::create("warehouse_win");
@@ -111,7 +111,7 @@ GraphView::create(App& app, const SPtr<const GraphModel>& graph)
 
 	result->init(app);
 	result->set_graph(graph);
-	return SPtr<GraphView>(result);
+	return std::shared_ptr<GraphView>(result);
 }
 
 void

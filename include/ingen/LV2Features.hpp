@@ -18,10 +18,10 @@
 #define INGEN_LV2FEATURES_HPP
 
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "lv2/core/lv2.h"
 #include "raul/Noncopyable.hpp"
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -43,10 +43,10 @@ public:
 
 		virtual const char* uri() const = 0;
 
-		virtual SPtr<LV2_Feature> feature(World& world,
-		                                  Node*  block) = 0;
+		virtual std::shared_ptr<LV2_Feature>
+		feature(World& world, Node* block) = 0;
 
-protected:
+	protected:
 		static void free_feature(LV2_Feature* feature);
 	};
 
@@ -56,7 +56,8 @@ protected:
 
 		const char* uri() const override { return _uri; }
 
-		SPtr<LV2_Feature> feature(World& world, Node* block) override {
+		std::shared_ptr<LV2_Feature> feature(World& world, Node* block) override
+		{
 			return nullptr;
 		}
 
@@ -65,7 +66,7 @@ protected:
 
 	class FeatureArray : public Raul::Noncopyable {
 	public:
-		using FeatureVector = std::vector<SPtr<LV2_Feature>>;
+		using FeatureVector = std::vector<std::shared_ptr<LV2_Feature>>;
 
 		explicit FeatureArray(FeatureVector& features);
 
@@ -78,13 +79,13 @@ protected:
 		LV2_Feature** _array;
 	};
 
-	void add_feature(const SPtr<Feature>& feature);
+	void add_feature(const std::shared_ptr<Feature>& feature);
 	bool is_supported(const std::string& uri) const;
 
-	SPtr<FeatureArray> lv2_features(World& world, Node*  node) const;
+	std::shared_ptr<FeatureArray> lv2_features(World& world, Node*  node) const;
 
 private:
-	using Features = std::vector<SPtr<Feature>>;
+	using Features = std::vector<std::shared_ptr<Feature>>;
 	Features _features;
 };
 

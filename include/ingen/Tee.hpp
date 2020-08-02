@@ -19,9 +19,9 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
-#include "ingen/memory.hpp"
 
 #include <cstddef>
+#include <memory>
 #include <mutex>
 #include <utility>
 #include <vector>
@@ -32,15 +32,16 @@ namespace ingen {
 class Tee : public Interface
 {
 public:
-	using Sinks = std::vector<SPtr<Interface>>;
+	using Sinks = std::vector<std::shared_ptr<Interface>>;
 
 	explicit Tee(Sinks sinks) : _sinks(std::move(sinks)) {}
 
-	SPtr<Interface> respondee() const override {
+	std::shared_ptr<Interface> respondee() const override {
 		return _sinks.front()->respondee();
 	}
 
-	void set_respondee(const SPtr<Interface>& respondee) override {
+	void set_respondee(const std::shared_ptr<Interface>& respondee) override
+	{
 		_sinks.front()->set_respondee(respondee);
 	}
 

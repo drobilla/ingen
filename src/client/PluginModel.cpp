@@ -27,6 +27,7 @@
 #include <cctype>
 #include <cstring>
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -153,7 +154,7 @@ PluginModel::get_property(const URI& key) const
 }
 
 void
-PluginModel::set(const SPtr<PluginModel>& p)
+PluginModel::set(const std::shared_ptr<PluginModel>& p)
 {
 	_type = p->_type;
 
@@ -241,8 +242,9 @@ PluginModel::has_ui() const
 	return false;
 }
 
-SPtr<PluginUI>
-PluginModel::ui(ingen::World& world, const SPtr<const BlockModel>& block) const
+std::shared_ptr<PluginUI>
+PluginModel::ui(ingen::World&                            world,
+                const std::shared_ptr<const BlockModel>& block) const
 {
 	if (!_lilv_plugin) {
 		return nullptr;

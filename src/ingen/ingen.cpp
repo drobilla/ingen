@@ -20,7 +20,6 @@
 #include "ingen/Log.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen_config.h"
@@ -141,8 +140,8 @@ main(int argc, char** argv)
 	}
 
 	// If we don't have a local engine interface (from the GUI), use network
-	SPtr<Interface> engine_interface(world->interface());
-	SPtr<Interface> dummy_client(new DummyInterface());
+	auto engine_interface = world->interface();
+	auto dummy_client     = std::make_shared<DummyInterface>();
 	if (!engine_interface) {
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(URI::is_valid(uri),
