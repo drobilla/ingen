@@ -160,9 +160,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		return false;
 	}
 
-	const auto*     obj     = reinterpret_cast<const LV2_Atom_Object*>(msg);
-	const LV2_Atom* subject = nullptr;
-	const LV2_Atom* number  = nullptr;
+	const auto* const obj     = reinterpret_cast<const LV2_Atom_Object*>(msg);
+	const LV2_Atom*   subject = nullptr;
+	const LV2_Atom*   number  = nullptr;
 
 	lv2_atom_object_get(obj,
 	                    _uris.patch_subject.urid(),        &subject,
