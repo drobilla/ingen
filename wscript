@@ -64,7 +64,6 @@ def configure(conf):
             'clang': [
                 '-Wno-cast-align',
                 '-Wno-cast-qual',
-                '-Wno-deprecated-copy-dtor',
                 '-Wno-documentation-unknown-command',
                 '-Wno-exit-time-destructors',
                 '-Wno-float-conversion',
@@ -90,7 +89,6 @@ def configure(conf):
                 '-Wno-cast-qual',
                 '-Wno-conditionally-supported',
                 '-Wno-conversion',
-                '-Wno-deprecated-copy-dtor',
                 '-Wno-effc++',
                 '-Wno-float-conversion',
                 '-Wno-float-equal',
@@ -98,7 +96,6 @@ def configure(conf):
                 '-Wno-format-nonliteral',
                 '-Wno-multiple-inheritance',
                 '-Wno-padded',
-                '-Wno-pedantic',
                 '-Wno-sign-conversion',
                 '-Wno-stack-protector',
                 '-Wno-suggest-attribute=format',
