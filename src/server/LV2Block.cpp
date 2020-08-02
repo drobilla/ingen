@@ -730,7 +730,7 @@ LV2Block::save_preset(const URI&        uri,
 		lilv_world_load_bundle(lworld, lbundle);
 		lilv_node_free(lbundle);
 
-		return preset;
+		return {preset};
 	}
 
 	return boost::optional<Resource>();

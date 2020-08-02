@@ -384,7 +384,7 @@ parse_graph(ingen::World&                        world,
 	}
 
 	if (ctx != Resource::Graph::INTERNAL) {
-		return graph_path;  // Not parsing graph internals, finished now
+		return {graph_path};  // Not parsing graph internals, finished now
 	}
 
 	// For each block in this graph
@@ -428,7 +428,7 @@ parse_graph(ingen::World&                        world,
 	// Now that all ports and blocks exist, create arcs inside graph
 	parse_arcs(world, target, model, base_uri, subject, graph_path);
 
-	return graph_path;
+	return {graph_path};
 }
 
 static bool
@@ -697,7 +697,7 @@ Parser::parse_string(ingen::World&                        world,
 
 	Sord::Node subject;
 	parse(world, target, model, actual_base, subject, parent, symbol, data);
-	return actual_base;
+	return {actual_base};
 }
 
 } // namespace ingen

@@ -77,7 +77,6 @@ def configure(conf):
                 '-Wno-implicit-int-conversion',
                 '-Wno-padded',
                 '-Wno-reserved-id-macro',
-                '-Wno-return-std-move-in-c++11',
                 '-Wno-shadow',
                 '-Wno-shadow-field',
                 '-Wno-shadow-field-in-constructor',
