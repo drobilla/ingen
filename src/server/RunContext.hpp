@@ -24,6 +24,7 @@
 #include "raul/RingBuffer.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <thread>
 
 namespace ingen {
@@ -143,11 +144,11 @@ public:
 protected:
 	void run();
 
-	Engine&           _engine;      ///< Engine we're running in
-	Raul::RingBuffer* _event_sink;  ///< Port updates from process context
-	Task*             _task;        ///< Currently executing task
-	UPtr<std::thread> _thread;      ///< Thread (null for main run context)
-	unsigned          _id;          ///< Context ID
+	Engine&                      _engine;     ///< Engine we're running in
+	Raul::RingBuffer*            _event_sink; ///< Updates from process context
+	Task*                        _task;       ///< Currently executing task
+	std::unique_ptr<std::thread> _thread;     ///< Thread (or null for main)
+	unsigned                     _id;         ///< Context ID
 
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative

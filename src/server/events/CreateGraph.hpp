@@ -25,6 +25,7 @@
 
 #include <cstdint>
 #include <list>
+#include <memory>
 
 namespace ingen {
 namespace server {
@@ -57,13 +58,13 @@ public:
 private:
 	void build_child_events();
 
-	const Raul::Path       _path;
-	Properties             _properties;
-	ClientUpdate           _update;
-	GraphImpl*             _graph;
-	GraphImpl*             _parent;
-	MPtr<CompiledGraph>    _compiled_graph;
-	std::list<UPtr<Event>> _child_events;
+	const Raul::Path                  _path;
+	Properties                        _properties;
+	ClientUpdate                      _update;
+	GraphImpl*                        _graph;
+	GraphImpl*                        _parent;
+	MPtr<CompiledGraph>               _compiled_graph;
+	std::list<std::unique_ptr<Event>> _child_events;
 };
 
 } // namespace events

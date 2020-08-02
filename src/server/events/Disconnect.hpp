@@ -22,6 +22,8 @@
 #include "PortImpl.hpp"
 #include "types.hpp"
 
+#include <memory>
+
 namespace ingen {
 namespace server {
 
@@ -67,7 +69,7 @@ public:
 private:
 	const ingen::Disconnect _msg;
 	GraphImpl*              _graph;
-	UPtr<Impl>              _impl;
+	std::unique_ptr<Impl>   _impl;
 	MPtr<CompiledGraph>     _compiled_graph;
 };
 

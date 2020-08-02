@@ -24,6 +24,7 @@
 #include "raul/Semaphore.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <thread>
 
 namespace ingen {
@@ -59,15 +60,15 @@ public:
 private:
 	SPtr<Schedule> _schedule;
 
-	Log&              _log;
-	Raul::Semaphore   _sem;
-	Raul::RingBuffer  _requests;
-	Raul::RingBuffer  _responses;
-	uint8_t* const    _buffer;
-	const uint32_t    _buffer_size;
-	UPtr<std::thread> _thread;
-	bool              _exit_flag;
-	bool              _synchronous;
+	Log&                         _log;
+	Raul::Semaphore              _sem;
+	Raul::RingBuffer             _requests;
+	Raul::RingBuffer             _responses;
+	uint8_t* const               _buffer;
+	const uint32_t               _buffer_size;
+	std::unique_ptr<std::thread> _thread;
+	bool                         _exit_flag;
+	bool                         _synchronous;
 
 	void run();
 };

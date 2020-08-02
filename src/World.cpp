@@ -72,7 +72,7 @@ ingen_load_library(Log& log, const string& name)
 		return nullptr;
 	}
 
-	UPtr<Library> library = make_unique<Library>(path);
+	std::unique_ptr<Library> library = make_unique<Library>(path);
 	if (*library) {
 		return library;
 	}
@@ -179,23 +179,23 @@ public:
 
 	using LilvWorldUPtr = std::unique_ptr<LilvWorld, decltype(&lilv_world_free)>;
 
-	int*              argc;
-	char***           argv;
-	LV2Features*      lv2_features;
-	UPtr<Sord::World> rdf_world;
-	LilvWorldUPtr     lilv_world;
-	URIMap            uri_map;
-	Forge             forge;
-	URIs              uris;
-	Configuration     conf;
-	Log               log;
-	SPtr<Interface>   interface;
-	SPtr<EngineBase>  engine;
-	SPtr<Serialiser>  serialiser;
-	SPtr<Parser>      parser;
-	SPtr<Store>       store;
-	std::mutex        rdf_mutex;
-	std::string       jack_uuid;
+	int*                         argc;
+	char***                      argv;
+	LV2Features*                 lv2_features;
+	std::unique_ptr<Sord::World> rdf_world;
+	LilvWorldUPtr                lilv_world;
+	URIMap                       uri_map;
+	Forge                        forge;
+	URIs                         uris;
+	Configuration                conf;
+	Log                          log;
+	SPtr<Interface>              interface;
+	SPtr<EngineBase>             engine;
+	SPtr<Serialiser>             serialiser;
+	SPtr<Parser>                 parser;
+	SPtr<Store>                  store;
+	std::mutex                   rdf_mutex;
+	std::string                  jack_uuid;
 };
 
 World::World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log)

@@ -45,6 +45,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -66,7 +67,7 @@ ingen_try(bool cond, const char* msg)
 static FilePath
 real_file_path(const char* path)
 {
-	UPtr<char, FreeDeleter<char>> real_path{realpath(path, nullptr)};
+	std::unique_ptr<char, FreeDeleter<char>> real_path{realpath(path, nullptr)};
 
 	return FilePath{real_path.get()};
 }

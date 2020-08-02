@@ -30,9 +30,6 @@ void NullDeleter(T* ptr) {}
 template <class T>
 struct FreeDeleter { void operator()(T* const ptr) { free(ptr); } };
 
-template <class T, class Deleter = std::default_delete<T>>
-using UPtr = std::unique_ptr<T, Deleter>;
-
 template <class T>
 using SPtr = std::shared_ptr<T>;
 

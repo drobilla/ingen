@@ -176,7 +176,7 @@ void
 Engine::listen()
 {
 #ifdef HAVE_SOCKET
-	_listener = UPtr<SocketListener>(new SocketListener(*this));
+	_listener = make_unique<SocketListener>(*this);
 #endif
 }
 

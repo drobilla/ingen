@@ -31,6 +31,7 @@
 #include <condition_variable>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <random>
 #include <vector>
@@ -136,20 +137,20 @@ public:
 	ingen::World& world() const { return _world; }
 	Log&          log()   const;
 
-	const SPtr<Interface>&       interface()        const { return _interface; }
-	const SPtr<EventWriter>&     event_writer()     const { return _event_writer; }
-	const UPtr<AtomReader>&      atom_interface()   const { return _atom_interface; }
-    const UPtr<BlockFactory>&    block_factory()    const { return _block_factory; }
-    const UPtr<Broadcaster>&     broadcaster()      const { return _broadcaster; }
-    const UPtr<BufferFactory>&   buffer_factory()   const { return _buffer_factory; }
-    const UPtr<ControlBindings>& control_bindings() const { return _control_bindings; }
-    const SPtr<Driver>&          driver()           const { return _driver; }
-    const UPtr<PostProcessor>&   post_processor()   const { return _post_processor; }
-    const UPtr<Raul::Maid>&      maid()             const { return _maid; }
-    const UPtr<UndoStack>&       undo_stack()       const { return _undo_stack; }
-    const UPtr<UndoStack>&       redo_stack()       const { return _redo_stack; }
-    const UPtr<Worker>&          worker()           const { return _worker; }
-    const UPtr<Worker>&          sync_worker()      const { return _sync_worker; }
+	const SPtr<Interface>&                  interface()        const { return _interface; }
+	const SPtr<EventWriter>&                event_writer()     const { return _event_writer; }
+	const std::unique_ptr<AtomReader>&      atom_interface()   const { return _atom_interface; }
+    const std::unique_ptr<BlockFactory>&    block_factory()    const { return _block_factory; }
+    const std::unique_ptr<Broadcaster>&     broadcaster()      const { return _broadcaster; }
+    const std::unique_ptr<BufferFactory>&   buffer_factory()   const { return _buffer_factory; }
+    const std::unique_ptr<ControlBindings>& control_bindings() const { return _control_bindings; }
+    const SPtr<Driver>&                     driver()           const { return _driver; }
+    const std::unique_ptr<PostProcessor>&   post_processor()   const { return _post_processor; }
+    const std::unique_ptr<Raul::Maid>&      maid()             const { return _maid; }
+    const std::unique_ptr<UndoStack>&       undo_stack()       const { return _undo_stack; }
+    const std::unique_ptr<UndoStack>&       redo_stack()       const { return _redo_stack; }
+    const std::unique_ptr<Worker>&          worker()           const { return _worker; }
+    const std::unique_ptr<Worker>&          sync_worker()      const { return _sync_worker; }
 
     GraphImpl* root_graph() const { return _root_graph; }
 	void       set_root_graph(GraphImpl* graph);
@@ -182,30 +183,30 @@ public:
 private:
 	ingen::World& _world;
 
-	SPtr<LV2Options>      _options;
-	UPtr<BufferFactory>   _buffer_factory;
-	UPtr<Raul::Maid>      _maid;
-	SPtr<Driver>          _driver;
-	UPtr<Worker>          _worker;
-	UPtr<Worker>          _sync_worker;
-	UPtr<Broadcaster>     _broadcaster;
-	UPtr<ControlBindings> _control_bindings;
-	UPtr<BlockFactory>    _block_factory;
-	UPtr<UndoStack>       _undo_stack;
-	UPtr<UndoStack>       _redo_stack;
-	UPtr<PostProcessor>   _post_processor;
-	UPtr<PreProcessor>    _pre_processor;
-	UPtr<SocketListener>  _listener;
-	SPtr<EventWriter>     _event_writer;
-	SPtr<Interface>       _interface;
-	UPtr<AtomReader>      _atom_interface;
-	GraphImpl*            _root_graph;
+	SPtr<LV2Options>                 _options;
+	std::unique_ptr<BufferFactory>   _buffer_factory;
+	std::unique_ptr<Raul::Maid>      _maid;
+	SPtr<Driver>                     _driver;
+	std::unique_ptr<Worker>          _worker;
+	std::unique_ptr<Worker>          _sync_worker;
+	std::unique_ptr<Broadcaster>     _broadcaster;
+	std::unique_ptr<ControlBindings> _control_bindings;
+	std::unique_ptr<BlockFactory>    _block_factory;
+	std::unique_ptr<UndoStack>       _undo_stack;
+	std::unique_ptr<UndoStack>       _redo_stack;
+	std::unique_ptr<PostProcessor>   _post_processor;
+	std::unique_ptr<PreProcessor>    _pre_processor;
+	std::unique_ptr<SocketListener>  _listener;
+	SPtr<EventWriter>                _event_writer;
+	SPtr<Interface>                  _interface;
+	std::unique_ptr<AtomReader>      _atom_interface;
+	GraphImpl*                       _root_graph;
 
-	std::vector<UPtr<Raul::RingBuffer>> _notifications;
-	std::vector<UPtr<RunContext>>       _run_contexts;
-	uint64_t                            _cycle_start_time;
-	Load                                _run_load;
-	Clock                               _clock;
+	std::vector<std::unique_ptr<Raul::RingBuffer>> _notifications;
+	std::vector<std::unique_ptr<RunContext>>       _run_contexts;
+	uint64_t                                       _cycle_start_time;
+	Load                                           _run_load;
+	Clock                                          _clock;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;

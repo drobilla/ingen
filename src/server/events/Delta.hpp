@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 namespace ingen {
@@ -95,11 +96,11 @@ private:
 		LOADED_BUNDLE
 	};
 
-	using SetEvents = std::vector<UPtr<SetPortValue>>;
+	using SetEvents = std::vector<std::unique_ptr<SetPortValue>>;
 
 	void init();
 
-	UPtr<Event>               _create_event;
+	std::unique_ptr<Event>    _create_event;
 	SetEvents                 _set_events;
 	std::vector<SpecialType>  _types;
 	std::vector<SpecialType>  _remove_types;

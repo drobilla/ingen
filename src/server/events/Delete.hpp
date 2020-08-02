@@ -25,6 +25,7 @@
 
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -61,16 +62,16 @@ private:
 	using IndexChange  = std::pair<uint32_t, uint32_t>;
 	using IndexChanges = std::map<Raul::Path, IndexChange>;
 
-	const ingen::Del        _msg;
-	Raul::Path              _path;
-	SPtr<BlockImpl>         _block; ///< Non-null iff a block
-	SPtr<DuplexPort>        _port; ///< Non-null iff a port
-	EnginePort*             _engine_port;
-	MPtr<GraphImpl::Ports>  _ports_array; ///< New (external) ports for Graph
-	MPtr<CompiledGraph>     _compiled_graph; ///< Graph's new process order
-	UPtr<DisconnectAll>     _disconnect_event;
-	Store::Objects          _removed_objects;
-	IndexChanges            _port_index_changes;
+	const ingen::Del               _msg;
+	Raul::Path                     _path;
+	SPtr<BlockImpl>                _block; ///< Non-null iff a block
+	SPtr<DuplexPort>               _port; ///< Non-null iff a port
+	EnginePort*                    _engine_port;
+	MPtr<GraphImpl::Ports>         _ports_array; ///< New (external) ports for Graph
+	MPtr<CompiledGraph>            _compiled_graph; ///< Graph's new process order
+	std::unique_ptr<DisconnectAll> _disconnect_event;
+	Store::Objects                 _removed_objects;
+	IndexChanges                   _port_index_changes;
 
 	std::vector<ControlBindings::Binding*> _removed_bindings;
 };

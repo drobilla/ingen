@@ -451,12 +451,12 @@ ingen_lv2_main(const SPtr<Engine>& engine, const SPtr<LV2Driver>& driver)
 }
 
 struct IngenPlugin {
-	UPtr<ingen::World> world;
-	SPtr<Engine>       engine;
-	UPtr<std::thread>  main;
-	LV2_URID_Map*      map  = nullptr;
-	int                argc = 0;
-	char**             argv = nullptr;
+	std::unique_ptr<ingen::World> world;
+	SPtr<Engine>                  engine;
+	std::unique_ptr<std::thread>  main;
+	LV2_URID_Map*                 map  = nullptr;
+	int                           argc = 0;
+	char**                        argv = nullptr;
 };
 
 static Lib::Graphs
@@ -539,7 +539,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	auto* plugin = new IngenPlugin();
 	plugin->map   = map;
-	plugin->world = UPtr<ingen::World>(new ingen::World(map, unmap, log));
+	plugin->world = make_unique<ingen::World>(map, unmap, log);
 	plugin->world->load_configuration(plugin->argc, plugin->argv);
 
 	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);

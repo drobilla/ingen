@@ -650,7 +650,8 @@ LV2Block::load_state(World& world, const FilePath& path)
 }
 
 void
-LV2Block::apply_state(const UPtr<Worker>& worker, const LilvState* state)
+LV2Block::apply_state(const std::unique_ptr<Worker>& worker,
+                      const LilvState*               state)
 {
 	World&            world = parent_graph()->engine().world();
 	SPtr<LV2_Feature> sched;

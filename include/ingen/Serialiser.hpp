@@ -23,6 +23,7 @@
 #include "ingen/memory.hpp"
 #include "sord/sordmm.hpp"
 
+#include <memory>
 #include <string>
 
 namespace Raul { class Path; }
@@ -98,7 +99,7 @@ public:
 
 private:
 	struct Impl;
-	UPtr<Impl> me;
+	std::unique_ptr<Impl> me;
 };
 
 } // namespace ingen

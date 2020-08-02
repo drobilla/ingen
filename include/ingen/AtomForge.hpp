@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 
 namespace ingen {
 
@@ -69,8 +70,8 @@ public:
 private:
 	struct SratomDeleter { void operator()(Sratom* s) { sratom_free(s); } };
 
-	using AtomPtr = UPtr<LV2_Atom, FreeDeleter<LV2_Atom>>;
-	using SratomPtr = UPtr<Sratom, SratomDeleter>;
+	using AtomPtr   = std::unique_ptr<LV2_Atom, FreeDeleter<LV2_Atom>>;
+	using SratomPtr = std::unique_ptr<Sratom, SratomDeleter>;
 
 	/// Append some data and return a reference to its start
 	intptr_t append(const void* data, uint32_t len) {

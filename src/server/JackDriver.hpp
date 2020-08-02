@@ -35,6 +35,7 @@
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <string>
 
 namespace Raul { class Path; }
@@ -143,7 +144,7 @@ protected:
 	using Ports = boost::intrusive::slist<EnginePort,
 	                                      boost::intrusive::cache_last<true>>;
 
-	using AudioBufPtr = UPtr<float, FreeDeleter<float>>;
+	using AudioBufPtr = std::unique_ptr<float, FreeDeleter<float>>;
 
 	Engine&                _engine;
 	Ports                  _ports;

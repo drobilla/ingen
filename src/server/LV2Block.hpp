@@ -33,6 +33,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <mutex>
 
 namespace ingen {
@@ -80,7 +81,8 @@ public:
 
 	LilvState* load_preset(const URI& uri) override;
 
-	void apply_state(const UPtr<Worker>& worker, const LilvState* state) override;
+	void apply_state(const std::unique_ptr<Worker>& worker,
+	                 const LilvState*               state) override;
 
 	boost::optional<Resource> save_preset(const URI&        uri,
 	                                      const Properties& props) override;
