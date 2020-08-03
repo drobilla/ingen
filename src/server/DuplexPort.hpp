@@ -23,6 +23,7 @@
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
+#include "ingen/ingen.h"
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 

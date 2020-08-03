@@ -17,11 +17,11 @@
 #ifndef INGEN_ENGINE_INTERNALPLUGIN_HPP
 #define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
+#include "PluginImpl.hpp"
+
 #include "ingen/URI.hpp"
 #include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
-
-#include "PluginImpl.hpp"
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 

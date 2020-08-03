@@ -17,29 +17,56 @@
 #include "ConnectWindow.hpp"
 
 #include "App.hpp"
+#include "Window.hpp"
 #include "WindowFactory.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/QueuedInterface.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/client/SocketClient.hpp"
+#include "ingen/fmt.hpp"
+#include "ingen/paths.hpp"
 #include "ingen_config.h"
+#include "raul/Path.hpp"
 #include "raul/Process.hpp"
 
+#include <boost/format/alt_sstream.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/variant/get.hpp>
 #include <glib.h>
+#include <glibmm/main.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/image.h>
+#include <gtkmm/label.h>
+#include <gtkmm/main.h>
+#include <gtkmm/progressbar.h>
+#include <gtkmm/radiobutton.h>
+#include <gtkmm/spinbutton.h>
 #include <gtkmm/stock.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <limits>
 #include <memory>
+#include <ostream>
 #include <string>
+#include <sys/time.h>
 #include <utility>
 
 using namespace ingen::client;

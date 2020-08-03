@@ -22,11 +22,16 @@
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
 
+#include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/World.hpp"
+#include "ingen/paths.hpp"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 #include <memory>
 #include <mutex>

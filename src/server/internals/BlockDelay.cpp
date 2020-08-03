@@ -16,15 +16,20 @@
 
 #include "internals/BlockDelay.hpp"
 
+#include "BlockImpl.hpp"
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
+#include "PortType.hpp"
 
 #include "ingen/Forge.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Symbol.hpp"
 
 #include <memory>
 

@@ -26,13 +26,19 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/paths.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 #include <cassert>
 #include <memory>

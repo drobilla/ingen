@@ -18,25 +18,35 @@
 #define INGEN_EVENTS_DELTA_HPP
 
 #include "ClientUpdate.hpp"
+#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
+#include "types.hpp"
 
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
 #include "lilv/lilv.h"
 #include "raul/Maid.hpp"
 
 #include <boost/optional/optional.hpp>
 
-#include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <vector>
 
 namespace ingen {
+
+class Interface;
+struct Delta;
+struct Put;
+struct SetProperty;
+
 namespace server {
 
-class CompiledGraph;
 class Engine;
 class GraphImpl;
+class PreProcessContext;
 class RunContext;
 
 namespace events {

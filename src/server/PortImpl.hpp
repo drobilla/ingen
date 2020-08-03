@@ -24,6 +24,10 @@
 #include "types.hpp"
 
 #include "ingen/Atom.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
+#include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
@@ -31,11 +35,20 @@
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
+#include <utility>
+
+namespace Raul {
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
+
+class Properties;
+
 namespace server {
 
 class BlockImpl;
+class BufferFactory;
 
 /** A port (input or output) on a Block.
  *

@@ -16,19 +16,26 @@
 
 #include "internals/Trigger.hpp"
 
+#include "BlockImpl.hpp"
 #include "Buffer.hpp"
-#include "Engine.hpp"
+#include "BufferFactory.hpp"
+#include "BufferRef.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
+#include "PortType.hpp"
 #include "RunContext.hpp"
-#include "ingen_config.h"
-#include "util.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
+#include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
 #include "lv2/midi/midi.h"
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
+#include "raul/Symbol.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -36,6 +43,9 @@
 
 namespace ingen {
 namespace server {
+
+class GraphImpl;
+
 namespace internals {
 
 InternalPlugin* TriggerNode::internal_plugin(URIs& uris) {

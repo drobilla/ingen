@@ -14,8 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "JackDriver.hpp"
+#include "BufferRef.hpp"
 #include "Engine.hpp"
+#include "JackDriver.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
@@ -27,6 +28,12 @@
 #include <string>
 
 using namespace ingen;
+
+namespace ingen {
+namespace server {
+class Driver;
+} // namespace server
+} // namespace ingen
 
 struct IngenJackModule : public ingen::Module {
 	void load(ingen::World& world) override {

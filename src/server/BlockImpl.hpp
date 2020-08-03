@@ -24,7 +24,6 @@
 
 #include "ingen/Node.hpp"
 #include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
 #include "lilv/lilv.h"
 #include "lv2/urid/urid.h"
@@ -43,6 +42,9 @@ class Symbol;
 } // namespace Raul
 
 namespace ingen {
+
+class Resource;
+
 namespace server {
 
 class BufferFactory;

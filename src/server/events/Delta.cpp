@@ -16,6 +16,8 @@
 
 #include "Delta.hpp"
 
+#include "BlockFactory.hpp"
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreateBlock.hpp"
@@ -23,18 +25,27 @@
 #include "CreatePort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
+#include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "SetPortValue.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/memory.hpp"
+#include "ingen/paths.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
 
 #include <memory>
 #include <mutex>

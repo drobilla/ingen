@@ -28,7 +28,6 @@
 #include "ingen/paths.hpp"
 #include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
-#include "lv2/urid/urid.h"
 #include "raul/Path.hpp"
 
 #include <boost/optional/optional.hpp>

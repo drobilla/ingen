@@ -17,6 +17,7 @@
 #ifndef INGEN_CLIENT_SOCKET_CLIENT_HPP
 #define INGEN_CLIENT_SOCKET_CLIENT_HPP
 
+#include "ingen/Log.hpp"
 #include "ingen/SocketReader.hpp"
 #include "ingen/SocketWriter.hpp"
 #include "ingen/ingen.h"

@@ -19,17 +19,24 @@
 
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
+#include "types.hpp"
 
+#include "ingen/Message.hpp"
 #include "raul/Maid.hpp"
 
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
 class BlockImpl;
 class Engine;
 class GraphImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

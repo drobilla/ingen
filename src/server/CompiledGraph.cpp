@@ -21,11 +21,13 @@
 #include "GraphImpl.hpp"
 #include "ThreadManager.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/ColorContext.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
 
 #include <algorithm>
 #include <cassert>

@@ -19,9 +19,11 @@
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
+#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "DisconnectAll.hpp"
 #include "Driver.hpp"
+#include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
 #include "GraphImpl.hpp"
@@ -29,9 +31,16 @@
 #include "PreProcessContext.hpp"
 
 #include "ingen/Forge.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/memory.hpp"
+#include "ingen/paths.hpp"
+#include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -43,6 +52,9 @@
 
 namespace ingen {
 namespace server {
+
+class RunContext;
+
 namespace events {
 
 Delete::Delete(Engine&                           engine,

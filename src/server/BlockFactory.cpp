@@ -33,7 +33,6 @@
 #include "internals/Trigger.hpp"
 #include "lilv/lilv.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <utility>

@@ -21,13 +21,22 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
+namespace Raul {
+class Symbol;
+} // namespace Raul
+
 namespace ingen {
+
+class URIs;
+
 namespace server {
 
-class InputPort;
-class OutputPort;
-class InternalPlugin;
 class BufferFactory;
+class GraphImpl;
+class InputPort;
+class InternalPlugin;
+class OutputPort;
+class RunContext;
 
 namespace internals {
 

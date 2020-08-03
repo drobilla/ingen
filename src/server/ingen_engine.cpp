@@ -15,7 +15,6 @@
 */
 
 #include "Engine.hpp"
-#include "EventWriter.hpp"
 #include "util.hpp"
 
 #include "ingen/Module.hpp"

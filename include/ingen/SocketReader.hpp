@@ -21,6 +21,7 @@
 #include "serd/serd.h"
 #include "sord/sord.h"
 
+#include <cstddef>
 #include <memory>
 #include <thread>
 

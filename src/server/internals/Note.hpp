@@ -20,17 +20,28 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
+#include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
 #include <cstdint>
 #include <memory>
 
+namespace Raul {
+class Symbol;
+} // namespace Raul
+
 namespace ingen {
+
+class URIs;
+
 namespace server {
 
+class BufferFactory;
+class GraphImpl;
 class InputPort;
-class OutputPort;
 class InternalPlugin;
+class OutputPort;
+class RunContext;
 
 namespace internals {
 

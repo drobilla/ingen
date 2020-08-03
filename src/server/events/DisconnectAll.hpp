@@ -17,26 +17,32 @@
 #ifndef INGEN_EVENTS_DISCONNECTALL_HPP
 #define INGEN_EVENTS_DISCONNECTALL_HPP
 
-#include "CompiledGraph.hpp"
 #include "Disconnect.hpp"
 #include "Event.hpp"
+#include "types.hpp"
 
+#include "ingen/Message.hpp"
 #include "raul/Maid.hpp"
-#include "raul/Path.hpp"
 
 #include <list>
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+class Node;
+
 namespace server {
 
 class BlockImpl;
+class CompiledGraph;
+class Engine;
 class GraphImpl;
 class PortImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
-
-class Disconnect;
 
 /** An event to disconnect all connections to a Block.
  *

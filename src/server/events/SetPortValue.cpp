@@ -16,19 +16,19 @@
 
 #include "SetPortValue.hpp"
 
-#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "ControlBindings.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
 
 #include "ingen/Forge.hpp"
-#include "ingen/LV2Features.hpp"
-#include "ingen/Store.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "lv2/atom/atom.h"
 
 #include <cassert>
 #include <memory>

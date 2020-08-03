@@ -21,7 +21,9 @@
 #include "LV2Block.hpp"
 
 #include "ingen/Log.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/memory.hpp"
+#include "lv2/core/lv2.h"
 #include "lv2/worker/worker.h"
 
 #include <cstdlib>

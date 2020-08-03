@@ -17,6 +17,8 @@
 #ifndef INGEN_EVENTS_GET_HPP
 #define INGEN_EVENTS_GET_HPP
 
+#include "ingen/Message.hpp"
+
 #include "BlockFactory.hpp"
 #include "ClientUpdate.hpp"
 #include "Event.hpp"
@@ -25,12 +27,16 @@
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+class Node;
+
 namespace server {
 
-class BlockImpl;
-class GraphImpl;
+class Engine;
 class PluginImpl;
-class PortImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

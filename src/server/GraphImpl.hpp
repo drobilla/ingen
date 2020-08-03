@@ -20,7 +20,9 @@
 #include "BlockImpl.hpp"
 #include "DuplexPort.hpp"
 #include "ThreadManager.hpp"
+#include "types.hpp"
 
+#include "ingen/Node.hpp"
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 
@@ -29,14 +31,19 @@
 #include <memory>
 #include <utility>
 
-namespace Raul { class Maid; }
+namespace Raul {
+class Maid;
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
 namespace server {
 
 class ArcImpl;
+class BufferFactory;
 class CompiledGraph;
 class Engine;
+class PortImpl;
 class RunContext;
 
 /** A group of blocks in a graph, possibly polyphonic.

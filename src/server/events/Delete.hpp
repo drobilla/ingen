@@ -17,12 +17,16 @@
 #ifndef INGEN_EVENTS_DELETE_HPP
 #define INGEN_EVENTS_DELETE_HPP
 
+#include "BlockImpl.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "GraphImpl.hpp"
+#include "types.hpp"
 
+#include "ingen/Message.hpp"
 #include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
 
 #include <cstdint>
 #include <map>
@@ -31,11 +35,17 @@
 #include <vector>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
 class CompiledGraph;
 class DuplexPort;
+class Engine;
 class EnginePort;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

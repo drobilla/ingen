@@ -17,23 +17,31 @@
 #include "JackDriver.hpp"
 
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
+#include "BufferRef.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
-#include "PortImpl.hpp"
+#include "PortType.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 #include "ingen_config.h"
 #include "util.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
-#include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/fmt.hpp"
 #include "ingen/memory.hpp"
+#include "lv2/atom/atom.h"
+#include "lv2/atom/forge.h"
 #include "lv2/atom/util.h"
+#include "raul/Path.hpp"
 
 #include <jack/midiport.h>
 
@@ -58,6 +66,9 @@
 using jack_sample_t = jack_default_audio_sample_t;
 
 namespace ingen {
+
+class Node;
+
 namespace server {
 
 JackDriver::JackDriver(Engine& engine)

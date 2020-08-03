@@ -18,6 +18,7 @@
 #define INGEN_EVENTS_MARK_HPP
 
 #include "Event.hpp"
+#include "types.hpp"
 
 #include "raul/Maid.hpp"
 
@@ -25,11 +26,18 @@
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+struct BundleBegin;
+struct BundleEnd;
+
 namespace server {
 
 class CompiledGraph;
 class Engine;
 class GraphImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

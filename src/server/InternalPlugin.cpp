@@ -22,6 +22,7 @@
 #include "internals/Note.hpp"
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
+#include "types.hpp"
 
 #include "ingen/URIs.hpp"
 

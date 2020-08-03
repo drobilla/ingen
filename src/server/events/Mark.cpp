@@ -16,10 +16,16 @@
 
 #include "events/Mark.hpp"
 
+#include "ingen/Message.hpp"
+#include "ingen/Status.hpp"
+
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "UndoStack.hpp"
 
+#include <cassert>
 #include <memory>
 #include <utility>
 

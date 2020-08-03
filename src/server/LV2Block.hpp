@@ -22,6 +22,8 @@
 #include "types.hpp"
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
 #include "lilv/lilv.h"
 #include "lv2/worker/worker.h"
 #include "raul/Array.hpp"
@@ -29,6 +31,8 @@
 #include "raul/Noncopyable.hpp"
 
 #include <boost/intrusive/slist.hpp>
+#include <boost/intrusive/slist_hook.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <cstdint>
 #include <cstdlib>
@@ -36,13 +40,25 @@
 #include <memory>
 #include <mutex>
 
+namespace Raul {
+class Symbol;
+} // namespace Raul
+
 namespace ingen {
 
 class FilePath;
+class Resource;
+class URIs;
+class World;
 
 namespace server {
 
+class BufferFactory;
+class Engine;
+class GraphImpl;
 class LV2Plugin;
+class RunContext;
+class Worker;
 
 /** An instance of a LV2 plugin.
  *

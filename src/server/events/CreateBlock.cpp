@@ -24,19 +24,33 @@
 #include "LV2Block.hpp"
 #include "PluginImpl.hpp"
 #include "PreProcessContext.hpp"
+#include "types.hpp"
 
+#include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/paths.hpp"
+#include "lilv/lilv.h"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 #include <memory>
 #include <utility>
 
 namespace ingen {
 namespace server {
+
+class RunContext;
+
 namespace events {
 
 CreateBlock::CreateBlock(Engine&                           engine,

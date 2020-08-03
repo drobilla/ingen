@@ -19,8 +19,10 @@
 #include "Engine.hpp"
 #include "SocketServer.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/World.hpp"
 #include "raul/Socket.hpp"
 

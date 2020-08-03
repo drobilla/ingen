@@ -19,11 +19,9 @@
 
 #include "Driver.hpp"
 #include "EnginePort.hpp"
-#include "ingen_config.h"
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
-#include "lv2/atom/forge.h"
 #include "raul/Semaphore.hpp"
 
 #include <portaudio.h>

@@ -15,18 +15,15 @@
 */
 
 #include "TestClient.hpp"
-#include "ingen_config.h"
 
 #include "ingen/Atom.hpp"
 #include "ingen/AtomForge.hpp"
 #include "ingen/AtomReader.hpp"
-#include "ingen/AtomWriter.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/FilePath.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
-#include "ingen/Properties.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URI.hpp"

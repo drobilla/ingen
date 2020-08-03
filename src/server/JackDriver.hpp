@@ -20,7 +20,9 @@
 #include "Driver.hpp"
 #include "EnginePort.hpp"
 #include "ingen_config.h"
+#include "types.hpp"
 
+#include "ingen/URI.hpp"
 #include "ingen/memory.hpp"
 #include "lv2/atom/forge.h"
 #include "raul/Semaphore.hpp"
@@ -28,6 +30,7 @@
 #include <jack/jack.h>
 #include <jack/thread.h>
 #include <jack/transport.h>
+#include <jack/types.h>
 #ifdef INGEN_JACK_SESSION
 #include <jack/session.h>
 #endif
@@ -38,16 +41,20 @@
 #include <memory>
 #include <string>
 
-namespace Raul { class Path; }
+namespace Raul {
+class Path;
+} // namespace Raul
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
+class Buffer;
 class DuplexPort;
 class Engine;
-class GraphImpl;
-class JackDriver;
-class PortImpl;
+class RunContext;
 
 /** The Jack Driver.
  *

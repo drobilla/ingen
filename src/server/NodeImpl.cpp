@@ -27,8 +27,6 @@
 #include <map>
 #include <utility>
 
-namespace Raul { class Symbol; }
-
 namespace ingen {
 namespace server {
 

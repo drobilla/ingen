@@ -27,7 +27,6 @@
 
 #include <cerrno>
 #include <cstdint>
-#include <cstdio>
 #include <memory>
 #include <mutex>
 #include <poll.h>

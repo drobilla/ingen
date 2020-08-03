@@ -24,7 +24,6 @@
 #include "PortType.hpp"
 
 #include "ingen/Arc.hpp"
-#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"

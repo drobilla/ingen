@@ -19,6 +19,8 @@
 #include "ingen/URIMap.hpp"
 #include "lv2/atom/atom.h"
 
+#include <utility>
+
 #define USTR(s) reinterpret_cast<const uint8_t*>(s)
 
 namespace ingen {

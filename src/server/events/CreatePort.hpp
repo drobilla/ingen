@@ -20,7 +20,9 @@
 #include "BlockImpl.hpp"
 #include "Event.hpp"
 #include "PortType.hpp"
+#include "types.hpp"
 
+#include "ingen/Properties.hpp"
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -31,11 +33,17 @@
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
 class DuplexPort;
+class Engine;
 class EnginePort;
 class GraphImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

@@ -18,13 +18,23 @@
 #define INGEN_INTERNALS_TIME_HPP
 
 #include "InternalBlock.hpp"
+#include "types.hpp"
+
+namespace Raul {
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
+
+class URIs;
+
 namespace server {
 
-class InputPort;
-class OutputPort;
+class BufferFactory;
+class GraphImpl;
 class InternalPlugin;
+class OutputPort;
+class RunContext;
 
 namespace internals {
 

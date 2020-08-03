@@ -23,6 +23,7 @@
 #include "sord/sordmm.hpp"
 
 #include <boost/utility/string_view.hpp>
+#include <boost/utility/string_view_fwd.hpp>
 
 #include <cstddef>
 #include <cstdint>

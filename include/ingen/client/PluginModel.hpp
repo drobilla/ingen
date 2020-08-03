@@ -24,12 +24,15 @@
 #include "ingen/ingen.h"
 #include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
-#include "sord/sordmm.hpp"
 
 #include <cstdint>
 #include <map>
 #include <memory>
 #include <string>
+
+namespace Sord {
+class World;
+} // namespace Sord
 
 namespace ingen {
 

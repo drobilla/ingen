@@ -24,7 +24,17 @@
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+struct Redo;
+struct Undo;
+
 namespace server {
+
+class Engine;
+class PreProcessContext;
+class RunContext;
+
 namespace events {
 
 /** A request to undo the last change to the engine.

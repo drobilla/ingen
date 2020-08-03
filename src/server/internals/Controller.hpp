@@ -18,15 +18,26 @@
 #define INGEN_INTERNALS_CONTROLLER_HPP
 
 #include "InternalBlock.hpp"
+#include "types.hpp"
 
 #include <cstdint>
 
+namespace Raul {
+class Symbol;
+} // namespace Raul
+
 namespace ingen {
+
+class URIs;
+
 namespace server {
 
+class BufferFactory;
+class GraphImpl;
 class InputPort;
-class OutputPort;
 class InternalPlugin;
+class OutputPort;
+class RunContext;
 
 namespace internals {
 

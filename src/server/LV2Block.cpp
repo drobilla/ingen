@@ -15,6 +15,7 @@
 */
 
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -22,20 +23,28 @@
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
 #include "RunContext.hpp"
 #include "Worker.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "lv2/core/lv2.h"
 #include "lv2/options/options.h"
 #include "lv2/state/state.h"
+#include "lv2/urid/urid.h"
+#include "lv2/worker/worker.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 #include <algorithm>
 #include <cassert>

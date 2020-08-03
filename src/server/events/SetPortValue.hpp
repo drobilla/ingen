@@ -28,9 +28,15 @@
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
+class Engine;
 class PortImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

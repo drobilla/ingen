@@ -16,20 +16,26 @@
 
 #include "events/Disconnect.hpp"
 
-#include "ArcImpl.hpp"
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"
-#include "DuplexPort.hpp"
+#include "BufferFactory.hpp"
+#include "BufferRef.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
 #include "PreProcessContext.hpp"
-#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/memory.hpp"
+#include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -42,6 +48,9 @@
 
 namespace ingen {
 namespace server {
+
+class RunContext;
+
 namespace events {
 
 Disconnect::Disconnect(Engine&                           engine,

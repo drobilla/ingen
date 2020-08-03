@@ -18,6 +18,11 @@
 #define INGEN_ENGINE_INTERNALBLOCK_HPP
 
 #include "BlockImpl.hpp"
+#include "types.hpp"
+
+namespace Raul {
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
 namespace server {

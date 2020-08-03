@@ -20,17 +20,26 @@
 #include "ClientUpdate.hpp"
 #include "CompiledGraph.hpp"
 #include "Event.hpp"
+#include "types.hpp"
 
+#include "ingen/Properties.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
 
 #include <cstdint>
 #include <list>
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
+class Engine;
 class GraphImpl;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

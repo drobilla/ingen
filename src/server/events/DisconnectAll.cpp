@@ -19,18 +19,20 @@
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
+#include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "events/Disconnect.hpp"
-#include "util.hpp"
 
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
-#include "raul/Array.hpp"
 #include "raul/Maid.hpp"
-#include "raul/Path.hpp"
 
 #include <memory>
 #include <mutex>

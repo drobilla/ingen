@@ -34,24 +34,36 @@
 #include "Worker.hpp"
 #include "events/CreateGraph.hpp"
 #include "ingen_config.h"
+#include "BufferRef.hpp"
+#include "NodeImpl.hpp"
+#include "PortImpl.hpp"
+#include "Task.hpp"
 
 #ifdef HAVE_SOCKET
 #include "SocketListener.hpp"
 #endif
 
+#include "ingen/Atom.hpp"
 #include "ingen/AtomReader.hpp"
+#include "ingen/ColorContext.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/StreamWriter.hpp"
 #include "ingen/Tee.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/memory.hpp"
 #include "lv2/buf-size/buf-size.h"
 #include "lv2/state/state.h"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
+#include "raul/RingBuffer.hpp"
 
 #include <algorithm>
 #include <cmath>

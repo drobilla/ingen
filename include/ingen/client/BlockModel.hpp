@@ -18,17 +18,22 @@
 #define INGEN_CLIENT_BLOCKMODEL_HPP
 
 #include "ingen/Node.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
+#include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace Raul { class Path; }
+namespace Raul {
+class Path;
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
 

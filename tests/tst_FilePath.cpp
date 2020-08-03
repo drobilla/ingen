@@ -20,6 +20,7 @@
 #include "ingen/fmt.hpp"
 
 #include <boost/utility/string_view.hpp>
+#include <boost/utility/string_view_fwd.hpp>
 
 #include <string>
 

@@ -17,6 +17,7 @@
 #include "Connect.hpp"
 
 #include "ArcImpl.hpp"
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
@@ -27,7 +28,11 @@
 #include "internals/BlockDelay.hpp"
 #include "types.hpp"
 
+#include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/paths.hpp"
 #include "raul/Maid.hpp"
 
 #include <cassert>

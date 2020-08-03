@@ -22,16 +22,24 @@
 #include "PortImpl.hpp"
 #include "types.hpp"
 
+#include "ingen/Message.hpp"
+#include "ingen/Properties.hpp"
 #include "raul/Maid.hpp"
 
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
 class ArcImpl;
+class Engine;
 class GraphImpl;
 class InputPort;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 

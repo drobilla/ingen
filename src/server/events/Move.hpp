@@ -18,17 +18,21 @@
 #define INGEN_EVENTS_MOVE_HPP
 
 #include "Event.hpp"
+#include "types.hpp"
 
-#include "ingen/Store.hpp"
-#include "raul/Path.hpp"
+#include "ingen/Message.hpp"
 
 #include <memory>
 
 namespace ingen {
+
+class Interface;
+
 namespace server {
 
-class GraphImpl;
-class PortImpl;
+class Engine;
+class PreProcessContext;
+class RunContext;
 
 namespace events {
 
