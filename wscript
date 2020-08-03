@@ -355,6 +355,7 @@ class LintContext(Build.BuildContext):
 def lint(ctx):
     "checks code for style issues"
     import subprocess
+    import sys
 
     st = 0
 
@@ -378,7 +379,6 @@ def lint(ctx):
         Logs.info("Running clang-tidy")
 
         import json
-        import sys
 
         with open('build/compile_commands.json', 'r') as db:
             commands = json.load(db)
