@@ -22,7 +22,7 @@ namespace server {
 
 struct StateDeleter
 {
-	void operator()(LilvState* state) { lilv_state_free(state); };
+	void operator()(LilvState* state) { lilv_state_free(state); }
 };
 
 using StatePtr = std::unique_ptr<LilvState, StateDeleter>;
