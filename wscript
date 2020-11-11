@@ -72,6 +72,8 @@ def configure(conf):
                 '-Wno-global-constructors',
                 '-Wno-implicit-float-conversion',
                 '-Wno-implicit-int-conversion',
+                '-Wno-nullability-extension',
+                '-Wno-nullable-to-nonnull-conversion',
                 '-Wno-padded',
                 '-Wno-reserved-id-macro',
                 '-Wno-shadow-field',
