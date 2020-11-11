@@ -105,6 +105,8 @@ URI::URI(URI&& uri) noexcept
 URI&
 URI::operator=(URI&& uri) noexcept
 {
+	serd_node_free(&_node);
+
 	_node     = uri._node;
 	_uri      = uri._uri;
 	uri._node = SERD_NODE_NULL;
