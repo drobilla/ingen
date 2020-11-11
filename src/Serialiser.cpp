@@ -390,6 +390,8 @@ Serialiser::Impl::serialise_graph(const std::shared_ptr<const Node>& graph,
 			                      Sord::URI(world, uris.ingen_block),
 			                      block_id);
 			serialise_block(subgraph, subgraph_id, block_id);
+
+			serd_node_free(&subgraph_node);
 		} else if (n->second->graph_type() == Node::GraphType::BLOCK) {
 			std::shared_ptr<const Node> block = n->second;
 
