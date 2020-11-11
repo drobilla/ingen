@@ -46,10 +46,14 @@ BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 BufferFactory::~BufferFactory()
 {
 	_silent_buffer.reset();
-	free_list(_free_audio.load());
-	free_list(_free_control.load());
-	free_list(_free_sequence.load());
-	free_list(_free_object.load());
+
+	// Run twice to delete value buffer references which are dropped
+	for (unsigned i = 0; i < 2; ++i) {
+		free_list(_free_audio.exchange(nullptr));
+		free_list(_free_control.exchange(nullptr));
+		free_list(_free_sequence.exchange(nullptr));
+		free_list(_free_object.exchange(nullptr));
+	}
 }
 
 Forge&
