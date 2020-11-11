@@ -72,7 +72,7 @@ Delta::Delta(Engine&                           engine,
 	, _object(nullptr)
 	, _graph(nullptr)
 	, _binding(nullptr)
-	, _state(nullptr)
+	, _state()
 	, _context(msg.ctx)
 	, _type(Type::PUT)
 	, _block(false)
@@ -390,8 +390,9 @@ Delta::pre_process(PreProcessContext& ctx)
 					if (!uri.empty()) {
 						op = SpecialType::PRESET;
 						if ((_state = block->load_preset(uri))) {
-							lilv_state_emit_port_values(
-								_state, s_add_set_event, this);
+							lilv_state_emit_port_values(_state.get(),
+							                            s_add_set_event,
+							                            this);
 						} else {
 							_engine.log().warn("Failed to load preset <%1%>\n", uri);
 						}
@@ -597,10 +598,11 @@ Delta::post_process()
 	if (_state) {
 		auto* block = dynamic_cast<BlockImpl*>(_object);
 		if (block) {
-			block->apply_state(_engine.sync_worker(), _state);
+			block->apply_state(_engine.sync_worker(), _state.get());
 			block->set_enabled(true);
 		}
-		lilv_state_free(_state);
+
+		_state.reset();
 	}
 
 	Broadcaster::Transfer t(*_engine.broadcaster());

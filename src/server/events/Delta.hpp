@@ -17,6 +17,7 @@
 #ifndef INGEN_EVENTS_DELTA_HPP
 #define INGEN_EVENTS_DELTA_HPP
 
+#include "BlockImpl.hpp"
 #include "ClientUpdate.hpp"
 #include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
@@ -119,7 +120,7 @@ private:
 	GraphImpl*                       _graph;
 	Raul::managed_ptr<CompiledGraph> _compiled_graph;
 	ControlBindings::Binding*        _binding;
-	LilvState*                       _state;
+	StatePtr                         _state;
 	Resource::Graph                  _context;
 	Type                             _type;
 

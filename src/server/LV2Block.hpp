@@ -95,7 +95,7 @@ public:
 	void run(RunContext& ctx) override;
 	void post_process(RunContext& ctx) override;
 
-	LilvState* load_preset(const URI& uri) override;
+	StatePtr load_preset(const URI& uri) override;
 
 	void apply_state(const std::unique_ptr<Worker>& worker,
 	                 const LilvState*               state) override;
@@ -108,7 +108,7 @@ public:
 	                     const BufferRef& buf,
 	                     SampleCount      offset) override;
 
-	static LilvState* load_state(World& world, const FilePath& path);
+	static StatePtr load_state(World& world, const FilePath& path);
 
 protected:
 	struct Instance : public Raul::Noncopyable {

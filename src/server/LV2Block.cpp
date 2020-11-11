@@ -454,18 +454,15 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 	}
 
 	// Load initial state if no state is explicitly given
-	LilvState* default_state = nullptr;
+	StatePtr default_state{};
 	if (!state) {
-		state = default_state = load_preset(_lv2_plugin->uri());
+		default_state = load_preset(_lv2_plugin->uri());
+		state         = default_state.get();
 	}
 
 	// Apply state
 	if (state) {
 		apply_state(nullptr, state);
-	}
-
-	if (default_state) {
-		lilv_state_free(default_state);
 	}
 
 	// FIXME: Polyphony + worker?
@@ -484,28 +481,32 @@ LV2Block::save_state(const FilePath& dir) const
 	World&     world  = _lv2_plugin->world();
 	LilvWorld* lworld = world.lilv_world();
 
-	LilvState* state = lilv_state_new_from_instance(
-		_lv2_plugin->lilv_plugin(), const_cast<LV2Block*>(this)->instance(0),
-		&world.uri_map().urid_map(),
-		nullptr, dir.c_str(), dir.c_str(), dir.c_str(), nullptr, nullptr,
-		LV2_STATE_IS_POD|LV2_STATE_IS_PORTABLE, nullptr);
+	StatePtr state{
+	    lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
+	                                 const_cast<LV2Block*>(this)->instance(0),
+	                                 &world.uri_map().urid_map(),
+	                                 nullptr,
+	                                 dir.c_str(),
+	                                 dir.c_str(),
+	                                 dir.c_str(),
+	                                 nullptr,
+	                                 nullptr,
+	                                 LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE,
+	                                 nullptr)};
 
 	if (!state) {
 		return false;
-	} else if (lilv_state_get_num_properties(state) == 0) {
-		lilv_state_free(state);
+	} else if (lilv_state_get_num_properties(state.get()) == 0) {
 		return false;
 	}
 
 	lilv_state_save(lworld,
 	                &world.uri_map().urid_map(),
 	                &world.uri_map().urid_unmap(),
-	                state,
+	                state.get(),
 	                nullptr,
 	                dir.c_str(),
 	                "state.ttl");
-
-	lilv_state_free(state);
 
 	return true;
 }
@@ -518,14 +519,22 @@ LV2Block::duplicate(Engine&             engine,
 	const SampleRate rate = engine.sample_rate();
 
 	// Get current state
-	LilvState* state = lilv_state_new_from_instance(
-		_lv2_plugin->lilv_plugin(), instance(0),
-		&engine.world().uri_map().urid_map(),
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, LV2_STATE_IS_NATIVE, nullptr);
+	StatePtr state{
+	    lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
+	                                 instance(0),
+	                                 &engine.world().uri_map().urid_map(),
+	                                 nullptr,
+	                                 nullptr,
+	                                 nullptr,
+	                                 nullptr,
+	                                 nullptr,
+	                                 nullptr,
+	                                 LV2_STATE_IS_NATIVE,
+	                                 nullptr)};
 
 	// Duplicate and instantiate block
 	auto* dup = new LV2Block(_lv2_plugin, symbol, _polyphonic, parent, rate);
-	if (!dup->instantiate(*engine.buffer_factory(), state)) {
+	if (!dup->instantiate(*engine.buffer_factory(), state.get())) {
 		delete dup;
 		return nullptr;
 	}
@@ -623,7 +632,7 @@ LV2Block::post_process(RunContext& ctx)
 	BlockImpl::post_process(ctx);
 }
 
-LilvState*
+StatePtr
 LV2Block::load_preset(const URI& uri)
 {
 	World&     world  = _lv2_plugin->world();
@@ -634,25 +643,22 @@ LV2Block::load_preset(const URI& uri)
 	lilv_world_load_resource(lworld, preset);
 
 	// Load preset from world
-	LV2_URID_Map* map   = &world.uri_map().urid_map();
-	LilvState*    state = lilv_state_new_from_world(lworld, map, preset);
+	LV2_URID_Map* map = &world.uri_map().urid_map();
+	StatePtr      state{lilv_state_new_from_world(lworld, map, preset)};
 
 	lilv_node_free(preset);
 	return state;
 }
 
-LilvState*
+StatePtr
 LV2Block::load_state(World& world, const FilePath& path)
 {
 	LilvWorld* lworld  = world.lilv_world();
 	const URI  uri     = URI(path);
 	LilvNode*  subject = lilv_new_uri(lworld, uri.c_str());
 
-	LilvState* state = lilv_state_new_from_file(
-		lworld,
-		&world.uri_map().urid_map(),
-		subject,
-		path.c_str());
+	StatePtr state{lilv_state_new_from_file(
+	    lworld, &world.uri_map().urid_map(), subject, path.c_str())};
 
 	lilv_node_free(subject);
 	return state;
@@ -709,25 +715,31 @@ LV2Block::save_preset(const URI&        uri,
 	const FilePath dirname  = path.parent_path();
 	const FilePath basename = path.stem();
 
-	LilvState* state = lilv_state_new_from_instance(
-		_lv2_plugin->lilv_plugin(), instance(0), lmap,
-		nullptr, nullptr, nullptr, path.c_str(),
-		get_port_value, this, LV2_STATE_IS_NATIVE, nullptr);
+	StatePtr state{lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
+	                                            instance(0),
+	                                            lmap,
+	                                            nullptr,
+	                                            nullptr,
+	                                            nullptr,
+	                                            path.c_str(),
+	                                            get_port_value,
+	                                            this,
+	                                            LV2_STATE_IS_NATIVE,
+	                                            nullptr)};
 
 	if (state) {
 		const Properties::const_iterator l = props.find(_uris.rdfs_label);
 		if (l != props.end() && l->second.type() == _uris.atom_String) {
-			lilv_state_set_label(state, l->second.ptr<char>());
+			lilv_state_set_label(state.get(), l->second.ptr<char>());
 		}
 
-		lilv_state_save(lworld, lmap, lunmap, state, nullptr,
+		lilv_state_save(lworld, lmap, lunmap, state.get(), nullptr,
 		                dirname.c_str(), basename.c_str());
 
-		const URI         state_uri(lilv_node_as_uri(lilv_state_get_uri(state)));
-		const std::string label(lilv_state_get_label(state)
-		                        ? lilv_state_get_label(state)
-		                        : basename);
-		lilv_state_free(state);
+		const URI state_uri(lilv_node_as_uri(lilv_state_get_uri(state.get())));
+		const std::string label(lilv_state_get_label(state.get())
+		                            ? lilv_state_get_label(state.get())
+		                            : basename);
 
 		Resource preset(_uris, state_uri);
 		preset.set_property(_uris.rdf_type, _uris.pset_Preset);

@@ -20,6 +20,7 @@
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
+#include "State.hpp"
 #include "types.hpp"
 
 #include "ingen/Node.hpp"
@@ -108,7 +109,7 @@ public:
 	void set_enabled(bool e) { _enabled = e; }
 
 	/** Load a preset from the world for this block. */
-	virtual LilvState* load_preset(const URI& uri) { return nullptr; }
+	virtual StatePtr load_preset(const URI& uri) { return {}; }
 
 	/** Restore `state`. */
 	virtual void
