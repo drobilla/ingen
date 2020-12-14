@@ -23,10 +23,10 @@
 #include "ingen/URI.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "raul/Path.hpp"
 
 #include <map>
 #include <memory>
+#include <utility>
 
 namespace Raul {
 class Path;
@@ -36,17 +36,14 @@ namespace ingen {
 
 class Atom;
 class Log;
-class Node;
 class Resource;
 class URIs;
 
 namespace client {
 
-class BlockModel;
 class GraphModel;
 class ObjectModel;
 class PluginModel;
-class PortModel;
 class SigClientInterface;
 
 /** Automatically manages models of objects in the engine.

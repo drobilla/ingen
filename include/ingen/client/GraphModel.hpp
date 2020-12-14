@@ -26,11 +26,19 @@
 #include <cstdint>
 #include <memory>
 
+namespace Raul {
+class Path;
+} // namespace Raul
+
 namespace ingen {
+
+class URI;
+
 namespace client {
 
 class ArcModel;
-class ClientStore;
+class ObjectModel;
+class PortModel;
 
 /** Client's model of a graph.
  *

@@ -16,12 +16,16 @@
 
 #include "ingen/client/GraphModel.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "raul/Path.hpp"
 
 #include <cassert>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>

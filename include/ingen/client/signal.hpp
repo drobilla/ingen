@@ -17,7 +17,10 @@
 #ifndef INGEN_CLIENT_SIGNAL_HPP
 #define INGEN_CLIENT_SIGNAL_HPP
 
-#include <sigc++/sigc++.h>
+// IWYU pragma: begin_exports
+#include <sigc++/signal.h>
+#include <sigc++/trackable.h>
+// IWYU pragma: end_exports
 
 #define INGEN_SIGNAL(name, ...) \
 protected: \

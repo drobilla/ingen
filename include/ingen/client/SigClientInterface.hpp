@@ -18,12 +18,10 @@
 #define INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 
 #include "ingen/Interface.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "raul/Path.hpp"
-
-#include <cstdint>
-#include <string>
 
 namespace ingen {
 namespace client {

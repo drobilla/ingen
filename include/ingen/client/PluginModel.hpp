@@ -17,9 +17,12 @@
 #ifndef INGEN_CLIENT_PLUGINMODEL_HPP
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
-#include "ingen/World.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 #include "lilv/lilv.h"
@@ -36,11 +39,10 @@ class World;
 
 namespace ingen {
 
-class URIs;
+class World;
 
 namespace client {
 
-class GraphModel;
 class BlockModel;
 class PluginUI;
 

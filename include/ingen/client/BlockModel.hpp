@@ -18,10 +18,9 @@
 #define INGEN_CLIENT_BLOCKMODEL_HPP
 
 #include "ingen/Node.hpp"
-#include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PluginModel.hpp" // IWYU pragma: keep
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 
@@ -37,6 +36,7 @@ class Symbol;
 
 namespace ingen {
 
+class Resource;
 class URIs;
 
 namespace client {

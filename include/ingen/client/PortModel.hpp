@@ -17,18 +17,22 @@
 #ifndef INGEN_CLIENT_PORTMODEL_HPP
 #define INGEN_CLIENT_PORTMODEL_HPP
 
+#include "ingen/Node.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
-#include "lv2/core/lv2.h"
-#include "lv2/port-props/port-props.h"
+#include "raul/Path.hpp"
 
-#include <cstdlib>
+#include <cstdint>
 #include <memory>
 #include <string>
 
-namespace Raul { class Path; }
-
 namespace ingen {
+
+class Atom;
+
 namespace client {
 
 /** Model of a port.

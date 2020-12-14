@@ -17,10 +17,8 @@
 #include "ingen/client/PluginModel.hpp"
 
 #include "ingen/Atom.hpp"
-#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginUI.hpp"
-#include "ingen_config.h"
-#include "raul/Path.hpp"
+#include "lv2/core/lv2.h"
 
 #include <boost/optional/optional.hpp>
 

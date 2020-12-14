@@ -16,11 +16,16 @@
 
 #include "ingen/client/ObjectModel.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/paths.hpp"
 
 #include <cassert>
 #include <cstdint>
+#include <map>
 #include <string>
 #include <utility>
 

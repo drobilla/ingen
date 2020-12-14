@@ -16,16 +16,24 @@
 
 #include "ingen/client/BlockModel.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
+#include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "lilv/lilv.h"
+#include "lv2/core/lv2.h"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace ingen {
 namespace client {

@@ -24,11 +24,11 @@
 
 #include <cassert>
 #include <memory>
+#include <string>
+#include <utility>
 
 namespace ingen {
 namespace client {
-
-class ClientStore;
 
 /** Class to represent a port->port connections in the engine.
  *
