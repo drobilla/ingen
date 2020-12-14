@@ -79,7 +79,7 @@ private:
 	                      boost::optional<Properties>   engine_data);
 
 	void save_graph_event(std::shared_ptr<const client::GraphModel> model,
-	                      const URI&                                filename);
+	                      const URI&                                uri);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	using Closure = sigc::slot<void>;
