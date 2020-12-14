@@ -107,8 +107,9 @@ void
 MessagesWindow::flush()
 {
 	while (true) {
-		LV2_URID    type;
+		LV2_URID    type = 0;
 		std::string line;
+
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
 			if (!_stream.rdbuf()->in_avail()) {

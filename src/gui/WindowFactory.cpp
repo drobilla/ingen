@@ -222,7 +222,8 @@ WindowFactory::present_load_plugin(std::shared_ptr<const GraphModel> graph,
 	_load_plugin_win->set_modal(false);
 	_load_plugin_win->set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	if (w->second) {
-		int width, height;
+		int width  = 0;
+		int height = 0;
 		w->second->get_size(width, height);
 		_load_plugin_win->set_default_size(width - width / 8, height / 2);
 	}
