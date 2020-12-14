@@ -108,7 +108,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 {
 	ingen::set_bundle_path(bundle_path);
 
-	ingen::IngenLV2UI* ui = new ingen::IngenLV2UI();
+	auto* ui = new ingen::IngenLV2UI();
 
 	LV2_URID_Map*   map   = nullptr;
 	LV2_URID_Unmap* unmap = nullptr;
@@ -177,7 +177,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 static void
 cleanup(LV2UI_Handle handle)
 {
-	ingen::IngenLV2UI* ui = static_cast<ingen::IngenLV2UI*>(handle);
+	auto* ui = static_cast<ingen::IngenLV2UI*>(handle);
 	delete ui;
 }
 
@@ -188,8 +188,8 @@ port_event(LV2UI_Handle handle,
            uint32_t     format,
            const void*  buffer)
 {
-	ingen::IngenLV2UI* ui   = static_cast<ingen::IngenLV2UI*>(handle);
-	const LV2_Atom*    atom = static_cast<const LV2_Atom*>(buffer);
+	auto*       ui   = static_cast<ingen::IngenLV2UI*>(handle);
+	const auto* atom = static_cast<const LV2_Atom*>(buffer);
 	ui->reader->write(atom);
 }
 

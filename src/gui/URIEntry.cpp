@@ -46,7 +46,7 @@ URIEntry::build_value_menu()
 {
 	World&     world  = _app->world();
 	LilvWorld* lworld = world.lilv_world();
-	Gtk::Menu* menu   = new Gtk::Menu();
+	auto*      menu   = new Gtk::Menu();
 
 	LilvNode* owl_onDatatype  = lilv_new_uri(lworld, LILV_NS_OWL "onDatatype");
 	LilvNode* rdf_type        = lilv_new_uri(lworld, LILV_NS_RDF "type");
@@ -110,7 +110,7 @@ URIEntry::build_subclass_menu(const LilvNode* klass)
 		return nullptr;
 	}
 
-	Gtk::Menu* menu = new Gtk::Menu();
+	auto* menu = new Gtk::Menu();
 
 	// Add "header" item for choosing this class itself
 	add_leaf_menu_item(menu, klass, rdfs::label(world, klass));

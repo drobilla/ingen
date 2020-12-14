@@ -117,10 +117,12 @@ PropertiesWindow::add_property(const URI& key, const Atom& value)
 	if (name.empty()) {
 		name = world.rdf_world()->prefixes().qualify(key);
 	}
-	Gtk::Label* label = new Gtk::Label(
-	        std::string("<a href=\"") + key.string() + "\">" + name + "</a>",
-	        1.0,
-	        0.5);
+
+	auto* label = new Gtk::Label(std::string("<a href=\"") + key.string() +
+	                                 "\">" + name + "</a>",
+	                             1.0,
+	                             0.5);
+
 	label->set_use_markup(true);
 	_app->set_tooltip(label, prop);
 	_table->attach(*Gtk::manage(label), 0, 1, n_rows, n_rows + 1,
@@ -438,29 +440,29 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 	Forge& forge = _app->forge();
 
 	if (type == forge.Int) {
-		Gtk::SpinButton* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
+		auto* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
 		if (spin) {
 			return _app->forge().make(spin->get_value_as_int());
 		}
 	} else if (type == forge.Float) {
-		Gtk::SpinButton* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
+		auto* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
 		if (spin) {
 			return _app->forge().make(static_cast<float>(spin->get_value()));
 		}
 	} else if (type == forge.Bool) {
-		Gtk::CheckButton* check = dynamic_cast<Gtk::CheckButton*>(value_widget);
+		auto* check = dynamic_cast<Gtk::CheckButton*>(value_widget);
 		if (check) {
 			return _app->forge().make(check->get_active());
 		}
 	} else if (type == forge.URI || type == forge.URID) {
-		URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
+		auto* uri_entry = dynamic_cast<URIEntry*>(value_widget);
 		if (uri_entry && URI::is_valid(uri_entry->get_text())) {
 			return _app->forge().make_urid(URI(uri_entry->get_text()));
 		} else {
 			_app->log().error("Invalid URI <%1%>\n", uri_entry->get_text());
 		}
 	} else if (type == forge.String) {
-		Gtk::Entry* entry = dynamic_cast<Gtk::Entry*>(value_widget);
+		auto* entry = dynamic_cast<Gtk::Entry*>(value_widget);
 		if (entry) {
 			return _app->forge().alloc(entry->get_text());
 		}

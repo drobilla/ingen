@@ -79,7 +79,7 @@ NodeModule::NodeModule(GraphCanvas&                      canvas,
 	signal_selected().connect(
 		sigc::mem_fun(this, &NodeModule::on_selected));
 
-	const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
+	const auto* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 	if (plugin) {
 		plugin->signal_changed().connect(
 			sigc::mem_fun(this, &NodeModule::plugin_changed));
@@ -182,7 +182,7 @@ NodeModule::show_human_names(bool b)
 	}
 
 	for (iterator i = begin(); i != end(); ++i) {
-		ingen::gui::Port* const port = dynamic_cast<ingen::gui::Port*>(*i);
+		auto* const port = dynamic_cast<ingen::gui::Port*>(*i);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
 			const Atom& name_property = port->model()->get_property(uris.lv2_name);
@@ -272,7 +272,7 @@ NodeModule::embed_gui(bool embed)
 			if (!_plugin_ui->instantiate()) {
 				app().log().error("Failed to instantiate LV2 UI\n");
 			} else {
-				GtkWidget* c_widget =
+				auto* c_widget =
 				    static_cast<GtkWidget*>(_plugin_ui->get_widget());
 
 				_gui_widget = Glib::wrap(c_widget);
@@ -354,7 +354,9 @@ NodeModule::popup_gui()
 			return true;
 		}
 
-		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_block->plugin());
+		const auto* const plugin =
+		    dynamic_cast<const PluginModel*>(_block->plugin());
+
 		assert(plugin);
 
 		_plugin_ui = plugin->ui(app().world(), _block);
@@ -368,8 +370,7 @@ NodeModule::popup_gui()
 				return false;
 			}
 
-			GtkWidget* c_widget =
-			    static_cast<GtkWidget*>(_plugin_ui->get_widget());
+			auto* c_widget = static_cast<GtkWidget*>(_plugin_ui->get_widget());
 
 			_gui_widget = Glib::wrap(c_widget);
 

@@ -177,7 +177,7 @@ NodeMenu::on_menu_randomize()
 			float max = 1.0f;
 			bm->port_value_range(p, min, max, _app->sample_rate());
 
-			const float r = static_cast<float>(g_random_double_range(0.0, 1.0));
+			const auto r = static_cast<float>(g_random_double_range(0.0, 1.0));
 			const float val = r * (max - min) + min;
 			_app->set_property(p->uri(),
 			                   _app->uris().ingen_value,
