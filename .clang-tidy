@@ -9,7 +9,6 @@ Checks: >
   -*-non-private-member-variables-in-classes,
   -*-special-member-functions,
   -*-uppercase-literal-suffix,
-  -*-use-emplace,
   -abseil-string-find-str-contains,
   -android-cloexec-fopen,
   -bugprone-branch-clone,

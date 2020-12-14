@@ -89,7 +89,7 @@ ThreadedLoader::load_graph(bool                          merge,
 		}
 	}
 
-	_events.push_back(sigc::hide_return(
+	_events.emplace_back(sigc::hide_return(
 	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::load_graph_event),
 	                   file_path,
 	                   engine_parent,
@@ -122,7 +122,7 @@ ThreadedLoader::save_graph(
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	_events.push_back(sigc::hide_return(
+	_events.emplace_back(sigc::hide_return(
 	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
 	                   model,
 	                   uri)));
