@@ -108,7 +108,7 @@ NodeModule::~NodeModule()
 bool
 NodeModule::idle_init()
 {
-	if (_block->ports().size() == 0) {
+	if (_block->ports().empty()) {
 		return true;  // Need to embed GUI, but ports haven't shown up yet
 	}
 
