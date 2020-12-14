@@ -61,7 +61,6 @@ Checks: >
   -llvmlibc-*,
   -misc-no-recursion,
   -misc-unused-parameters,
-  -modernize-loop-convert,
   -modernize-use-trailing-return-type,
   -performance-unnecessary-value-param,
   -portability-simd-intrinsics,

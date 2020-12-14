@@ -241,12 +241,12 @@ Port::build_enum_menu()
 
 	PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
 		model()->index());
-	for (auto i = points.begin(); i != points.end(); ++i) {
-		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second));
+	for (const auto& p : points) {
+		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p.second));
 		Gtk::MenuItem* menu_item = &(menu->items().back());
 		menu_item->signal_activate().connect(
 			sigc::bind(sigc::mem_fun(this, &Port::on_scale_point_activated),
-			           i->first));
+			           p.first));
 	}
 
 	return menu;

@@ -181,8 +181,8 @@ NodeModule::show_human_names(bool b)
 		set_label(block()->symbol().c_str());
 	}
 
-	for (iterator i = begin(); i != end(); ++i) {
-		auto* const port = dynamic_cast<ingen::gui::Port*>(*i);
+	for (auto* p : *this) {
+		auto* const port = dynamic_cast<ingen::gui::Port*>(p);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
 			const Atom& name_property = port->model()->get_property(uris.lv2_name);
@@ -196,7 +196,7 @@ NodeModule::show_human_names(bool b)
 				}
 			}
 		}
-		(*i)->set_label(label.c_str());
+		port->set_label(label.c_str());
 	}
 }
 
@@ -238,8 +238,8 @@ NodeModule::port_value_changed(uint32_t index, const Atom& value)
 void
 NodeModule::plugin_changed()
 {
-	for (iterator p = begin(); p != end(); ++p) {
-		dynamic_cast<ingen::gui::Port*>(*p)->update_metadata();
+	for (auto* p : *this) {
+		dynamic_cast<ingen::gui::Port*>(p)->update_metadata();
 	}
 }
 
@@ -324,8 +324,8 @@ NodeModule::new_port_view(std::shared_ptr<const PortModel> port)
 Port*
 NodeModule::port(std::shared_ptr<const PortModel> model)
 {
-	for (iterator p = begin(); p != end(); ++p) {
-		Port* const port = dynamic_cast<Port*>(*p);
+	for (auto* p : *this) {
+		auto* const port = dynamic_cast<Port*>(p);
 		if (port->model() == model) {
 			return port;
 		}
