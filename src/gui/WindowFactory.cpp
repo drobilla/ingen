@@ -15,11 +15,11 @@
 */
 
 #include "App.hpp"
+#include "GraphView.hpp"
+#include "GraphWindow.hpp"
 #include "LoadGraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubgraphWindow.hpp"
-#include "GraphView.hpp"
-#include "GraphWindow.hpp"
 #include "PropertiesWindow.hpp"
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"

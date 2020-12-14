@@ -17,9 +17,9 @@
 #include "SubgraphModule.hpp"
 
 #include "App.hpp"
-#include "NodeModule.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphWindow.hpp"
+#include "NodeModule.hpp"
 #include "Port.hpp"
 #include "WindowFactory.hpp"
 
