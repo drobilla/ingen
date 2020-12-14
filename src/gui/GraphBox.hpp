@@ -17,21 +17,30 @@
 #ifndef INGEN_GUI_GRAPH_BOX_HPP
 #define INGEN_GUI_GRAPH_BOX_HPP
 
-#include "Window.hpp"
-
 #include "ingen/ingen.h"
 
+#include <gdk/gdk.h>
+#include <glibmm/ustring.h>
 #include <gtkmm/alignment.h>
 #include <gtkmm/box.h>
-#include <gtkmm/builder.h>
-#include <gtkmm/menushell.h>
-#include <gtkmm/messagedialog.h>
-#include <gtkmm/paned.h>
 #include <gtkmm/scrolledwindow.h>
-#include <gtkmm/statusbar.h>
+#include <sigc++/connection.h>
 
 #include <memory>
 #include <string>
+
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class CheckMenuItem;
+class HPaned;
+class Label;
+class MenuItem;
+class Statusbar;
+} // namespace Gtk
 
 namespace Raul {
 class Path;
@@ -39,6 +48,7 @@ class Path;
 
 namespace ingen {
 
+class Atom;
 class URI;
 
 namespace client {
@@ -49,14 +59,10 @@ class ObjectModel;
 
 namespace gui {
 
+class App;
 class BreadCrumbs;
-class LoadGraphBox;
-class LoadPluginWindow;
-class NewSubgraphWindow;
-class GraphDescriptionWindow;
 class GraphView;
 class GraphWindow;
-class SubgraphModule;
 
 /** A window for a graph.
  *

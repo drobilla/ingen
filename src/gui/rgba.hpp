@@ -18,6 +18,7 @@
 #define INGEN_GUI_RGBA_HPP
 
 #include <cmath>
+#include <cstdint>
 
 namespace ingen {
 namespace gui {

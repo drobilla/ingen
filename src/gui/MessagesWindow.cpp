@@ -17,8 +17,21 @@
 #include "MessagesWindow.hpp"
 
 #include "App.hpp"
+#include "Window.hpp"
 
 #include "ingen/URIs.hpp"
+#include "lv2/urid/urid.h"
+
+#include <gdkmm/color.h>
+#include <glibmm/propertyproxy.h>
+#include <glibmm/signalproxy.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/textbuffer.h>
+#include <gtkmm/texttagtable.h>
+#include <gtkmm/textview.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <cstdio>
 #include <cstdlib>

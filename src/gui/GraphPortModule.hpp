@@ -17,14 +17,19 @@
 #ifndef INGEN_GUI_GRAPHPORTMODULE_HPP
 #define INGEN_GUI_GRAPHPORTMODULE_HPP
 
-#include "Port.hpp"
-
 #include "ganv/Module.hpp"
+#include "ingen/URI.hpp"
+
+#include <gdk/gdk.h>
+#include <glib.h>
 
 #include <memory>
 #include <string>
 
 namespace ingen {
+
+class Atom;
+
 namespace client {
 class PortModel;
 } // namespace client
@@ -33,9 +38,9 @@ class PortModel;
 namespace ingen {
 namespace gui {
 
+class App;
 class GraphCanvas;
 class Port;
-class PortMenu;
 
 /** A "module" to represent a graph's port on its own canvas.
  *

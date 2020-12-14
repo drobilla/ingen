@@ -16,18 +16,36 @@
 
 #include "App.hpp"
 #include "GraphCanvas.hpp"
-#include "GraphTreeWindow.hpp"
 #include "GraphView.hpp"
-#include "LoadPluginWindow.hpp"
-#include "NewSubgraphWindow.hpp"
 #include "WidgetFactory.hpp"
 
-#include "ingen/Interface.hpp"
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/GraphModel.hpp"
 
+#include <glibmm/propertyproxy.h>
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <gtkmm/adjustment.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/layout.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/toggletoolbutton.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/toolitem.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
+
 #include <cassert>
-#include <fstream>
+#include <cstdint>
+#include <map>
 #include <memory>
+#include <utility>
 
 namespace ingen {
 

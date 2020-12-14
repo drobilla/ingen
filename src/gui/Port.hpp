@@ -19,11 +19,19 @@
 
 #include "ganv/Port.hpp"
 
-#include <gtkmm/menu.h>
+#include <gdk/gdk.h>
+#include <glib.h>
 
-#include <cassert>
 #include <memory>
 #include <string>
+
+namespace Ganv {
+class Module;
+} // namespace Ganv
+
+namespace Gtk {
+class Menu;
+} // namespace Gtk
 
 namespace ingen {
 

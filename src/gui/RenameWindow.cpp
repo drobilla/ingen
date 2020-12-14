@@ -17,12 +17,27 @@
 #include "RenameWindow.hpp"
 
 #include "App.hpp"
+#include "Window.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "lv2/core/lv2.h"
+#include "ingen/paths.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
+#include <glibmm/propertyproxy.h>
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/label.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <memory>
 #include <string>

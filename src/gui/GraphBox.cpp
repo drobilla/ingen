@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "GraphBox.hpp"
+
 #include "App.hpp"
 #include "BreadCrumbs.hpp"
 #include "ConnectWindow.hpp"
@@ -21,35 +23,84 @@
 #include "GraphTreeWindow.hpp"
 #include "GraphView.hpp"
 #include "GraphWindow.hpp"
-#include "LoadGraphWindow.hpp"
-#include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
-#include "NewSubgraphWindow.hpp"
-#include "Style.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-#include "ingen_config.h"
 
+#include "ganv/canvas.h"
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PortModel.hpp"
 #include "ingen/fmt.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
-#include <boost/format.hpp>
+#include <gdk/gdk.h>
 #include <glib/gstdio.h>
+#include <glibmm/convert.h>
 #include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/propertyproxy.h>
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/alignment.h>
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/checkmenuitem.h>
+#include <gtkmm/clipboard.h>
+#include <gtkmm/container.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/filechooser.h>
+#include <gtkmm/filechooserdialog.h>
+#include <gtkmm/filefilter.h>
+#include <gtkmm/label.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/messagedialog.h>
+#include <gtkmm/object.h>
+#include <gtkmm/paned.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/statusbar.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/textbuffer.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/toolitem.h>
+#include <gtkmm/widget.h>
+#include <sigc++/adaptors/retype_return.h>
+#include <sigc++/connection.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
+
 #ifdef HAVE_WEBKIT
 #include <webkit/webkit.h>
 #endif
 
 #include <cassert>
+#include <cstdint>
+#include <cstdio>
+#include <limits>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace ingen {
 

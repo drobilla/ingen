@@ -17,15 +17,26 @@
 #ifndef INGEN_GUI_LOADGRAPHWINDOW_HPP
 #define INGEN_GUI_LOADGRAPHWINDOW_HPP
 
-#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "raul/Symbol.hpp"
 
-#include <gtkmm/builder.h>
-#include <gtkmm/button.h>
-#include <gtkmm/entry.h>
+#include <glibmm/ustring.h>
 #include <gtkmm/filechooserdialog.h>
-#include <gtkmm/label.h>
-#include <gtkmm/radiobutton.h>
-#include <gtkmm/spinbutton.h>
+
+#include <memory>
+
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class Button;
+class Entry;
+class Label;
+class RadioButton;
+class SpinButton;
+} // namespace Gtk
 
 namespace ingen {
 

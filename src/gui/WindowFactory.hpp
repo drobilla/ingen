@@ -17,7 +17,10 @@
 #ifndef INGEN_GUI_WINDOWFACTORY_HPP
 #define INGEN_GUI_WINDOWFACTORY_HPP
 
-#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "raul/Path.hpp"
+
+#include <gdk/gdk.h>
 
 #include <cstddef>
 #include <map>

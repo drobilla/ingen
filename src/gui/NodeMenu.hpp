@@ -19,17 +19,34 @@
 
 #include "ObjectMenu.hpp"
 
-#include "ingen/client/BlockModel.hpp"
+#include "ingen/URI.hpp"
 
-#include <gtkmm/builder.h>
 #include <gtkmm/menu.h>
-#include <gtkmm/menushell.h>
+#include <sigc++/connection.h>
+#include <sigc++/signal.h>
 
 #include <memory>
 #include <string>
 
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class CheckMenuItem;
+class MenuItem;
+} // namespace Gtk
+
 namespace ingen {
+
+namespace client {
+class BlockModel;
+} // namespace client
+
 namespace gui {
+
+class App;
 
 /** Menu for a Node.
  *

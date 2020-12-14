@@ -18,16 +18,44 @@
 #include "PropertiesWindow.hpp"
 #include "RDFS.hpp"
 #include "URIEntry.hpp"
+#include "Window.hpp"
 
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/PluginModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "lilv/lilv.h"
+#include "lv2/urid/urid.h"
+#include "raul/Path.hpp"
+#include "sord/sordmm.hpp"
 
+#include <glibmm/containers.h>
+#include <glibmm/propertyproxy.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/alignment.h>
+#include <gtkmm/bin.h>
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/enums.h>
 #include <gtkmm/label.h>
+#include <gtkmm/object.h>
+#include <gtkmm/scrolledwindow.h>
 #include <gtkmm/spinbutton.h>
+#include <gtkmm/table.h>
+#include <gtkmm/treeiter.h>
+#include <gtkmm/widget.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <algorithm>
 #include <cfloat>

@@ -18,15 +18,21 @@
 #define INGEN_GUI_GRAPHVIEW_HPP
 
 #include <gtkmm/box.h>
-#include <gtkmm/builder.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/toggletoolbutton.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/toolitem.h>
-#include <gtkmm/toolitem.h>
 
 #include <memory>
+
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class ScrolledWindow;
+class SpinButton;
+class ToggleToolButton;
+class ToolItem;
+class Toolbar;
+} // namespace Gtk
 
 namespace ingen {
 
@@ -34,20 +40,13 @@ class Atom;
 class URI;
 
 namespace client {
-class PortModel;
-class MetadataModel;
 class GraphModel;
-class ObjectModel;
 } // namespace client
 
 namespace gui {
 
 class App;
-class LoadPluginWindow;
-class NewSubgraphWindow;
 class GraphCanvas;
-class GraphDescriptionWindow;
-class SubgraphModule;
 
 /** The graph specific contents of a GraphWindow (ie the canvas and whatever else).
  *

@@ -17,32 +17,52 @@
 #include "NodeModule.hpp"
 
 #include "App.hpp"
+#include "GraphBox.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphWindow.hpp"
 #include "NodeMenu.hpp"
 #include "Port.hpp"
-#include "RenameWindow.hpp"
-#include "Style.hpp"
 #include "SubgraphModule.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-#include "ingen_config.h"
 
+#include "ganv/Port.hpp"
 #include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp"
+#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
+#include "ingen/client/PortModel.hpp"
 #include "lv2/atom/util.h"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
+#include <glibmm/main.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/container.h>
 #include <gtkmm/eventbox.h>
+#include <gtkmm/widget.h>
+#include <gtkmm/window.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/adaptors/retype_return.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <cassert>
+#include <map>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace ingen {
 

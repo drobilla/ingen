@@ -15,21 +15,46 @@
 */
 
 #include "App.hpp"
-#include "GraphCanvas.hpp"
-#include "GraphView.hpp"
-#include "GraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
-#include "ingen_config.h"
+#include "Window.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "ingen/paths.hpp"
+#include "lilv/lilv.h"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
+#include <gdk/gdkkeysyms-compat.h>
+#include <glibmm/listhandle.h>
+#include <glibmm/propertyproxy.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/messagedialog.h>
+#include <gtkmm/treeiter.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/treeviewcolumn.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <algorithm>
-#include <cassert>
+#include <cctype>
 #include <cstddef>
 #include <memory>
+#include <sstream>
 #include <string>
+#include <utility>
 
 using std::string;
 

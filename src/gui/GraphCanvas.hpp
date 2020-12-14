@@ -17,27 +17,48 @@
 #ifndef INGEN_GUI_GRAPHCANVAS_HPP
 #define INGEN_GUI_GRAPHCANVAS_HPP
 
-#include "NodeModule.hpp"
-
 #include "ganv/Canvas.hpp"
-#include "ganv/Module.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/client/ArcModel.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
 
+#include <gdk/gdk.h>
+
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
+
+namespace Ganv {
+class Module;
+class Node;
+class Port;
+} // namespace Ganv
+
+namespace Gtk {
+class CheckMenuItem;
+class Menu;
+class MenuItem;
+} // namespace Gtk
 
 namespace ingen {
 
-namespace client { class GraphModel; }
+namespace client {
+class ArcModel;
+class BlockModel;
+class GraphModel;
+class ObjectModel;
+class PluginModel;
+class PortModel;
+} // namespace client
 
 namespace gui {
 
-class NodeModule;
+class App;
 class PluginMenu;
 
 /** Graph canvas widget.

@@ -16,14 +16,23 @@
 
 #include "Arc.hpp"
 
+#include "ingen/URI.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
+#include "ingen/client/PortModel.hpp"
+
+#include <glib-object.h>
 
 #include <memory>
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 namespace ingen {
+
+namespace client {
+class ObjectModel;
+} // namespace client
+
 namespace gui {
 
 Arc::Arc(Ganv::Canvas&                                  canvas,

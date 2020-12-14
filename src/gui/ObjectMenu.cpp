@@ -17,12 +17,24 @@
 #include "ObjectMenu.hpp"
 
 #include "App.hpp"
-#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/ObjectModel.hpp"
+
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/checkmenuitem.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/separatormenuitem.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <cstdint>
 #include <memory>

@@ -16,7 +16,7 @@
 
 #include "WidgetFactory.hpp"
 
-#include "ingen/Log.hpp"
+#include "ingen/FilePath.hpp"
 #include "ingen/runtime_paths.hpp"
 
 #include <cstdlib>

@@ -17,27 +17,50 @@
 #include "NodeMenu.hpp"
 
 #include "App.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
+#include "ObjectMenu.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URIMap.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/BlockModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "lv2/presets/presets.h"
+#include "raul/Symbol.hpp"
 
 #include <glib.h>
+#include <glibmm/convert.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/checkmenuitem.h>
+#include <gtkmm/dialog.h>
 #include <gtkmm/entry.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/filechooser.h>
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/image.h>
+#include <gtkmm/label.h>
+#include <gtkmm/menu_elems.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/menushell.h>
+#include <gtkmm/object.h>
+#include <gtkmm/separatormenuitem.h>
 #include <gtkmm/stock.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace ingen {
 namespace gui {

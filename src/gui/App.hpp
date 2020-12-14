@@ -17,35 +17,42 @@
 #ifndef INGEN_GUI_APP_HPP
 #define INGEN_GUI_APP_HPP
 
-#include "ingen/Atom.hpp"
 #include "ingen/Message.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
 #include "lilv/lilv.h"
-#include "raul/Deletable.hpp"
 
-#include <gtkmm/aboutdialog.h>
-#include <gtkmm/main.h>
-#include <gtkmm/window.h>
+#include <sigc++/signal.h>
 
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
+namespace Gtk {
+class AboutDialog;
+class Main;
+class Widget;
+class Window;
+} // namespace Gtk
+
 namespace ingen {
 
+class Atom;
+class Forge;
 class Interface;
 class Log;
 class Serialiser;
 class StreamWriter;
-class World;
+class URIs;
 
 namespace client {
 
 class ClientStore;
-class GraphModel;
-class PluginModel;
 class PortModel;
 class SigClientInterface;
 
@@ -54,8 +61,6 @@ class SigClientInterface;
 namespace gui {
 
 class ConnectWindow;
-class GraphCanvas;
-class GraphTreeView;
 class GraphTreeWindow;
 class MessagesWindow;
 class Port;

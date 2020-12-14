@@ -16,14 +16,34 @@
 
 #include "App.hpp"
 #include "GraphTreeWindow.hpp"
-#include "SubgraphModule.hpp"
+#include "Window.hpp"
 #include "WindowFactory.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
+#include <glibmm/propertyproxy.h>
+#include <glibmm/signalproxy.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/cellrenderer.h>
+#include <gtkmm/cellrenderertoggle.h>
+#include <gtkmm/object.h>
+#include <gtkmm/treeiter.h>
+#include <gtkmm/treepath.h>
+#include <gtkmm/treeviewcolumn.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
+
+#include <cassert>
+#include <cstdint>
 #include <memory>
 
 namespace ingen {

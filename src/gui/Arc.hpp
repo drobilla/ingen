@@ -19,8 +19,12 @@
 
 #include "ganv/Edge.hpp"
 
-#include <cassert>
 #include <memory>
+
+namespace Ganv {
+class Canvas;
+class Node;
+} // namespace Ganv
 
 namespace ingen {
 

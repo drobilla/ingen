@@ -19,17 +19,32 @@
 #include "App.hpp"
 
 #include "ingen/Log.hpp"
-#include "ingen/Module.hpp"
+#include "ingen/Parser.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Serialiser.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
+#include <boost/optional/optional.hpp>
+#include <glibmm/ustring.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/adaptors/retype_return.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <cassert>
 #include <memory>
 #include <string>
+#include <utility>
 
 using boost::optional;
 
 namespace ingen {
+
+class Interface;
+
 namespace gui {
 
 ThreadedLoader::ThreadedLoader(App& app, std::shared_ptr<Interface> engine)

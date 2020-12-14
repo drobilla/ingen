@@ -19,16 +19,27 @@
 
 #include "Window.hpp"
 
-#include "ingen/client/ObjectModel.hpp"
-
-#include <gtkmm/builder.h>
-#include <gtkmm/button.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/label.h>
+#include <gtkmm/window.h>
 
 #include <memory>
 
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class Button;
+class Entry;
+class Label;
+} // namespace Gtk
+
 namespace ingen {
+
+namespace client {
+class ObjectModel;
+} // namespace client
+
 namespace gui {
 
 /** Rename window.  Handles renaming of any (Ingen) object.

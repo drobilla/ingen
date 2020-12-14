@@ -17,8 +17,9 @@
 #ifndef INGEN_GUI_SUBGRAPHMODULE_HPP
 #define INGEN_GUI_SUBGRAPHMODULE_HPP
 
-#include "GraphPortModule.hpp"
 #include "NodeModule.hpp"
+
+#include <gdk/gdk.h>
 
 #include <memory>
 
@@ -26,7 +27,6 @@ namespace ingen {
 
 namespace client {
 class GraphModel;
-class PortModel;
 } // namespace client
 
 namespace gui {

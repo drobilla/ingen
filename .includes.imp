@@ -9,6 +9,7 @@
   { "symbol": [ "sched_param",       "private", "<sched.h>",       "public" ] },
   { "symbol": [ "clockid_t",         "private", "<time.h>",        "public" ] },
   { "symbol": [ "clockid_t",         "private", "<sys/types.h>",   "public" ] },
+  { "symbol": [ "GdkEvent",          "private", "<gdk/gdk.h>",     "public" ] },
   { "symbol": [ "LilvWorld",         "private", "\"lilv/lilv.h\"", "public" ] },
 
   { "symbol": [ "boost::intrusive::constant_time_size", "private",
@@ -19,4 +20,6 @@
 
   { "include": [ "<ext/alloc_traits.h>", "private", "<string>",    "public", ] },
   { "include": [ "<ext/alloc_traits.h>", "private", "<vector>",    "public", ] },
+  { "include": [ "<gdk/gdkevents.h>",    "private", "<gdk/gdk.h>", "public", ] },
+  { "include": [ "<gdk/gdktypes.h>",     "private", "<gdk/gdk.h>", "public", ] }
 ]

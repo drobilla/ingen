@@ -20,12 +20,15 @@
 #include "GraphView.hpp"
 
 #include "ingen/Message.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
 
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
+#include <gtkmm/object.h>
 #include <gtkmm/togglebutton.h>
+#include <sigc++/signal.h>
 
 #include <cassert>
 #include <list>
@@ -34,6 +37,8 @@
 
 namespace ingen {
 namespace gui {
+
+class App;
 
 /** Collection of breadcrumb buttons forming a path.
  * This doubles as a cache for GraphViews.

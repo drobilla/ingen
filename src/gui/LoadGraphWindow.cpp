@@ -17,23 +17,42 @@
 #include "LoadGraphWindow.hpp"
 
 #include "App.hpp"
-#include "GraphView.hpp"
-#include "Style.hpp"
 #include "ThreadedLoader.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/client/BlockModel.hpp"
+#include "ingen/FilePath.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/runtime_paths.hpp"
+#include "raul/Path.hpp"
 
 #include <boost/optional/optional.hpp>
+#include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/propertyproxy.h>
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/slisthandle.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/filefilter.h>
+#include <gtkmm/label.h>
+#include <gtkmm/radiobutton.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/window.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <list>
+#include <map>
 #include <memory>
-#include <ostream>
+#include <sstream>
 #include <string>
 #include <utility>
 

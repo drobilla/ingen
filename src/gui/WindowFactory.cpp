@@ -15,6 +15,7 @@
 */
 
 #include "App.hpp"
+#include "GraphBox.hpp"
 #include "GraphView.hpp"
 #include "GraphWindow.hpp"
 #include "LoadGraphWindow.hpp"
@@ -26,7 +27,14 @@
 #include "WindowFactory.hpp"
 
 #include "ingen/Log.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
+
+#include <gdkmm/window.h>
+#include <glibmm/signalproxy.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <cassert>
 #include <memory>

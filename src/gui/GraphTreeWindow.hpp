@@ -19,20 +19,37 @@
 
 #include "Window.hpp"
 
-#include <gtkmm/builder.h>
+#include "ingen/URI.hpp"
+
+#include <gdk/gdk.h>
+#include <glibmm/refptr.h>
+#include <glibmm/ustring.h>
 #include <gtkmm/treemodel.h>
+#include <gtkmm/treemodelcolumn.h>
+#include <gtkmm/treeselection.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeview.h>
+#include <gtkmm/window.h>
 
-namespace Raul { class Path; }
+#include <memory>
+
+namespace Gtk {
+class Builder;
+} // namespace Gtk
 
 namespace ingen {
 
-namespace client { class ClientStore; class ObjectModel; }
+class Atom;
+
+namespace client {
+class ClientStore;
+class ObjectModel;
+class GraphModel;
+} // namespace client
 
 namespace gui {
 
-class GraphWindow;
+class App;
 class GraphTreeView;
 
 /** Window with a TreeView of all loaded graphs.

@@ -17,13 +17,24 @@
 #ifndef INGEN_GUI_NODEMODULE_HPP
 #define INGEN_GUI_NODEMODULE_HPP
 
-#include "Port.hpp"
-
 #include "ganv/Module.hpp"
+#include "ingen/URI.hpp"
 
+#include <gdk/gdk.h>
+#include <glib.h>
+
+#include <cstdint>
 #include <memory>
 
+namespace Gtk {
+class Widget;
+class Window;
+} // namespace Gtk
+
 namespace ingen {
+
+class Atom;
+
 namespace client {
 class BlockModel;
 class PluginUI;
@@ -34,9 +45,10 @@ class PortModel;
 namespace ingen {
 namespace gui {
 
+class App;
 class GraphCanvas;
-class Port;
 class NodeMenu;
+class Port;
 
 /** A module in a graphn.
  *

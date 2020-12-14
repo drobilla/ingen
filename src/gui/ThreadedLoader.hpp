@@ -18,22 +18,29 @@
 #define INGEN_GUI_THREADEDLOADER_HPP
 
 #include "ingen/FilePath.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/Serialiser.hpp"
 #include "raul/Semaphore.hpp"
 
-#include <boost/optional/optional.hpp>
-#include <sigc++/sigc++.h>
+#include <sigc++/functors/slot.h>
 
 #include <list>
 #include <memory>
 #include <mutex>
 #include <thread>
-#include <utility>
+
+namespace boost {
+template <class T> class optional;
+} // namespace boost
+
+namespace Raul {
+class Path;
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
 
+class Interface;
+class Parser;
+class Properties;
 class URI;
 
 namespace client { class GraphModel; }

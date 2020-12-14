@@ -17,10 +17,10 @@
 #ifndef INGEN_GUI_PLUGINMENU_HPP
 #define INGEN_GUI_PLUGINMENU_HPP
 
-#include "ingen/World.hpp"
 #include "lilv/lilv.h"
 
 #include <gtkmm/menu.h>
+#include <sigc++/signal.h>
 
 #include <cstddef>
 #include <map>
@@ -28,7 +28,13 @@
 #include <set>
 #include <string>
 
+namespace Gtk {
+class MenuItem;
+} // namespace Gtk
+
 namespace ingen {
+
+class World;
 
 namespace client { class PluginModel; }
 

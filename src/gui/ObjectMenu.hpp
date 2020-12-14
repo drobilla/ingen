@@ -17,22 +17,34 @@
 #ifndef INGEN_GUI_OBJECTMENU_HPP
 #define INGEN_GUI_OBJECTMENU_HPP
 
-#include "ingen/client/ObjectModel.hpp"
+#include "ingen/URI.hpp"
 
-#include <gtkmm/builder.h>
-#include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
-#include <gtkmm/menuitem.h>
 
 #include <memory>
 
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class CheckMenuItem;
+class MenuItem;
+class SeparatorMenuItem;
+} // namespace Gtk
+
 namespace ingen {
+
+class Atom;
+
+namespace client {
+class ObjectModel;
+} // namespace client
+
 namespace gui {
 
 class App;
-class ObjectControlWindow;
-class ObjectPropertiesWindow;
-class GraphCanvas;
 
 /** Menu for a Object.
  *

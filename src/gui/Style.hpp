@@ -20,13 +20,15 @@
 #include <cstdint>
 #include <string>
 
-namespace ingen { namespace client { class PortModel; } }
-
 namespace ingen {
+
+namespace client {
+class PortModel;
+} // namespace client
+
 namespace gui {
 
 class App;
-class Port;
 
 class Style
 {

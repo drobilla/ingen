@@ -17,26 +17,51 @@
 #include "Port.hpp"
 
 #include "App.hpp"
+#include "GraphBox.hpp"
 #include "GraphWindow.hpp"
 #include "PortMenu.hpp"
 #include "RDFS.hpp"
 #include "Style.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-#include "ingen_config.h"
 #include "rgba.hpp"
 
-#include "ganv/Module.hpp"
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
-#include "ingen/Interface.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
-#include "ingen/client/GraphModel.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "ingen/client/BlockModel.hpp"
+#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "lilv/lilv.h"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+#include "sord/sordmm.hpp"
+
+#include <glibmm/signalproxy.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menu_elems.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/menushell.h>
+#include <gtkmm/object.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <cassert>
+#include <cmath>
+#include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace ingen {
 

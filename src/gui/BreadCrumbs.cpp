@@ -17,10 +17,15 @@
 #include "BreadCrumbs.hpp"
 
 #include "App.hpp"
+#include "GraphView.hpp"
 
 #include "ingen/client/SigClientInterface.hpp"
+#include "raul/Symbol.hpp"
 
 #include <boost/variant/get.hpp>
+#include <glibmm/signalproxy.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <string>
 

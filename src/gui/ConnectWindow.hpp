@@ -20,15 +20,18 @@
 #include "Window.hpp"
 
 #include "ingen/Message.hpp"
+#include "ingen/Status.hpp"
+#include "ingen/URI.hpp"
 
 #include <glibmm/refptr.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/dialog.h>
 
 #include <cstdint>
 #include <memory>
 #include <string>
 
 namespace Gtk {
-class Builder;
 class Button;
 class Entry;
 class Image;

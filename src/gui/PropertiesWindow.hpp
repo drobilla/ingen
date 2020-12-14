@@ -19,21 +19,38 @@
 
 #include "Window.hpp"
 
-#include "ingen/client/BlockModel.hpp"
+#include "ingen/Atom.hpp"
+#include "ingen/URI.hpp"
+#include "lv2/urid/urid.h"
 
-#include <gtkmm/alignment.h>
-#include <gtkmm/box.h>
-#include <gtkmm/builder.h>
-#include <gtkmm/button.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/combobox.h>
+#include <glibmm/refptr.h>
 #include <gtkmm/liststore.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/table.h>
+#include <gtkmm/treemodel.h>
+#include <gtkmm/treemodelcolumn.h>
+#include <gtkmm/window.h>
+#include <sigc++/connection.h>
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
+
+namespace Glib {
+class ustring;
+} // namespace Glib
+
+namespace Gtk {
+class Alignment;
+class Bin;
+class Builder;
+class Button;
+class CheckButton;
+class ComboBox;
+class ScrolledWindow;
+class Table;
+class VBox;
+class Widget;
+} // namespace Gtk
 
 namespace ingen {
 

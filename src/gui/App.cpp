@@ -18,56 +18,64 @@
 
 #include "ConnectWindow.hpp"
 #include "GraphTreeWindow.hpp"
-#include "GraphWindow.hpp"
-#include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
-#include "NodeModule.hpp"
 #include "Port.hpp"
 #include "RDFS.hpp"
 #include "Style.hpp"
-#include "SubgraphModule.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 #include "rgba.hpp"
 
-#include "ganv/Edge.hpp"
+#include "ingen/Atom.hpp"
+#include "ingen/ColorContext.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/FilePath.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/QueuedInterface.hpp"
 #include "ingen/StreamWriter.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/GraphModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
-#include "raul/Path.hpp"
 #include "suil/suil.h"
 
 #include <boost/variant/get.hpp>
-#include <gtk/gtkwindow.h>
+#include <glib.h>
+#include <glibmm/main.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/propertyproxy.h>
+#include <gtk/gtk.h>
+#include <gtkmm/aboutdialog.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/main.h>
+#include <gtkmm/messagedialog.h>
+#include <gtkmm/rc.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/widget.h>
+#include <sigc++/functors/mem_fun.h>
 
+#include <algorithm>
 #include <cassert>
-#include <fstream>
+#include <cstdio>
+#include <exception>
+#include <functional>
+#include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
-namespace Raul { class Deletable; }
-
 namespace ingen {
-
-namespace client { class PluginModel; }
-
 namespace gui {
-
-class Port;
 
 Gtk::Main* App::_main = nullptr;
 

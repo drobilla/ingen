@@ -20,18 +20,32 @@
 #include "GraphBox.hpp"
 #include "Window.hpp"
 
-#include <gtkmm/builder.h>
+#include <gdk/gdk.h>
+#include <gtkmm/window.h>
 
 #include <memory>
 #include <string>
 
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+} // namespace Gtk
+
 namespace ingen {
+
+class Atom;
 
 namespace client {
 class GraphModel;
+class PortModel;
 } // namespace client
 
 namespace gui {
+
+class App;
 
 /** A window for a graph.
  *

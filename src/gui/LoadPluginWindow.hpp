@@ -19,21 +19,39 @@
 
 #include "Window.hpp"
 
-#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen_config.h"
 
-#include <gtkmm/builder.h>
-#include <gtkmm/combobox.h>
+#include <gdk/gdk.h>
+#include <glibmm/refptr.h>
+#include <gtkmm/entry.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treemodel.h>
-#include <gtkmm/treeview.h>
+#include <gtkmm/treemodelcolumn.h>
+#include <gtkmm/treeselection.h>
+#include <gtkmm/window.h>
 
 #include <map>
 #include <memory>
 #include <string>
 
+namespace Glib {
+class ustring;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class Button;
+class CheckButton;
+class ComboBox;
+class TreeView;
+class TreeViewColumn;
+} // namespace Gtk
+
 namespace ingen {
+
+class Atom;
 
 namespace client {
 class GraphModel;

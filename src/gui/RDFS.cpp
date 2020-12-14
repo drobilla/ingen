@@ -16,7 +16,8 @@
 
 #include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/Resource.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "lilv/lilv.h"

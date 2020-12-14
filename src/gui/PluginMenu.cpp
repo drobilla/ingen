@@ -15,8 +15,19 @@
 */
 
 #include "PluginMenu.hpp"
+
 #include "ingen/Log.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "ingen/client/PluginModel.hpp"
+
+#include <glibmm/ustring.h>
+#include <gtkmm/menu_elems.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/menushell.h>
+#include <gtkmm/object.h>
+#include <sigc++/adaptors/bind.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <memory>
 #include <utility>

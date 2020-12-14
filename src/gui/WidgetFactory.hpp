@@ -19,11 +19,9 @@
 
 #include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
-#include <gtkmm/builder.h>
+#include <gtkmm/builder.h> // IWYU pragma: keep
 
 #include <string>
-
-namespace Gtk { class Builder; }
 
 namespace ingen {
 namespace gui {

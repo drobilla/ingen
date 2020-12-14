@@ -17,25 +17,32 @@
 #include "App.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphPortModule.hpp"
-#include "GraphWindow.hpp"
 #include "Port.hpp"
-#include "PortMenu.hpp"
-#include "RenameWindow.hpp"
-#include "Style.hpp"
-#include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
+
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "raul/Symbol.hpp"
 
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp"
+#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
+#include "ingen/client/PortModel.hpp"
+
+#include <sigc++/functors/mem_fun.h>
+#include <sigc++/signal.h>
 
 #include <cassert>
+#include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
 namespace ingen {
+
 namespace gui {
 
 GraphPortModule::GraphPortModule(

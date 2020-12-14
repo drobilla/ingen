@@ -14,14 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/GraphModel.hpp"
+#include "GraphWindow.hpp"
 
-#include "App.hpp"
+#include "GraphBox.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphView.hpp"
-#include "GraphWindow.hpp"
-#include "WindowFactory.hpp"
+#include "Window.hpp"
+
+#include <glibmm/propertyproxy.h>
+#include <glibmm/refptr.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/layout.h>
 
 namespace ingen {
 namespace gui {

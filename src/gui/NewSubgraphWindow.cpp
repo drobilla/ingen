@@ -17,13 +17,33 @@
 #include "NewSubgraphWindow.hpp"
 
 #include "App.hpp"
-#include "GraphView.hpp"
+#include "Window.hpp"
 
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/paths.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
+
+#include <glibmm/propertyproxy.h>
+#include <glibmm/refptr.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
+#include <gtkmm/adjustment.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/label.h>
+#include <gtkmm/spinbutton.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <utility>
 

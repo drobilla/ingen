@@ -20,13 +20,19 @@
 #include "ingen/URI.hpp"
 #include "lilv/lilv.h"
 
+#include <gdk/gdk.h>
+#include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
 #include <gtkmm/box.h>
-#include <gtkmm/button.h>
 #include <gtkmm/entry.h>
-#include <gtkmm/menu.h>
 
 #include <set>
 #include <string>
+
+namespace Gtk {
+class Button;
+class Menu;
+} // namespace Gtk
 
 namespace ingen {
 namespace gui {

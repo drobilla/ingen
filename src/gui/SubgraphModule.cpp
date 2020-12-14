@@ -17,24 +17,27 @@
 #include "SubgraphModule.hpp"
 
 #include "App.hpp"
-#include "GraphCanvas.hpp"
-#include "GraphWindow.hpp"
 #include "NodeModule.hpp"
-#include "Port.hpp"
 #include "WindowFactory.hpp"
 
+#include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/GraphModel.hpp"
 
 #include <cassert>
 #include <memory>
-#include <utility>
 
 namespace ingen {
 
 using client::GraphModel;
 
 namespace gui {
+
+class GraphWindow;
 
 SubgraphModule::SubgraphModule(GraphCanvas&                             canvas,
                                const std::shared_ptr<const GraphModel>& graph)

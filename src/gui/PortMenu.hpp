@@ -19,14 +19,28 @@
 
 #include "ObjectMenu.hpp"
 
-#include "ingen/client/PortModel.hpp"
-
-#include <gtkmm/builder.h>
 #include <gtkmm/menu.h>
-#include <gtkmm/menushell.h>
+
+#include <memory>
+
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class MenuItem;
+} // namespace Gtk
 
 namespace ingen {
+
+namespace client {
+class PortModel;
+} // namespace client
+
 namespace gui {
+
+class App;
 
 /** Menu for a Port.
  *

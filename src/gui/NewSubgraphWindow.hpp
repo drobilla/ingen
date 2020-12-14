@@ -19,15 +19,23 @@
 
 #include "Window.hpp"
 
-#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
 
-#include <gtkmm/builder.h>
-#include <gtkmm/button.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/label.h>
-#include <gtkmm/spinbutton.h>
+#include <gtkmm/window.h>
 
 #include <memory>
+
+namespace Glib {
+template <class T> class RefPtr;
+} // namespace Glib
+
+namespace Gtk {
+class Builder;
+class Button;
+class Entry;
+class Label;
+class SpinButton;
+} // namespace Gtk
 
 namespace ingen {
 

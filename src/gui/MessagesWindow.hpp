@@ -19,11 +19,11 @@
 
 #include "Window.hpp"
 
-#include "lv2/log/log.h"
+#include "lv2/urid/urid.h"
 
-#include <gtkmm/builder.h>
-#include <gtkmm/button.h>
-#include <gtkmm/textview.h>
+#include <glibmm/refptr.h>
+#include <gtkmm/texttag.h>
+#include <gtkmm/window.h>
 
 #include <cstdarg>
 #include <map>
@@ -31,8 +31,16 @@
 #include <sstream>
 #include <string>
 
+namespace Gtk {
+class Builder;
+class Button;
+class TextView;
+} // namespace Gtk
+
 namespace ingen {
 namespace gui {
+
+class App;
 
 /** Messages Window.
  *
