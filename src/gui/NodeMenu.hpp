@@ -41,7 +41,7 @@ public:
 	NodeMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, std::shared_ptr<const client::BlockModel> block);
+	void init(App& app, const std::shared_ptr<const client::BlockModel>& block);
 
 	bool has_control_inputs();
 

@@ -40,8 +40,8 @@ class GraphCanvas;
 class SubgraphModule : public NodeModule
 {
 public:
-	SubgraphModule(GraphCanvas&                              canvas,
-	               std::shared_ptr<const client::GraphModel> graph);
+	SubgraphModule(GraphCanvas&                                     canvas,
+	               const std::shared_ptr<const client::GraphModel>& graph);
 
 	~SubgraphModule() override = default;
 

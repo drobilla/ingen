@@ -62,11 +62,12 @@ Objects instances(World& world, const URISet& types);
 
 /** Get all the types which `model` is an instance of. */
 URISet
-types(World& world, std::shared_ptr<const client::ObjectModel> model);
+types(World& world, const std::shared_ptr<const client::ObjectModel>& model);
 
 /** Get all the properties with domains appropriate for `model`. */
 URISet
-properties(World& world, std::shared_ptr<const client::ObjectModel> model);
+properties(World&                                            world,
+           const std::shared_ptr<const client::ObjectModel>& model);
 
 /** Return the range (value types) of `prop`.
  * @param recursive If true, include all subclasses.

@@ -47,9 +47,9 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 }
 
 void
-PortMenu::init(App&                             app,
-               std::shared_ptr<const PortModel> port,
-               bool                             internal_graph_port)
+PortMenu::init(App&                                    app,
+               const std::shared_ptr<const PortModel>& port,
+               bool                                    internal_graph_port)
 {
 	const URIs& uris = app.uris();
 

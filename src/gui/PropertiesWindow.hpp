@@ -53,8 +53,8 @@ public:
 	PropertiesWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(std::shared_ptr<const client::ObjectModel> model);
-	void set_object(std::shared_ptr<const client::ObjectModel> model);
+	void present(const std::shared_ptr<const client::ObjectModel>& model);
+	void set_object(const std::shared_ptr<const client::ObjectModel>& model);
 
 private:
 	/** Record of a property (row in the table) */

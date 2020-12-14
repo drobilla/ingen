@@ -41,10 +41,10 @@ public:
 	RenameWindow(BaseObjectType*                   cobject,
 	             const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(std::shared_ptr<const client::ObjectModel> object);
+	void present(const std::shared_ptr<const client::ObjectModel>& object);
 
 private:
-	void set_object(std::shared_ptr<const client::ObjectModel> object);
+	void set_object(const std::shared_ptr<const client::ObjectModel>& object);
 
 	void values_changed();
 	void cancel_clicked();

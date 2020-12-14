@@ -25,6 +25,7 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 
 namespace ingen {
 namespace gui {
@@ -50,9 +51,9 @@ NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
 
 void
 NewSubgraphWindow::present(std::shared_ptr<const client::GraphModel> graph,
-                           Properties                                data)
+                           const Properties&                         data)
 {
-	set_graph(graph);
+	set_graph(std::move(graph));
 	_initial_data = data;
 	Gtk::Window::present();
 }
@@ -64,7 +65,7 @@ NewSubgraphWindow::present(std::shared_ptr<const client::GraphModel> graph,
 void
 NewSubgraphWindow::set_graph(std::shared_ptr<const client::GraphModel> graph)
 {
-	_graph = graph;
+	_graph = std::move(graph);
 }
 
 /** Called every time the user types into the name input box.

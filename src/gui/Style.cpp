@@ -57,7 +57,7 @@ Style::Style(App& app)
  * the default location.
  */
 void
-Style::load_settings(std::string filename)
+Style::load_settings(const std::string& filename)
 {
 	/* ... */
 }
@@ -66,7 +66,7 @@ Style::load_settings(std::string filename)
  * default location.
  */
 void
-Style::save_settings(std::string filename)
+Style::save_settings(const std::string& filename)
 {
 	/* ... */
 }

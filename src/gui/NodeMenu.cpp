@@ -54,7 +54,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(App& app, std::shared_ptr<const client::BlockModel> block)
+NodeMenu::init(App& app, const std::shared_ptr<const client::BlockModel>& block)
 {
 	ObjectMenu::init(app, block);
 

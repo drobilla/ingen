@@ -48,21 +48,21 @@ using client::PortModel;
 namespace gui {
 
 Port*
-Port::create(App&                             app,
-             Ganv::Module&                    module,
-             std::shared_ptr<const PortModel> pm,
-             bool                             flip)
+Port::create(App&                                    app,
+             Ganv::Module&                           module,
+             const std::shared_ptr<const PortModel>& pm,
+             bool                                    flip)
 {
 	return new Port(app, module, pm, port_label(app, pm), flip);
 }
 
 /** @param flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(App&                             app,
-           Ganv::Module&                    module,
-           std::shared_ptr<const PortModel> pm,
-           const std::string&               name,
-           bool                             flip)
+Port::Port(App&                                    app,
+           Ganv::Module&                           module,
+           const std::shared_ptr<const PortModel>& pm,
+           const std::string&                      name,
+           bool                                    flip)
     : Ganv::Port(module,
                  name,
                  flip ? (!pm->is_input()) : pm->is_input(),
@@ -117,7 +117,7 @@ Port::~Port()
 }
 
 std::string
-Port::port_label(App& app, std::shared_ptr<const PortModel> pm)
+Port::port_label(App& app, const std::shared_ptr<const PortModel>& pm)
 {
 	if (!pm) {
 		return "";

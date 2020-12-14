@@ -45,7 +45,7 @@ public:
 	PluginMenu(ingen::World& world);
 
 	void clear();
-	void add_plugin(std::shared_ptr<client::PluginModel> p);
+	void add_plugin(const std::shared_ptr<client::PluginModel>& p);
 
 	sigc::signal<void, std::weak_ptr<client::PluginModel>> signal_load_plugin;
 
@@ -66,10 +66,10 @@ private:
 	                               const LV2Children&       children,
 	                               std::set<const char*>&   ancestors);
 
-	void add_plugin_to_menu(MenuRecord&                          menu,
-	                        std::shared_ptr<client::PluginModel> p);
+	void add_plugin_to_menu(MenuRecord&                                 menu,
+	                        const std::shared_ptr<client::PluginModel>& p);
 
-	void load_plugin(std::weak_ptr<client::PluginModel> weak_plugin);
+	void load_plugin(const std::weak_ptr<client::PluginModel>& weak_plugin);
 
 	ingen::World& _world;
 	MenuRecord    _classless_menu;

@@ -38,8 +38,8 @@ public:
 	PortMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App&                                     app,
-	          std::shared_ptr<const client::PortModel> port,
+	void init(App&                                            app,
+	          const std::shared_ptr<const client::PortModel>& port,
 	          bool internal_graph_port = false);
 
 private:

@@ -72,11 +72,11 @@ ThreadedLoader::run()
 }
 
 void
-ThreadedLoader::load_graph(bool                   merge,
-                           const FilePath&        file_path,
-                           optional<Raul::Path>   engine_parent,
-                           optional<Raul::Symbol> engine_symbol,
-                           optional<Properties>   engine_data)
+ThreadedLoader::load_graph(bool                          merge,
+                           const FilePath&               file_path,
+                           const optional<Raul::Path>&   engine_parent,
+                           const optional<Raul::Symbol>& engine_symbol,
+                           const optional<Properties>&   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
@@ -100,10 +100,10 @@ ThreadedLoader::load_graph(bool                   merge,
 }
 
 void
-ThreadedLoader::load_graph_event(const FilePath&        file_path,
-                                 optional<Raul::Path>   engine_parent,
-                                 optional<Raul::Symbol> engine_symbol,
-                                 optional<Properties>   engine_data)
+ThreadedLoader::load_graph_event(const FilePath&               file_path,
+                                 const optional<Raul::Path>&   engine_parent,
+                                 const optional<Raul::Symbol>& engine_symbol,
+                                 const optional<Properties>&   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
@@ -116,8 +116,9 @@ ThreadedLoader::load_graph_event(const FilePath&        file_path,
 }
 
 void
-ThreadedLoader::save_graph(std::shared_ptr<const client::GraphModel> model,
-                           const URI&                                uri)
+ThreadedLoader::save_graph(
+    const std::shared_ptr<const client::GraphModel>& model,
+    const URI&                                       uri)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
@@ -131,8 +132,8 @@ ThreadedLoader::save_graph(std::shared_ptr<const client::GraphModel> model,
 
 void
 ThreadedLoader::save_graph_event(
-    std::shared_ptr<const client::GraphModel> model,
-    const URI&                                uri)
+    const std::shared_ptr<const client::GraphModel>& model,
+    const URI&                                       uri)
 {
 	assert(uri.scheme() == "file");
 	if (_app.serialiser()) {

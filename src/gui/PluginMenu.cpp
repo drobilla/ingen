@@ -65,7 +65,7 @@ PluginMenu::clear()
 }
 
 void
-PluginMenu::add_plugin(std::shared_ptr<client::PluginModel> p)
+PluginMenu::add_plugin(const std::shared_ptr<client::PluginModel>& p)
 {
 	using iterator = ClassMenus::iterator;
 
@@ -144,8 +144,8 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 }
 
 void
-PluginMenu::add_plugin_to_menu(MenuRecord&                          menu,
-                               std::shared_ptr<client::PluginModel> p)
+PluginMenu::add_plugin_to_menu(MenuRecord&                                 menu,
+                               const std::shared_ptr<client::PluginModel>& p)
 {
 	const URIs& uris        = _world.uris();
 	LilvWorld*  lworld      = _world.lilv_world();
@@ -171,7 +171,7 @@ PluginMenu::add_plugin_to_menu(MenuRecord&                          menu,
 }
 
 void
-PluginMenu::load_plugin(std::weak_ptr<client::PluginModel> weak_plugin)
+PluginMenu::load_plugin(const std::weak_ptr<client::PluginModel>& weak_plugin)
 {
 	signal_load_plugin.emit(weak_plugin);
 }

@@ -44,7 +44,8 @@ public:
 	ObjectMenu(BaseObjectType*                   cobject,
 	           const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, std::shared_ptr<const client::ObjectModel> object);
+	void
+	init(App& app, const std::shared_ptr<const client::ObjectModel>& object);
 
 	std::shared_ptr<const client::ObjectModel> object() const
 	{

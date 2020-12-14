@@ -33,8 +33,8 @@ class Style
 public:
 	explicit Style(App& app);
 
-	void load_settings(std::string filename = "");
-	void save_settings(std::string filename = "");
+	void load_settings(const std::string& filename = "");
+	void save_settings(const std::string& filename = "");
 
 	void apply_settings();
 

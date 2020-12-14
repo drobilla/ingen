@@ -61,25 +61,26 @@ public:
 
 	~ThreadedLoader();
 
-	void load_graph(bool                          merge,
-	                const FilePath&               file_path,
-	                boost::optional<Raul::Path>   engine_parent,
-	                boost::optional<Raul::Symbol> engine_symbol,
-	                boost::optional<Properties>   engine_data);
+	void load_graph(bool                                 merge,
+	                const FilePath&                      file_path,
+	                const boost::optional<Raul::Path>&   engine_parent,
+	                const boost::optional<Raul::Symbol>& engine_symbol,
+	                const boost::optional<Properties>&   engine_data);
 
-	void
-	save_graph(std::shared_ptr<const client::GraphModel> model, const URI& uri);
+	void save_graph(const std::shared_ptr<const client::GraphModel>& model,
+	                const URI&                                       uri);
 
 	std::shared_ptr<Parser> parser();
 
 private:
-	void load_graph_event(const FilePath&               file_path,
-	                      boost::optional<Raul::Path>   engine_parent,
-	                      boost::optional<Raul::Symbol> engine_symbol,
-	                      boost::optional<Properties>   engine_data);
+	void load_graph_event(const FilePath&                      file_path,
+	                      const boost::optional<Raul::Path>&   engine_parent,
+	                      const boost::optional<Raul::Symbol>& engine_symbol,
+	                      const boost::optional<Properties>&   engine_data);
 
-	void save_graph_event(std::shared_ptr<const client::GraphModel> model,
-	                      const URI&                                uri);
+	void
+	save_graph_event(const std::shared_ptr<const client::GraphModel>& model,
+	                 const URI&                                       uri);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	using Closure = sigc::slot<void>;

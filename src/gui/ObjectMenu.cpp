@@ -52,7 +52,8 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 }
 
 void
-ObjectMenu::init(App& app, std::shared_ptr<const client::ObjectModel> object)
+ObjectMenu::init(App&                                              app,
+                 const std::shared_ptr<const client::ObjectModel>& object)
 {
 	_app = &app;
 	_object = object;

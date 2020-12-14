@@ -49,8 +49,8 @@ public:
 
 	void set_graph(std::shared_ptr<const client::GraphModel> graph);
 
-	void
-	present(std::shared_ptr<const client::GraphModel> graph, Properties data);
+	void present(std::shared_ptr<const client::GraphModel> graph,
+	             const Properties&                         data);
 
 private:
 	void name_changed();

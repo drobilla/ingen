@@ -44,10 +44,10 @@ class GraphBox;
 class Port : public Ganv::Port
 {
 public:
-	static Port* create(App&                                     app,
-	                    Ganv::Module&                            module,
-	                    std::shared_ptr<const client::PortModel> pm,
-	                    bool                                     flip = false);
+	static Port* create(App&                                            app,
+	                    Ganv::Module&                                   module,
+	                    const std::shared_ptr<const client::PortModel>& pm,
+	                    bool flip = false);
 
 	~Port() override;
 
@@ -66,14 +66,14 @@ public:
 	bool on_selected(gboolean b) override;
 
 private:
-	Port(App&                                     app,
-	     Ganv::Module&                            module,
-	     std::shared_ptr<const client::PortModel> pm,
-	     const std::string&                       name,
-	     bool                                     flip = false);
+	Port(App&                                            app,
+	     Ganv::Module&                                   module,
+	     const std::shared_ptr<const client::PortModel>& pm,
+	     const std::string&                              name,
+	     bool                                            flip = false);
 
 	static std::string
-	port_label(App& app, std::shared_ptr<const client::PortModel> pm);
+	port_label(App& app, const std::shared_ptr<const client::PortModel>& pm);
 
 	Gtk::Menu* build_enum_menu();
 	Gtk::Menu* build_uri_menu();

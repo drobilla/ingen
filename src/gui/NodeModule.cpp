@@ -53,8 +53,8 @@ using client::PortModel;
 
 namespace gui {
 
-NodeModule::NodeModule(GraphCanvas&                      canvas,
-                       std::shared_ptr<const BlockModel> block)
+NodeModule::NodeModule(GraphCanvas&                             canvas,
+                       const std::shared_ptr<const BlockModel>& block)
     : Ganv::Module(canvas, block->path().symbol(), 0, 0, true)
     , _block(block)
     , _gui_widget(nullptr)
@@ -137,9 +137,9 @@ NodeModule::show_menu(GdkEventButton* ev)
 }
 
 NodeModule*
-NodeModule::create(GraphCanvas&                      canvas,
-                   std::shared_ptr<const BlockModel> block,
-                   bool                              human)
+NodeModule::create(GraphCanvas&                             canvas,
+                   const std::shared_ptr<const BlockModel>& block,
+                   bool                                     human)
 {
 	auto graph = std::dynamic_pointer_cast<const GraphModel>(block);
 
@@ -308,7 +308,7 @@ NodeModule::rename()
 }
 
 void
-NodeModule::new_port_view(std::shared_ptr<const PortModel> port)
+NodeModule::new_port_view(const std::shared_ptr<const PortModel>& port)
 {
 	Port::create(app(), *this, port);
 
@@ -322,7 +322,7 @@ NodeModule::new_port_view(std::shared_ptr<const PortModel> port)
 }
 
 Port*
-NodeModule::port(std::shared_ptr<const PortModel> model)
+NodeModule::port(const std::shared_ptr<const PortModel>& model)
 {
 	for (auto* p : *this) {
 		auto* const port = dynamic_cast<Port*>(p);
@@ -334,7 +334,7 @@ NodeModule::port(std::shared_ptr<const PortModel> model)
 }
 
 void
-NodeModule::delete_port_view(std::shared_ptr<const PortModel> model)
+NodeModule::delete_port_view(const std::shared_ptr<const PortModel>& model)
 {
 	Port* const p = port(model);
 
