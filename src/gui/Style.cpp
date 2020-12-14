@@ -34,8 +34,6 @@
 namespace ingen {
 namespace gui {
 
-using namespace ingen::client;
-
 Style::Style(App& app)
 	// Colours from the Tango palette with modified V
 	: _app(app)

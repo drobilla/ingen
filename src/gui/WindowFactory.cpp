@@ -36,7 +36,9 @@
 
 namespace ingen {
 
-using namespace client;
+using client::BlockModel;
+using client::GraphModel;
+using client::ObjectModel;
 
 namespace gui {
 

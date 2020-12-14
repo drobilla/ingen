@@ -36,9 +36,6 @@
 #include <utility>
 
 namespace ingen {
-
-using namespace client;
-
 namespace gui {
 
 GraphPortModule::GraphPortModule(
@@ -50,7 +47,8 @@ GraphPortModule::GraphPortModule(
 {
 	assert(model);
 
-	assert(std::dynamic_pointer_cast<const GraphModel>(model->parent()));
+	assert(
+	    std::dynamic_pointer_cast<const client::GraphModel>(model->parent()));
 
 	set_stacked(model->polyphonic());
 	if (model->is_input() && !model->is_numeric()) {
@@ -65,8 +63,8 @@ GraphPortModule::GraphPortModule(
 }
 
 GraphPortModule*
-GraphPortModule::create(GraphCanvas&                            canvas,
-                        const std::shared_ptr<const PortModel>& model)
+GraphPortModule::create(GraphCanvas&                                    canvas,
+                        const std::shared_ptr<const client::PortModel>& model)
 {
 	auto* ret  = new GraphPortModule(canvas, model);
 	Port* port = Port::create(canvas.app(), *ret, model, true);

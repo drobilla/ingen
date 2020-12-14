@@ -27,16 +27,13 @@
 #include <memory>
 #include <string>
 
-using namespace ingen;
-
 namespace ingen {
 namespace server {
-class Driver;
-} // namespace server
-} // namespace ingen
 
-struct IngenJackModule : public ingen::Module {
-	void load(ingen::World& world) override {
+class Driver;
+
+struct JackModule : public Module {
+	void load(World& world) override {
 		server::Engine* const engine =
 		    static_cast<server::Engine*>(world.engine().get());
 
@@ -57,12 +54,15 @@ struct IngenJackModule : public ingen::Module {
 	}
 };
 
+} // namespace server
+} // namespace ingen
+
 extern "C" {
 
 ingen::Module*
 ingen_module_load()
 {
-	return new IngenJackModule();
+	return new ingen::server::JackModule();
 }
 
 } // extern "C"

@@ -23,12 +23,13 @@
 
 #include <memory>
 
-namespace ingen { namespace server { class Driver; } }
+namespace ingen {
+namespace server {
 
-using namespace ingen;
+class Driver;
 
-struct IngenPortAudioModule : public ingen::Module {
-	void load(ingen::World& world) override {
+struct PortAudioModule : public Module {
+	void load(World& world) override {
 		server::Engine* const engine =
 		    static_cast<server::Engine*>(world.engine().get());
 
@@ -43,12 +44,15 @@ struct IngenPortAudioModule : public ingen::Module {
 	}
 };
 
+} // namespace server
+} // namespace ingen
+
 extern "C" {
 
 ingen::Module*
 ingen_module_load()
 {
-	return new IngenPortAudioModule();
+	return new ingen::server::PortAudioModule();
 }
 
 } // extern "C"

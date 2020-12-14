@@ -40,9 +40,6 @@
 #include <utility>
 
 namespace ingen {
-
-using namespace client;
-
 namespace gui {
 
 NodeMenu::NodeMenu(BaseObjectType*                   cobject,

@@ -31,7 +31,7 @@
 
 namespace ingen {
 
-using namespace client;
+using client::GraphModel;
 
 namespace gui {
 

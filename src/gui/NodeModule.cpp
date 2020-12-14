@@ -46,7 +46,10 @@
 
 namespace ingen {
 
-using namespace client;
+using client::BlockModel;
+using client::GraphModel;
+using client::PluginModel;
+using client::PortModel;
 
 namespace gui {
 

@@ -29,7 +29,7 @@
 
 namespace ingen {
 
-using namespace client;
+using client::ObjectModel;
 
 namespace gui {
 

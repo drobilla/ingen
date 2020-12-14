@@ -69,8 +69,6 @@
 #include <sys/time.h>
 #include <utility>
 
-using namespace ingen::client;
-
 namespace ingen {
 namespace gui {
 
@@ -223,7 +221,7 @@ ConnectWindow::connect_remote(const URI& uri)
 {
 	ingen::World& world = _app->world();
 
-	auto sci = std::make_shared<SigClientInterface>();
+	auto sci = std::make_shared<client::SigClientInterface>();
 	auto qi  = std::make_shared<QueuedInterface>(sci);
 
 	std::shared_ptr<ingen::Interface> iface(world.new_interface(uri, qi));
@@ -513,7 +511,7 @@ ConnectWindow::gtk_callback()
 		if (ms_since_last >= 250) {
 			last = now;
 			if (_mode == Mode::INTERNAL) {
-				auto client = std::make_shared<SigClientInterface>();
+				auto client = std::make_shared<client::SigClientInterface>();
 				_app->world().interface()->set_respondee(client);
 				_app->attach(client);
 				_app->register_callbacks();
@@ -555,7 +553,7 @@ ConnectWindow::gtk_callback()
 		next_stage();
 	} else if (_connect_stage == 4) {
 		if (!_app->store()->empty()) {
-			auto root = std::dynamic_pointer_cast<const GraphModel>(
+			auto root = std::dynamic_pointer_cast<const client::GraphModel>(
 				_app->store()->object(Raul::Path("/")));
 			if (root) {
 				set_connected_to(_app->interface());

@@ -22,10 +22,10 @@
 
 #include <memory>
 
-using namespace ingen;
+namespace ingen {
 
-struct IngenEngineModule : public ingen::Module {
-	void load(ingen::World& world) override {
+struct EngineModule : public Module {
+	void load(World& world) override {
 		server::set_denormal_flags(world.log());
 		auto engine = std::make_shared<server::Engine>(world);
 		world.set_engine(engine);
@@ -35,12 +35,14 @@ struct IngenEngineModule : public ingen::Module {
 	}
 };
 
+} // namespace ingen
+
 extern "C" {
 
 ingen::Module*
 ingen_module_load()
 {
-	return new IngenEngineModule();
+	return new ingen::EngineModule();
 }
 
 } // extern "C"

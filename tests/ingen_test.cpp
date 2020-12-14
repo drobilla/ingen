@@ -46,22 +46,23 @@
 #include <string>
 #include <utility>
 
-using namespace std;
-using namespace ingen;
+namespace ingen {
+namespace test {
+namespace {
 
-static unique_ptr<World> world;
+std::unique_ptr<World> world;
 
-static void
+void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
-		cerr << "ingen: Error: " << msg << endl;
+		std::cerr << "ingen: Error: " << msg << std::endl;
 		world.reset();
 		exit(EXIT_FAILURE);
 	}
 }
 
-static FilePath
+FilePath
 real_file_path(const char* path)
 {
 	std::unique_ptr<char, FreeDeleter<char>> real_path{realpath(path, nullptr)};
@@ -70,16 +71,14 @@ real_file_path(const char* path)
 }
 
 int
-main(int argc, char** argv)
+run(int argc, char** argv)
 {
-	set_bundle_path_from_code(reinterpret_cast<void(*)()>(&ingen_try));
-
 	// Create world
 	try {
-		world = unique_ptr<World>{new World(nullptr, nullptr, nullptr)};
+		world = std::unique_ptr<World>{new World(nullptr, nullptr, nullptr)};
 		world->load_configuration(argc, argv);
 	} catch (std::exception& e) {
-		cout << "ingen: " << e.what() << endl;
+		std::cout << "ingen: " << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -87,7 +86,10 @@ main(int argc, char** argv)
 	const Atom& load    = world->conf().option("load");
 	const Atom& execute = world->conf().option("execute");
 	if (!load.is_valid() || !execute.is_valid()) {
-		cerr << "Usage: ingen_test --load START_GRAPH --execute COMMANDS_FILE" << endl;
+		std::cerr
+		    << "Usage: ingen_test --load START_GRAPH --execute COMMANDS_FILE"
+		    << std::endl;
+
 		return EXIT_FAILURE;
 	}
 
@@ -96,10 +98,14 @@ main(int argc, char** argv)
 	const FilePath run_path  = real_file_path(static_cast<const char*>(execute.get_body()));
 
 	if (load_path.empty()) {
-		cerr << "error: initial graph '" << load_path << "' does not exist" << endl;
+		std::cerr << "error: initial graph '" << load_path << "' does not exist"
+		          << std::endl;
+
 		return EXIT_FAILURE;
 	} else if (run_path.empty()) {
-		cerr << "error: command file '" << run_path << "' does not exist" << endl;
+		std::cerr << "error: command file '" << run_path << "' does not exist"
+		          << std::endl;
+
 		return EXIT_FAILURE;
 	}
 
@@ -115,7 +121,9 @@ main(int argc, char** argv)
 
 	// Load graph
 	if (!world->parser()->parse_file(*world, *world->interface(), load_path)) {
-		cerr << "error: failed to load initial graph " << load_path << endl;
+		std::cerr << "error: failed to load initial graph " << load_path
+		          << std::endl;
+
 		return EXIT_FAILURE;
 	}
 	world->engine()->flush_events(std::chrono::milliseconds(20));
@@ -220,4 +228,17 @@ main(int argc, char** argv)
 	world->engine()->deactivate();
 
 	return EXIT_SUCCESS;
+}
+
+} // namespace
+} // namespace test
+} // namespace ingen
+
+int
+main(int argc, char** argv)
+{
+	ingen::set_bundle_path_from_code(
+	    reinterpret_cast<void (*)()>(&ingen::test::ingen_try));
+
+	return ingen::test::run(argc, argv);
 }

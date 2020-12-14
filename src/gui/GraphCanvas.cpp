@@ -58,7 +58,11 @@ using std::string;
 
 namespace ingen {
 
-using namespace client;
+using client::ArcModel;
+using client::BlockModel;
+using client::GraphModel;
+using client::PluginModel;
+using client::PortModel;
 
 namespace gui {
 
@@ -678,7 +682,7 @@ GraphCanvas::paste()
 	++_paste_count;
 
 	// Make a client store to serve as clipboard
-	ClientStore clipboard(_app.world().uris(), _app.log());
+	client::ClientStore clipboard(_app.world().uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
 	clipboard.put(main_uri(),
 	              {{uris.rdf_type, Property(uris.ingen_Graph)}});

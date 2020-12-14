@@ -28,7 +28,8 @@
 
 namespace ingen {
 
-using namespace client;
+using client::GraphModel;
+using client::ObjectModel;
 
 namespace gui {
 
@@ -67,7 +68,7 @@ GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
 }
 
 void
-GraphTreeWindow::init(App& app, ClientStore& store)
+GraphTreeWindow::init(App& app, client::ClientStore& store)
 {
 	init_window(app);
 	store.signal_new_object().connect(

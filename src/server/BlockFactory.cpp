@@ -41,8 +41,6 @@
 namespace ingen {
 namespace server {
 
-using namespace internals;
-
 BlockFactory::BlockFactory(ingen::World& world)
 	: _world(world)
 	, _has_loaded(false)
@@ -107,20 +105,23 @@ void
 BlockFactory::load_internal_plugins()
 {
 	ingen::URIs& uris = _world.uris();
-	InternalPlugin* block_delay_plug = BlockDelayNode::internal_plugin(uris);
-	_plugins.emplace(block_delay_plug->uri(), block_delay_plug);
 
-	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
-	_plugins.emplace(controller_plug->uri(), controller_plug);
+	InternalPlugin* block_delay =
+	    internals::BlockDelayNode::internal_plugin(uris);
+	_plugins.emplace(block_delay->uri(), block_delay);
 
-	InternalPlugin* note_plug = NoteNode::internal_plugin(uris);
-	_plugins.emplace(note_plug->uri(), note_plug);
+	InternalPlugin* controller =
+	    internals::ControllerNode::internal_plugin(uris);
+	_plugins.emplace(controller->uri(), controller);
 
-	InternalPlugin* time_plug = TimeNode::internal_plugin(uris);
-	_plugins.emplace(time_plug->uri(), time_plug);
+	InternalPlugin* note = internals::NoteNode::internal_plugin(uris);
+	_plugins.emplace(note->uri(), note);
 
-	InternalPlugin* trigger_plug = TriggerNode::internal_plugin(uris);
-	_plugins.emplace(trigger_plug->uri(), trigger_plug);
+	InternalPlugin* time = internals::TimeNode::internal_plugin(uris);
+	_plugins.emplace(time->uri(), time);
+
+	InternalPlugin* trigger = internals::TriggerNode::internal_plugin(uris);
+	_plugins.emplace(trigger->uri(), trigger);
 }
 
 void

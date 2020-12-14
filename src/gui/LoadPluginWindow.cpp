@@ -35,7 +35,9 @@ using std::string;
 
 namespace ingen {
 
-using namespace client;
+using client::ClientStore;
+using client::GraphModel;
+using client::PluginModel;
 
 namespace gui {
 

@@ -28,9 +28,6 @@
 #include <memory>
 
 namespace ingen {
-
-using namespace client;
-
 namespace gui {
 
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
@@ -55,7 +52,7 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 }
 
 void
-ObjectMenu::init(App& app, std::shared_ptr<const ObjectModel> object)
+ObjectMenu::init(App& app, std::shared_ptr<const client::ObjectModel> object)
 {
 	_app = &app;
 	_object = object;

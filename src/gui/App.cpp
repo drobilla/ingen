@@ -65,8 +65,6 @@ namespace ingen {
 
 namespace client { class PluginModel; }
 
-using namespace client;
-
 namespace gui {
 
 class Port;
@@ -99,11 +97,14 @@ App::App(ingen::World& world)
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 
-	PluginModel::set_rdf_world(*world.rdf_world());
-	PluginModel::set_lilv_world(world.lilv_world());
+	client::PluginModel::set_rdf_world(*world.rdf_world());
+	client::PluginModel::set_lilv_world(world.lilv_world());
 
-	using namespace std::placeholders;
-	world.log().set_sink(std::bind(&MessagesWindow::log, _messages_window, _1, _2, _3));
+	world.log().set_sink(std::bind(&MessagesWindow::log,
+	                               _messages_window,
+	                               std::placeholders::_1,
+	                               std::placeholders::_2,
+	                               std::placeholders::_3));
 }
 
 App::~App()
@@ -171,8 +172,13 @@ App::attach(const std::shared_ptr<ingen::Interface>& client)
 	}
 
 	_client = client;
-	_store  = std::make_shared<ClientStore>(_world.uris(), _world.log(), sig_client());
+
+	_store = std::make_shared<client::ClientStore>(_world.uris(),
+	                                               _world.log(),
+	                                               sig_client());
+
 	_loader = std::make_shared<ThreadedLoader>(*this, _world.interface());
+
 	if (!_world.store()) {
 		_world.set_store(_store);
 	}
@@ -215,14 +221,14 @@ App::request_plugins_if_necessary()
 	}
 }
 
-std::shared_ptr<SigClientInterface>
+std::shared_ptr<client::SigClientInterface>
 App::sig_client()
 {
 	auto qi = std::dynamic_pointer_cast<QueuedInterface>(_client);
 	if (qi) {
-		return std::dynamic_pointer_cast<SigClientInterface>(qi->sink());
+		return std::dynamic_pointer_cast<client::SigClientInterface>(qi->sink());
 	}
-	return std::dynamic_pointer_cast<SigClientInterface>(_client);
+	return std::dynamic_pointer_cast<client::SigClientInterface>(_client);
 }
 
 std::shared_ptr<Serialiser>

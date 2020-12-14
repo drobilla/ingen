@@ -38,9 +38,13 @@
 #include <memory>
 #include <string>
 
-using namespace ingen::client;
-
 namespace ingen {
+
+using client::BlockModel;
+using client::GraphModel;
+using client::PluginModel;
+using client::PortModel;
+
 namespace gui {
 
 Port*

@@ -75,6 +75,9 @@
 #include <vector>
 
 namespace ingen {
+namespace server {
+
+class LV2Driver;
 
 /** Record of a graph in this bundle. */
 struct LV2Graph : public Parser::ResourceRecord {
@@ -93,12 +96,6 @@ public:
 	Graphs graphs;
 };
 
-namespace server {
-
-class LV2Driver;
-
-void signal_main(RunContext& ctx, LV2Driver* driver);
-
 inline size_t
 ui_ring_size(SampleCount block_length)
 {
@@ -106,8 +103,7 @@ ui_ring_size(SampleCount block_length)
 	                static_cast<size_t>(block_length) * 16u);
 }
 
-class LV2Driver : public ingen::server::Driver
-                , public ingen::AtomSink
+class LV2Driver : public Driver, public ingen::AtomSink
 {
 public:
 	LV2Driver(Engine&     engine,
@@ -425,13 +421,16 @@ private:
 	bool             _instantiated;
 };
 
-} // namespace server
-} // namespace ingen
+struct IngenPlugin {
+	std::unique_ptr<World>       world;
+	std::shared_ptr<Engine>      engine;
+	std::unique_ptr<std::thread> main;
+	LV2_URID_Map*                map  = nullptr;
+	int                          argc = 0;
+	char**                       argv = nullptr;
+};
 
 extern "C" {
-
-using namespace ingen;
-using namespace ingen::server;
 
 static void
 ingen_lv2_main(const std::shared_ptr<Engine>&    engine,
@@ -450,15 +449,6 @@ ingen_lv2_main(const std::shared_ptr<Engine>&    engine,
 		}
 	}
 }
-
-struct IngenPlugin {
-	std::unique_ptr<ingen::World> world;
-	std::shared_ptr<Engine>       engine;
-	std::unique_ptr<std::thread>  main;
-	LV2_URID_Map*                 map  = nullptr;
-	int                           argc = 0;
-	char**                        argv = nullptr;
-};
 
 static Lib::Graphs
 find_graphs(const URI& manifest_uri)
@@ -623,8 +613,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	using namespace ingen::server;
-
 	auto*           me     = static_cast<IngenPlugin*>(instance);
 	server::Engine* engine = static_cast<server::Engine*>(me->world->engine().get());
 	const auto      driver = std::static_pointer_cast<LV2Driver>(engine->driver());
@@ -858,6 +846,12 @@ lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 	return index < lib->graphs.size() ? &lib->graphs[index]->descriptor : nullptr;
 }
 
+} // extern "C"
+} // namespace server
+} // namespace ingen
+
+extern "C" {
+
 /** LV2 plugin library entry point */
 LV2_SYMBOL_EXPORT
 const LV2_Lib_Descriptor*
@@ -865,16 +859,16 @@ lv2_lib_descriptor(const char*              bundle_path,
                    const LV2_Feature*const* features)
 {
 	static const uint32_t desc_size = sizeof(LV2_Lib_Descriptor);
-	Lib*                  lib       = new Lib(bundle_path);
+	auto*                 lib       = new ingen::server::Lib(bundle_path);
 
 	// FIXME: memory leak.  I think the LV2_Lib_Descriptor API is botched :(
 	auto* desc = static_cast<LV2_Lib_Descriptor*>(malloc(desc_size));
 	desc->handle     = lib;
 	desc->size       = desc_size;
-	desc->cleanup    = lib_cleanup;
-	desc->get_plugin = lib_get_plugin;
+	desc->cleanup    = ingen::server::lib_cleanup;
+	desc->get_plugin = ingen::server::lib_get_plugin;
 
 	return desc;
 }
 
-} // extern "C"
+}
