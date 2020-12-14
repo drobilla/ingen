@@ -22,8 +22,8 @@
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 
-#include <boost/utility/string_view.hpp>
-#include <boost/utility/string_view_fwd.hpp>
+#include <boost/utility/string_view.hpp>     // IWYU pragma: export
+#include <boost/utility/string_view_fwd.hpp> // IWYU pragma: export
 
 #include <cstddef>
 #include <cstdint>

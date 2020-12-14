@@ -19,11 +19,19 @@
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/URIs.hpp"
+#include "lv2/core/lv2.h"
 #include "lv2/options/options.h"
 
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <memory>
 
 namespace ingen {
+
+class Node;
+class World;
+
 namespace server {
 
 class LV2Options : public ingen::LV2Features::Feature {

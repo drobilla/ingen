@@ -27,14 +27,16 @@
 #    include <io.h>
 #    define F_OK 0
 #    define mkdir(path, flags) _mkdir(path)
+#else
+#    include <unistd.h>
 #endif
 
+#include <sys/stat.h>
+
+#include <algorithm>
 #include <cerrno>
-#include <climits>
 #include <cstdlib>
 #include <memory>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <vector>
 
 /* A minimal subset of the std::filesystem API from C++17. */

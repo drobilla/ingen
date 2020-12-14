@@ -26,6 +26,8 @@
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
 
+#include <boost/smart_ptr/intrusive_ptr.hpp>
+
 #include <cstddef>
 #include <cstdint>
 #include <memory>

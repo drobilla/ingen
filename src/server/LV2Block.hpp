@@ -19,6 +19,7 @@
 
 #include "BlockImpl.hpp"
 #include "BufferRef.hpp"
+#include "State.hpp"
 #include "types.hpp"
 
 #include "ingen/LV2Features.hpp"
@@ -43,6 +44,18 @@
 namespace Raul {
 class Symbol;
 } // namespace Raul
+
+namespace boost {
+namespace intrusive {
+
+template <bool Enabled>
+struct cache_last;
+
+template <bool Enabled>
+struct constant_time_size;
+
+} // namespace intrusive
+} // namespace boost
 
 namespace ingen {
 

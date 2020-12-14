@@ -24,6 +24,7 @@
 #include "serd/serd.h"
 #include "sratom/sratom.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>

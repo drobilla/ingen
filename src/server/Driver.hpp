@@ -17,18 +17,25 @@
 #ifndef INGEN_ENGINE_DRIVER_HPP
 #define INGEN_ENGINE_DRIVER_HPP
 
-#include "DuplexPort.hpp"
-#include "EnginePort.hpp"
+#include "types.hpp"
 
+#include "ingen/URI.hpp"
 #include "raul/Noncopyable.hpp"
+
+#include <cstddef>
 
 namespace Raul { class Path; }
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
+class Buffer;
 class DuplexPort;
 class EnginePort;
+class RunContext;
 
 /** Engine driver base class.
  *

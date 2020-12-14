@@ -18,12 +18,35 @@
 #define INGEN_ENGINE_DIRECT_DRIVER_HPP
 
 #include "Driver.hpp"
+#include "DuplexPort.hpp"
 #include "Engine.hpp"
+#include "EnginePort.hpp"
+#include "RunContext.hpp"
+#include "types.hpp"
+
+#include "raul/Path.hpp"
 
 #include <boost/intrusive/slist.hpp>
 
+#include <cstddef>
+#include <string>
+
+namespace boost {
+namespace intrusive {
+
+template <bool Enabled> struct cache_last;
+
+} // namespace intrusive
+} // namespace boost
+
 namespace ingen {
+
+class Atom;
+class URI;
+
 namespace server {
+
+class Buffer;
 
 /** Driver for running Ingen directly as a library.
  * \ingroup engine

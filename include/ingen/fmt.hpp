@@ -17,7 +17,7 @@
 #ifndef INGEN_FMT_HPP
 #define INGEN_FMT_HPP
 
-#include <boost/format.hpp>
+#include <boost/format.hpp> // IWYU pragma: export
 
 #include <initializer_list>
 #include <string>

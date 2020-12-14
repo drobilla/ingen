@@ -41,6 +41,7 @@
 #include "raul/Symbol.hpp"
 
 #include <cassert>
+#include <map>
 #include <memory>
 #include <utility>
 

@@ -41,7 +41,9 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -65,7 +67,8 @@ ingen_try(bool cond, const char* msg)
 FilePath
 real_file_path(const char* path)
 {
-	std::unique_ptr<char, FreeDeleter<char>> real_path{realpath(path, nullptr)};
+	std::unique_ptr<char, FreeDeleter<char>> real_path{realpath(path, nullptr),
+	                                                   FreeDeleter<char>{}};
 
 	return FilePath{real_path.get()};
 }

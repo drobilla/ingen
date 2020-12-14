@@ -19,7 +19,7 @@
 
 #include "ingen/ingen.h"
 
-#include <boost/utility/string_view.hpp>
+#include <boost/utility/string_view.hpp> // IWYU pragma: export
 
 #include <ostream>
 #include <string>

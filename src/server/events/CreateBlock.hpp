@@ -18,7 +18,6 @@
 #define INGEN_EVENTS_CREATEBLOCK_HPP
 
 #include "ClientUpdate.hpp"
-#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "types.hpp"
 
@@ -36,6 +35,7 @@ class Properties;
 namespace server {
 
 class BlockImpl;
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class PreProcessContext;
@@ -56,6 +56,8 @@ public:
 	            SampleCount                       timestamp,
 	            const Raul::Path&                 path,
 	            Properties&                       properties);
+
+	~CreateBlock() override;
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

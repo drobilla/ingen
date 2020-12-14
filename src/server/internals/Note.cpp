@@ -39,6 +39,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <memory>
 #include <utility>
 
 // #define NOTE_DEBUG 1

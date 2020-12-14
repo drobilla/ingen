@@ -17,7 +17,6 @@
 #ifndef INGEN_EVENTS_COPY_HPP
 #define INGEN_EVENTS_COPY_HPP
 
-#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "types.hpp"
 
@@ -33,6 +32,7 @@ class Interface;
 namespace server {
 
 class BlockImpl;
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class PreProcessContext;
@@ -50,6 +50,8 @@ public:
 	     const std::shared_ptr<Interface>& client,
 	     SampleCount                       timestamp,
 	     const ingen::Copy&                msg);
+
+	~Copy() override;
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

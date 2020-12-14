@@ -18,11 +18,11 @@
 #define INGEN_PARSER_HPP
 
 #include "ingen/FilePath.hpp"
-#include "ingen/Properties.hpp"
+#include "ingen/Properties.hpp" // IWYU pragma: keep
 #include "ingen/URI.hpp"
 #include "ingen/ingen.h"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include "raul/Path.hpp" // IWYU pragma: keep
+#include "raul/Symbol.hpp" // IWYU pragma: keep
 
 #include <boost/optional/optional.hpp>
 

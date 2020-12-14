@@ -19,6 +19,7 @@
 #include "BlockFactory.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "CreateBlock.hpp"
 #include "CreateGraph.hpp"
@@ -44,9 +45,12 @@
 #include "ingen/World.hpp"
 #include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
+#include "lilv/lilv.h"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include <algorithm>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <set>

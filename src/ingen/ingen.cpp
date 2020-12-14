@@ -35,10 +35,13 @@
 #include "ingen/client/SocketClient.hpp"
 #endif
 
+#include <boost/optional/optional.hpp>
+
 #include <chrono>
 #include <csignal>
 #include <cstdint>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <mutex>

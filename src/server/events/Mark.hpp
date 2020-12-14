@@ -61,6 +61,8 @@ public:
 	     SampleCount                       timestamp,
 	     const ingen::BundleEnd&           msg);
 
+	~Mark() override;
+
 	void mark(PreProcessContext& ctx) override;
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

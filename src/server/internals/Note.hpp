@@ -24,7 +24,6 @@
 #include "raul/Maid.hpp"
 
 #include <cstdint>
-#include <memory>
 
 namespace Raul {
 class Symbol;

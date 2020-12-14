@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// IWYU pragma: no_include "ingen/Atom.hpp"
+
 #include "Engine.hpp"
 #include "util.hpp"
 

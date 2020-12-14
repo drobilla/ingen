@@ -1,0 +1,22 @@
+[
+  { "symbol": [ "fmt::format",       "private", "<fmt/core.h>",    "public" ] },
+  { "symbol": [ "std::exception",    "private", "<exception>",     "public" ] },
+  { "symbol": [ "std::ifstream",     "private", "<fstream>",       "public" ] },
+  { "symbol": [ "std::ostream",      "private", "<ostream>",       "public" ] },
+  { "symbol": [ "std::ostream",      "private", "<iosfwd>",        "public" ] },
+  { "symbol": [ "posix_memalign",    "private", "<stdlib.h>",      "public" ] },
+  { "symbol": [ "std::stringstream", "private", "<sstream>",       "public" ] },
+  { "symbol": [ "sched_param",       "private", "<sched.h>",       "public" ] },
+  { "symbol": [ "clockid_t",         "private", "<time.h>",        "public" ] },
+  { "symbol": [ "clockid_t",         "private", "<sys/types.h>",   "public" ] },
+  { "symbol": [ "LilvWorld",         "private", "\"lilv/lilv.h\"", "public" ] },
+
+  { "symbol": [ "boost::intrusive::constant_time_size", "private",
+                "<boost/intrusive/options.hpp>",        "public" ] },
+
+  { "symbol": [ "boost::intrusive::cache_last",  "private",
+                "<boost/intrusive/options.hpp>", "public" ] },
+
+  { "include": [ "<ext/alloc_traits.h>", "private", "<string>",    "public", ] },
+  { "include": [ "<ext/alloc_traits.h>", "private", "<vector>",    "public", ] },
+]

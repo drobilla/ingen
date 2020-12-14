@@ -21,6 +21,7 @@
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "BufferRef.hpp"
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -62,6 +63,8 @@ Disconnect::Disconnect(Engine&                           engine,
 	, _graph(nullptr)
 {
 }
+
+Disconnect::~Disconnect() = default;
 
 Disconnect::Impl::Impl(Engine&     e,
                        GraphImpl*  graph,

@@ -19,8 +19,13 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/Status.hpp"
+#include "ingen/URI.hpp"
 
 #include <boost/variant/get.hpp>
+
+#include <cstdlib>
 
 namespace ingen {
 

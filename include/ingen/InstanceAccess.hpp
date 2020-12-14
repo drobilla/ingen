@@ -25,7 +25,6 @@
 #include "lv2/core/lv2.h"
 
 #include <memory>
-#include <utility>
 
 namespace ingen {
 

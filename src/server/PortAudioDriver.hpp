@@ -18,12 +18,13 @@
 #define INGEN_ENGINE_PORTAUDIODRIVER_HPP
 
 #include "Driver.hpp"
-#include "EnginePort.hpp"
+#include "EnginePort.hpp" // IWYU pragma: keep
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
 #include "raul/Semaphore.hpp"
 
+#include <boost/intrusive/slist.hpp>
 #include <portaudio.h>
 
 #include <atomic>
@@ -32,6 +33,15 @@
 #include <memory>
 
 namespace Raul { class Path; }
+
+namespace boost {
+namespace intrusive {
+
+template <bool Enabled>
+struct cache_last;
+
+} // namespace intrusive
+} // namespace boost
 
 namespace ingen {
 

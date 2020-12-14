@@ -18,6 +18,7 @@
 #define INGEN_NODE_HPP
 
 #include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/ingen.h"
 #include "ingen/paths.hpp"
 #include "lilv/lilv.h"
@@ -37,7 +38,6 @@ namespace ingen {
 
 class Arc;
 class FilePath;
-class Store;
 class URIs;
 
 /** A node in the audio graph.

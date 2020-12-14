@@ -19,7 +19,7 @@
 
 #include "ingen/ingen.h"
 
-#include <boost/intrusive_ptr.hpp>
+#include <boost/smart_ptr/intrusive_ptr.hpp> // IWYU pragma: export
 
 namespace ingen {
 namespace server {

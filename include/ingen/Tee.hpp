@@ -19,8 +19,8 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
+#include "ingen/URI.hpp"
 
-#include <cstddef>
 #include <memory>
 #include <mutex>
 #include <utility>

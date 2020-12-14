@@ -36,6 +36,8 @@
 #include "lv2/urid/urid.h"
 #include "raul/Path.hpp"
 
+#include <boost/intrusive/bstree.hpp>
+
 #include <algorithm>
 #include <cmath>
 #include <cstring>

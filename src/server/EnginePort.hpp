@@ -22,7 +22,9 @@
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 
-#include <boost/intrusive/slist.hpp>
+#include <boost/intrusive/slist_hook.hpp>
+
+#include <cstdint>
 
 namespace ingen {
 namespace server {

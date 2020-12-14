@@ -26,15 +26,24 @@
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 
+#include <boost/intrusive/slist.hpp>
+
 #include <cassert>
 #include <cstdint>
 #include <memory>
 #include <utility>
 
 namespace Raul {
-class Maid;
 class Symbol;
 } // namespace Raul
+
+namespace boost {
+namespace intrusive {
+
+template <bool Enabled> struct constant_time_size;
+
+} // namespace intrusive
+} // namespace boost
 
 namespace ingen {
 namespace server {

@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// IWYU pragma: no_include "ingen/FilePath.hpp"
+
 #include "PortAudioDriver.hpp"
 #include "Engine.hpp"
 

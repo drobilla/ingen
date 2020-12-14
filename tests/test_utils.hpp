@@ -14,9 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// IWYU pragma: no_include "ingen/FilePath.hpp"
+
 #include "ingen/fmt.hpp"
 
 #include <iostream>
+#include <string>
 
 #define EXPECT_TRUE(value) \
 	do { \
@@ -39,6 +42,6 @@
 		if (!((value) == (expected))) { \
 			std::cerr << fmt("error: %1%:%2%: %3% != %4%\n", \
 			                 __FILE__, __LINE__, (#value), (#expected)); \
-			std::cerr << "note: actual value: " << value << std::endl; \
+			std::cerr << "note: actual value: " << (value) << std::endl; \
 		} \
 	} while (0)

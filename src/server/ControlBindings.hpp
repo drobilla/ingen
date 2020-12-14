@@ -22,7 +22,6 @@
 #include "lv2/atom/forge.h"
 #include "raul/Maid.hpp"
 
-#include <boost/intrusive/options.hpp>
 #include <boost/intrusive/set.hpp>
 #include <boost/intrusive/set_hook.hpp>
 
@@ -32,6 +31,14 @@
 #include <vector>
 
 namespace Raul { class Path; }
+
+namespace boost {
+namespace intrusive {
+
+template <class Compare> struct compare;
+
+} // namespace intrusive
+} // namespace boost
 
 namespace ingen {
 

@@ -70,6 +70,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <limits>
+#include <map>
 #include <memory>
 #include <thread>
 #include <utility>

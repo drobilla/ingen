@@ -18,6 +18,7 @@
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
@@ -33,6 +34,9 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
+#include <boost/optional/optional.hpp>
+
+#include <map>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -52,6 +56,8 @@ Copy::Copy(Engine&                           engine,
     , _parent(nullptr)
     , _block(nullptr)
 {}
+
+Copy::~Copy() = default;
 
 bool
 Copy::pre_process(PreProcessContext& ctx)

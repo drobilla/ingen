@@ -24,8 +24,6 @@
 
 #include <unordered_set>
 
-namespace Raul { class Maid; }
-
 namespace ingen {
 namespace server {
 
@@ -65,7 +63,7 @@ public:
 	 * This may return null when an atomic bundle is deferring compilation, in
 	 * which case the graph is flagged as dirty for later compilation.
 	 */
-	Raul::managed_ptr<CompiledGraph>
+	Raul::Maid::managed_ptr<CompiledGraph>
 	maybe_compile(Raul::Maid& maid, GraphImpl& graph)
 	{
 		if (must_compile(graph)) {

@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_THREADMANAGER_HPP
 #define INGEN_ENGINE_THREADMANAGER_HPP
 
-#include "util.hpp"
-
 #include "ingen/ingen.h"
 
 #include <cassert>

@@ -18,6 +18,7 @@
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
@@ -39,6 +40,9 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
+#include <boost/intrusive/slist.hpp>
+
+#include <map>
 #include <memory>
 #include <utility>
 
@@ -58,6 +62,8 @@ CreateGraph::CreateGraph(Engine&                           engine,
     , _graph(nullptr)
     , _parent(nullptr)
 {}
+
+CreateGraph::~CreateGraph() = default;
 
 void
 CreateGraph::build_child_events()

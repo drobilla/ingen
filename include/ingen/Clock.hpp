@@ -22,7 +22,6 @@
 #    include <mach/mach_time.h>
 #else
 #    include <ctime>
-#    include <sys/time.h>
 #endif
 
 #include <cstdint>

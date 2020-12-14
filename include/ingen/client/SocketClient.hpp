@@ -20,12 +20,20 @@
 #include "ingen/Log.hpp"
 #include "ingen/SocketReader.hpp"
 #include "ingen/SocketWriter.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/World.hpp"
 #include "ingen/ingen.h"
 #include "raul/Socket.hpp"
 
+#include <cerrno>
+#include <cstring>
 #include <memory>
+#include <string>
 
 namespace ingen {
+
+class Interface;
+
 namespace client {
 
 /** The client side of an Ingen socket connection. */

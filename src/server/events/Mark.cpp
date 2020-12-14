@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <memory>
+#include <unordered_set>
 #include <utility>
 
 namespace ingen {
@@ -50,6 +51,8 @@ Mark::Mark(Engine&                           engine,
 	, _type(Type::BUNDLE_END)
 	, _depth(-1)
 {}
+
+Mark::~Mark() = default;
 
 void
 Mark::mark(PreProcessContext&)

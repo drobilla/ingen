@@ -20,6 +20,7 @@
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -38,6 +39,7 @@
 #include <cassert>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <utility>
 
 namespace ingen {
@@ -54,6 +56,8 @@ Connect::Connect(Engine&                           engine,
     , _head(nullptr)
 {
 }
+
+Connect::~Connect() = default;
 
 bool
 Connect::pre_process(PreProcessContext& ctx)

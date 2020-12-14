@@ -17,15 +17,20 @@
 #ifndef INGEN_ENGINE_ARC_IMPL_HPP
 #define INGEN_ENGINE_ARC_IMPL_HPP
 
+// IWYU pragma: no_include "raul/Path.hpp"
+
 #include "BufferRef.hpp"
 
 #include "ingen/Arc.hpp"
 #include "raul/Noncopyable.hpp"
-#include "raul/Path.hpp"
 
 #include <boost/intrusive/slist_hook.hpp>
 
 #include <cstdint>
+
+namespace Raul {
+class Path; // IWYU pragma: keep
+} // namespace Raul
 
 namespace ingen {
 namespace server {

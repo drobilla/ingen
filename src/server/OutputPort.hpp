@@ -18,9 +18,25 @@
 #define INGEN_ENGINE_OUTPUTPORT_HPP
 
 #include "PortImpl.hpp"
+#include "PortType.hpp"
+
+#include "lv2/urid/urid.h"
+
+#include <cstddef>
+#include <cstdint>
+
+namespace Raul {
+class Symbol;
+} // namespace Raul
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
+
+class BlockImpl;
+class BufferFactory;
 
 /** An output port.
  *

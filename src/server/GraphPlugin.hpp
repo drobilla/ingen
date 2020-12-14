@@ -19,12 +19,20 @@
 
 #include "PluginImpl.hpp"
 
+#include "ingen/URI.hpp"
+#include "ingen/URIs.hpp"
+#include "lilv/lilv.h"
+#include "raul/Symbol.hpp"
+
 #include <string>
 
 namespace ingen {
 namespace server {
 
 class BlockImpl;
+class BufferFactory;
+class Engine;
+class GraphImpl;
 
 /** Implementation of a Graph plugin.
  *

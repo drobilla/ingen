@@ -75,9 +75,12 @@
 #include <vector>
 
 namespace ingen {
+
+class Atom;
+
 namespace server {
 
-class LV2Driver;
+class GraphImpl;
 
 /** Record of a graph in this bundle. */
 struct LV2Graph : public Parser::ResourceRecord {
@@ -563,7 +566,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		"queue-size",
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
-	auto engine = std::make_shared<server::Engine>(*plugin->world);
+	auto engine = std::make_shared<Engine>(*plugin->world);
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
@@ -571,14 +574,14 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	plugin->world->set_interface(interface);
 
-	server::ThreadManager::set_flag(server::THREAD_PRE_PROCESS);
-	server::ThreadManager::single_threaded = true;
+	ThreadManager::set_flag(THREAD_PRE_PROCESS);
+	ThreadManager::single_threaded = true;
 
 	auto* driver = new LV2Driver(*engine, block_length, seq_size, rate);
-	engine->set_driver(std::shared_ptr<ingen::server::Driver>(driver));
+	engine->set_driver(std::shared_ptr<Driver>(driver));
 
 	engine->activate();
-	server::ThreadManager::single_threaded = true;
+	ThreadManager::single_threaded = true;
 
 	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 
@@ -613,9 +616,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	auto*           me     = static_cast<IngenPlugin*>(instance);
-	server::Engine* engine = static_cast<server::Engine*>(me->world->engine().get());
-	const auto      driver = std::static_pointer_cast<LV2Driver>(engine->driver());
+	auto*      me     = static_cast<IngenPlugin*>(instance);
+	Engine*    engine = static_cast<Engine*>(me->world->engine().get());
+	const auto driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 	} else {
@@ -627,7 +630,7 @@ static void
 ingen_activate(LV2_Handle instance)
 {
 	auto*      me     = static_cast<IngenPlugin*>(instance);
-	auto       engine = std::static_pointer_cast<server::Engine>(me->world->engine());
+	auto       engine = std::static_pointer_cast<Engine>(me->world->engine());
 	const auto driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 	engine->activate();
 	me->main = make_unique<std::thread>(ingen_lv2_main, engine, driver);
@@ -637,11 +640,11 @@ static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	auto*      me     = static_cast<IngenPlugin*>(instance);
-	auto       engine = std::static_pointer_cast<server::Engine>(me->world->engine());
+	auto       engine = std::static_pointer_cast<Engine>(me->world->engine());
 	const auto driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 
-	server::ThreadManager::set_flag(ingen::server::THREAD_PROCESS);
-	server::ThreadManager::set_flag(ingen::server::THREAD_IS_REAL_TIME);
+	ThreadManager::set_flag(THREAD_PROCESS);
+	ThreadManager::set_flag(THREAD_IS_REAL_TIME);
 
 	driver->run(sample_count);
 }

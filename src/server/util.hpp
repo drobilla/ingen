@@ -17,17 +17,11 @@
 #ifndef INGEN_ENGINE_UTIL_HPP
 #define INGEN_ENGINE_UTIL_HPP
 
-#include "ingen_config.h"
-
 #include "ingen/Log.hpp"
-#include "raul/Path.hpp"
 
 #ifdef __SSE__
-#include <xmmintrin.h>
+#include <xmmintrin.h> // IWYU pragma: keep
 #endif
-
-#include <cfenv>
-#include <cstdlib>
 
 #ifdef __clang__
 #    define REALTIME __attribute__((annotate("realtime")))

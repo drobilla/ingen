@@ -29,10 +29,13 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include <boost/intrusive/slist.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
+#include <exception>
 #include <limits>
 #include <utility>
 

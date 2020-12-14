@@ -21,6 +21,8 @@
 #include "lv2/atom/atom.h"
 #include "lv2/atom/forge.h"
 #include "lv2/atom/util.h"
+#include "lv2/urid/urid.h"
+#include "sord/sord.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
@@ -81,8 +83,10 @@ private:
 		// Update size and reallocate if necessary
 		if (lv2_atom_pad_size(_size + len) > _capacity) {
 			_capacity = lv2_atom_pad_size(_size + len);
-			_buf      = AtomPtr{
-                static_cast<LV2_Atom*>(realloc(_buf.release(), _capacity))};
+
+			_buf = AtomPtr{static_cast<LV2_Atom*>(
+			                   realloc(_buf.release(), _capacity)),
+			               FreeDeleter<LV2_Atom>{}};
 		}
 
 		// Append new data

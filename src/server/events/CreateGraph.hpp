@@ -18,7 +18,6 @@
 #define INGEN_EVENTS_CREATEGRAPH_HPP
 
 #include "ClientUpdate.hpp"
-#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "types.hpp"
 
@@ -36,6 +35,7 @@ class Interface;
 
 namespace server {
 
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class PreProcessContext;
@@ -56,6 +56,8 @@ public:
 	            SampleCount                       timestamp,
 	            const Raul::Path&                 path,
 	            const Properties&                 properties);
+
+	~CreateGraph() override;
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

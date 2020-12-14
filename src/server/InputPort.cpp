@@ -35,6 +35,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <memory>
 
 namespace ingen {
 namespace server {

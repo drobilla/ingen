@@ -21,6 +21,7 @@
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
+#include "ingen/URI.hpp"
 #include "raul/Path.hpp"
 
 #include <boost/variant/variant.hpp>

@@ -20,14 +20,21 @@
 #include "types.hpp"
 
 #include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
+#include "ingen/URI.hpp"
+#include "ingen/paths.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
-#include "raul/Path.hpp"
 
 #include <atomic>
+#include <cstdint>
 #include <memory>
+#include <string>
+#include <utility>
+
+namespace Raul {
+class Path;
+} // namespace Raul
 
 namespace ingen {
 namespace server {

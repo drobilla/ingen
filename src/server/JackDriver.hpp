@@ -18,29 +18,37 @@
 #define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
 #include "Driver.hpp"
-#include "EnginePort.hpp"
-#include "ingen_config.h"
+#include "EnginePort.hpp" // IWYU pragma: keep
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
-#include "ingen/memory.hpp"
+#include "ingen/memory.hpp" // IWYU pragma: keep
 #include "lv2/atom/forge.h"
 #include "raul/Semaphore.hpp"
 
+#include <boost/intrusive/slist.hpp>
 #include <jack/jack.h>
 #include <jack/thread.h>
-#include <jack/transport.h>
 #include <jack/types.h>
 
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <memory>
 #include <string>
 
 namespace Raul {
 class Path;
 } // namespace Raul
+
+namespace boost {
+namespace intrusive {
+
+template <bool Enabled> struct cache_last;
+
+} // namespace intrusive
+} // namespace boost
 
 namespace ingen {
 

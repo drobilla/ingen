@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_INPUTPORT_HPP
 #define INGEN_ENGINE_INPUTPORT_HPP
 
-#include "ArcImpl.hpp"
+#include "ArcImpl.hpp" // IWYU pragma: keep
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
@@ -25,14 +25,20 @@
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 
-#include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
 
 #include <cstdint>
 #include <cstdlib>
-#include <memory>
 
 namespace Raul { class Symbol; }
+
+namespace boost {
+namespace intrusive {
+
+template <bool Enabled> struct constant_time_size;
+
+} // namespace intrusive
+} // namespace boost
 
 namespace ingen {
 

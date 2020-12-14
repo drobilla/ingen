@@ -36,14 +36,13 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/fmt.hpp"
-#include "ingen/memory.hpp"
 #include "lv2/atom/atom.h"
 #include "lv2/atom/forge.h"
 #include "lv2/atom/util.h"
 #include "raul/Path.hpp"
 
 #include <jack/midiport.h>
+#include <jack/transport.h>
 
 #ifdef HAVE_JACK_METADATA
 #include "jackey.h"
@@ -52,18 +51,13 @@
 
 #include <cassert>
 #include <chrono>
-#include <cstdlib>
-#include <cstring>
-#include <mutex>
+#include <map>
 #include <string>
 #include <utility>
 
 using jack_sample_t = jack_default_audio_sample_t;
 
 namespace ingen {
-
-class Node;
-
 namespace server {
 
 JackDriver::JackDriver(Engine& engine)

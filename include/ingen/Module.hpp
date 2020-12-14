@@ -17,7 +17,6 @@
 #ifndef INGEN_MODULE_HPP
 #define INGEN_MODULE_HPP
 
-#include "ingen/FilePath.hpp"
 #include "ingen/Library.hpp"
 #include "ingen/ingen.h"
 

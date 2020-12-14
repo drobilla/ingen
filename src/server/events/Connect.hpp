@@ -17,7 +17,6 @@
 #ifndef INGEN_EVENTS_CONNECT_HPP
 #define INGEN_EVENTS_CONNECT_HPP
 
-#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
@@ -35,6 +34,7 @@ class Interface;
 namespace server {
 
 class ArcImpl;
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class InputPort;
@@ -54,6 +54,8 @@ public:
 	        const std::shared_ptr<Interface>& client,
 	        SampleCount                       timestamp,
 	        const ingen::Connect&             msg);
+
+	~Connect() override;
 
 	bool pre_process(PreProcessContext& ctx) override;
 	void execute(RunContext& ctx) override;

@@ -19,11 +19,13 @@
 #include "BlockFactory.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "LV2Block.hpp"
 #include "PluginImpl.hpp"
 #include "PreProcessContext.hpp"
+#include "State.hpp"
 #include "types.hpp"
 
 #include "ingen/FilePath.hpp"
@@ -38,11 +40,11 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/paths.hpp"
-#include "lilv/lilv.h"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
+#include <map>
 #include <memory>
 #include <utility>
 
@@ -65,6 +67,8 @@ CreateBlock::CreateBlock(Engine&                           engine,
     , _graph(nullptr)
     , _block(nullptr)
 {}
+
+CreateBlock::~CreateBlock() = default;
 
 bool
 CreateBlock::pre_process(PreProcessContext& ctx)

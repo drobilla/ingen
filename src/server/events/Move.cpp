@@ -24,6 +24,7 @@
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
+#include <map>
 #include <memory>
 #include <mutex>
 

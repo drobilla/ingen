@@ -17,17 +17,15 @@
 #ifndef INGEN_EVENTS_DELTA_HPP
 #define INGEN_EVENTS_DELTA_HPP
 
-#include "BlockImpl.hpp"
 #include "ClientUpdate.hpp"
-#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
+#include "State.hpp"
 #include "types.hpp"
 
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
-#include "lilv/lilv.h"
 #include "raul/Maid.hpp"
 
 #include <boost/optional/optional.hpp>
@@ -45,6 +43,7 @@ struct SetProperty;
 
 namespace server {
 
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class PreProcessContext;

@@ -17,6 +17,7 @@
 #ifndef INGEN_ENGINE_PORTIMPL_HPP
 #define INGEN_ENGINE_PORTIMPL_HPP
 
+#include "BufferFactory.hpp"
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
@@ -34,7 +35,6 @@
 #include <atomic>
 #include <cstdint>
 #include <cstdlib>
-#include <memory>
 #include <utility>
 
 namespace Raul {
@@ -48,7 +48,6 @@ class Properties;
 namespace server {
 
 class BlockImpl;
-class BufferFactory;
 
 /** A port (input or output) on a Block.
  *

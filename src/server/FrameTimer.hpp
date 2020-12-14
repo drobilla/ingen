@@ -17,7 +17,6 @@
 #ifndef INGEN_ENGINE_FRAMETIMER_HPP
 #define INGEN_ENGINE_FRAMETIMER_HPP
 
-#include <chrono>
 #include <cmath>
 #include <cstdint>
 

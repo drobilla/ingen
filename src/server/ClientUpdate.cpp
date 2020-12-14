@@ -29,9 +29,12 @@
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 
+#include <boost/intrusive/slist.hpp>
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <utility>
 
