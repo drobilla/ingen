@@ -153,7 +153,7 @@ PortMenu::on_menu_expose()
 	const std::string label = block->label() + " " + block->port_label(port);
 	const Raul::Path  path  = Raul::Path(block->path() + Raul::Symbol("_" + port->symbol()));
 
-	ingen::Resource r(*_object.get());
+	ingen::Resource r(*_object);
 	r.remove_property(uris.lv2_index, uris.patch_wildcard);
 	r.set_property(uris.lv2_symbol, _app->forge().alloc(path.symbol()));
 	r.set_property(uris.lv2_name, _app->forge().alloc(label.c_str()));

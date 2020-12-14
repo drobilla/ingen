@@ -138,7 +138,7 @@ run(int argc, char** argv)
 	AtomReader atom_reader(world->uri_map(),
 	                       world->uris(),
 	                       world->log(),
-	                       *world->interface().get());
+	                       *world->interface());
 
 	// AtomWriter to serialise responses from the engine
 	std::shared_ptr<Interface> client(new TestClient(world->log()));

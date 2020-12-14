@@ -66,7 +66,6 @@ Checks: >
   -readability-convert-member-functions-to-static,
   -readability-delete-null-pointer,
   -readability-implicit-bool-conversion,
-  -readability-redundant-smartptr-get,
   -readability-use-anyofallof,
 WarningsAsErrors: '*'
 HeaderFilterRegex: 'include/ingen/.*|tests/.*|src/.*'

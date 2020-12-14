@@ -152,7 +152,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->reader = std::make_shared<ingen::AtomReader>(ui->world->uri_map(),
 	                                                 ui->world->uris(),
 	                                                 ui->world->log(),
-	                                                 *ui->client.get());
+	                                                 *ui->client);
 
 	// Create empty root graph model
 	ingen::Properties props;
