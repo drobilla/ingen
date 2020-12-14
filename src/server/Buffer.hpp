@@ -226,8 +226,11 @@ private:
 
 	void recycle();
 
-	BufferFactory&        _factory;
-	Buffer*               _next; ///< Intrusive linked list for BufferFactory
+	BufferFactory& _factory;
+
+	// NOLINTNEXTLINE(clang-analyzer-webkit.NoUncountedMemberChecker)
+	Buffer* _next; ///< Intrusive linked list for BufferFactory
+
 	void*                 _buf; ///< Actual buffer memory
 	BufferRef             _value_buffer; ///< Value buffer for numeric sequences
 	int64_t               _latest_event;

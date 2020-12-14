@@ -28,7 +28,6 @@ Checks: >
   -clang-analyzer-core.CallAndMessage,
   -clang-analyzer-optin.cplusplus.VirtualCall,
   -clang-analyzer-valist.Uninitialized,
-  -clang-analyzer-webkit.NoUncountedMemberChecker,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-no-malloc,
