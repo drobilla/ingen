@@ -38,7 +38,6 @@ def options(ctx):
          'no-plugin': 'do not build ingen.lv2 plugin',
          'no-python': 'do not install Python bindings',
          'no-webkit': 'do not use webkit to display plugin documentation',
-         'no-jack-session': 'do not build JACK session support',
          'no-socket': 'do not build Socket interface',
          'debug-urids': 'print a trace of URI mapping',
          'portaudio': 'build PortAudio backend'})
@@ -196,8 +195,6 @@ def configure(conf):
                             return_type   = 'int',
                             arg_types     = 'jack_client_t*,jack_port_t*,const char*',
                             mandatory     = False)
-        if not Options.options.no_jack_session:
-            conf.define('INGEN_JACK_SESSION', 1)
 
     if Options.options.debug_urids:
         conf.define('INGEN_DEBUG_URIDS', 1)
@@ -251,7 +248,6 @@ def configure(conf):
          'HTML plugin doc support': bool(conf.env.HAVE_WEBKIT),
          'PortAudio driver': bool(conf.env.HAVE_PORTAUDIO),
          'Jack driver': bool(conf.env.HAVE_JACK),
-         'Jack session support': conf.is_defined('INGEN_JACK_SESSION'),
          'Jack metadata support': conf.is_defined('HAVE_JACK_METADATA'),
          'LV2 plugin driver': bool(conf.env.INGEN_BUILD_LV2),
          'LV2 bundle': conf.env.INGEN_BUNDLE_DIR,

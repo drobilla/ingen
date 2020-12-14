@@ -45,11 +45,6 @@
 
 #include <jack/midiport.h>
 
-#ifdef INGEN_JACK_SESSION
-#include "ingen/Serialiser.hpp"
-#include <jack/session.h>
-#endif
-
 #ifdef HAVE_JACK_METADATA
 #include "jackey.h"
 #include <jack/metadata.h>
@@ -104,17 +99,6 @@ JackDriver::attach(const std::string& server_name,
 {
 	assert(!_client);
 	if (!jack_client) {
-#ifdef INGEN_JACK_SESSION
-		const std::string uuid = _engine.world().jack_uuid();
-		if (!uuid.empty()) {
-			_client = jack_client_open(client_name.c_str(),
-			                           JackSessionID, nullptr,
-			                           uuid.c_str());
-			_engine.log().info("Connected to Jack as `%1%' (UUID `%2%')\n",
-			                   client_name.c_str(), uuid);
-		}
-#endif
-
 		// Try supplied server name
 		if (!_client && !server_name.empty()) {
 			if ((_client = jack_client_open(client_name.c_str(),
@@ -153,9 +137,6 @@ JackDriver::attach(const std::string& server_name,
 
 	jack_set_thread_init_callback(_client, thread_init_cb, this);
 	jack_set_buffer_size_callback(_client, block_length_cb, this);
-#ifdef INGEN_JACK_SESSION
-	jack_set_session_callback(_client, session_cb, this);
-#endif
 
 	for (auto& p : _ports) {
 		register_port(p);
@@ -569,43 +550,6 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 	}
 	return 0;
 }
-
-#ifdef INGEN_JACK_SESSION
-void
-JackDriver::_session_cb(jack_session_event_t* event)
-{
-	_engine.log().info("Jack session save to %1%\n", event->session_dir);
-
-	const std::string cmd = fmt("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}",
-	                            jack_get_client_name(_client),
-	                            event->client_uuid);
-
-	if (auto serialiser = _engine.world().serialiser()) {
-		std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
-
-		std::shared_ptr<Node> root(_engine.root_graph(), NullDeleter<Node>);
-		serialiser->write_bundle(root,
-		                         URI(std::string("file://") + event->session_dir));
-	}
-
-	event->command_line = static_cast<char*>(malloc(cmd.size() + 1));
-	memcpy(event->command_line, cmd.c_str(), cmd.size() + 1);
-	jack_session_reply(_client, event);
-
-	switch (event->type) {
-	case JackSessionSave:
-		break;
-	case JackSessionSaveAndQuit:
-		_engine.log().warn("Jack session quit\n");
-		_engine.quit();
-		break;
-	case JackSessionSaveTemplate:
-		break;
-	}
-
-	jack_session_event_free(event);
-}
-#endif
 
 } // namespace server
 } // namespace ingen
