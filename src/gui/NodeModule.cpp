@@ -336,13 +336,14 @@ NodeModule::port(std::shared_ptr<const PortModel> model)
 void
 NodeModule::delete_port_view(std::shared_ptr<const PortModel> model)
 {
-	Port* p = port(model);
-	if (p) {
-		delete p;
-	} else {
+	Port* const p = port(model);
+
+	if (!p) {
 		app().log().warn("Failed to find port %1% on module %2%\n",
 		                 model->path(), _block->path());
 	}
+
+	delete p;
 }
 
 bool
