@@ -10,7 +10,7 @@ Checks: >
   -*-special-member-functions,
   -*-uppercase-literal-suffix,
   -abseil-string-find-str-contains,
-  -android-cloexec-fopen,
+  -android-cloexec-*,
   -bugprone-branch-clone,
   -bugprone-exception-escape,
   -bugprone-macro-parentheses,
