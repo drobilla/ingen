@@ -64,7 +64,7 @@ public:
 		const char* _uri;
 	};
 
-	class FeatureArray : public Raul::Noncopyable {
+	class FeatureArray : public raul::Noncopyable {
 	public:
 		using FeatureVector = std::vector<std::shared_ptr<LV2_Feature>>;
 

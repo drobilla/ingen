@@ -167,9 +167,9 @@ LoadPluginWindow::name_changed()
 	// Toggle add button sensitivity according name legality
 	if (_selection->get_selected_rows().size() == 1) {
 		const string sym = _name_entry->get_text();
-		if (!Raul::Symbol::is_valid(sym)) {
+		if (!raul::Symbol::is_valid(sym)) {
 			_add_button->property_sensitive() = false;
-		} else if (_app->store()->find(_graph->path().child(Raul::Symbol(sym)))
+		} else if (_app->store()->find(_graph->path().child(raul::Symbol(sym)))
 		           != _app->store()->end()) {
 			_add_button->property_sensitive() = false;
 		} else {
@@ -407,7 +407,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		name = generate_module_name(plugin, _name_offset);
 	}
 
-	if (name.empty() || !Raul::Symbol::is_valid(name)) {
+	if (name.empty() || !raul::Symbol::is_valid(name)) {
 		Gtk::MessageDialog dialog(
 			*this,
 			"Unable to choose a default name, please provide one",
@@ -415,7 +415,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		dialog.run();
 	} else {
-		Raul::Path path  = _graph->path().child(Raul::Symbol::symbolify(name));
+		raul::Path path  = _graph->path().child(raul::Symbol::symbolify(name));
 		Properties props = _initial_data;
 		props.emplace(uris.rdf_type, Property(uris.ingen_Block));
 		props.emplace(uris.lv2_prototype, _app->forge().make_urid(plugin->uri()));

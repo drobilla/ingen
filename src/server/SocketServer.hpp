@@ -46,7 +46,7 @@ class SocketServer
 public:
 	SocketServer(World&                               world,
 	             server::Engine&                      engine,
-	             const std::shared_ptr<Raul::Socket>& sock)
+	             const std::shared_ptr<raul::Socket>& sock)
 		: _engine(engine)
 		, _sink(world.conf().option("dump").get<int32_t>()
 		        ? std::shared_ptr<Interface>(

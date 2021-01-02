@@ -54,7 +54,7 @@ monitor_period(const Engine& engine)
 
 PortImpl::PortImpl(BufferFactory&      bufs,
                    BlockImpl* const    block,
-                   const Raul::Symbol& name,
+                   const raul::Symbol& name,
                    uint32_t            index,
                    uint32_t            poly,
                    PortType            type,
@@ -118,7 +118,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 bool
 PortImpl::get_buffers(BufferFactory&                   bufs,
                       GetFn                            get,
-                      const Raul::managed_ptr<Voices>& voices,
+                      const raul::managed_ptr<Voices>& voices,
                       uint32_t                         poly,
                       size_t) const
 {
@@ -216,7 +216,7 @@ PortImpl::deactivate()
 }
 
 void
-PortImpl::set_voices(RunContext&, Raul::managed_ptr<Voices>&& voices)
+PortImpl::set_voices(RunContext&, raul::managed_ptr<Voices>&& voices)
 {
 	_voices = std::move(voices);
 	connect_buffers();

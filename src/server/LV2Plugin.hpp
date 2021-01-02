@@ -42,13 +42,13 @@ public:
 	LV2Plugin(World& world, const LilvPlugin* lplugin);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
-	                       const Raul::Symbol& symbol,
+	                       const raul::Symbol& symbol,
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
 	                       Engine&             engine,
 	                       const LilvState*    state) override;
 
-	Raul::Symbol symbol() const override;
+	raul::Symbol symbol() const override;
 
 	World&            world()       const { return _world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }

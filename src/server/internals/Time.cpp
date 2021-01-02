@@ -47,12 +47,12 @@ namespace internals {
 
 InternalPlugin* TimeNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, URI(NS_INTERNALS "Time"), Raul::Symbol("time"));
+		uris, URI(NS_INTERNALS "Time"), raul::Symbol("time"));
 }
 
 TimeNode::TimeNode(InternalPlugin*     plugin,
                    BufferFactory&      bufs,
-                   const Raul::Symbol& symbol,
+                   const raul::Symbol& symbol,
                    bool                polyphonic,
                    GraphImpl*          parent,
                    SampleRate          srate)
@@ -62,7 +62,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 	_ports = bufs.maid().make_managed<Ports>(1);
 
 	_notify_port = new OutputPort(
-		bufs, this, Raul::Symbol("notify"), 0, 1,
+		bufs, this, raul::Symbol("notify"), 0, 1,
 		PortType::ATOM, uris.atom_Sequence, Atom(), 1024);
 	_notify_port->set_property(uris.lv2_name, bufs.forge().alloc("Notify"));
 	_notify_port->set_property(uris.atom_supports,

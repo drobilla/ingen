@@ -29,10 +29,10 @@
 #include <string>
 #include <vector>
 
-namespace Raul {
+namespace raul {
 class Path;
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -57,7 +57,7 @@ public:
 
 	using Ports = std::vector<std::shared_ptr<const PortModel>>;
 
-	std::shared_ptr<const PortModel> get_port(const Raul::Symbol& symbol) const;
+	std::shared_ptr<const PortModel> get_port(const raul::Symbol& symbol) const;
 	std::shared_ptr<const PortModel> get_port(uint32_t index) const;
 
 	Node* port(uint32_t index) const override;
@@ -89,19 +89,19 @@ public:
 protected:
 	friend class ClientStore;
 
-	BlockModel(URIs& uris, URI plugin_uri, const Raul::Path& path);
+	BlockModel(URIs& uris, URI plugin_uri, const raul::Path& path);
 
 	BlockModel(URIs&                               uris,
 	           const std::shared_ptr<PluginModel>& plugin,
-	           const Raul::Path&                   path);
+	           const raul::Path&                   path);
 
-	explicit BlockModel(const Raul::Path& path);
+	explicit BlockModel(const raul::Path& path);
 
 	void add_child(const std::shared_ptr<ObjectModel>& c) override;
 	bool remove_child(const std::shared_ptr<ObjectModel>& c) override;
 	void add_port(const std::shared_ptr<PortModel>& pm);
 	void remove_port(const std::shared_ptr<PortModel>& port);
-	void remove_port(const Raul::Path& port_path);
+	void remove_port(const raul::Path& port_path);
 	void set(const std::shared_ptr<ObjectModel>& model) override;
 
 	virtual void clear();

@@ -30,7 +30,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-namespace Raul { class Symbol; }
+namespace raul { class Symbol; }
 
 namespace boost {
 namespace intrusive {
@@ -66,7 +66,7 @@ class InputPort : public PortImpl
 public:
 	InputPort(BufferFactory&      bufs,
 	          BlockImpl*          parent,
-	          const Raul::Symbol& symbol,
+	          const raul::Symbol& symbol,
 	          uint32_t            index,
 	          uint32_t            poly,
 	          PortType            type,
@@ -105,7 +105,7 @@ public:
 	 * connection/disconnection/etc in the next process cycle.
 	 */
 	bool pre_get_buffers(BufferFactory&             bufs,
-	                     Raul::managed_ptr<Voices>& voices,
+	                     raul::managed_ptr<Voices>& voices,
 	                     uint32_t                   poly) const;
 
 	bool
@@ -132,7 +132,7 @@ public:
 protected:
 	bool get_buffers(BufferFactory&                   bufs,
 	                 PortImpl::GetFn                  get,
-	                 const Raul::managed_ptr<Voices>& voices,
+	                 const raul::managed_ptr<Voices>& voices,
 	                 uint32_t                         poly,
 	                 size_t num_in_arcs) const override;
 

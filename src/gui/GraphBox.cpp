@@ -299,7 +299,7 @@ GraphBox::set_status_text(const std::string& text)
 }
 
 void
-GraphBox::set_graph_from_path(const Raul::Path&                 path,
+GraphBox::set_graph_from_path(const raul::Path&                 path,
                               const std::shared_ptr<GraphView>& view)
 {
 	if (view) {
@@ -654,7 +654,7 @@ GraphBox::event_save_as()
 
 		const std::string symbol(basename.substr(0, basename.find('.')));
 
-		if (!Raul::Symbol::is_valid(symbol)) {
+		if (!raul::Symbol::is_valid(symbol)) {
 			error(
 				"<b>Ingen bundle names must be valid symbols.</b>",
 				"All characters must be _, a-z, A-Z, or 0-9, but the first may not be 0-9.");

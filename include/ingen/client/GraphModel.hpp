@@ -26,9 +26,9 @@
 #include <cstdint>
 #include <memory>
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -67,7 +67,7 @@ public:
 private:
 	friend class ClientStore;
 
-	GraphModel(URIs& uris, const Raul::Path& graph_path)
+	GraphModel(URIs& uris, const raul::Path& graph_path)
 	    : BlockModel(uris,
 	                 static_cast<const URI&>(uris.ingen_Graph),
 	                 graph_path)

@@ -63,9 +63,9 @@ private:
 	std::shared_ptr<Schedule> _schedule;
 
 	Log&                         _log;
-	Raul::Semaphore              _sem;
-	Raul::RingBuffer             _requests;
-	Raul::RingBuffer             _responses;
+	raul::Semaphore              _sem;
+	raul::RingBuffer             _requests;
+	raul::RingBuffer             _responses;
 	uint8_t* const               _buffer;
 	const uint32_t               _buffer_size;
 	std::unique_ptr<std::thread> _thread;

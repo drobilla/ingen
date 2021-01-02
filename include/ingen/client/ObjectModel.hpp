@@ -58,8 +58,8 @@ public:
 	void on_property(const URI& uri, const Atom& value) override;
 	void on_property_removed(const URI& uri, const Atom& value) override;
 
-	const Raul::Path&   path()   const override { return _path; }
-	const Raul::Symbol& symbol() const override { return _symbol; }
+	const raul::Path&   path()   const override { return _path; }
+	const raul::Symbol& symbol() const override { return _symbol; }
 
 	std::shared_ptr<ObjectModel> parent() const { return _parent; }
 	bool                         polyphonic() const;
@@ -77,10 +77,10 @@ public:
 protected:
 	friend class ClientStore;
 
-	ObjectModel(URIs& uris, const Raul::Path& path);
+	ObjectModel(URIs& uris, const raul::Path& path);
 	ObjectModel(const ObjectModel& copy);
 
-	void set_path(const Raul::Path& p) override;
+	void set_path(const raul::Path& p) override;
 	virtual void set_parent(const std::shared_ptr<ObjectModel>& p);
 	virtual void add_child(const std::shared_ptr<ObjectModel>& c) {}
 	virtual bool remove_child(const std::shared_ptr<ObjectModel>& c) { return true; }
@@ -90,8 +90,8 @@ protected:
 	std::shared_ptr<ObjectModel> _parent;
 
 private:
-	Raul::Path   _path;
-	Raul::Symbol _symbol;
+	raul::Path   _path;
+	raul::Symbol _symbol;
 };
 
 } // namespace client

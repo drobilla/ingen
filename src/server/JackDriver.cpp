@@ -195,7 +195,7 @@ JackDriver::deactivate()
 }
 
 EnginePort*
-JackDriver::get_port(const Raul::Path& path)
+JackDriver::get_port(const raul::Path& path)
 {
 	for (auto& p : _ports) {
 		if (p.graph_port()->path() == path) {
@@ -266,8 +266,8 @@ JackDriver::unregister_port(EnginePort& port)
 }
 
 void
-JackDriver::rename_port(const Raul::Path& old_path,
-                        const Raul::Path& new_path)
+JackDriver::rename_port(const raul::Path& old_path,
+                        const raul::Path& new_path)
 {
 	EnginePort* eport = get_port(old_path);
 	if (eport) {
@@ -283,7 +283,7 @@ JackDriver::rename_port(const Raul::Path& old_path,
 }
 
 void
-JackDriver::port_property(const Raul::Path& path,
+JackDriver::port_property(const raul::Path& path,
                           const URI&        uri,
                           const Atom&       value)
 {

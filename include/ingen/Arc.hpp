@@ -20,7 +20,7 @@
 #include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
 
-namespace Raul { class Path; }
+namespace raul { class Path; }
 
 namespace ingen {
 
@@ -28,11 +28,11 @@ namespace ingen {
  *
  * @ingroup Ingen
  */
-class INGEN_API Arc : public Raul::Deletable
+class INGEN_API Arc : public raul::Deletable
 {
 public:
-	virtual const Raul::Path& tail_path() const = 0;
-	virtual const Raul::Path& head_path() const = 0;
+	virtual const raul::Path& tail_path() const = 0;
+	virtual const raul::Path& head_path() const = 0;
 };
 
 } // namespace ingen

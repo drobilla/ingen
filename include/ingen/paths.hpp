@@ -38,14 +38,14 @@ inline bool uri_is_path(const URI& uri)
 	}
 }
 
-inline Raul::Path uri_to_path(const URI& uri)
+inline raul::Path uri_to_path(const URI& uri)
 {
 	return (uri == main_uri())
-		? Raul::Path("/")
-		: Raul::Path(uri.string().substr(main_uri().string().length()));
+		? raul::Path("/")
+		: raul::Path(uri.string().substr(main_uri().string().length()));
 }
 
-inline URI path_to_uri(const Raul::Path& path)
+inline URI path_to_uri(const raul::Path& path)
 {
 	return URI(main_uri().string() + path.c_str());
 }

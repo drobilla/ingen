@@ -50,12 +50,12 @@ namespace internals {
 
 InternalPlugin* TriggerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, URI(NS_INTERNALS "Trigger"), Raul::Symbol("trigger"));
+		uris, URI(NS_INTERNALS "Trigger"), raul::Symbol("trigger"));
 }
 
 TriggerNode::TriggerNode(InternalPlugin*     plugin,
                          BufferFactory&      bufs,
-                         const Raul::Symbol& symbol,
+                         const raul::Symbol& symbol,
                          bool                polyphonic,
                          GraphImpl*          parent,
                          SampleRate          srate)
@@ -67,21 +67,21 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 
 	const Atom zero = bufs.forge().make(0.0f);
 
-	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
+	_midi_in_port = new InputPort(bufs, this, raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_midi_in_port->set_property(uris.atom_supports,
 	                            bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(0) = _midi_in_port;
 
-	_midi_out_port = new OutputPort(bufs, this, Raul::Symbol("event"), 1, 1,
+	_midi_out_port = new OutputPort(bufs, this, raul::Symbol("event"), 1, 1,
 	                                PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_out_port->set_property(uris.lv2_name, bufs.forge().alloc("Event"));
 	_midi_out_port->set_property(uris.atom_supports,
 	                             bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(1) = _midi_out_port;
 
-	_note_port = new InputPort(bufs, this, Raul::Symbol("note"), 2, 1,
+	_note_port = new InputPort(bufs, this, raul::Symbol("note"), 2, 1,
 	                           PortType::ATOM, uris.atom_Sequence,
 	                           bufs.forge().make(60.0f));
 	_note_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
@@ -91,21 +91,21 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	_note_port->set_property(uris.lv2_name, bufs.forge().alloc("Note"));
 	_ports->at(2) = _note_port;
 
-	_gate_port = new OutputPort(bufs, this, Raul::Symbol("gate"), 3, 1,
+	_gate_port = new OutputPort(bufs, this, raul::Symbol("gate"), 3, 1,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_gate_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
 	_ports->at(3) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, Raul::Symbol("trigger"), 4, 1,
+	_trig_port = new OutputPort(bufs, this, raul::Symbol("trigger"), 4, 1,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_trig_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(4) = _trig_port;
 
-	_vel_port = new OutputPort(bufs, this, Raul::Symbol("velocity"), 5, 1,
+	_vel_port = new OutputPort(bufs, this, raul::Symbol("velocity"), 5, 1,
 	                           PortType::ATOM, uris.atom_Sequence, zero);
 	_vel_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_vel_port->set_property(uris.lv2_minimum, zero);

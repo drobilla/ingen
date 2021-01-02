@@ -40,7 +40,7 @@ namespace client {
 
 BlockModel::BlockModel(URIs&                               uris,
                        const std::shared_ptr<PluginModel>& plugin,
-                       const Raul::Path&                   path)
+                       const raul::Path&                   path)
     : ObjectModel(uris, path)
     , _plugin_uri(plugin->uri())
     , _plugin(plugin)
@@ -50,7 +50,7 @@ BlockModel::BlockModel(URIs&                               uris,
 {
 }
 
-BlockModel::BlockModel(URIs& uris, URI plugin_uri, const Raul::Path& path)
+BlockModel::BlockModel(URIs& uris, URI plugin_uri, const raul::Path& path)
     : ObjectModel(uris, path)
     , _plugin_uri(std::move(plugin_uri))
     , _num_values(0)
@@ -88,7 +88,7 @@ BlockModel::remove_port(const std::shared_ptr<PortModel>& port)
 }
 
 void
-BlockModel::remove_port(const Raul::Path& port_path)
+BlockModel::remove_port(const raul::Path& port_path)
 {
 	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
@@ -152,7 +152,7 @@ BlockModel::add_port(const std::shared_ptr<PortModel>& pm)
 }
 
 std::shared_ptr<const PortModel>
-BlockModel::get_port(const Raul::Symbol& symbol) const
+BlockModel::get_port(const raul::Symbol& symbol) const
 {
 	for (auto p : _ports) {
 		if (p->symbol() == symbol) {

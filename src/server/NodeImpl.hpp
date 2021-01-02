@@ -38,7 +38,7 @@ class RunContext;
 
 /** An object on the audio graph (a Graph, Block, or Port).
  *
- * Each of these is a Raul::Deletable and so can be deleted in a realtime safe
+ * Each of these is a raul::Deletable and so can be deleted in a realtime safe
  * way from anywhere, and they all have a map of variable for clients to store
  * arbitrary values in (which the engine puts no significance to whatsoever).
  *
@@ -47,17 +47,17 @@ class RunContext;
 class NodeImpl : public Node
 {
 public:
-	const Raul::Symbol& symbol() const override { return _symbol; }
+	const raul::Symbol& symbol() const override { return _symbol; }
 
 	Node*     graph_parent() const override { return _parent; }
 	NodeImpl* parent()       const          { return _parent; }
 
 	/** Rename */
-	void set_path(const Raul::Path& new_path) override {
+	void set_path(const raul::Path& new_path) override {
 		_path = new_path;
 		const char* const new_sym = new_path.symbol();
 		if (new_sym[0] != '\0') {
-			_symbol = Raul::Symbol(new_sym);
+			_symbol = raul::Symbol(new_sym);
 		}
 		set_uri(path_to_uri(new_path));
 	}
@@ -67,7 +67,7 @@ public:
 	/** The Graph this object is a child of. */
 	virtual GraphImpl* parent_graph() const;
 
-	const Raul::Path& path() const override { return _path; }
+	const raul::Path& path() const override { return _path; }
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -94,11 +94,11 @@ public:
 protected:
 	NodeImpl(const ingen::URIs&  uris,
 	         NodeImpl*           parent,
-	         const Raul::Symbol& symbol);
+	         const raul::Symbol& symbol);
 
 	NodeImpl*    _parent;
-	Raul::Path   _path;
-	Raul::Symbol _symbol;
+	raul::Path   _path;
+	raul::Symbol _symbol;
 };
 
 } // namespace server

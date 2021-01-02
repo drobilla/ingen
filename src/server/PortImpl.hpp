@@ -37,9 +37,9 @@
 #include <cstdlib>
 #include <utility>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -97,11 +97,11 @@ public:
 		BufferRef buffer;
 	};
 
-	using Voices = Raul::Array<Voice>;
+	using Voices = raul::Array<Voice>;
 
 	PortImpl(BufferFactory&      bufs,
 	         BlockImpl*          block,
-	         const Raul::Symbol& name,
+	         const raul::Symbol& name,
 	         uint32_t            index,
 	         uint32_t            poly,
 	         PortType            type,
@@ -116,7 +116,7 @@ public:
 	BlockImpl* parent_block() const { return reinterpret_cast<BlockImpl*>(_parent); }
 
 	/** Set the the voices (buffers) for this port in the audio thread. */
-	void set_voices(RunContext& ctx, Raul::managed_ptr<Voices>&& voices);
+	void set_voices(RunContext& ctx, raul::managed_ptr<Voices>&& voices);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -291,7 +291,7 @@ protected:
 	 */
 	virtual bool get_buffers(BufferFactory&                   bufs,
 	                         GetFn                            get,
-	                         const Raul::managed_ptr<Voices>& voices,
+	                         const raul::managed_ptr<Voices>& voices,
 	                         uint32_t                         poly,
 	                         size_t num_in_arcs) const;
 
@@ -307,8 +307,8 @@ protected:
 	Atom                      _value;
 	Atom                      _min;
 	Atom                      _max;
-	Raul::managed_ptr<Voices> _voices;
-	Raul::managed_ptr<Voices> _prepared_voices;
+	raul::managed_ptr<Voices> _voices;
+	raul::managed_ptr<Voices> _prepared_voices;
 	BufferRef                 _user_buffer;
 	std::atomic_flag          _connected_flag;
 	bool                      _monitored;

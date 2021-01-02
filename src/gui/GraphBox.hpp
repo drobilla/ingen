@@ -42,9 +42,9 @@ class MenuItem;
 class Statusbar;
 } // namespace Gtk
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -97,7 +97,7 @@ public:
 	void show_port_status(const client::PortModel* port,
 	                      const Atom&              value);
 
-	void set_graph_from_path(const Raul::Path&                 path,
+	void set_graph_from_path(const raul::Path&                 path,
 	                         const std::shared_ptr<GraphView>& view);
 
 	void object_entered(const client::ObjectModel* model);

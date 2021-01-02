@@ -24,7 +24,7 @@
 
 #include <cstddef>
 
-namespace Raul { class Path; }
+namespace raul { class Path; }
 
 namespace ingen {
 
@@ -44,7 +44,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class Driver : public Raul::Noncopyable {
+class Driver : public raul::Noncopyable {
 public:
 	virtual ~Driver() = default;
 
@@ -60,7 +60,7 @@ public:
 	virtual EnginePort* create_port(DuplexPort* graph_port) = 0;
 
 	/** Find a system port by path. */
-	virtual EnginePort* get_port(const Raul::Path& path) = 0;
+	virtual EnginePort* get_port(const raul::Path& path) = 0;
 
 	/** Add a system visible port (e.g. a port on the root graph). */
 	virtual void add_port(RunContext& ctx, EnginePort* port) = 0;
@@ -83,11 +83,11 @@ public:
 	virtual void unregister_port(EnginePort& port) = 0;
 
 	/** Rename a system visible port. */
-	virtual void rename_port(const Raul::Path& old_path,
-	                         const Raul::Path& new_path) = 0;
+	virtual void rename_port(const raul::Path& old_path,
+	                         const raul::Path& new_path) = 0;
 
 	/** Apply a system visible port property. */
-	virtual void port_property(const Raul::Path& path,
+	virtual void port_property(const raul::Path& path,
 	                           const URI&        uri,
 	                           const Atom&       value) = 0;
 

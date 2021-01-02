@@ -28,9 +28,9 @@
 
 #include <cstdint>
 
-namespace Raul {
+namespace raul {
 class Path; // IWYU pragma: keep
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 namespace server {
@@ -52,7 +52,7 @@ class RunContext;
  * \ingroup engine
  */
 class ArcImpl
-		: private Raul::Noncopyable
+		: private raul::Noncopyable
 		, public  Arc
 		, public  boost::intrusive::slist_base_hook<>
 {
@@ -63,8 +63,8 @@ public:
 	inline PortImpl* tail() const { return _tail; }
 	inline PortImpl* head() const { return _head; }
 
-	const Raul::Path& tail_path() const override;
-	const Raul::Path& head_path() const override;
+	const raul::Path& tail_path() const override;
+	const raul::Path& head_path() const override;
 
 	/** Get the buffer for a particular voice.
 	 * An Arc is smart - it knows the destination port requesting the

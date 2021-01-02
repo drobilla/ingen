@@ -75,7 +75,7 @@ private:
 	BlockImpl*                       _block;
 	PortImpl*                        _port;
 	Impls                            _impls;
-	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	raul::managed_ptr<CompiledGraph> _compiled_graph;
 	bool                             _deleting;
 };
 

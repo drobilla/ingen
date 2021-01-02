@@ -78,7 +78,7 @@ private:
 	friend class ClientStore;
 
 	PortModel(URIs&             uris,
-	          const Raul::Path& path,
+	          const raul::Path& path,
 	          uint32_t          index,
 	          Direction         dir)
 		: ObjectModel(uris, path)

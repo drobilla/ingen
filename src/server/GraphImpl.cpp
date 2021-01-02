@@ -48,14 +48,14 @@ namespace ingen {
 namespace server {
 
 GraphImpl::GraphImpl(Engine&             engine,
-                     const Raul::Symbol& symbol,
+                     const raul::Symbol& symbol,
                      uint32_t            poly,
                      GraphImpl*          parent,
                      SampleRate          srate,
                      uint32_t            internal_poly)
 	: BlockImpl(new GraphPlugin(engine.world().uris(),
 	                            engine.world().uris().ingen_Graph,
-	                            Raul::Symbol("graph"),
+	                            raul::Symbol("graph"),
 	                            "Ingen Graph"),
 	            symbol, poly, parent, srate)
 	, _engine(engine)
@@ -78,7 +78,7 @@ GraphImpl::~GraphImpl()
 
 BlockImpl*
 GraphImpl::duplicate(Engine&             engine,
-                     const Raul::Symbol& symbol,
+                     const raul::Symbol& symbol,
                      GraphImpl*          parent)
 {
 	BufferFactory&   bufs = *engine.buffer_factory();
@@ -190,7 +190,7 @@ GraphImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 bool
 GraphImpl::apply_internal_poly(RunContext&    ctx,
                                BufferFactory& bufs,
-                               Raul::Maid&,
+                               raul::Maid&,
                                uint32_t poly)
 {
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
@@ -312,7 +312,7 @@ GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 }
 
 void
-GraphImpl::set_compiled_graph(Raul::managed_ptr<CompiledGraph>&& cg)
+GraphImpl::set_compiled_graph(raul::managed_ptr<CompiledGraph>&& cg)
 {
 	if (_compiled_graph && _compiled_graph != cg) {
 		_engine.reset_load();
@@ -365,13 +365,13 @@ GraphImpl::clear_ports()
 	_outputs.clear();
 }
 
-Raul::managed_ptr<BlockImpl::Ports>
-GraphImpl::build_ports_array(Raul::Maid& maid)
+raul::managed_ptr<BlockImpl::Ports>
+GraphImpl::build_ports_array(raul::Maid& maid)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	const size_t             n      = _inputs.size() + _outputs.size();
-	Raul::managed_ptr<Ports> result = maid.make_managed<Ports>(n);
+	raul::managed_ptr<Ports> result = maid.make_managed<Ports>(n);
 
 	std::map<size_t, DuplexPort*> ports;
 	for (auto& p : _inputs) {

@@ -41,9 +41,9 @@
 #include <memory>
 #include <mutex>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace boost {
 namespace intrusive {
@@ -81,7 +81,7 @@ class LV2Block final : public BlockImpl
 {
 public:
 	LV2Block(LV2Plugin*          plugin,
-	         const Raul::Symbol& symbol,
+	         const raul::Symbol& symbol,
 	         bool                polyphonic,
 	         GraphImpl*          parent,
 	         SampleRate          srate);
@@ -94,7 +94,7 @@ public:
 	bool          save_state(const FilePath& dir) const override;
 
 	BlockImpl* duplicate(Engine&             engine,
-	                     const Raul::Symbol& symbol,
+	                     const raul::Symbol& symbol,
 	                     GraphImpl*          parent) override;
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly) override;
@@ -124,7 +124,7 @@ public:
 	static StatePtr load_state(World& world, const FilePath& path);
 
 protected:
-	struct Instance : public Raul::Noncopyable {
+	struct Instance : public raul::Noncopyable {
 		explicit Instance(LilvInstance* i) : instance(i) {}
 
 		~Instance() { lilv_instance_free(instance); }
@@ -139,9 +139,9 @@ protected:
 		return static_cast<LilvInstance*>((*_instances)[voice]->instance);
 	}
 
-	using Instances = Raul::Array<std::shared_ptr<Instance>>;
+	using Instances = raul::Array<std::shared_ptr<Instance>>;
 
-	static void drop_instances(const Raul::managed_ptr<Instances>& instances) {
+	static void drop_instances(const raul::managed_ptr<Instances>& instances) {
 		if (instances) {
 			for (size_t i = 0; i < instances->size(); ++i) {
 				(*instances)[i].reset();
@@ -149,8 +149,8 @@ protected:
 		}
 	}
 
-	struct Response : public Raul::Maid::Disposable
-	                , public Raul::Noncopyable
+	struct Response : public raul::Maid::Disposable
+	                , public raul::Noncopyable
 	                , public boost::intrusive::slist_base_hook<>
 	{
 		inline Response(uint32_t s, const void* d)
@@ -177,8 +177,8 @@ protected:
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
 
 	LV2Plugin*                                 _lv2_plugin;
-	Raul::managed_ptr<Instances>               _instances;
-	Raul::managed_ptr<Instances>               _prepared_instances;
+	raul::managed_ptr<Instances>               _instances;
+	raul::managed_ptr<Instances>               _prepared_instances;
 	const LV2_Worker_Interface*                _worker_iface;
 	std::mutex                                 _work_mutex;
 	Responses                                  _responses;

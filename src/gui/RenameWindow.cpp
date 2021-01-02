@@ -95,12 +95,12 @@ void
 RenameWindow::values_changed()
 {
 	const std::string& symbol = _symbol_entry->get_text();
-	if (!Raul::Symbol::is_valid(symbol)) {
+	if (!raul::Symbol::is_valid(symbol)) {
 		_message_label->set_text("Invalid symbol");
 		_ok_button->property_sensitive() = false;
 	} else if (_object->symbol() != symbol &&
 	           _app->store()->object(
-		           _object->parent()->path().child(Raul::Symbol(symbol)))) {
+		           _object->parent()->path().child(raul::Symbol(symbol)))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
 	} else {
@@ -128,7 +128,7 @@ RenameWindow::ok_clicked()
 	const URIs&        uris       = _app->uris();
 	const std::string& symbol_str = _symbol_entry->get_text();
 	const std::string& label      = _label_entry->get_text();
-	Raul::Path         path       = _object->path();
+	raul::Path         path       = _object->path();
 	const Atom&        name_atom  = _object->get_property(uris.lv2_name);
 
 	if (!label.empty() && (name_atom.type() != uris.forge.String ||
@@ -138,8 +138,8 @@ RenameWindow::ok_clicked()
 		                   _app->forge().alloc(label));
 	}
 
-	if (Raul::Symbol::is_valid(symbol_str)) {
-		const Raul::Symbol symbol(symbol_str);
+	if (raul::Symbol::is_valid(symbol_str)) {
+		const raul::Symbol symbol(symbol_str);
 		if (symbol != _object->symbol()) {
 			path = _object->path().parent().child(symbol);
 			_app->interface()->move(_object->path(), path);

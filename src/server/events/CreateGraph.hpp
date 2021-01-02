@@ -54,7 +54,7 @@ public:
 	            const std::shared_ptr<Interface>& client,
 	            int32_t                           id,
 	            SampleCount                       timestamp,
-	            const Raul::Path&                 path,
+	            const raul::Path&                 path,
 	            const Properties&                 properties);
 
 	~CreateGraph() override;
@@ -69,12 +69,12 @@ public:
 private:
 	void build_child_events();
 
-	const Raul::Path                  _path;
+	const raul::Path                  _path;
 	Properties                        _properties;
 	ClientUpdate                      _update;
 	GraphImpl*                        _graph;
 	GraphImpl*                        _parent;
-	Raul::managed_ptr<CompiledGraph>  _compiled_graph;
+	raul::managed_ptr<CompiledGraph>  _compiled_graph;
 	std::list<std::unique_ptr<Event>> _child_events;
 };
 

@@ -32,7 +32,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace Raul { class Symbol; }
+namespace raul { class Symbol; }
 
 namespace ingen {
 
@@ -62,7 +62,7 @@ class INGEN_API DuplexPort final
 public:
 	DuplexPort(BufferFactory&      bufs,
 	           GraphImpl*          parent,
-	           const Raul::Symbol& symbol,
+	           const raul::Symbol& symbol,
 	           uint32_t            index,
 	           bool                polyphonic,
 	           PortType            type,
@@ -74,7 +74,7 @@ public:
 	~DuplexPort() override;
 
 	DuplexPort* duplicate(Engine&             engine,
-	                      const Raul::Symbol& symbol,
+	                      const raul::Symbol& symbol,
 	                      GraphImpl*          parent);
 
 	void inherit_neighbour(const PortImpl* port,
@@ -91,7 +91,7 @@ public:
 
 	bool get_buffers(BufferFactory&                   bufs,
 	                 PortImpl::GetFn                  get,
-	                 const Raul::managed_ptr<Voices>& voices,
+	                 const raul::managed_ptr<Voices>& voices,
 	                 uint32_t                         poly,
 	                 size_t num_in_arcs) const override;
 

@@ -67,8 +67,8 @@ struct ClientUpdate {
 	};
 
 	struct Connect {
-		Raul::Path tail;
-		Raul::Path head;
+		raul::Path tail;
+		raul::Path head;
 	};
 
 	std::vector<URI>     dels;

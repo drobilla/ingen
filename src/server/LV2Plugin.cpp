@@ -65,7 +65,7 @@ LV2Plugin::update_properties()
 	lilv_node_free(micro);
 }
 
-Raul::Symbol
+raul::Symbol
 LV2Plugin::symbol() const
 {
 	std::string working = uri();
@@ -78,18 +78,18 @@ LV2Plugin::symbol() const
 		const std::string symbol = working.substr(last_slash+1);
 		if ( (symbol[0] >= 'a' && symbol[0] <= 'z')
 		     || (symbol[0] >= 'A' && symbol[0] <= 'Z') ) {
-			return Raul::Symbol::symbolify(symbol);
+			return raul::Symbol::symbolify(symbol);
 		} else {
 			working = working.substr(0, last_slash);
 		}
 	}
 
-	return Raul::Symbol("lv2_symbol");
+	return raul::Symbol("lv2_symbol");
 }
 
 BlockImpl*
 LV2Plugin::instantiate(BufferFactory&      bufs,
-                       const Raul::Symbol& symbol,
+                       const raul::Symbol& symbol,
                        bool                polyphonic,
                        GraphImpl*          parent,
                        Engine&             engine,

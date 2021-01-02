@@ -59,7 +59,7 @@ CreateBlock::CreateBlock(Engine&                           engine,
                          const std::shared_ptr<Interface>& client,
                          int32_t                           id,
                          SampleCount                       timestamp,
-                         const Raul::Path&                 path,
+                         const raul::Path&                 path,
                          Properties&                       properties)
     : Event(engine, client, id, timestamp)
     , _path(path)
@@ -120,7 +120,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 		if (!ancestor) {
 			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);
 		} else if (!(_block = ancestor->duplicate(
-			             _engine, Raul::Symbol(_path.symbol()), _graph))) {
+			             _engine, raul::Symbol(_path.symbol()), _graph))) {
 			return Event::pre_process_done(Status::CREATION_FAILED, _path);
 		}
 
@@ -147,7 +147,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 
 		// Instantiate plugin
 		if (!(_block = plugin->instantiate(*_engine.buffer_factory(),
-		                                   Raul::Symbol(_path.symbol()),
+		                                   raul::Symbol(_path.symbol()),
 		                                   polyphonic,
 		                                   _graph,
 		                                   _engine,

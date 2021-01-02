@@ -159,7 +159,7 @@ PortAudioDriver::frame_time() const
 }
 
 EnginePort*
-PortAudioDriver::get_port(const Raul::Path& path)
+PortAudioDriver::get_port(const raul::Path& path)
 {
 	for (auto& p : _ports) {
 		if (p.graph_port()->path() == path) {
@@ -193,13 +193,13 @@ PortAudioDriver::unregister_port(EnginePort& port)
 }
 
 void
-PortAudioDriver::rename_port(const Raul::Path& old_path,
-                             const Raul::Path& new_path)
+PortAudioDriver::rename_port(const raul::Path& old_path,
+                             const raul::Path& new_path)
 {
 }
 
 void
-PortAudioDriver::port_property(const Raul::Path& path,
+PortAudioDriver::port_property(const raul::Path& path,
                                const URI&        uri,
                                const Atom&       value)
 {

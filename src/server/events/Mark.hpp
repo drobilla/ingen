@@ -74,7 +74,7 @@ private:
 	enum class Type { BUNDLE_BEGIN, BUNDLE_END };
 
 	using CompiledGraphs =
-	    std::map<GraphImpl*, Raul::managed_ptr<CompiledGraph>>;
+	    std::map<GraphImpl*, raul::managed_ptr<CompiledGraph>>;
 
 	CompiledGraphs _compiled_graphs;
 	Type           _type;

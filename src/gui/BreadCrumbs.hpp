@@ -50,11 +50,11 @@ class BreadCrumbs : public Gtk::HBox
 public:
 	explicit BreadCrumbs(App& app);
 
-	std::shared_ptr<GraphView> view(const Raul::Path& path);
+	std::shared_ptr<GraphView> view(const raul::Path& path);
 
-	void build(const Raul::Path& path, const std::shared_ptr<GraphView>& view);
+	void build(const raul::Path& path, const std::shared_ptr<GraphView>& view);
 
-	sigc::signal<void, const Raul::Path&, std::shared_ptr<GraphView>>
+	sigc::signal<void, const raul::Path&, std::shared_ptr<GraphView>>
 	    signal_graph_selected;
 
 private:
@@ -70,7 +70,7 @@ private:
 	class BreadCrumb : public Gtk::ToggleButton
 	{
 	public:
-		BreadCrumb(const Raul::Path&                 path,
+		BreadCrumb(const raul::Path&                 path,
 		           const std::shared_ptr<GraphView>& view = nullptr)
 		    : _path(path), _view(view)
 		{
@@ -86,10 +86,10 @@ private:
 			_view = view;
 		}
 
-		const Raul::Path&          path() const { return _path; }
+		const raul::Path&          path() const { return _path; }
 		std::shared_ptr<GraphView> view() const { return _view; }
 
-		void set_path(const Raul::Path& path) {
+		void set_path(const raul::Path& path) {
 			remove();
 			const char* text = (path.is_root()) ? "/" : path.symbol();
 			Gtk::Label* lab = manage(new Gtk::Label(text));
@@ -103,21 +103,21 @@ private:
 		}
 
 	private:
-		Raul::Path                 _path;
+		raul::Path                 _path;
 		std::shared_ptr<GraphView> _view;
 	};
 
-	BreadCrumb* create_crumb(const Raul::Path&                 path,
+	BreadCrumb* create_crumb(const raul::Path&                 path,
 	                         const std::shared_ptr<GraphView>& view = nullptr);
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 
 	void message(const Message& msg);
 	void object_destroyed(const URI& uri);
-	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
+	void object_moved(const raul::Path& old_path, const raul::Path& new_path);
 
-	Raul::Path             _active_path;
-	Raul::Path             _full_path;
+	raul::Path             _active_path;
+	raul::Path             _full_path;
 	bool                   _enable_signal;
 	std::list<BreadCrumb*> _breadcrumbs;
 };

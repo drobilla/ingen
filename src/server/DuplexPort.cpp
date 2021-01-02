@@ -43,7 +43,7 @@ namespace server {
 
 DuplexPort::DuplexPort(BufferFactory&      bufs,
                        GraphImpl*          parent,
-                       const Raul::Symbol& symbol,
+                       const raul::Symbol& symbol,
                        uint32_t            index,
                        bool                polyphonic,
                        PortType            type,
@@ -92,7 +92,7 @@ DuplexPort::~DuplexPort()
 
 DuplexPort*
 DuplexPort::duplicate(Engine&             engine,
-                      const Raul::Symbol& symbol,
+                      const raul::Symbol& symbol,
                       GraphImpl*          parent)
 {
 	BufferFactory& bufs       = *engine.buffer_factory();
@@ -148,7 +148,7 @@ DuplexPort::on_property(const URI& uri, const Atom& value)
 bool
 DuplexPort::get_buffers(BufferFactory&                   bufs,
                         PortImpl::GetFn                  get,
-                        const Raul::managed_ptr<Voices>& voices,
+                        const raul::managed_ptr<Voices>& voices,
                         uint32_t                         poly,
                         size_t                           num_in_arcs) const
 {

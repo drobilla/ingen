@@ -46,7 +46,7 @@ BreadCrumbs::BreadCrumbs(App& app)
 }
 
 std::shared_ptr<GraphView>
-BreadCrumbs::view(const Raul::Path& path)
+BreadCrumbs::view(const raul::Path& path)
 {
 	for (const auto& b : _breadcrumbs) {
 		if (b->path() == path) {
@@ -63,7 +63,7 @@ BreadCrumbs::view(const Raul::Path& path)
  * children preserved.
  */
 void
-BreadCrumbs::build(const Raul::Path&                 path,
+BreadCrumbs::build(const raul::Path&                 path,
                    const std::shared_ptr<GraphView>& view)
 {
 	bool old_enable_signal = _enable_signal;
@@ -98,7 +98,7 @@ BreadCrumbs::build(const Raul::Path&                 path,
 				suffix = suffix.substr(1);
 			}
 			const string name = suffix.substr(0, suffix.find('/'));
-			_full_path = _full_path.child(Raul::Symbol(name));
+			_full_path = _full_path.child(raul::Symbol(name));
 			BreadCrumb* but = create_crumb(_full_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
@@ -129,19 +129,19 @@ BreadCrumbs::build(const Raul::Path&                 path,
 		_breadcrumbs.clear();
 
 		// Add root
-		BreadCrumb* root_but = create_crumb(Raul::Path("/"), view);
+		BreadCrumb* root_but = create_crumb(raul::Path("/"), view);
 		pack_start(*root_but, false, false, 1);
 		_breadcrumbs.push_front(root_but);
 		root_but->set_active(root_but->path() == _active_path);
 
-		Raul::Path working_path("/");
+		raul::Path working_path("/");
 		string suffix = path.substr(1);
 		while (suffix.length() > 0) {
 			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
 			}
 			const string name = suffix.substr(0, suffix.find('/'));
-			working_path = working_path.child(Raul::Symbol(name));
+			working_path = working_path.child(raul::Symbol(name));
 			BreadCrumb* but = create_crumb(working_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
@@ -162,7 +162,7 @@ BreadCrumbs::build(const Raul::Path&                 path,
  * match, otherwise ignoring `view`.
  */
 BreadCrumbs::BreadCrumb*
-BreadCrumbs::create_crumb(const Raul::Path&                 path,
+BreadCrumbs::create_crumb(const raul::Path&                 path,
                           const std::shared_ptr<GraphView>& view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(
@@ -219,7 +219,7 @@ BreadCrumbs::object_destroyed(const URI& uri)
 }
 
 void
-BreadCrumbs::object_moved(const Raul::Path& old_path, const Raul::Path& new_path)
+BreadCrumbs::object_moved(const raul::Path& old_path, const raul::Path& new_path)
 {
 	for (const auto& b : _breadcrumbs) {
 		if (b->path() == old_path) {

@@ -35,10 +35,10 @@
 #include <random>
 #include <vector>
 
-namespace Raul {
+namespace raul {
 class Maid;
 class RingBuffer;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -145,7 +145,7 @@ public:
     const std::unique_ptr<ControlBindings>& control_bindings() const { return _control_bindings; }
     const std::shared_ptr<Driver>&          driver()           const { return _driver; }
     const std::unique_ptr<PostProcessor>&   post_processor()   const { return _post_processor; }
-    const std::unique_ptr<Raul::Maid>&      maid()             const { return _maid; }
+    const std::unique_ptr<raul::Maid>&      maid()             const { return _maid; }
     const std::unique_ptr<UndoStack>&       undo_stack()       const { return _undo_stack; }
     const std::unique_ptr<UndoStack>&       redo_stack()       const { return _redo_stack; }
     const std::unique_ptr<Worker>&          worker()           const { return _worker; }
@@ -184,7 +184,7 @@ private:
 
 	std::shared_ptr<LV2Options>      _options;
 	std::unique_ptr<BufferFactory>   _buffer_factory;
-	std::unique_ptr<Raul::Maid>      _maid;
+	std::unique_ptr<raul::Maid>      _maid;
 	std::shared_ptr<Driver>          _driver;
 	std::unique_ptr<Worker>          _worker;
 	std::unique_ptr<Worker>          _sync_worker;
@@ -201,7 +201,7 @@ private:
 	std::unique_ptr<AtomReader>      _atom_interface;
 	GraphImpl*                       _root_graph;
 
-	std::vector<std::unique_ptr<Raul::RingBuffer>> _notifications;
+	std::vector<std::unique_ptr<raul::RingBuffer>> _notifications;
 	std::vector<std::unique_ptr<RunContext>>       _run_contexts;
 	uint64_t                                       _cycle_start_time;
 	Load                                           _run_load;

@@ -194,7 +194,7 @@ run(int argc, char** argv)
 	delete cmds;
 
 	// Save resulting graph
-	auto              r        = world->store()->find(Raul::Path("/"));
+	auto              r        = world->store()->find(raul::Path("/"));
 	const std::string base     = run_path.stem();
 	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
 	const FilePath    out_path = filesystem::current_path() / out_name;
@@ -207,7 +207,7 @@ run(int argc, char** argv)
 	}
 
 	// Save completely undone graph
-	r = world->store()->find(Raul::Path("/"));
+	r = world->store()->find(raul::Path("/"));
 	const std::string undo_name = base.substr(0, base.find('.')) + ".undo.ingen";
 	const FilePath    undo_path = filesystem::current_path() / undo_name;
 	world->serialiser()->write_bundle(r->second, URI(undo_path));
@@ -219,7 +219,7 @@ run(int argc, char** argv)
 	}
 
 	// Save completely redone graph
-	r = world->store()->find(Raul::Path("/"));
+	r = world->store()->find(raul::Path("/"));
 	const std::string redo_name = base.substr(0, base.find('.')) + ".redo.ingen";
 	const FilePath    redo_path = filesystem::current_path() / redo_name;
 	world->serialiser()->write_bundle(r->second, URI(redo_path));

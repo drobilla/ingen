@@ -53,7 +53,7 @@ CreatePort::CreatePort(Engine&                           engine,
                        const std::shared_ptr<Interface>& client,
                        int32_t                           id,
                        SampleCount                       timestamp,
-                       const Raul::Path&                 path,
+                       const raul::Path&                 path,
                        const Properties&                 properties)
     : Event(engine, client, id, timestamp)
     , _path(path)
@@ -107,7 +107,7 @@ CreatePort::pre_process(PreProcessContext&)
 		return Event::pre_process_done(Status::EXISTS, _path);
 	}
 
-	const Raul::Path parent_path = _path.parent();
+	const raul::Path parent_path = _path.parent();
 	Node* const      parent      = _engine.store()->get(parent_path);
 	if (!parent) {
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, parent_path);
@@ -156,7 +156,7 @@ CreatePort::pre_process(PreProcessContext&)
 	}
 
 	// Create port
-	_graph_port = new DuplexPort(bufs, _graph, Raul::Symbol(_path.symbol()),
+	_graph_port = new DuplexPort(bufs, _graph, raul::Symbol(_path.symbol()),
 	                             index,
 	                             polyphonic,
 	                             _port_type, _buf_type, buf_size,

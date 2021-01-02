@@ -32,9 +32,9 @@
 #include <cstdint>
 #include <memory>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -46,7 +46,7 @@ class GraphImpl;
 class RunContext;
 
 InternalBlock::InternalBlock(PluginImpl*         plugin,
-                             const Raul::Symbol& symbol,
+                             const raul::Symbol& symbol,
                              bool                poly,
                              GraphImpl*          parent,
                              SampleRate          rate)
@@ -55,7 +55,7 @@ InternalBlock::InternalBlock(PluginImpl*         plugin,
 
 BlockImpl*
 InternalBlock::duplicate(Engine&             engine,
-                         const Raul::Symbol& symbol,
+                         const raul::Symbol& symbol,
                          GraphImpl*          parent)
 {
 	BufferFactory& bufs = *engine.buffer_factory();

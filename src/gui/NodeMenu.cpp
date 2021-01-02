@@ -239,9 +239,9 @@ NodeMenu::on_save_preset_activated()
 		const std::string user_path = Glib::filename_from_uri(user_uri);
 		const std::string dirname   = Glib::path_get_dirname(user_path);
 		const std::string basename  = Glib::path_get_basename(user_path);
-		const std::string sym       = Raul::Symbol::symbolify(basename);
+		const std::string sym       = raul::Symbol::symbolify(basename);
 		const std::string plugname  = block()->plugin_model()->human_name();
-		const std::string prefix    = Raul::Symbol::symbolify(plugname);
+		const std::string prefix    = raul::Symbol::symbolify(plugname);
 		const std::string bundle    = prefix + "_" + sym + ".preset.lv2/";
 		const std::string file      = sym + ".ttl";
 		const std::string real_path = Glib::build_filename(dirname, bundle, file);

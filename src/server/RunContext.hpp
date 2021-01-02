@@ -57,7 +57,7 @@ public:
 	 * a thread and execute tasks as they become available.
 	 */
 	RunContext(Engine&           engine,
-	           Raul::RingBuffer* event_sink,
+	           raul::RingBuffer* event_sink,
 	           unsigned          id,
 	           bool              threaded);
 
@@ -144,7 +144,7 @@ protected:
 	void run();
 
 	Engine&                      _engine;     ///< Engine we're running in
-	Raul::RingBuffer*            _event_sink; ///< Updates from process context
+	raul::RingBuffer*            _event_sink; ///< Updates from process context
 	Task*                        _task;       ///< Currently executing task
 	std::unique_ptr<std::thread> _thread;     ///< Thread (or null for main)
 	unsigned                     _id;         ///< Context ID

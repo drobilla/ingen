@@ -31,10 +31,10 @@ namespace boost {
 template <class T> class optional;
 } // namespace boost
 
-namespace Raul {
+namespace raul {
 class Path;
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -70,8 +70,8 @@ public:
 
 	void load_graph(bool                                 merge,
 	                const FilePath&                      file_path,
-	                const boost::optional<Raul::Path>&   engine_parent,
-	                const boost::optional<Raul::Symbol>& engine_symbol,
+	                const boost::optional<raul::Path>&   engine_parent,
+	                const boost::optional<raul::Symbol>& engine_symbol,
 	                const boost::optional<Properties>&   engine_data);
 
 	void save_graph(const std::shared_ptr<const client::GraphModel>& model,
@@ -81,8 +81,8 @@ public:
 
 private:
 	void load_graph_event(const FilePath&                      file_path,
-	                      const boost::optional<Raul::Path>&   engine_parent,
-	                      const boost::optional<Raul::Symbol>& engine_symbol,
+	                      const boost::optional<raul::Path>&   engine_parent,
+	                      const boost::optional<raul::Symbol>& engine_symbol,
 	                      const boost::optional<Properties>&   engine_data);
 
 	void
@@ -95,7 +95,7 @@ private:
 	void run();
 
 	App&                       _app;
-	Raul::Semaphore            _sem;
+	raul::Semaphore            _sem;
 	std::shared_ptr<Interface> _engine;
 	std::mutex                 _mutex;
 	std::list<Closure>         _events;

@@ -24,9 +24,9 @@
 #include <cstddef>
 #include <memory>
 
-namespace Raul {
+namespace raul {
 class Socket;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -42,14 +42,14 @@ public:
 	SocketWriter(URIMap&                       map,
 	             URIs&                         uris,
 	             const URI&                    uri,
-	             std::shared_ptr<Raul::Socket> sock);
+	             std::shared_ptr<raul::Socket> sock);
 
 	void message(const Message& message) override;
 
 	size_t text_sink(const void* buf, size_t len) override;
 
 protected:
-	std::shared_ptr<Raul::Socket> _socket;
+	std::shared_ptr<raul::Socket> _socket;
 };
 
 }  // namespace ingen

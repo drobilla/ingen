@@ -25,9 +25,9 @@
 
 #include <cstdint>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -55,7 +55,7 @@ class NoteNode : public InternalBlock
 public:
 	NoteNode(InternalPlugin*     plugin,
 	         BufferFactory&      bufs,
-	         const Raul::Symbol& symbol,
+	         const raul::Symbol& symbol,
 	         bool                polyphonic,
 	         GraphImpl*          parent,
 	         SampleRate          srate);
@@ -97,12 +97,12 @@ private:
 		SampleCount time  = 0;
 	};
 
-	using Voices = Raul::Array<Voice>;
+	using Voices = raul::Array<Voice>;
 
 	void free_voice(RunContext& ctx, uint32_t voice, FrameTime time);
 
-	Raul::managed_ptr<Voices> _voices;
-	Raul::managed_ptr<Voices> _prepared_voices;
+	raul::managed_ptr<Voices> _voices;
+	raul::managed_ptr<Voices> _prepared_voices;
 
 	Key  _keys[128];
 	bool _sustain;  ///< Whether or not hold pedal is depressed

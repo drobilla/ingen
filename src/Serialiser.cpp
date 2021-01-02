@@ -74,7 +74,7 @@ struct Serialiser::Impl {
 
 	enum class Mode { TO_FILE, TO_STRING };
 
-	void start_to_file(const Raul::Path& root,
+	void start_to_file(const raul::Path& root,
 	                   const FilePath&   filename);
 
 	std::set<const Resource*>
@@ -94,7 +94,7 @@ struct Serialiser::Impl {
 
 	void write_bundle(const std::shared_ptr<const Node>& graph, const URI& uri);
 
-	Sord::Node path_rdf_node(const Raul::Path& path) const;
+	Sord::Node path_rdf_node(const raul::Path& path) const;
 
 	void write_manifest(const FilePath&                    bundle_path,
 	                    const std::shared_ptr<const Node>& graph);
@@ -107,7 +107,7 @@ struct Serialiser::Impl {
 
 	std::string finish();
 
-	Raul::Path   _root_path;
+	raul::Path   _root_path;
 	Mode         _mode;
 	URI          _base_uri;
 	FilePath     _basename;
@@ -129,7 +129,7 @@ Serialiser::Impl::write_manifest(const FilePath& bundle_path,
 	const FilePath manifest_path(bundle_path / "manifest.ttl");
 	const FilePath binary_path(ingen_module_path("lv2"));
 
-	start_to_file(Raul::Path("/"), manifest_path);
+	start_to_file(raul::Path("/"), manifest_path);
 
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
@@ -159,7 +159,7 @@ Serialiser::Impl::write_plugins(const FilePath&                  bundle_path,
 {
 	const FilePath plugins_path(bundle_path / "plugins.ttl");
 
-	start_to_file(Raul::Path("/"), plugins_path);
+	start_to_file(raul::Path("/"), plugins_path);
 
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
@@ -205,7 +205,7 @@ Serialiser::Impl::write_bundle(const std::shared_ptr<const Node>& graph,
 	filesystem::create_directories(path);
 
 	const FilePath   main_file     = path / "main.ttl";
-	const Raul::Path old_root_path = _root_path;
+	const raul::Path old_root_path = _root_path;
 
 	start_to_file(graph->path(), main_file);
 
@@ -225,7 +225,7 @@ Serialiser::Impl::write_bundle(const std::shared_ptr<const Node>& graph,
  * This must be called before any serializing methods.
  */
 void
-Serialiser::Impl::start_to_file(const Raul::Path& root,
+Serialiser::Impl::start_to_file(const raul::Path& root,
                                 const FilePath&   filename)
 {
 	_base_uri = URI(filename);
@@ -240,7 +240,7 @@ Serialiser::Impl::start_to_file(const Raul::Path& root,
 }
 
 void
-Serialiser::start_to_string(const Raul::Path& root, const URI& base_uri)
+Serialiser::start_to_string(const raul::Path& root, const URI& base_uri)
 {
 	me->_root_path = root;
 	me->_base_uri  = base_uri;
@@ -249,7 +249,7 @@ Serialiser::start_to_string(const Raul::Path& root, const URI& base_uri)
 }
 
 void
-Serialiser::start_to_file(const Raul::Path& root, const FilePath& filename)
+Serialiser::start_to_file(const raul::Path& root, const FilePath& filename)
 {
 	me->start_to_file(root, filename);
 }
@@ -282,7 +282,7 @@ Serialiser::Impl::finish()
 }
 
 Sord::Node
-Serialiser::Impl::path_rdf_node(const Raul::Path& path) const
+Serialiser::Impl::path_rdf_node(const raul::Path& path) const
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));

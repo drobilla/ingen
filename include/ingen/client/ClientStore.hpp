@@ -28,9 +28,9 @@
 #include <memory>
 #include <utility>
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -61,7 +61,7 @@ public:
 
 	URI uri() const override { return URI("ingen:/clients/store"); }
 
-	std::shared_ptr<const ObjectModel> object(const Raul::Path& path) const;
+	std::shared_ptr<const ObjectModel> object(const raul::Path& path) const;
 	std::shared_ptr<const PluginModel> plugin(const URI& uri)   const;
 	std::shared_ptr<const Resource>    resource(const URI& uri) const;
 
@@ -100,22 +100,22 @@ public:
 	INGEN_SIGNAL(plugin_deleted, void, URI)
 
 private:
-	std::shared_ptr<ObjectModel> _object(const Raul::Path& path);
+	std::shared_ptr<ObjectModel> _object(const raul::Path& path);
 	std::shared_ptr<PluginModel> _plugin(const URI& uri);
 	std::shared_ptr<PluginModel> _plugin(const Atom& uri);
 	std::shared_ptr<Resource>    _resource(const URI& uri);
 
 	void add_object(const std::shared_ptr<ObjectModel>& object);
-	std::shared_ptr<ObjectModel> remove_object(const Raul::Path& path);
+	std::shared_ptr<ObjectModel> remove_object(const raul::Path& path);
 
 	void add_plugin(const std::shared_ptr<PluginModel>& pm);
 
-	std::shared_ptr<GraphModel> connection_graph(const Raul::Path& tail_path,
-	                                  const Raul::Path& head_path);
+	std::shared_ptr<GraphModel> connection_graph(const raul::Path& tail_path,
+	                                  const raul::Path& head_path);
 
 	// Slots for SigClientInterface signals
-	bool attempt_connection(const Raul::Path& tail_path,
-	                        const Raul::Path& head_path);
+	bool attempt_connection(const raul::Path& tail_path,
+	                        const raul::Path& head_path);
 
 	URIs&                               _uris;
 	Log&                                _log;

@@ -77,8 +77,8 @@ private:
 	void cancel_clicked();
 	void ok_clicked();
 
-	Raul::Symbol symbol_from_filename(const Glib::ustring& filename);
-	Raul::Symbol avoid_symbol_clash(const Raul::Symbol& symbol);
+	raul::Symbol symbol_from_filename(const Glib::ustring& filename);
+	raul::Symbol avoid_symbol_clash(const raul::Symbol& symbol);
 
 	App* _app = nullptr;
 

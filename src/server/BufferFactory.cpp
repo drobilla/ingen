@@ -62,7 +62,7 @@ BufferFactory::forge()
 	return _engine.world().forge();
 }
 
-Raul::Maid&
+raul::Maid&
 BufferFactory::maid()
 {
 	return *_engine.maid();

@@ -63,8 +63,8 @@ public:
 	 * This may return null when an atomic bundle is deferring compilation, in
 	 * which case the graph is flagged as dirty for later compilation.
 	 */
-	Raul::Maid::managed_ptr<CompiledGraph>
-	maybe_compile(Raul::Maid& maid, GraphImpl& graph)
+	raul::Maid::managed_ptr<CompiledGraph>
+	maybe_compile(raul::Maid& maid, GraphImpl& graph)
 	{
 		if (must_compile(graph)) {
 			return compile(maid, graph);

@@ -71,11 +71,11 @@ public:
 
 	void print_usage(const std::string& program, std::ostream& os);
 
-	struct OptionError : public Raul::Exception {
+	struct OptionError : public raul::Exception {
 		explicit OptionError(const std::string& m) : Exception(m) {}
 	};
 
-	struct FileError : public Raul::Exception {
+	struct FileError : public raul::Exception {
 		explicit FileError(const std::string& m) : Exception(m) {}
 	};
 

@@ -42,7 +42,7 @@ namespace server {
 
 InputPort::InputPort(BufferFactory&      bufs,
                      BlockImpl*          parent,
-                     const Raul::Symbol& symbol,
+                     const raul::Symbol& symbol,
                      uint32_t            index,
                      uint32_t            poly,
                      PortType            type,
@@ -73,7 +73,7 @@ InputPort::apply_poly(RunContext& ctx, const uint32_t poly)
 bool
 InputPort::get_buffers(BufferFactory&                   bufs,
                        PortImpl::GetFn                  get,
-                       const Raul::managed_ptr<Voices>& voices,
+                       const raul::managed_ptr<Voices>& voices,
                        uint32_t                         poly,
                        size_t                           num_in_arcs) const
 {
@@ -104,7 +104,7 @@ InputPort::get_buffers(BufferFactory&                   bufs,
 
 bool
 InputPort::pre_get_buffers(BufferFactory&             bufs,
-                           Raul::managed_ptr<Voices>& voices,
+                           raul::managed_ptr<Voices>& voices,
                            uint32_t                   poly) const
 {
 	return get_buffers(bufs, &BufferFactory::get_buffer, voices, poly, _num_arcs);

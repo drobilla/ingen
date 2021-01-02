@@ -75,14 +75,14 @@ public:
 		PortImpl*                           _tail;
 		InputPort*                          _head;
 		std::shared_ptr<ArcImpl>            _arc;
-		Raul::managed_ptr<PortImpl::Voices> _voices;
+		raul::managed_ptr<PortImpl::Voices> _voices;
 	};
 
 private:
 	const ingen::Disconnect          _msg;
 	GraphImpl*                       _graph;
 	std::unique_ptr<Impl>            _impl;
-	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace events

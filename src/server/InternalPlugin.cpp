@@ -31,7 +31,7 @@ namespace server {
 
 InternalPlugin::InternalPlugin(URIs&               uris,
                                const URI&          uri,
-                               const Raul::Symbol& symbol)
+                               const raul::Symbol& symbol)
 	: PluginImpl(uris, uris.ingen_Internal.urid_atom(), uri)
 	, _symbol(symbol)
 {
@@ -40,7 +40,7 @@ InternalPlugin::InternalPlugin(URIs&               uris,
 
 BlockImpl*
 InternalPlugin::instantiate(BufferFactory&      bufs,
-                            const Raul::Symbol& symbol,
+                            const raul::Symbol& symbol,
                             bool                polyphonic,
                             GraphImpl*          parent,
                             Engine&             engine,

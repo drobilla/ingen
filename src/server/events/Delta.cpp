@@ -240,7 +240,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	}
 
 	if (is_graph_object && !_object) {
-		Raul::Path path(uri_to_path(_subject));
+		raul::Path path(uri_to_path(_subject));
 
 		bool is_graph  = false;
 		bool is_block  = false;

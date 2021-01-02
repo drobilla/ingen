@@ -32,8 +32,8 @@ public:
 	~SocketListener();
 
 private:
-	Raul::Socket                 unix_sock;
-	Raul::Socket                 net_sock;
+	raul::Socket                 unix_sock;
+	raul::Socket                 net_sock;
 	std::unique_ptr<std::thread> thread;
 };
 

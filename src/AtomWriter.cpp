@@ -158,7 +158,7 @@ AtomWriter::forge_properties(const Properties& properties)
 }
 
 void
-AtomWriter::forge_arc(const Raul::Path& tail, const Raul::Path& head)
+AtomWriter::forge_arc(const raul::Path& tail, const raul::Path& head)
 {
 	LV2_Atom_Forge_Frame arc;
 	lv2_atom_forge_object(&_forge, &arc, 0, _uris.ingen_Arc);
@@ -504,7 +504,7 @@ AtomWriter::operator()(const Connect& message)
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Put, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
-	forge_uri(path_to_uri(Raul::Path::lca(message.tail, message.head)));
+	forge_uri(path_to_uri(raul::Path::lca(message.tail, message.head)));
 	lv2_atom_forge_key(&_forge, _uris.patch_body);
 	forge_arc(message.tail, message.head);
 	lv2_atom_forge_pop(&_forge, &msg);

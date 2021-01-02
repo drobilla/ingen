@@ -117,7 +117,7 @@ private:
 	ClientUpdate                     _update;
 	ingen::Resource*                 _object;
 	GraphImpl*                       _graph;
-	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	raul::managed_ptr<CompiledGraph> _compiled_graph;
 	ControlBindings::Binding*        _binding;
 	StatePtr                         _state;
 	Resource::Graph                  _context;

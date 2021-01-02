@@ -32,7 +32,7 @@
 #include <cstdint>
 #include <memory>
 
-namespace Raul { class Path; }
+namespace raul { class Path; }
 
 namespace boost {
 namespace intrusive {
@@ -67,10 +67,10 @@ public:
 	void deactivate() override;
 
 	EnginePort* create_port(DuplexPort* graph_port) override;
-	EnginePort* get_port(const Raul::Path& path) override;
+	EnginePort* get_port(const raul::Path& path) override;
 
-	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path) override;
-	void port_property(const Raul::Path& path, const URI& uri, const Atom& value) override;
+	void rename_port(const raul::Path& old_path, const raul::Path& new_path) override;
+	void port_property(const raul::Path& path, const URI& uri, const Atom& value) override;
 	void add_port(RunContext& ctx, EnginePort* port) override;
 	void remove_port(RunContext& ctx, EnginePort* port) override;
 	void register_port(EnginePort& port) override;
@@ -124,7 +124,7 @@ protected:
 	Ports                       _ports;
 	PaStreamParameters          _inputParameters;
 	PaStreamParameters          _outputParameters;
-	Raul::Semaphore             _sem;
+	raul::Semaphore             _sem;
 	std::unique_ptr<FrameTimer> _timer;
 	PaStream*                   _stream;
 	size_t                      _seq_size;

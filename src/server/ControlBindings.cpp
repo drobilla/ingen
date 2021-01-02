@@ -384,7 +384,7 @@ ControlBindings::finish_learn(RunContext& ctx, Key key)
 }
 
 void
-ControlBindings::get_all(const Raul::Path& path, std::vector<Binding*>& bindings)
+ControlBindings::get_all(const raul::Path& path, std::vector<Binding*>& bindings)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 

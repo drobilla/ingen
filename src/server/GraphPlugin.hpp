@@ -43,13 +43,13 @@ class GraphPlugin : public PluginImpl
 public:
 	GraphPlugin(URIs&               uris,
 	            const URI&          uri,
-	            const Raul::Symbol& symbol,
+	            const raul::Symbol& symbol,
 	            const std::string&  name)
 		: PluginImpl(uris, uris.ingen_Graph.urid_atom(), uri)
 	{}
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
-	                       const Raul::Symbol& symbol,
+	                       const raul::Symbol& symbol,
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
 	                       Engine&             engine,
@@ -58,7 +58,7 @@ public:
 		return nullptr;
 	}
 
-	Raul::Symbol       symbol() const override { return Raul::Symbol("graph"); }
+	raul::Symbol       symbol() const override { return raul::Symbol("graph"); }
 	static std::string name() { return "Ingen Graph"; }
 
 private:

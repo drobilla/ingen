@@ -274,7 +274,7 @@ ConnectWindow::connect(bool existing)
 		const std::string port  = std::to_string(_port_spinbutton->get_value_as_int());
 		const char*       cmd[] = { "ingen", "-e", "-E", port.c_str(), nullptr };
 
-		if (!Raul::Process::launch(cmd)) {
+		if (!raul::Process::launch(cmd)) {
 			error("Failed to launch engine process");
 			return;
 		}
@@ -548,7 +548,7 @@ ConnectWindow::gtk_callback()
 	} else if (_connect_stage == 4) {
 		if (!_app->store()->empty()) {
 			auto root = std::dynamic_pointer_cast<const client::GraphModel>(
-				_app->store()->object(Raul::Path("/")));
+				_app->store()->object(raul::Path("/")));
 			if (root) {
 				set_connected_to(_app->interface());
 				_app->window_factory()->present_graph(root);

@@ -22,9 +22,9 @@
 
 #include <cstdint>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -56,7 +56,7 @@ class TriggerNode : public InternalBlock
 public:
 	TriggerNode(InternalPlugin*     plugin,
 	            BufferFactory&      bufs,
-	            const Raul::Symbol& symbol,
+	            const raul::Symbol& symbol,
 	            bool                polyphonic,
 	            GraphImpl*          parent,
 	            SampleRate          srate);

@@ -219,7 +219,7 @@ public:
 	virtual void       set_root_graph(GraphImpl* graph) { _root_graph = graph; }
 	virtual GraphImpl* root_graph()                     { return _root_graph; }
 
-	EnginePort* get_port(const Raul::Path& path) override {
+	EnginePort* get_port(const raul::Path& path) override {
 		for (auto& p : _ports) {
 			if (p->graph_port()->path() == path) {
 				return p;
@@ -251,11 +251,11 @@ public:
 	void unregister_port(EnginePort& port) override {}
 
 	/** Unused since LV2 has no dynamic ports. */
-	void rename_port(const Raul::Path& old_path,
-	                 const Raul::Path& new_path) override {}
+	void rename_port(const raul::Path& old_path,
+	                 const raul::Path& new_path) override {}
 
 	/** Unused since LV2 has no dynamic ports. */
-	void port_property(const Raul::Path& path,
+	void port_property(const raul::Path& path,
 	                   const URI&        uri,
 	                   const Atom&       value) override {}
 
@@ -296,7 +296,7 @@ public:
 		return true;
 	}
 
-	Raul::Semaphore& main_sem() { return _main_sem; }
+	raul::Semaphore& main_sem() { return _main_sem; }
 
 	/** AtomSink::write implementation called by the PostProcessor in the main
 	 * thread to write responses to the UI.
@@ -408,18 +408,18 @@ public:
 private:
 	Engine&          _engine;
 	Ports            _ports;
-	Raul::Semaphore  _main_sem;
+	raul::Semaphore  _main_sem;
 	AtomReader       _reader;
 	AtomWriter       _writer;
-	Raul::RingBuffer _from_ui;
-	Raul::RingBuffer _to_ui;
+	raul::RingBuffer _from_ui;
+	raul::RingBuffer _to_ui;
 	GraphImpl*       _root_graph;
 	uint32_t         _notify_capacity;
 	SampleCount      _block_length;
 	size_t           _seq_size;
 	SampleCount      _sample_rate;
 	SampleCount      _frame_time;
-	Raul::Semaphore  _to_ui_overflow_sem;
+	raul::Semaphore  _to_ui_overflow_sem;
 	bool             _to_ui_overflow;
 	bool             _instantiated;
 };
@@ -713,7 +713,7 @@ ingen_save(LV2_Handle                instance,
 	char* real_path  = make_path->path(make_path->handle, "main.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
-	auto root = plugin->world->store()->find(Raul::Path("/"));
+	auto root = plugin->world->store()->find(raul::Path("/"));
 
 	{
 		std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());

@@ -75,8 +75,8 @@ CompiledGraph::CompiledGraph(GraphImpl* graph)
 	compile_graph(graph);
 }
 
-Raul::managed_ptr<CompiledGraph>
-CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
+raul::managed_ptr<CompiledGraph>
+CompiledGraph::compile(raul::Maid& maid, GraphImpl& graph)
 {
 	try {
 		return maid.make_managed<CompiledGraph>(&graph);

@@ -57,13 +57,13 @@ public:
 	PluginImpl& operator=(const PluginImpl&) = delete;
 
 	virtual BlockImpl* instantiate(BufferFactory&      bufs,
-	                               const Raul::Symbol& symbol,
+	                               const raul::Symbol& symbol,
 	                               bool                polyphonic,
 	                               GraphImpl*          parent,
 	                               Engine&             engine,
 	                               const LilvState*    state) = 0;
 
-	virtual Raul::Symbol symbol() const = 0;
+	virtual raul::Symbol symbol() const = 0;
 
 	const Atom& type() const            { return _type; }
 	void        set_type(const Atom& t) { _type = t; }

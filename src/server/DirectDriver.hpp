@@ -73,7 +73,7 @@ public:
 		return new EnginePort(graph_port);
 	}
 
-	EnginePort* get_port(const Raul::Path& path) override {
+	EnginePort* get_port(const raul::Path& path) override {
 		for (auto& p : _ports) {
 			if (p.graph_port()->path() == path) {
 				return &p;
@@ -91,10 +91,10 @@ public:
 		_ports.erase(_ports.iterator_to(*port));
 	}
 
-	void rename_port(const Raul::Path& old_path,
-	                 const Raul::Path& new_path) override {}
+	void rename_port(const raul::Path& old_path,
+	                 const raul::Path& new_path) override {}
 
-	void port_property(const Raul::Path& path,
+	void port_property(const raul::Path& path,
 	                   const URI&        uri,
 	                   const Atom&       value) override {}
 

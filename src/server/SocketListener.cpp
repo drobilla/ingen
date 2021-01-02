@@ -67,13 +67,13 @@ get_link_target(const char* link_path)
 }
 
 static void ingen_listen(Engine*       engine,
-                         Raul::Socket* unix_sock,
-                         Raul::Socket* net_sock);
+                         raul::Socket* unix_sock,
+                         raul::Socket* net_sock);
 
 
 SocketListener::SocketListener(Engine& engine)
-	: unix_sock(Raul::Socket::Type::UNIX)
-	, net_sock(Raul::Socket::Type::TCP)
+	: unix_sock(raul::Socket::Type::UNIX)
+	, net_sock(raul::Socket::Type::TCP)
 	, thread(new std::thread(ingen_listen, &engine, &unix_sock, &net_sock))
 {}
 
@@ -85,7 +85,7 @@ SocketListener::~SocketListener() {
 }
 
 static void
-ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
+ingen_listen(Engine* engine, raul::Socket* unix_sock, raul::Socket* net_sock)
 {
 	ingen::World& world = engine->world();
 

@@ -25,9 +25,9 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -50,7 +50,7 @@ class OutputPort : public PortImpl
 public:
 	OutputPort(BufferFactory&      bufs,
 	           BlockImpl*          parent,
-	           const Raul::Symbol& symbol,
+	           const raul::Symbol& symbol,
 	           uint32_t            index,
 	           uint32_t            poly,
 	           PortType            type,

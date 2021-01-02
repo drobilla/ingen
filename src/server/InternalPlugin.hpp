@@ -43,19 +43,19 @@ class InternalPlugin : public PluginImpl
 public:
 	InternalPlugin(URIs&               uris,
 	               const URI&          uri,
-	               const Raul::Symbol& symbol);
+	               const raul::Symbol& symbol);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
-	                       const Raul::Symbol& symbol,
+	                       const raul::Symbol& symbol,
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
 	                       Engine&             engine,
 	                       const LilvState*    state) override;
 
-	Raul::Symbol symbol() const override { return _symbol; }
+	raul::Symbol symbol() const override { return _symbol; }
 
 private:
-	const Raul::Symbol _symbol;
+	const raul::Symbol _symbol;
 };
 
 } // namespace server

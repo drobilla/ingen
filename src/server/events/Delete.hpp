@@ -71,15 +71,15 @@ public:
 
 private:
 	using IndexChange  = std::pair<uint32_t, uint32_t>;
-	using IndexChanges = std::map<Raul::Path, IndexChange>;
+	using IndexChanges = std::map<raul::Path, IndexChange>;
 
 	const ingen::Del                    _msg;
-	Raul::Path                          _path;
+	raul::Path                          _path;
 	std::shared_ptr<BlockImpl>          _block; ///< Non-null iff a block
 	std::shared_ptr<DuplexPort>         _port; ///< Non-null iff a port
 	EnginePort*                         _engine_port;
-	Raul::managed_ptr<GraphImpl::Ports> _ports_array; ///< New (external) ports for Graph
-	Raul::managed_ptr<CompiledGraph>    _compiled_graph; ///< Graph's new process order
+	raul::managed_ptr<GraphImpl::Ports> _ports_array; ///< New (external) ports for Graph
+	raul::managed_ptr<CompiledGraph>    _compiled_graph; ///< Graph's new process order
 	std::unique_ptr<DisconnectAll>      _disconnect_event;
 	Store::Objects                      _removed_objects;
 	IndexChanges                        _port_index_changes;

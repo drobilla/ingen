@@ -33,8 +33,8 @@ namespace server {
  *
  * @ingroup engine
  */
-class EnginePort : public Raul::Noncopyable
-                 , public Raul::Deletable
+class EnginePort : public raul::Noncopyable
+                 , public raul::Deletable
                  , public boost::intrusive::slist_base_hook<>
 {
 public:

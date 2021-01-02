@@ -109,14 +109,14 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 	return boost::optional<URI>();
 }
 
-boost::optional<Raul::Path>
+boost::optional<raul::Path>
 AtomReader::atom_to_path(const LV2_Atom* atom)
 {
 	boost::optional<URI> uri = atom_to_uri(atom);
 	if (uri && uri_is_path(*uri)) {
 		return uri_to_path(*uri);
 	}
-	return boost::optional<Raul::Path>();
+	return boost::optional<raul::Path>();
 }
 
 Resource::Graph
@@ -205,10 +205,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			                    _uris.ingen_incidentTo.urid(), &incidentTo,
 			                    nullptr);
 
-			boost::optional<Raul::Path> subject_path(atom_to_path(subject));
-			boost::optional<Raul::Path> tail_path(atom_to_path(tail));
-			boost::optional<Raul::Path> head_path(atom_to_path(head));
-			boost::optional<Raul::Path> other_path(atom_to_path(incidentTo));
+			boost::optional<raul::Path> subject_path(atom_to_path(subject));
+			boost::optional<raul::Path> tail_path(atom_to_path(tail));
+			boost::optional<raul::Path> head_path(atom_to_path(head));
+			boost::optional<raul::Path> other_path(atom_to_path(incidentTo));
 			if (tail_path && head_path) {
 				_iface(Disconnect{seq, *tail_path, *head_path});
 			} else if (subject_path && other_path) {
@@ -245,8 +245,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 				return false;
 			}
 
-			boost::optional<Raul::Path> tail_path(atom_to_path(tail));
-			boost::optional<Raul::Path> head_path(atom_to_path(head));
+			boost::optional<raul::Path> tail_path(atom_to_path(tail));
+			boost::optional<raul::Path> head_path(atom_to_path(head));
 			if (tail_path && head_path) {
 				_iface(Connect{seq, *tail_path, *head_path});
 			} else {
@@ -356,13 +356,13 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		boost::optional<Raul::Path> subject_path(atom_to_path(subject));
+		boost::optional<raul::Path> subject_path(atom_to_path(subject));
 		if (!subject_path) {
 			_log.warn("Move message has non-path subject\n");
 			return false;
 		}
 
-		boost::optional<Raul::Path> dest_path(atom_to_path(dest));
+		boost::optional<raul::Path> dest_path(atom_to_path(dest));
 		if (!dest_path) {
 			_log.warn("Move message has non-path destination\n");
 			return false;

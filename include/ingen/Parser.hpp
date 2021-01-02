@@ -80,8 +80,8 @@ public:
 		World&                               world,
 		Interface&                           target,
 		const FilePath&                      path,
-		const boost::optional<Raul::Path>&   parent = boost::optional<Raul::Path>(),
-		const boost::optional<Raul::Symbol>& symbol = boost::optional<Raul::Symbol>(),
+		const boost::optional<raul::Path>&   parent = boost::optional<raul::Path>(),
+		const boost::optional<raul::Symbol>& symbol = boost::optional<raul::Symbol>(),
 		const boost::optional<Properties>&   data   = boost::optional<Properties>());
 
 	virtual boost::optional<URI> parse_string(
@@ -89,8 +89,8 @@ public:
 		Interface&                           target,
 		const std::string&                   str,
 		const URI&                           base_uri,
-		const boost::optional<Raul::Path>&   parent = boost::optional<Raul::Path>(),
-		const boost::optional<Raul::Symbol>& symbol = boost::optional<Raul::Symbol>(),
+		const boost::optional<raul::Path>&   parent = boost::optional<raul::Path>(),
+		const boost::optional<raul::Symbol>& symbol = boost::optional<raul::Symbol>(),
 		const boost::optional<Properties>&   data   = boost::optional<Properties>());
 };
 

@@ -40,8 +40,8 @@ public:
 	std::shared_ptr<PortModel> tail() const { return _tail; }
 	std::shared_ptr<PortModel> head() const { return _head; }
 
-	const Raul::Path& tail_path() const override { return _tail->path(); }
-	const Raul::Path& head_path() const override { return _head->path(); }
+	const raul::Path& tail_path() const override { return _tail->path(); }
+	const raul::Path& head_path() const override { return _head->path(); }
 
 private:
 	friend class ClientStore;

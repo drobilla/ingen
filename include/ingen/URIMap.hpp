@@ -40,7 +40,7 @@ class World;
 /** URI to integer map and implementation of LV2 URID extension.
  * @ingroup IngenShared
  */
-class INGEN_API URIMap : public Raul::Noncopyable {
+class INGEN_API URIMap : public raul::Noncopyable {
 public:
 	URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap);
 

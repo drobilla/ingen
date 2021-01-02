@@ -20,9 +20,9 @@
 #include "BlockImpl.hpp"
 #include "types.hpp"
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 namespace server {
@@ -40,13 +40,13 @@ class InternalBlock : public BlockImpl
 {
 public:
 	InternalBlock(PluginImpl*         plugin,
-	              const Raul::Symbol& symbol,
+	              const raul::Symbol& symbol,
 	              bool                poly,
 	              GraphImpl*          parent,
 	              SampleRate          rate);
 
 	BlockImpl* duplicate(Engine&             engine,
-	                     const Raul::Symbol& symbol,
+	                     const raul::Symbol& symbol,
 	                     GraphImpl*          parent) override;
 
 	void pre_process(RunContext& ctx) override;

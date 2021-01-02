@@ -67,7 +67,7 @@ private:
 	std::shared_ptr<BlockImpl>       _old_block;
 	GraphImpl*                       _parent;
 	BlockImpl*                       _block;
-	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace events

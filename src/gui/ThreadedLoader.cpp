@@ -89,8 +89,8 @@ ThreadedLoader::run()
 void
 ThreadedLoader::load_graph(bool                          merge,
                            const FilePath&               file_path,
-                           const optional<Raul::Path>&   engine_parent,
-                           const optional<Raul::Symbol>& engine_symbol,
+                           const optional<raul::Path>&   engine_parent,
+                           const optional<raul::Symbol>& engine_symbol,
                            const optional<Properties>&   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -116,8 +116,8 @@ ThreadedLoader::load_graph(bool                          merge,
 
 void
 ThreadedLoader::load_graph_event(const FilePath&               file_path,
-                                 const optional<Raul::Path>&   engine_parent,
-                                 const optional<Raul::Symbol>& engine_symbol,
+                                 const optional<raul::Path>&   engine_parent,
+                                 const optional<raul::Symbol>& engine_symbol,
                                  const optional<Properties>&   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());

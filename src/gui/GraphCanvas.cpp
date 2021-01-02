@@ -714,7 +714,7 @@ GraphCanvas::paste()
 	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
 	auto                parser = _app.loader()->parser();
 	const URIs&         uris   = _app.uris();
-	const Raul::Path&   parent = _graph->path();
+	const raul::Path&   parent = _graph->path();
 	if (!parser) {
 		_app.log().error("Unable to load parser, paste unavailable\n");
 		return;
@@ -736,7 +736,7 @@ GraphCanvas::paste()
 		_app.world(), clipboard, str, main_uri());
 
 	// Figure out the copy graph base path
-	Raul::Path copy_root("/");
+	raul::Path copy_root("/");
 	if (base_uri) {
 		std::string base = *base_uri;
 		if (base[base.size() - 1] == '/') {
@@ -749,7 +749,7 @@ GraphCanvas::paste()
 	float min_x = std::numeric_limits<float>::max();
 	float min_y = std::numeric_limits<float>::max();
 	for (const auto& c : clipboard) {
-		if (c.first.parent() == Raul::Path("/")) {
+		if (c.first.parent() == raul::Path("/")) {
 			const Atom& x = c.second->get_property(uris.ingen_canvasX);
 			const Atom& y = c.second->get_property(uris.ingen_canvasY);
 			if (x.type() == uris.atom_Float) {
@@ -776,14 +776,14 @@ GraphCanvas::paste()
 	// Put each top level object in the clipboard store
 	ClashAvoider avoider(*_app.store());
 	for (const auto& c : clipboard) {
-		if (c.first.is_root() || c.first.parent() != Raul::Path("/")) {
+		if (c.first.is_root() || c.first.parent() != raul::Path("/")) {
 			continue;
 		}
 
 		const auto        node     = c.second;
-		const Raul::Path& old_path = copy_root.child(node->path());
+		const raul::Path& old_path = copy_root.child(node->path());
 		const URI&        old_uri  = path_to_uri(old_path);
-		const Raul::Path& new_path =
+		const raul::Path& new_path =
 		    avoider.map_path(parent.child(node->path()));
 
 		// Copy properties, except those that should not be inherited in copies
@@ -825,7 +825,7 @@ GraphCanvas::paste()
 	}
 
 	// Connect objects
-	for (const auto& a : clipboard.object(Raul::Path("/"))->arcs()) {
+	for (const auto& a : clipboard.object(raul::Path("/"))->arcs()) {
 		_app.interface()->connect(
 			avoider.map_path(parent.child(a.second->tail_path())),
 			avoider.map_path(parent.child(a.second->head_path())));
@@ -848,12 +848,12 @@ GraphCanvas::generate_port_name(
 		snprintf(num_buf, sizeof(num_buf), "%u", i);
 		symbol = sym_base + "_";
 		symbol += num_buf;
-		if (!_graph->get_port(Raul::Symbol::symbolify(symbol))) {
+		if (!_graph->get_port(raul::Symbol::symbolify(symbol))) {
 			break;
 		}
 	}
 
-	assert(Raul::Path::is_valid(string("/") + symbol));
+	assert(raul::Path::is_valid(string("/") + symbol));
 
 	name.append(" ").append(num_buf);
 }
@@ -867,7 +867,7 @@ GraphCanvas::menu_add_port(const string& sym_base,
 	string sym;
 	string name;
 	generate_port_name(sym_base, sym, name_base, name);
-	const Raul::Path& path = _graph->path().child(Raul::Symbol(sym));
+	const raul::Path& path = _graph->path().child(raul::Symbol(sym));
 
 	const URIs& uris = _app.uris();
 
@@ -893,16 +893,16 @@ GraphCanvas::load_plugin(const std::weak_ptr<PluginModel>& weak_plugin)
 		return;
 	}
 
-	Raul::Symbol symbol = plugin->default_block_symbol();
+	raul::Symbol symbol = plugin->default_block_symbol();
 	unsigned offset = _app.store()->child_name_offset(_graph->path(), symbol);
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << symbol << "_" << offset;
-		symbol = Raul::Symbol(ss.str());
+		symbol = raul::Symbol(ss.str());
 	}
 
 	const URIs&      uris = _app.uris();
-	const Raul::Path path = _graph->path().child(symbol);
+	const raul::Path path = _graph->path().child(symbol);
 
 	// FIXME: polyphony?
 	Properties props = get_initial_data();

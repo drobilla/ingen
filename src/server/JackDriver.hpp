@@ -38,9 +38,9 @@
 #include <memory>
 #include <string>
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace boost {
 namespace intrusive {
@@ -85,10 +85,10 @@ public:
 	bool dynamic_ports() const override { return true; }
 
 	EnginePort* create_port(DuplexPort* graph_port) override;
-	EnginePort* get_port(const Raul::Path& path) override;
+	EnginePort* get_port(const raul::Path& path) override;
 
-	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path) override;
-	void port_property(const Raul::Path& path, const URI& uri, const Atom& value) override;
+	void rename_port(const raul::Path& old_path, const raul::Path& new_path) override;
+	void port_property(const raul::Path& path, const URI& uri, const Atom& value) override;
 	void add_port(RunContext& ctx, EnginePort* port) override;
 	void remove_port(RunContext& ctx, EnginePort* port) override;
 	void register_port(EnginePort& port) override;
@@ -154,7 +154,7 @@ protected:
 	Ports                  _ports;
 	AudioBufPtr            _fallback_buffer;
 	LV2_Atom_Forge         _forge;
-	Raul::Semaphore        _sem;
+	raul::Semaphore        _sem;
 	std::atomic<bool>      _flag;
 	jack_client_t*         _client;
 	jack_nframes_t         _block_length;

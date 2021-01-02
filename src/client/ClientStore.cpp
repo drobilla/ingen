@@ -100,7 +100,7 @@ ClientStore::add_object(const std::shared_ptr<ObjectModel>& object)
 }
 
 std::shared_ptr<ObjectModel>
-ClientStore::remove_object(const Raul::Path& path)
+ClientStore::remove_object(const raul::Path& path)
 {
 	// Find the object, the "top" of the tree to remove
 	const iterator top = find(path);
@@ -163,7 +163,7 @@ ClientStore::plugin(const URI& uri) const
 }
 
 std::shared_ptr<ObjectModel>
-ClientStore::_object(const Raul::Path& path)
+ClientStore::_object(const raul::Path& path)
 {
 	const iterator i = find(path);
 	if (i == end()) {
@@ -177,7 +177,7 @@ ClientStore::_object(const Raul::Path& path)
 }
 
 std::shared_ptr<const ObjectModel>
-ClientStore::object(const Raul::Path& path) const
+ClientStore::object(const raul::Path& path) const
 {
 	return const_cast<ClientStore*>(this)->_object(path);
 }
@@ -297,7 +297,7 @@ ClientStore::operator()(const Put& msg)
 		return;
 	}
 
-	const Raul::Path path(uri_to_path(uri));
+	const raul::Path path(uri_to_path(uri));
 
 	auto obj = std::dynamic_pointer_cast<ObjectModel>(_object(path));
 	if (obj) {
@@ -369,7 +369,7 @@ ClientStore::operator()(const Delta& msg)
 		return;
 	}
 
-	const Raul::Path path(uri_to_path(uri));
+	const raul::Path path(uri_to_path(uri));
 
 	std::shared_ptr<ObjectModel> obj = _object(path);
 	if (obj) {
@@ -413,8 +413,8 @@ ClientStore::operator()(const SetProperty& msg)
 }
 
 std::shared_ptr<GraphModel>
-ClientStore::connection_graph(const Raul::Path& tail_path,
-                              const Raul::Path& head_path)
+ClientStore::connection_graph(const raul::Path& tail_path,
+                              const raul::Path& head_path)
 {
 	std::shared_ptr<GraphModel> graph;
 
@@ -443,8 +443,8 @@ ClientStore::connection_graph(const Raul::Path& tail_path,
 }
 
 bool
-ClientStore::attempt_connection(const Raul::Path& tail_path,
-                                const Raul::Path& head_path)
+ClientStore::attempt_connection(const raul::Path& tail_path,
+                                const raul::Path& head_path)
 {
 	auto tail = std::dynamic_pointer_cast<PortModel>(_object(tail_path));
 	auto head = std::dynamic_pointer_cast<PortModel>(_object(head_path));

@@ -42,12 +42,12 @@ namespace internals {
 
 InternalPlugin* BlockDelayNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, URI(NS_INTERNALS "BlockDelay"), Raul::Symbol("blockDelay"));
+		uris, URI(NS_INTERNALS "BlockDelay"), raul::Symbol("blockDelay"));
 }
 
 BlockDelayNode::BlockDelayNode(InternalPlugin*     plugin,
                                BufferFactory&      bufs,
-                               const Raul::Symbol& symbol,
+                               const raul::Symbol& symbol,
                                bool                polyphonic,
                                GraphImpl*          parent,
                                SampleRate          srate)
@@ -56,12 +56,12 @@ BlockDelayNode::BlockDelayNode(InternalPlugin*     plugin,
 	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(2);
 
-	_in_port = new InputPort(bufs, this, Raul::Symbol("in"), 0, 1,
+	_in_port = new InputPort(bufs, this, raul::Symbol("in"), 0, 1,
 	                         PortType::AUDIO, 0, bufs.forge().make(0.0f));
 	_in_port->set_property(uris.lv2_name, bufs.forge().alloc("In"));
 	_ports->at(0) = _in_port;
 
-	_out_port = new OutputPort(bufs, this, Raul::Symbol("out"), 0, 1,
+	_out_port = new OutputPort(bufs, this, raul::Symbol("out"), 0, 1,
 	                           PortType::AUDIO, 0, bufs.forge().make(0.0f));
 	_out_port->set_property(uris.lv2_name, bufs.forge().alloc("Out"));
 	_ports->at(1) = _out_port;

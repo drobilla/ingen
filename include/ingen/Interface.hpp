@@ -31,9 +31,9 @@
 #include <memory>
 #include <string>
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -92,24 +92,24 @@ public:
 		message(Copy{_seq++, old_uri, new_uri});
 	}
 
-	inline void move(const Raul::Path& old_path, const Raul::Path& new_path)
+	inline void move(const raul::Path& old_path, const raul::Path& new_path)
 	{
 		message(Move{_seq++, old_path, new_path});
 	}
 
 	inline void del(const URI& uri) { message(Del{_seq++, uri}); }
 
-	inline void connect(const Raul::Path& tail, const Raul::Path& head)
+	inline void connect(const raul::Path& tail, const raul::Path& head)
 	{
 		message(Connect{_seq++, tail, head});
 	}
 
-	inline void disconnect(const Raul::Path& tail, const Raul::Path& head)
+	inline void disconnect(const raul::Path& tail, const raul::Path& head)
 	{
 		message(Disconnect{_seq++, tail, head});
 	}
 
-	inline void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
+	inline void disconnect_all(const raul::Path& graph, const raul::Path& path)
 	{
 		message(DisconnectAll{_seq++, graph, path});
 	}

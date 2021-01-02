@@ -54,7 +54,7 @@ public:
 	            const std::shared_ptr<Interface>& client,
 	            int32_t                           id,
 	            SampleCount                       timestamp,
-	            const Raul::Path&                 path,
+	            const raul::Path&                 path,
 	            Properties&                       properties);
 
 	~CreateBlock() override;
@@ -65,12 +65,12 @@ public:
 	void undo(Interface& target) override;
 
 private:
-	Raul::Path                       _path;
+	raul::Path                       _path;
 	Properties&                      _properties;
 	ClientUpdate                     _update;
 	GraphImpl*                       _graph;
 	BlockImpl*                       _block;
-	Raul::managed_ptr<CompiledGraph> _compiled_graph;
+	raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace events

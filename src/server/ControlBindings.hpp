@@ -30,7 +30,7 @@
 #include <memory>
 #include <vector>
 
-namespace Raul { class Path; }
+namespace raul { class Path; }
 
 namespace boost {
 namespace intrusive {
@@ -79,7 +79,7 @@ public:
 
 	/** One binding of a controller to a port. */
 	struct Binding : public boost::intrusive::set_base_hook<>,
-	                 public Raul::Maid::Disposable {
+	                 public raul::Maid::Disposable {
 		Binding(Key k=Key(), PortImpl* p=nullptr) : key(k), port(p) {}
 
 		inline bool operator<(const Binding& rhs) const { return key < rhs.key; }
@@ -118,7 +118,7 @@ public:
 	void post_process(RunContext& ctx, Buffer* buffer);
 
 	/** Get all bindings for `path` or children of `path`. */
-	void get_all(const Raul::Path& path, std::vector<Binding*>& bindings);
+	void get_all(const raul::Path& path, std::vector<Binding*>& bindings);
 
 	/** Remove a set of bindings from an earlier call to get_all(). */
 	void remove(RunContext& ctx, const std::vector<Binding*>& bindings);

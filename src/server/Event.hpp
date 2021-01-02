@@ -32,9 +32,9 @@
 #include <string>
 #include <utility>
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 namespace server {
@@ -55,7 +55,7 @@ class PreProcessContext;
  *
  * \ingroup engine
  */
-class Event : public Raul::Deletable, public Raul::Noncopyable
+class Event : public raul::Deletable, public raul::Noncopyable
 {
 public:
 	/** Event mode to distinguish normal events from undo events. */
@@ -144,7 +144,7 @@ protected:
 		return pre_process_done(st);
 	}
 
-	inline bool pre_process_done(Status st, const Raul::Path& subject) {
+	inline bool pre_process_done(Status st, const raul::Path& subject) {
 		return pre_process_done(st, path_to_uri(subject));
 	}
 

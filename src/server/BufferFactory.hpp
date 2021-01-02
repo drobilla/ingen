@@ -28,7 +28,7 @@
 #include <cstdint>
 #include <mutex>
 
-namespace Raul { class Maid; }
+namespace raul { class Maid; }
 
 namespace ingen {
 
@@ -71,7 +71,7 @@ public:
 	void set_seq_size(uint32_t seq_size) { _seq_size = seq_size; }
 
 	Forge&      forge();
-	Raul::Maid& maid();
+	raul::Maid& maid();
 
 	URIs&   uris()   { return _uris; }
 	Engine& engine() { return _engine; }

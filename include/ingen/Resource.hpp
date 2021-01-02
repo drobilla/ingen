@@ -37,7 +37,7 @@ class Atom;
  *
  * @ingroup Ingen
  */
-class INGEN_API Resource : public Raul::Deletable
+class INGEN_API Resource : public raul::Deletable
 {
 public:
 	using Graph = Property::Graph;

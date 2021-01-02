@@ -38,7 +38,7 @@ namespace ingen {
 
 SocketReader::SocketReader(ingen::World&                 world,
                            Interface&                    iface,
-                           std::shared_ptr<Raul::Socket> sock)
+                           std::shared_ptr<raul::Socket> sock)
     : _world(world)
     , _iface(iface)
     , _env()

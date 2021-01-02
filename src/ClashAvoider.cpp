@@ -47,8 +47,8 @@ ClashAvoider::map_uri(const URI& in)
 	}
 }
 
-Raul::Path
-ClashAvoider::map_path(const Raul::Path& in)
+raul::Path
+ClashAvoider::map_path(const raul::Path& in)
 {
 	unsigned offset = 0;
 	bool has_offset = false;
@@ -66,7 +66,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 		base_path_str = base_path_str.substr(0, base_path_str.find_last_of('_'));
 	}
 
-	Raul::Path base_path(base_path_str);
+	raul::Path base_path(base_path_str);
 
 	auto m = _symbol_map.find(in);
 	if (m != _symbol_map.end()) {
@@ -75,11 +75,11 @@ ClashAvoider::map_path(const Raul::Path& in)
 		using InsertRecord = std::pair<SymbolMap::iterator, bool>;
 
 		// See if parent is mapped
-		Raul::Path parent = in.parent();
+		raul::Path parent = in.parent();
 		do {
 			auto p = _symbol_map.find(parent);
 			if (p != _symbol_map.end()) {
-				const Raul::Path mapped = Raul::Path(
+				const raul::Path mapped = raul::Path(
 					p->second.base() + in.substr(parent.base().length()));
 				InsertRecord i = _symbol_map.emplace(in, mapped);
 				return i.first->second;
@@ -113,14 +113,14 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 				std::stringstream ss;
 				ss << base_path << "_" << offset;
-				if (!exists(Raul::Path(ss.str()))) {
+				if (!exists(raul::Path(ss.str()))) {
 					std::string name = base_path.symbol();
 					if (name.empty()) {
 						name = "_";
 					}
-					Raul::Symbol sym(name);
+					raul::Symbol sym(name);
 					std::string str = ss.str();
-					InsertRecord i = _symbol_map.emplace(in, Raul::Path(str));
+					InsertRecord i = _symbol_map.emplace(in, raul::Path(str));
 					offset = _store.child_name_offset(in.parent(), sym, false);
 					_offsets.emplace(base_path, offset);
 					return i.first->second;
@@ -137,7 +137,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 }
 
 bool
-ClashAvoider::exists(const Raul::Path& path) const
+ClashAvoider::exists(const raul::Path& path) const
 {
 	return _store.find(path) != _store.end();
 }
@@ -158,8 +158,8 @@ numeric_suffix_start(const std::string& str)
 }
 
 std::string
-ClashAvoider::adjust_name(const Raul::Path& old_path,
-                          const Raul::Path& new_path,
+ClashAvoider::adjust_name(const raul::Path& old_path,
+                          const raul::Path& new_path,
                           std::string       name)
 {
 	const auto name_suffix_start = numeric_suffix_start(name);

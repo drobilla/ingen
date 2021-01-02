@@ -21,9 +21,9 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -45,7 +45,7 @@ class BlockDelayNode : public InternalBlock
 public:
 	BlockDelayNode(InternalPlugin*     plugin,
 	               BufferFactory&      bufs,
-	               const Raul::Symbol& symbol,
+	               const raul::Symbol& symbol,
 	               bool                polyphonic,
 	               GraphImpl*          parent,
 	               SampleRate          srate);

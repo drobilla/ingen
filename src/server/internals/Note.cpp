@@ -53,12 +53,12 @@ namespace internals {
 
 InternalPlugin* NoteNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, URI(NS_INTERNALS "Note"), Raul::Symbol("note"));
+		uris, URI(NS_INTERNALS "Note"), raul::Symbol("note"));
 }
 
 NoteNode::NoteNode(InternalPlugin*     plugin,
                    BufferFactory&      bufs,
-                   const Raul::Symbol& symbol,
+                   const raul::Symbol& symbol,
                    bool                polyphonic,
                    GraphImpl*          parent,
                    SampleRate          srate)
@@ -72,14 +72,14 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	const Atom zero = bufs.forge().make(0.0f);
 	const Atom one  = bufs.forge().make(1.0f);
 
-	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
+	_midi_in_port = new InputPort(bufs, this, raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_midi_in_port->set_property(uris.atom_supports,
 	                            bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(bufs, this, Raul::Symbol("frequency"), 1, _polyphony,
+	_freq_port = new OutputPort(bufs, this, raul::Symbol("frequency"), 1, _polyphony,
 	                            PortType::ATOM, uris.atom_Sequence,
 	                            bufs.forge().make(440.0f));
 	_freq_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
@@ -88,7 +88,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_freq_port->set_property(uris.lv2_maximum, bufs.forge().make(25088.0f));
 	_ports->at(1) = _freq_port;
 
-	_num_port = new OutputPort(bufs, this, Raul::Symbol("number"), 1, _polyphony,
+	_num_port = new OutputPort(bufs, this, raul::Symbol("number"), 1, _polyphony,
 	                           PortType::ATOM, uris.atom_Sequence, zero);
 	_num_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_num_port->set_property(uris.lv2_minimum, zero);
@@ -97,7 +97,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_num_port->set_property(uris.lv2_name, bufs.forge().alloc("Number"));
 	_ports->at(2) = _num_port;
 
-	_vel_port = new OutputPort(bufs, this, Raul::Symbol("velocity"), 2, _polyphony,
+	_vel_port = new OutputPort(bufs, this, raul::Symbol("velocity"), 2, _polyphony,
 	                           PortType::ATOM, uris.atom_Sequence, zero);
 	_vel_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_vel_port->set_property(uris.lv2_minimum, zero);
@@ -105,21 +105,21 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_vel_port->set_property(uris.lv2_name, bufs.forge().alloc("Velocity"));
 	_ports->at(3) = _vel_port;
 
-	_gate_port = new OutputPort(bufs, this, Raul::Symbol("gate"), 3, _polyphony,
+	_gate_port = new OutputPort(bufs, this, raul::Symbol("gate"), 3, _polyphony,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_gate_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
 	_ports->at(4) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, Raul::Symbol("trigger"), 4, _polyphony,
+	_trig_port = new OutputPort(bufs, this, raul::Symbol("trigger"), 4, _polyphony,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_trig_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(5) = _trig_port;
 
-	_bend_port = new OutputPort(bufs, this, Raul::Symbol("bend"), 5, _polyphony,
+	_bend_port = new OutputPort(bufs, this, raul::Symbol("bend"), 5, _polyphony,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_bend_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_bend_port->set_property(uris.lv2_name, bufs.forge().alloc("Bender"));
@@ -128,7 +128,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_bend_port->set_property(uris.lv2_maximum, one);
 	_ports->at(6) = _bend_port;
 
-	_pressure_port = new OutputPort(bufs, this, Raul::Symbol("pressure"), 6, _polyphony,
+	_pressure_port = new OutputPort(bufs, this, raul::Symbol("pressure"), 6, _polyphony,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_pressure_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_pressure_port->set_property(uris.lv2_name, bufs.forge().alloc("Pressure"));

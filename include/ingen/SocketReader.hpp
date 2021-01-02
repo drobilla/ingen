@@ -25,7 +25,7 @@
 #include <memory>
 #include <thread>
 
-namespace Raul { class Socket; }
+namespace raul { class Socket; }
 
 namespace ingen {
 
@@ -38,7 +38,7 @@ class INGEN_API SocketReader
 public:
 	SocketReader(World&                        world,
 	             Interface&                    iface,
-	             std::shared_ptr<Raul::Socket> sock);
+	             std::shared_ptr<raul::Socket> sock);
 
 	virtual ~SocketReader();
 
@@ -75,7 +75,7 @@ private:
 	SerdEnv*                      _env;
 	SordInserter*                 _inserter;
 	SordNode*                     _msg_node;
-	std::shared_ptr<Raul::Socket> _socket;
+	std::shared_ptr<raul::Socket> _socket;
 	int                           _socket_error;
 	bool                          _exit_flag;
 	std::thread                   _thread;

@@ -25,7 +25,7 @@
 #include <memory>
 #include <string>
 
-namespace Raul { class Path; }
+namespace raul { class Path; }
 
 namespace ingen {
 
@@ -60,7 +60,7 @@ public:
 	 * All serialized paths will have the root path chopped from their prefix
 	 * (therefore all serialized paths must be descendants of the root)
 	 */
-	virtual void start_to_string(const Raul::Path& root,
+	virtual void start_to_string(const raul::Path& root,
 	                             const URI&        base_uri);
 
 	/** Begin a serialization to a file.
@@ -70,7 +70,7 @@ public:
 	 * All serialized paths will have the root path chopped from their prefix
 	 * (therefore all serialized paths must be descendants of the root)
 	 */
-	virtual void start_to_file(const Raul::Path& root,
+	virtual void start_to_file(const raul::Path& root,
 	                           const FilePath&   filename);
 
 	/** Serialize an object (graph, block, or port).

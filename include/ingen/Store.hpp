@@ -27,7 +27,7 @@
 #include <mutex>
 #include <utility>
 
-namespace Raul { class Symbol; }
+namespace raul { class Symbol; }
 
 namespace ingen {
 
@@ -36,20 +36,20 @@ class Node;
 /** Store of objects in the graph hierarchy.
  * @ingroup IngenShared
  */
-class INGEN_API Store : public Raul::Noncopyable,
-                        public Raul::Deletable,
-                        public std::map<const Raul::Path, std::shared_ptr<Node>>
+class INGEN_API Store : public raul::Noncopyable,
+                        public raul::Deletable,
+                        public std::map<const raul::Path, std::shared_ptr<Node>>
 {
 public:
 	void add(Node* o);
 
-	Node* get(const Raul::Path& path) {
+	Node* get(const raul::Path& path) {
 		const iterator i = find(path);
 		return (i == end()) ? nullptr : i->second.get();
 	}
 
 	using const_range = std::pair<const_iterator, const_iterator>;
-	using Objects     = std::map<Raul::Path, std::shared_ptr<Node>>;
+	using Objects     = std::map<raul::Path, std::shared_ptr<Node>>;
 	using Mutex       = std::recursive_mutex;
 
 	iterator       find_descendants_end(Store::iterator parent);
@@ -70,10 +70,10 @@ public:
 	 *
 	 * Note this invalidates `i`.
 	 */
-	void rename(iterator top, const Raul::Path& new_path);
+	void rename(iterator top, const raul::Path& new_path);
 
-	unsigned child_name_offset(const Raul::Path&   parent,
-	                           const Raul::Symbol& symbol,
+	unsigned child_name_offset(const raul::Path&   parent,
+	                           const raul::Symbol& symbol,
 	                           bool                allow_zero=true) const;
 
 	Mutex& mutex() { return _mutex; }

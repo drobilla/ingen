@@ -29,10 +29,10 @@
 #include <string>
 #include <utility>
 
-namespace Raul {
+namespace raul {
 class Path;
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -79,8 +79,8 @@ public:
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;
-	virtual const Raul::Path&   path()         const = 0;
-	virtual const Raul::Symbol& symbol()       const = 0;
+	virtual const raul::Path&   path()         const = 0;
+	virtual const raul::Symbol& symbol()       const = 0;
 	virtual Node*               graph_parent() const = 0;
 
 	URI base_uri() const {
@@ -92,9 +92,9 @@ public:
 
 protected:
 	friend class Store;
-	virtual void set_path(const Raul::Path& p) = 0;
+	virtual void set_path(const raul::Path& p) = 0;
 
-	Node(const URIs& uris, const Raul::Path& path)
+	Node(const URIs& uris, const raul::Path& path)
 		: Resource(uris, path_to_uri(path))
 	{}
 

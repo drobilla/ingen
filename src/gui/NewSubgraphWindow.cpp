@@ -95,10 +95,10 @@ void
 NewSubgraphWindow::name_changed()
 {
 	std::string name = _name_entry->get_text();
-	if (!Raul::Symbol::is_valid(name)) {
+	if (!raul::Symbol::is_valid(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
-	} else if (_app->store()->find(_graph->path().child(Raul::Symbol(name)))
+	} else if (_app->store()->find(_graph->path().child(raul::Symbol(name)))
 	           != _app->store()->end()) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
@@ -112,8 +112,8 @@ void
 NewSubgraphWindow::ok_clicked()
 {
 	const uint32_t   poly = _poly_spinbutton->get_value_as_int();
-	const Raul::Path path = _graph->path().child(
-		Raul::Symbol::symbolify(_name_entry->get_text()));
+	const raul::Path path = _graph->path().child(
+		raul::Symbol::symbolify(_name_entry->get_text()));
 
 	// Create graph
 	Properties props;

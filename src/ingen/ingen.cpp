@@ -177,16 +177,16 @@ run(int argc, char** argv)
 
 	// Load a graph
 	if (conf.option("load").is_valid()) {
-		boost::optional<Raul::Path>   parent;
-		boost::optional<Raul::Symbol> symbol;
+		boost::optional<raul::Path>   parent;
+		boost::optional<raul::Symbol> symbol;
 
 		const Atom& path_option = conf.option("path");
 		if (path_option.is_valid()) {
-			if (Raul::Path::is_valid(path_option.ptr<char>())) {
-				const Raul::Path p(path_option.ptr<char>());
+			if (raul::Path::is_valid(path_option.ptr<char>())) {
+				const raul::Path p(path_option.ptr<char>());
 				if (!p.is_root()) {
 					parent = p.parent();
-					symbol = Raul::Symbol(p.symbol());
+					symbol = raul::Symbol(p.symbol());
 				}
 			} else {
 				std::cerr << "Invalid path given: '" << path_option.ptr<char>()

@@ -85,7 +85,7 @@ Engine::Engine(ingen::World& world)
 	: _world(world)
 	, _options(new LV2Options(world.uris()))
 	, _buffer_factory(new BufferFactory(*this, world.uris()))
-	, _maid(new Raul::Maid)
+	, _maid(new raul::Maid)
 	, _worker(new Worker(world.log(), event_queue_size()))
 	, _sync_worker(new Worker(world.log(), event_queue_size(), true))
 	, _broadcaster(new Broadcaster())
@@ -114,7 +114,7 @@ Engine::Engine(ingen::World& world)
 
 	for (int i = 0; i < world.conf().option("threads").get<int32_t>(); ++i) {
 		_notifications.emplace_back(
-			make_unique<Raul::RingBuffer>(uint32_t(24 * event_queue_size())));
+			make_unique<raul::RingBuffer>(uint32_t(24 * event_queue_size())));
 		_run_contexts.emplace_back(
 			make_unique<RunContext>(
 				*this, _notifications.back().get(), unsigned(i), i > 0));
@@ -420,7 +420,7 @@ Engine::activate()
 
 		enqueue_event(
 			new events::CreateGraph(
-				*this, nullptr, -1, 0, Raul::Path("/"), properties));
+				*this, nullptr, -1, 0, raul::Path("/"), properties));
 
 		flush_events(std::chrono::milliseconds(10));
 		if (!_root_graph) {

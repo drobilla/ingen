@@ -55,13 +55,13 @@ ArcImpl::~ArcImpl()
 	}
 }
 
-const Raul::Path&
+const raul::Path&
 ArcImpl::tail_path() const
 {
 	return _tail->path();
 }
 
-const Raul::Path&
+const raul::Path&
 ArcImpl::head_path() const
 {
 	return _head->path();

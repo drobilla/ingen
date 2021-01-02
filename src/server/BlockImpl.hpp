@@ -39,9 +39,9 @@
 #include <memory>
 #include <set>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 namespace server {
@@ -65,10 +65,10 @@ class BlockImpl : public NodeImpl
                 , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
-	using Ports = Raul::Array<PortImpl*>;
+	using Ports = raul::Array<PortImpl*>;
 
 	BlockImpl(PluginImpl*         plugin,
-	          const Raul::Symbol& symbol,
+	          const raul::Symbol& symbol,
 	          bool                polyphonic,
 	          GraphImpl*          parent,
 	          SampleRate          rate);
@@ -94,7 +94,7 @@ public:
 
 	/** Duplicate this Node. */
 	virtual BlockImpl* duplicate(Engine&             engine,
-	                             const Raul::Symbol& symbol,
+	                             const raul::Symbol& symbol,
 	                             GraphImpl*          parent) { return nullptr; }
 
 	/** Return true iff this block is activated */
@@ -204,7 +204,7 @@ protected:
 	PortImpl* nth_port_by_type(uint32_t n, bool input, PortType type);
 
 	PluginImpl*              _plugin;
-	Raul::managed_ptr<Ports> _ports; ///< Access in audio thread only
+	raul::managed_ptr<Ports> _ports; ///< Access in audio thread only
 	uint32_t                 _polyphony;
 	std::set<BlockImpl*>     _providers; ///< Blocks connected to this one's input ports
 	std::set<BlockImpl*>     _dependants; ///< Blocks this one's output ports are connected to

@@ -149,7 +149,7 @@ private:
 	int _paste_count;
 
 	// Track pasted objects so they can be selected when they arrive
-	std::set<Raul::Path> _pastees;
+	std::set<raul::Path> _pastees;
 
 	Gtk::Menu*          _menu                    = nullptr;
 	Gtk::Menu*          _internal_menu           = nullptr;

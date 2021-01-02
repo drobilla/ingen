@@ -33,9 +33,9 @@
 #include <memory>
 #include <utility>
 
-namespace Raul {
+namespace raul {
 class Symbol;
-} // namespace Raul
+} // namespace raul
 
 namespace boost {
 namespace intrusive {
@@ -67,7 +67,7 @@ class GraphImpl final : public BlockImpl
 {
 public:
 	GraphImpl(Engine&             engine,
-	          const Raul::Symbol& symbol,
+	          const raul::Symbol& symbol,
 	          uint32_t            poly,
 	          GraphImpl*          parent,
 	          SampleRate          srate,
@@ -78,7 +78,7 @@ public:
 	GraphType graph_type() const override { return GraphType::GRAPH; }
 
 	BlockImpl* duplicate(Engine&             engine,
-	                     const Raul::Symbol& symbol,
+	                     const raul::Symbol& symbol,
 	                     GraphImpl*          parent) override;
 
 	void activate(BufferFactory& bufs) override;
@@ -111,7 +111,7 @@ public:
 	 */
 	bool apply_internal_poly(RunContext&    ctx,
 	                         BufferFactory& bufs,
-	                         Raul::Maid&    maid,
+	                         raul::Maid&    maid,
 	                         uint32_t       poly);
 
 	// Graph specific stuff not inherited from Block
@@ -184,13 +184,13 @@ public:
 	bool has_arc(const PortImpl* tail, const PortImpl* dst_port) const;
 
 	/** Set a new compiled graph to run, and return the old one. */
-	void set_compiled_graph(Raul::managed_ptr<CompiledGraph>&& cg);
+	void set_compiled_graph(raul::managed_ptr<CompiledGraph>&& cg);
 
-	const Raul::managed_ptr<Ports>& external_ports() { return _ports; }
+	const raul::managed_ptr<Ports>& external_ports() { return _ports; }
 
-	void set_external_ports(Raul::managed_ptr<Ports>&& pa) { _ports = std::move(pa); }
+	void set_external_ports(raul::managed_ptr<Ports>&& pa) { _ports = std::move(pa); }
 
-	Raul::managed_ptr<Ports> build_ports_array(Raul::Maid& maid);
+	raul::managed_ptr<Ports> build_ports_array(raul::Maid& maid);
 
 	/** Whether to run this graph's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
@@ -206,7 +206,7 @@ private:
 	Engine&                          _engine;
 	uint32_t                         _poly_pre;     ///< Pre-process thread only
 	uint32_t                         _poly_process; ///< Process thread only
-	Raul::managed_ptr<CompiledGraph> _compiled_graph; ///< Process thread only
+	raul::managed_ptr<CompiledGraph> _compiled_graph; ///< Process thread only
 	PortList                         _inputs;  ///< Pre-process thread only
 	PortList                         _outputs; ///< Pre-process thread only
 	Blocks                           _blocks;  ///< Pre-process thread only

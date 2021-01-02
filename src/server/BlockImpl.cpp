@@ -36,7 +36,7 @@ namespace ingen {
 namespace server {
 
 BlockImpl::BlockImpl(PluginImpl*         plugin,
-                     const Raul::Symbol& symbol,
+                     const raul::Symbol& symbol,
                      bool                polyphonic,
                      GraphImpl*          parent,
                      SampleRate)

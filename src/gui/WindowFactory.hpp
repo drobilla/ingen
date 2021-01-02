@@ -99,7 +99,7 @@ public:
 	void clear();
 
 private:
-	using GraphWindowMap = std::map<Raul::Path, GraphWindow*>;
+	using GraphWindowMap = std::map<raul::Path, GraphWindow*>;
 
 	GraphWindow*
 	new_graph_window(const std::shared_ptr<const client::GraphModel>& graph,

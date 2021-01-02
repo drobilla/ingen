@@ -169,7 +169,7 @@ PortMenu::on_menu_expose()
 	auto block = std::dynamic_pointer_cast<const BlockModel>(port->parent());
 
 	const std::string label = block->label() + " " + block->port_label(port);
-	const Raul::Path  path  = Raul::Path(block->path() + Raul::Symbol("_" + port->symbol()));
+	const raul::Path  path  = raul::Path(block->path() + raul::Symbol("_" + port->symbol()));
 
 	ingen::Resource r(*_object);
 	r.remove_property(uris.lv2_index, uris.patch_wildcard);

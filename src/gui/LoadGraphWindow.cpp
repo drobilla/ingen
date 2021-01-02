@@ -187,8 +187,8 @@ LoadGraphWindow::ok_clicked()
 
 	if (_import) {
 		// If unset load_graph will load value
-		boost::optional<Raul::Path>   parent;
-		boost::optional<Raul::Symbol> symbol;
+		boost::optional<raul::Path>   parent;
+		boost::optional<raul::Symbol> symbol;
 		if (!_graph->path().is_root()) {
 			parent = _graph->path().parent();
 			symbol = _graph->symbol();
@@ -206,9 +206,9 @@ LoadGraphWindow::ok_clicked()
 			Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 			y = _app->forge().make(y.get<float>() + 20.0f);
 
-			Raul::Symbol symbol(symbol_from_filename(u));
+			raul::Symbol symbol(symbol_from_filename(u));
 			if (uri_list.size() == 1 && !_symbol_entry->get_text().empty()) {
-				symbol = Raul::Symbol::symbolify(_symbol_entry->get_text());
+				symbol = raul::Symbol::symbolify(_symbol_entry->get_text());
 			}
 
 			symbol = avoid_symbol_clash(symbol);
@@ -233,16 +233,16 @@ LoadGraphWindow::cancel_clicked()
 	hide();
 }
 
-Raul::Symbol
+raul::Symbol
 LoadGraphWindow::symbol_from_filename(const Glib::ustring& filename)
 {
 	std::string symbol_str = Glib::path_get_basename(get_filename());
 	symbol_str = symbol_str.substr(0, symbol_str.find('.'));
-	return Raul::Symbol::symbolify(symbol_str);
+	return raul::Symbol::symbolify(symbol_str);
 }
 
-Raul::Symbol
-LoadGraphWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
+raul::Symbol
+LoadGraphWindow::avoid_symbol_clash(const raul::Symbol& symbol)
 {
 	unsigned offset = _app->store()->child_name_offset(
 		_graph->path(), symbol);
@@ -250,7 +250,7 @@ LoadGraphWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << symbol << "_" << offset;
-		return Raul::Symbol(ss.str());
+		return raul::Symbol(ss.str());
 	} else {
 		return symbol;
 	}

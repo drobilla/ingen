@@ -111,7 +111,7 @@ PluginModel::get_property(const URI& key) const
 		}
 		str = str.substr(last_delim + 1);
 
-		std::string symbol = Raul::Symbol::symbolify(str);
+		std::string symbol = raul::Symbol::symbolify(str);
 		set_property(_uris.lv2_symbol, _uris.forge.alloc(symbol));
 		return get_property(key);
 	}
@@ -175,14 +175,14 @@ PluginModel::add_preset(const URI& uri, const std::string& label)
 	_signal_preset.emit(uri, label);
 }
 
-Raul::Symbol
+raul::Symbol
 PluginModel::default_block_symbol() const
 {
 	const Atom& name_atom = get_property(_uris.lv2_symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String) {
-		return Raul::Symbol::symbolify(name_atom.ptr<char>());
+		return raul::Symbol::symbolify(name_atom.ptr<char>());
 	} else {
-		return Raul::Symbol("_");
+		return raul::Symbol("_");
 	}
 }
 

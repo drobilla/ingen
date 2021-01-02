@@ -32,7 +32,7 @@
 namespace ingen {
 namespace client {
 
-ObjectModel::ObjectModel(URIs& uris, const Raul::Path& path)
+ObjectModel::ObjectModel(URIs& uris, const raul::Path& path)
 	: Node(uris, path)
 	, _path(path)
 	, _symbol((path == "/") ? "root" : path.symbol())
@@ -100,10 +100,10 @@ ObjectModel::set(const std::shared_ptr<ObjectModel>& o)
 }
 
 void
-ObjectModel::set_path(const Raul::Path& p)
+ObjectModel::set_path(const raul::Path& p)
 {
 	_path   = p;
-	_symbol = Raul::Symbol(p.is_root() ? "root" : p.symbol());
+	_symbol = raul::Symbol(p.is_root() ? "root" : p.symbol());
 	set_uri(path_to_uri(p));
 	_signal_moved.emit();
 }

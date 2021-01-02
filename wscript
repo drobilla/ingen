@@ -115,7 +115,7 @@ def configure(conf):
     conf.check_pkg('lilv-0 >= 0.21.5', uselib_store='LILV')
     conf.check_pkg('suil-0 >= 0.8.7', uselib_store='SUIL')
     conf.check_pkg('sratom-0 >= 0.4.6', uselib_store='SRATOM')
-    conf.check_pkg('raul-1 >= 1.0.0', uselib_store='RAUL')
+    conf.check_pkg('raul-1 >= 1.1.0', uselib_store='RAUL')
     conf.check_pkg('serd-0 >= 0.30.3', uselib_store='SERD', mandatory=False)
     conf.check_pkg('sord-0 >= 0.12.0', uselib_store='SORD', mandatory=False)
 

@@ -50,12 +50,12 @@ namespace internals {
 
 InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, URI(NS_INTERNALS "Controller"), Raul::Symbol("controller"));
+		uris, URI(NS_INTERNALS "Controller"), raul::Symbol("controller"));
 }
 
 ControllerNode::ControllerNode(InternalPlugin*      plugin,
                                BufferFactory&       bufs,
-                               const Raul::Symbol&  symbol,
+                               const raul::Symbol&  symbol,
                                bool                 polyphonic,
                                GraphImpl*           parent,
                                SampleRate           srate)
@@ -69,21 +69,21 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 	const Atom one        = bufs.forge().make(1.0f);
 	const Atom atom_Float = bufs.forge().make_urid(URI(LV2_ATOM__Float));
 
-	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
+	_midi_in_port = new InputPort(bufs, this, raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_midi_in_port->set_property(uris.atom_supports,
 	                            bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(0) = _midi_in_port;
 
-	_midi_out_port = new OutputPort(bufs, this, Raul::Symbol("event"), 1, 1,
+	_midi_out_port = new OutputPort(bufs, this, raul::Symbol("event"), 1, 1,
 	                                PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_out_port->set_property(uris.lv2_name, bufs.forge().alloc("Event"));
 	_midi_out_port->set_property(uris.atom_supports,
 	                             bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(1) = _midi_out_port;
 
-	_param_port = new InputPort(bufs, this, Raul::Symbol("controller"), 2, 1,
+	_param_port = new InputPort(bufs, this, raul::Symbol("controller"), 2, 1,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_param_port->set_property(uris.atom_supports, atom_Float);
 	_param_port->set_property(uris.lv2_minimum, zero);
@@ -92,26 +92,26 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 	_param_port->set_property(uris.lv2_name, bufs.forge().alloc("Controller"));
 	_ports->at(2) = _param_port;
 
-	_log_port = new InputPort(bufs, this, Raul::Symbol("logarithmic"), 3, 1,
+	_log_port = new InputPort(bufs, this, raul::Symbol("logarithmic"), 3, 1,
 	                          PortType::ATOM, uris.atom_Sequence, zero);
 	_log_port->set_property(uris.atom_supports, atom_Float);
 	_log_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_log_port->set_property(uris.lv2_name, bufs.forge().alloc("Logarithmic"));
 	_ports->at(3) = _log_port;
 
-	_min_port = new InputPort(bufs, this, Raul::Symbol("minimum"), 4, 1,
+	_min_port = new InputPort(bufs, this, raul::Symbol("minimum"), 4, 1,
 	                          PortType::ATOM, uris.atom_Sequence, zero);
 	_min_port->set_property(uris.atom_supports, atom_Float);
 	_min_port->set_property(uris.lv2_name, bufs.forge().alloc("Minimum"));
 	_ports->at(4) = _min_port;
 
-	_max_port = new InputPort(bufs, this, Raul::Symbol("maximum"), 5, 1,
+	_max_port = new InputPort(bufs, this, raul::Symbol("maximum"), 5, 1,
 	                          PortType::ATOM, uris.atom_Sequence, one);
 	_max_port->set_property(uris.atom_supports, atom_Float);
 	_max_port->set_property(uris.lv2_name, bufs.forge().alloc("Maximum"));
 	_ports->at(5) = _max_port;
 
-	_audio_port = new OutputPort(bufs, this, Raul::Symbol("output"), 6, 1,
+	_audio_port = new OutputPort(bufs, this, raul::Symbol("output"), 6, 1,
 	                             PortType::ATOM, uris.atom_Sequence, zero);
 	_audio_port->set_property(uris.atom_supports, atom_Float);
 	_audio_port->set_property(uris.lv2_name, bufs.forge().alloc("Output"));

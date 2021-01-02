@@ -36,7 +36,7 @@ class PluginImpl;
  *
  * \ingroup engine
  */
-class BlockFactory : public Raul::Noncopyable
+class BlockFactory : public raul::Noncopyable
 {
 public:
 	explicit BlockFactory(ingen::World& world);

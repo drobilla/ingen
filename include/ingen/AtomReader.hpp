@@ -26,9 +26,9 @@
 
 #include <cstdint>
 
-namespace Raul {
+namespace raul {
 class Path;
-} // namespace Raul
+} // namespace raul
 
 namespace ingen {
 
@@ -59,7 +59,7 @@ private:
 	void get_atom(const LV2_Atom* in, Atom& out);
 
 	boost::optional<URI>        atom_to_uri(const LV2_Atom* atom);
-	boost::optional<Raul::Path> atom_to_path(const LV2_Atom* atom);
+	boost::optional<raul::Path> atom_to_path(const LV2_Atom* atom);
 	Resource::Graph             atom_to_context(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object* obj,

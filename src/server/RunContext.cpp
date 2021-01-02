@@ -58,7 +58,7 @@ struct Notification
 };
 
 RunContext::RunContext(Engine&           engine,
-                       Raul::RingBuffer* event_sink,
+                       raul::RingBuffer* event_sink,
                        unsigned          id,
                        bool              threaded)
 	: _engine(engine)

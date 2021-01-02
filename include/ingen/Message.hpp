@@ -44,8 +44,8 @@ struct BundleEnd
 struct Connect
 {
 	int32_t    seq;
-	Raul::Path tail;
-	Raul::Path head;
+	raul::Path tail;
+	raul::Path head;
 };
 
 struct Copy
@@ -73,15 +73,15 @@ struct Delta
 struct Disconnect
 {
 	int32_t    seq;
-	Raul::Path tail;
-	Raul::Path head;
+	raul::Path tail;
+	raul::Path head;
 };
 
 struct DisconnectAll
 {
 	int32_t    seq;
-	Raul::Path graph;
-	Raul::Path path;
+	raul::Path graph;
+	raul::Path path;
 };
 
 struct Error
@@ -99,8 +99,8 @@ struct Get
 struct Move
 {
 	int32_t    seq;
-	Raul::Path old_path;
-	Raul::Path new_path;
+	raul::Path old_path;
+	raul::Path new_path;
 };
 
 struct Put

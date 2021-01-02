@@ -58,7 +58,7 @@ public:
 	           const std::shared_ptr<Interface>& client,
 	           int32_t                           id,
 	           SampleCount                       timestamp,
-	           const Raul::Path&                 path,
+	           const raul::Path&                 path,
 	           const Properties&                 properties);
 
 	bool pre_process(PreProcessContext& ctx) override;
@@ -72,12 +72,12 @@ private:
 		OUTPUT
 	};
 
-	Raul::Path                          _path;
+	raul::Path                          _path;
 	PortType                            _port_type;
 	LV2_URID                            _buf_type;
 	GraphImpl*                          _graph;
 	DuplexPort*                         _graph_port;
-	Raul::managed_ptr<BlockImpl::Ports> _ports_array; ///< New external port array for Graph
+	raul::managed_ptr<BlockImpl::Ports> _ports_array; ///< New external port array for Graph
 	EnginePort*                         _engine_port; ///< Driver port if on the root
 	Properties                          _properties;
 	Properties                          _update;

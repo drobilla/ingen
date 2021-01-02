@@ -38,9 +38,9 @@ public:
 	explicit ClashAvoider(const Store& store);
 
 	URI        map_uri(const URI& in);
-	Raul::Path map_path(const Raul::Path& in);
+	raul::Path map_path(const raul::Path& in);
 
-	bool exists(const Raul::Path& path) const;
+	bool exists(const raul::Path& path) const;
 
 	/** Adjust a new label by increasing the numeric suffix if any.
 	 *
@@ -48,13 +48,13 @@ public:
 	 * @param new_path The new path that `old_path` was mapped to
 	 * @param name The old name.
 	 */
-	static std::string adjust_name(const Raul::Path& old_path,
-	                               const Raul::Path& new_path,
+	static std::string adjust_name(const raul::Path& old_path,
+	                               const raul::Path& new_path,
 	                               std::string       name);
 
 private:
-	using Offsets   = std::map<Raul::Path, unsigned>;
-	using SymbolMap = std::map<Raul::Path, Raul::Path>;
+	using Offsets   = std::map<raul::Path, unsigned>;
+	using SymbolMap = std::map<raul::Path, raul::Path>;
 
 	const Store& _store;
 	Offsets      _offsets;

@@ -64,7 +64,7 @@ namespace server {
  * (It _will_ crash!)
  */
 LV2Block::LV2Block(LV2Plugin*          plugin,
-                   const Raul::Symbol& symbol,
+                   const raul::Symbol& symbol,
                    bool                polyphonic,
                    GraphImpl*          parent,
                    SampleRate          srate)
@@ -257,7 +257,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 
 		/* LV2 port symbols are guaranteed to be unique, valid C identifiers,
 		   and Lilv guarantees that lilv_port_get_symbol() is valid. */
-		const Raul::Symbol port_sym(
+		const raul::Symbol port_sym(
 			lilv_node_as_string(lilv_port_get_symbol(plug, id)));
 
 		// Get port type
@@ -514,7 +514,7 @@ LV2Block::save_state(const FilePath& dir) const
 
 BlockImpl*
 LV2Block::duplicate(Engine&             engine,
-                    const Raul::Symbol& symbol,
+                    const raul::Symbol& symbol,
                     GraphImpl*          parent)
 {
 	const SampleRate rate = engine.sample_rate();

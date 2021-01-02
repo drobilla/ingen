@@ -35,7 +35,7 @@ namespace ingen {
 SocketWriter::SocketWriter(URIMap&                       map,
                            URIs&                         uris,
                            const URI&                    uri,
-                           std::shared_ptr<Raul::Socket> sock)
+                           std::shared_ptr<raul::Socket> sock)
 	: TurtleWriter(map, uris, uri)
 	, _socket(std::move(sock))
 {}

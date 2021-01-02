@@ -68,7 +68,7 @@ public:
 
 	const Atom& get_property(const URI& key) const override;
 
-	Raul::Symbol default_block_symbol() const;
+	raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;
 	std::string  port_human_name(uint32_t index) const;
 

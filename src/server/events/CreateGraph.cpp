@@ -54,7 +54,7 @@ CreateGraph::CreateGraph(Engine&                           engine,
                          const std::shared_ptr<Interface>& client,
                          int32_t                           id,
                          SampleCount                       timestamp,
-                         const Raul::Path&                 path,
+                         const raul::Path&                 path,
                          const Properties&                 properties)
     : Event(engine, client, id, timestamp)
     , _path(path)
@@ -91,7 +91,7 @@ CreateGraph::build_child_events()
 
 	_child_events.push_back(
 		make_unique<events::CreatePort>(_engine, _request_client, -1, _time,
-		                                _path.child(Raul::Symbol("control")),
+		                                _path.child(raul::Symbol("control")),
 		                                in_properties));
 
 	// Add notify port (message respond)
@@ -106,7 +106,7 @@ CreateGraph::build_child_events()
 
 	_child_events.push_back(
 		make_unique<events::CreatePort>(_engine, _request_client, -1, _time,
-		                                _path.child(Raul::Symbol("notify")),
+		                                _path.child(raul::Symbol("notify")),
 		                                out_properties));
 }
 
@@ -118,7 +118,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 	}
 
 	if (!_path.is_root()) {
-		const Raul::Path up(_path.parent());
+		const raul::Path up(_path.parent());
 		if (!(_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(up)))) {
 			return Event::pre_process_done(Status::PARENT_NOT_FOUND, up);
 		}
@@ -143,7 +143,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		ext_poly = int_poly;
 	}
 
-	const Raul::Symbol symbol(_path.is_root() ? "graph" : _path.symbol());
+	const raul::Symbol symbol(_path.is_root() ? "graph" : _path.symbol());
 
 	// Get graph prototype
 	iterator t = _properties.find(uris.lv2_prototype);
