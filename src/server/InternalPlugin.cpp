@@ -26,14 +26,14 @@
 
 #include "ingen/URIs.hpp"
 
+#include <utility>
+
 namespace ingen {
 namespace server {
 
-InternalPlugin::InternalPlugin(URIs&               uris,
-                               const URI&          uri,
-                               const raul::Symbol& symbol)
-	: PluginImpl(uris, uris.ingen_Internal.urid_atom(), uri)
-	, _symbol(symbol)
+InternalPlugin::InternalPlugin(URIs& uris, const URI& uri, raul::Symbol symbol)
+    : PluginImpl(uris, uris.ingen_Internal.urid_atom(), uri)
+    , _symbol(std::move(symbol))
 {
 	set_property(uris.rdf_type, uris.ingen_Internal);
 }

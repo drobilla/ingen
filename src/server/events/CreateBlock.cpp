@@ -59,10 +59,10 @@ CreateBlock::CreateBlock(Engine&                           engine,
                          const std::shared_ptr<Interface>& client,
                          int32_t                           id,
                          SampleCount                       timestamp,
-                         const raul::Path&                 path,
+                         raul::Path                        path,
                          Properties&                       properties)
     : Event(engine, client, id, timestamp)
-    , _path(path)
+    , _path(std::move(path))
     , _properties(properties)
     , _graph(nullptr)
     , _block(nullptr)

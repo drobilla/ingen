@@ -41,9 +41,7 @@ class GraphImpl;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(URIs&               uris,
-	               const URI&          uri,
-	               const raul::Symbol& symbol);
+	InternalPlugin(URIs& uris, const URI& uri, raul::Symbol symbol);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
 	                       const raul::Symbol& symbol,

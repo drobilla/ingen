@@ -54,10 +54,10 @@ CreateGraph::CreateGraph(Engine&                           engine,
                          const std::shared_ptr<Interface>& client,
                          int32_t                           id,
                          SampleCount                       timestamp,
-                         const raul::Path&                 path,
+                         raul::Path                        path,
                          const Properties&                 properties)
     : Event(engine, client, id, timestamp)
-    , _path(path)
+    , _path(std::move(path))
     , _properties(properties)
     , _graph(nullptr)
     , _parent(nullptr)
