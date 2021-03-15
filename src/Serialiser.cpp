@@ -530,7 +530,7 @@ Serialiser::Impl::serialise_arc(const Sord::Node&                 parent,
 
 	const Sord::Node src    = path_rdf_node(arc->tail_path());
 	const Sord::Node dst    = path_rdf_node(arc->head_path());
-	const Sord::Node arc_id = Sord::Node::blank_id(*_world.rdf_world());
+	const Sord::Node arc_id = Sord::Node::blank_id(*_world.rdf_world(), "arc");
 	_model->add_statement(arc_id,
 	                      Sord::URI(world, uris.ingen_tail),
 	                      src);
