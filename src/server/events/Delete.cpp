@@ -166,7 +166,7 @@ Delete::execute(RunContext& ctx)
 	}
 
 	GraphImpl* parent = _block ? _block->parent_graph() : nullptr;
-	if (_port) {
+	if (_ports_array && _port) {
 		// Adjust port indices if necessary
 		for (size_t i = 0; i < _ports_array->size(); ++i) {
 			PortImpl* const port = _ports_array->at(i);

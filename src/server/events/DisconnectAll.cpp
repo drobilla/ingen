@@ -122,6 +122,18 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 			                     dynamic_cast<InputPort*>(a->head())));
 	}
 
+	// Create disconnect events to erase adjacent arcs in parent's parent
+	if (_port && _parent->parent()) {
+		GraphImpl* parent_parent = dynamic_cast<GraphImpl*>(_parent->parent());
+		for (const auto& a : adjacent_arcs(parent_parent)) {
+			_impls.push_back(
+				new Disconnect::Impl(_engine,
+				                     parent_parent,
+				                     dynamic_cast<PortImpl*>(a->tail()),
+				                     dynamic_cast<InputPort*>(a->head())));
+		}
+	}
+
 	if (!_deleting && ctx.must_compile(*_parent)) {
 		if (!(_compiled_graph = compile(*_engine.maid(), *_parent))) {
 			return Event::pre_process_done(Status::COMPILATION_FAILED);
