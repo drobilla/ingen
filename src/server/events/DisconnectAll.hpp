@@ -26,6 +26,7 @@
 
 #include <list>
 #include <memory>
+#include <set>
 
 namespace ingen {
 
@@ -34,6 +35,7 @@ class Node;
 
 namespace server {
 
+class ArcImpl;
 class BlockImpl;
 class CompiledGraph;
 class Engine;
@@ -69,6 +71,8 @@ public:
 
 private:
 	using Impls = std::list<Disconnect::Impl*>;
+
+	std::set<ArcImpl*> adjacent_arcs(GraphImpl* graph);
 
 	const ingen::DisconnectAll       _msg;
 	GraphImpl*                       _parent;

@@ -113,28 +113,13 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 		}
 	}
 
-	// Find set of arcs to remove
-	std::set<ArcImpl*> to_remove;
-	for (const auto& a : _parent->arcs()) {
-		auto* const arc = static_cast<ArcImpl*>(a.second.get());
-		if (_block) {
-			if (arc->tail()->parent_block() == _block
-			    || arc->head()->parent_block() == _block) {
-				to_remove.insert(arc);
-			}
-		} else if (_port) {
-			if (arc->tail() == _port || arc->head() == _port) {
-				to_remove.insert(arc);
-			}
-		}
-	}
-
-	// Create disconnect events (which erases from _parent->arcs())
-	for (const auto& a : to_remove) {
-		_impls.push_back(new Disconnect::Impl(
-			                 _engine, _parent,
-			                 dynamic_cast<PortImpl*>(a->tail()),
-			                 dynamic_cast<InputPort*>(a->head())));
+	// Create disconnect events to erase adjacent arcs in parent
+	for (const auto& a : adjacent_arcs(_parent)) {
+		_impls.push_back(
+			new Disconnect::Impl(_engine,
+			                     _parent,
+			                     dynamic_cast<PortImpl*>(a->tail()),
+			                     dynamic_cast<InputPort*>(a->head())));
 	}
 
 	if (!_deleting && ctx.must_compile(*_parent)) {
@@ -176,6 +161,27 @@ DisconnectAll::undo(Interface& target)
 	for (auto& i : _impls) {
 		target.connect(i->tail()->path(), i->head()->path());
 	}
+}
+
+std::set<ArcImpl*>
+DisconnectAll::adjacent_arcs(GraphImpl* const graph)
+{
+	std::set<ArcImpl*> arcs;
+	for (const auto& a : graph->arcs()) {
+		auto* const arc = static_cast<ArcImpl*>(a.second.get());
+		if (_block) {
+			if (arc->tail()->parent_block() == _block
+			    || arc->head()->parent_block() == _block) {
+				arcs.insert(arc);
+			}
+		} else if (_port) {
+			if (arc->tail() == _port || arc->head() == _port) {
+				arcs.insert(arc);
+			}
+		}
+	}
+
+	return arcs;
 }
 
 } // namespace events
