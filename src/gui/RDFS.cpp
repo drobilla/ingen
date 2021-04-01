@@ -234,7 +234,9 @@ range(World& world, const LilvNode* prop, bool recursive)
 
 	URISet ranges;
 	LILV_FOREACH(nodes, n, nodes) {
-		ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(nodes, n))));
+		if (lilv_node_is_uri(lilv_nodes_get(nodes, n))) {
+			ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(nodes, n))));
+		}
 	}
 
 	if (recursive) {
