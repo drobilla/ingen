@@ -22,7 +22,6 @@
 
 #include "ingen/Log.hpp"
 #include "ingen/Node.hpp"
-#include "ingen/memory.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/worker/worker.h"
 
@@ -127,7 +126,7 @@ Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)
 	, _synchronous(synchronous)
 {
 	if (!synchronous) {
-		_thread = make_unique<std::thread>(&Worker::run, this);
+		_thread = std::make_unique<std::thread>(&Worker::run, this);
 	}
 }
 

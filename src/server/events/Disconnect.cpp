@@ -35,13 +35,13 @@
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
-#include "ingen/memory.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <cassert>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <string>
@@ -167,10 +167,10 @@ Disconnect::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _msg.head);
 	}
 
-	_impl = make_unique<Impl>(_engine,
-	                          _graph,
-	                          dynamic_cast<PortImpl*>(tail),
-	                          dynamic_cast<InputPort*>(head));
+	_impl = std::make_unique<Impl>(_engine,
+	                               _graph,
+	                               dynamic_cast<PortImpl*>(tail),
+	                               dynamic_cast<InputPort*>(head));
 
 	_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_graph);
 

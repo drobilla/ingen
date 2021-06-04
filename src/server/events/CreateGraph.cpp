@@ -34,7 +34,6 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -61,7 +60,8 @@ CreateGraph::CreateGraph(Engine&                           engine,
     , _properties(properties)
     , _graph(nullptr)
     , _parent(nullptr)
-{}
+{
+}
 
 CreateGraph::~CreateGraph() = default;
 
@@ -84,30 +84,40 @@ CreateGraph::build_child_events()
 	in_properties.put(uris.lv2_index, uris.forge.make(0));
 	in_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
 	in_properties.put(uris.rdf_type, uris.lv2_InputPort);
-	in_properties.put(uris.ingen_canvasX, uris.forge.make(32.0f),
+	in_properties.put(uris.ingen_canvasX,
+	                  uris.forge.make(32.0f),
 	                  Resource::Graph::EXTERNAL);
-	in_properties.put(uris.ingen_canvasY, uris.forge.make(32.0f),
+	in_properties.put(uris.ingen_canvasY,
+	                  uris.forge.make(32.0f),
 	                  Resource::Graph::EXTERNAL);
 
-	_child_events.push_back(
-		make_unique<events::CreatePort>(_engine, _request_client, -1, _time,
-		                                _path.child(raul::Symbol("control")),
-		                                in_properties));
+	_child_events.push_back(std::make_unique<events::CreatePort>(
+	    _engine,
+	    _request_client,
+	    -1,
+	    _time,
+	    _path.child(raul::Symbol("control")),
+	    in_properties));
 
 	// Add notify port (message respond)
 	Properties out_properties(control_properties);
 	out_properties.put(uris.lv2_index, uris.forge.make(1));
 	out_properties.put(uris.lv2_name, uris.forge.alloc("Notify"));
 	out_properties.put(uris.rdf_type, uris.lv2_OutputPort);
-	out_properties.put(uris.ingen_canvasX, uris.forge.make(128.0f),
+	out_properties.put(uris.ingen_canvasX,
+	                   uris.forge.make(128.0f),
 	                   Resource::Graph::EXTERNAL);
-	out_properties.put(uris.ingen_canvasY, uris.forge.make(32.0f),
+	out_properties.put(uris.ingen_canvasY,
+	                   uris.forge.make(32.0f),
 	                   Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		make_unique<events::CreatePort>(_engine, _request_client, -1, _time,
-		                                _path.child(raul::Symbol("notify")),
-		                                out_properties));
+		std::make_unique<events::CreatePort>(_engine,
+		                                     _request_client,
+		                                     -1,
+		                                     _time,
+		                                     _path.child(raul::Symbol("notify")),
+		                                     out_properties));
 }
 
 bool
@@ -151,24 +161,28 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		t = _properties.find(uris.lv2_prototype);
 	}
 
-	if (t != _properties.end() &&
-	    uris.forge.is_uri(t->second) &&
+	if (t != _properties.end() && uris.forge.is_uri(t->second) &&
 	    URI::is_valid(uris.forge.str(t->second, false)) &&
 	    uri_is_path(URI(uris.forge.str(t->second, false)))) {
 		// Create a duplicate of an existing graph
 		const URI  prototype(uris.forge.str(t->second, false));
 		GraphImpl* ancestor = dynamic_cast<GraphImpl*>(
-			_engine.store()->get(uri_to_path(prototype)));
+		    _engine.store()->get(uri_to_path(prototype)));
 		if (!ancestor) {
-			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);
+			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND,
+			                               prototype);
 		} else if (!(_graph = dynamic_cast<GraphImpl*>(
-			      ancestor->duplicate(_engine, symbol, _parent)))) {
+		                 ancestor->duplicate(_engine, symbol, _parent)))) {
 			return Event::pre_process_done(Status::CREATION_FAILED, _path);
 		}
 	} else {
 		// Create a new graph
-		_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
-		                       _engine.sample_rate(), int_poly);
+		_graph = new GraphImpl(_engine,
+		                       symbol,
+		                       ext_poly,
+		                       _parent,
+		                       _engine.sample_rate(),
+		                       int_poly);
 		_graph->add_property(uris.rdf_type, uris.ingen_Graph.urid_atom());
 		_graph->add_property(uris.rdf_type,
 		                     Property(uris.ingen_Block,

@@ -533,7 +533,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	auto* plugin = new IngenPlugin();
 	plugin->map   = map;
-	plugin->world = make_unique<ingen::World>(map, unmap, log);
+	plugin->world = std::make_unique<ingen::World>(map, unmap, log);
 	plugin->world->load_configuration(plugin->argc, plugin->argv);
 
 	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
@@ -633,7 +633,7 @@ ingen_activate(LV2_Handle instance)
 	auto       engine = std::static_pointer_cast<Engine>(me->world->engine());
 	const auto driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 	engine->activate();
-	me->main = make_unique<std::thread>(ingen_lv2_main, engine, driver);
+	me->main = std::make_unique<std::thread>(ingen_lv2_main, engine, driver);
 }
 
 static void

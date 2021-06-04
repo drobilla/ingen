@@ -58,7 +58,6 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "lv2/buf-size/buf-size.h"
 #include "lv2/state/state.h"
 #include "raul/Maid.hpp"
@@ -114,9 +113,9 @@ Engine::Engine(ingen::World& world)
 
 	for (int i = 0; i < world.conf().option("threads").get<int32_t>(); ++i) {
 		_notifications.emplace_back(
-			make_unique<raul::RingBuffer>(uint32_t(24 * event_queue_size())));
+			std::make_unique<raul::RingBuffer>(uint32_t(24 * event_queue_size())));
 		_run_contexts.emplace_back(
-			make_unique<RunContext>(
+			std::make_unique<RunContext>(
 				*this, _notifications.back().get(), unsigned(i), i > 0));
 	}
 
@@ -189,7 +188,7 @@ void
 Engine::listen()
 {
 #ifdef HAVE_SOCKET
-	_listener = make_unique<SocketListener>(*this);
+	_listener = std::make_unique<SocketListener>(*this);
 #endif
 }
 

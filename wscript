@@ -50,7 +50,7 @@ def configure(conf):
         conf.load('python', cache=True)
 
     conf.load('autowaf', cache=True)
-    autowaf.set_cxx_lang(conf, 'c++11')
+    autowaf.set_cxx_lang(conf, 'c++14')
 
     if Options.options.strict:
         # Check for programs used by lint target

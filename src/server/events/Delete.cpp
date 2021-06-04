@@ -38,7 +38,6 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
@@ -114,13 +113,13 @@ Delete::pre_process(PreProcessContext& ctx)
 	if (_block) {
 		parent->remove_block(*_block);
 		_disconnect_event =
-			make_unique<DisconnectAll>(_engine, parent, _block.get());
+			std::make_unique<DisconnectAll>(_engine, parent, _block.get());
 		_disconnect_event->pre_process(ctx);
 		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *parent);
 	} else if (_port) {
 		parent->remove_port(*_port);
 		_disconnect_event =
-			make_unique<DisconnectAll>(_engine, parent, _port.get());
+			std::make_unique<DisconnectAll>(_engine, parent, _port.get());
 		_disconnect_event->pre_process(ctx);
 
 		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *parent);

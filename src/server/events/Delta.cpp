@@ -43,7 +43,6 @@
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/memory.hpp"
 #include "ingen/paths.hpp"
 #include "lilv/lilv.h"
 #include "raul/Maid.hpp"
@@ -153,7 +152,7 @@ Delta::add_set_event(const char* port_symbol,
 	}
 
 	_set_events.emplace_back(
-		make_unique<SetPortValue>(
+		std::make_unique<SetPortValue>(
 			_engine, _request_client, _request_id, _time,
 			port, Atom(size, type, value), false, true));
 }
@@ -249,13 +248,13 @@ Delta::pre_process(PreProcessContext& ctx)
 		ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 
 		if (is_graph) {
-			_create_event = make_unique<CreateGraph>(
+			_create_event = std::make_unique<CreateGraph>(
 				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_block) {
-			_create_event = make_unique<CreateBlock>(
+			_create_event = std::make_unique<CreateBlock>(
 				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_port) {
-			_create_event = make_unique<CreatePort>(
+			_create_event = std::make_unique<CreatePort>(
 				_engine, _request_client, _request_id, _time,
 				path, _properties);
 		}
@@ -351,7 +350,7 @@ Delta::pre_process(PreProcessContext& ctx)
 					}
 				} else if (key == uris.ingen_value || key == uris.ingen_activity) {
 					_set_events.emplace_back(
-						make_unique<SetPortValue>(
+						std::make_unique<SetPortValue>(
 							_engine, _request_client, _request_id, _time,
 							port, value, key == uris.ingen_activity));
 				} else if (key == uris.midi_binding) {

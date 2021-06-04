@@ -33,7 +33,6 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
-#include "ingen/memory.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "lv2/log/log.h"
@@ -68,35 +67,37 @@ ingen_load_library(Log& log, const string& name)
 	const auto path = ingen_module_path(name);
 	if (path.empty()) {
 		log.error("Failed to find %1% (%2%)\n",
-		          name, Library::get_last_error());
+		          name,
+		          Library::get_last_error());
 		return nullptr;
 	}
 
-	std::unique_ptr<Library> library = make_unique<Library>(path);
+	std::unique_ptr<Library> library = std::make_unique<Library>(path);
 	if (*library) {
 		return library;
 	}
 
 	log.error("Unable to load %1% from %2% (%3%)\n",
-	          name, path, Library::get_last_error());
+	          name,
+	          path,
+	          Library::get_last_error());
 	return nullptr;
 }
 
-class World::Impl {
+class World::Impl
+{
 public:
-	Impl(LV2_URID_Map*   map,
-	     LV2_URID_Unmap* unmap,
-	     LV2_Log_Log*    log_feature)
-		: argc(nullptr)
-		, argv(nullptr)
-		, lv2_features(nullptr)
-		, rdf_world(new Sord::World())
-		, lilv_world(lilv_world_new(), lilv_world_free)
-		, uri_map(log, map, unmap)
-		, forge(uri_map)
-		, uris(forge, &uri_map, lilv_world.get())
-		, conf(forge)
-		, log(log_feature, uris)
+	Impl(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log_feature)
+	    : argc(nullptr)
+	    , argv(nullptr)
+	    , lv2_features(nullptr)
+	    , rdf_world(new Sord::World())
+	    , lilv_world(lilv_world_new(), lilv_world_free)
+	    , uri_map(log, map, unmap)
+	    , forge(uri_map)
+	    , uris(forge, &uri_map, lilv_world.get())
+	    , conf(forge)
+	    , log(log_feature, uris)
 	{
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map.urid_map_feature());
@@ -107,25 +108,28 @@ public:
 		lilv_world_load_all(lilv_world.get());
 
 		// Set up RDF namespaces
-		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
-		rdf_world->add_prefix("doap",  "http://usefulinc.com/ns/doap#");
+		rdf_world->add_prefix("atom", "http://lv2plug.in/ns/ext/atom#");
+		rdf_world->add_prefix("doap", "http://usefulinc.com/ns/doap#");
 		rdf_world->add_prefix("ingen", INGEN_NS);
-		rdf_world->add_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
-		rdf_world->add_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
-		rdf_world->add_prefix("owl",   "http://www.w3.org/2002/07/owl#");
+		rdf_world->add_prefix("lv2", "http://lv2plug.in/ns/lv2core#");
+		rdf_world->add_prefix("midi", "http://lv2plug.in/ns/ext/midi#");
+		rdf_world->add_prefix("owl", "http://www.w3.org/2002/07/owl#");
 		rdf_world->add_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
-		rdf_world->add_prefix("rdf",   "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		rdf_world->add_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
-		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
+		rdf_world->add_prefix("rdf",
+		                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		rdf_world->add_prefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		rdf_world->add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 
 		// Load internal 'plugin' information into lilv world
-		LilvNode* rdf_type = lilv_new_uri(
-			lilv_world.get(), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		LilvNode* ingen_Plugin = lilv_new_uri(
-			lilv_world.get(), INGEN__Plugin);
-		LilvNodes* internals = lilv_world_find_nodes(
-			lilv_world.get(), nullptr, rdf_type, ingen_Plugin);
-		LILV_FOREACH(nodes, i, internals) {
+		LilvNode* rdf_type =
+		    lilv_new_uri(lilv_world.get(),
+		                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		LilvNode*  ingen_Plugin = lilv_new_uri(lilv_world.get(), INGEN__Plugin);
+		LilvNodes* internals    = lilv_world_find_nodes(lilv_world.get(),
+                                                     nullptr,
+                                                     rdf_type,
+                                                     ingen_Plugin);
+		LILV_FOREACH (nodes, i, internals) {
 			const LilvNode* internal = lilv_nodes_get(internals, i);
 			lilv_world_load_resource(lilv_world.get(), internal);
 		}
@@ -163,21 +167,23 @@ public:
 	}
 
 	Impl(const Impl&) = delete;
-	Impl(Impl&&) = delete;
+	Impl(Impl&&)      = delete;
 	Impl& operator=(const Impl&) = delete;
 	Impl& operator=(Impl&&) = delete;
 
 	using Modules = std::map<std::string, Module*>;
 	Modules modules;
 
-	using InterfaceFactories = std::map<const std::string, World::InterfaceFactory>;
+	using InterfaceFactories =
+	    std::map<const std::string, World::InterfaceFactory>;
 	InterfaceFactories interface_factories;
 
 	using ScriptRunner  = bool (*)(World& world, const char* filename);
 	using ScriptRunners = std::map<const std::string, ScriptRunner>;
 	ScriptRunners script_runners;
 
-	using LilvWorldUPtr = std::unique_ptr<LilvWorld, decltype(&lilv_world_free)>;
+	using LilvWorldUPtr =
+	    std::unique_ptr<LilvWorld, decltype(&lilv_world_free)>;
 
 	int*                         argc;
 	char***                      argv;
@@ -199,7 +205,7 @@ public:
 };
 
 World::World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log)
-	: _impl(new Impl(map, unmap, log))
+    : _impl(new Impl(map, unmap, log))
 {
 	_impl->serialiser = std::make_shared<Serialiser>(*this);
 	_impl->parser     = std::make_shared<Parser>();
@@ -246,26 +252,90 @@ World::set_store(const std::shared_ptr<Store>& s)
 	_impl->store = s;
 }
 
-std::shared_ptr<EngineBase> World::engine()     { return _impl->engine; }
-std::shared_ptr<Interface>  World::interface()  { return _impl->interface; }
-std::shared_ptr<Parser>     World::parser()     { return _impl->parser; }
-std::shared_ptr<Serialiser> World::serialiser() { return _impl->serialiser; }
-std::shared_ptr<Store>      World::store()      { return _impl->store; }
+std::shared_ptr<EngineBase>
+World::engine()
+{
+	return _impl->engine;
+}
+std::shared_ptr<Interface>
+World::interface()
+{
+	return _impl->interface;
+}
+std::shared_ptr<Parser>
+World::parser()
+{
+	return _impl->parser;
+}
+std::shared_ptr<Serialiser>
+World::serialiser()
+{
+	return _impl->serialiser;
+}
+std::shared_ptr<Store>
+World::store()
+{
+	return _impl->store;
+}
 
-int&           World::argc() { return *_impl->argc; }
-char**&        World::argv() { return *_impl->argv; }
-Configuration& World::conf() { return _impl->conf; }
-Log&           World::log()  { return _impl->log; }
+int&
+World::argc()
+{
+	return *_impl->argc;
+}
+char**&
+World::argv()
+{
+	return *_impl->argv;
+}
+Configuration&
+World::conf()
+{
+	return _impl->conf;
+}
+Log&
+World::log()
+{
+	return _impl->log;
+}
 
-std::mutex& World::rdf_mutex() { return _impl->rdf_mutex; }
+std::mutex&
+World::rdf_mutex()
+{
+	return _impl->rdf_mutex;
+}
 
-Sord::World* World::rdf_world()  { return _impl->rdf_world.get(); }
-LilvWorld*   World::lilv_world() { return _impl->lilv_world.get(); }
+Sord::World*
+World::rdf_world()
+{
+	return _impl->rdf_world.get();
+}
+LilvWorld*
+World::lilv_world()
+{
+	return _impl->lilv_world.get();
+}
 
-LV2Features& World::lv2_features() { return *_impl->lv2_features; }
-Forge&       World::forge()        { return _impl->forge; }
-URIs&        World::uris()         { return _impl->uris; }
-URIMap&      World::uri_map()      { return _impl->uri_map; }
+LV2Features&
+World::lv2_features()
+{
+	return *_impl->lv2_features;
+}
+Forge&
+World::forge()
+{
+	return _impl->forge;
+}
+URIs&
+World::uris()
+{
+	return _impl->uris;
+}
+URIMap&
+World::uri_map()
+{
+	return _impl->uri_map;
+}
 
 bool
 World::load_module(const char* name)
@@ -293,7 +363,8 @@ World::load_module(const char* name)
 	}
 
 	log().error("Failed to load module `%1%' (%2%)\n",
-	            name, lib->get_last_error());
+	            name,
+	            lib->get_last_error());
 	return false;
 }
 
@@ -317,7 +388,7 @@ World::new_interface(const URI&                        engine_uri,
                      const std::shared_ptr<Interface>& respondee)
 {
 	const Impl::InterfaceFactories::const_iterator i =
-	        _impl->interface_factories.find(std::string(engine_uri.scheme()));
+	    _impl->interface_factories.find(std::string(engine_uri.scheme()));
 	if (i == _impl->interface_factories.end()) {
 		log().warn("Unknown URI scheme `%1%'\n", engine_uri.scheme());
 		return nullptr;
@@ -330,7 +401,8 @@ World::new_interface(const URI&                        engine_uri,
 bool
 World::run(const std::string& mime_type, const std::string& filename)
 {
-	const Impl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
+	const Impl::ScriptRunners::const_iterator i =
+	    _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
 		log().warn("Unknown script MIME type `%1%'\n", mime_type);
 		return false;
@@ -340,7 +412,8 @@ World::run(const std::string& mime_type, const std::string& filename)
 }
 
 void
-World::add_interface_factory(const std::string& scheme, InterfaceFactory factory)
+World::add_interface_factory(const std::string& scheme,
+                             InterfaceFactory   factory)
 {
 	_impl->interface_factories.emplace(scheme, factory);
 }

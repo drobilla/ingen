@@ -29,13 +29,6 @@ void NullDeleter(T* ptr) {}
 template <class T>
 struct FreeDeleter { void operator()(T* const ptr) { free(ptr); } };
 
-template <typename T, typename... Args>
-std::unique_ptr<T>
-make_unique(Args&&... args)
-{
-	return std::unique_ptr<T>{new T{std::forward<Args>(args)...}};
-}
-
 } // namespace ingen
 
 #endif // INGEN_MEMORY_HPP
