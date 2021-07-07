@@ -259,7 +259,7 @@ Buffer::peak(const RunContext& ctx) const
 #else
 	const Sample* const buf = samples();
 	float peak = 0.0f;
-	for (SampleCount i = 0; i < context.nframes(); ++i) {
+	for (SampleCount i = 0; i < ctx.nframes(); ++i) {
 		peak = fmaxf(peak, fabsf(buf[i]));
 	}
 	return peak;
