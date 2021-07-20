@@ -928,11 +928,22 @@ GraphCanvas::get_initial_data(Resource::Graph ctx)
 {
 	Properties result;
 	const URIs& uris = _app.uris();
+	int origin_x = 0;
+	int origin_y = 0;
+	auto alloc = widget().get_allocation();
+	int widget_x = alloc.get_x();
+	int widget_y = alloc.get_y();
+	int scroll_x = 0;
+	int scroll_y = 0;
+	widget().get_parent_window()->get_origin(origin_x, origin_y);
+	get_scroll_offsets(scroll_x, scroll_y);
+	int canvas_x = _menu_x - origin_x - widget_x + scroll_x;
+	int canvas_y = _menu_y - origin_y - widget_y + scroll_y;
 	result.emplace(uris.ingen_canvasX,
-	               Property(_app.forge().make(static_cast<float>(_menu_x)),
+	               Property(_app.forge().make(static_cast<float>(canvas_x)),
 	                        ctx));
 	result.emplace(uris.ingen_canvasY,
-	               Property(_app.forge().make(static_cast<float>(_menu_y)),
+	               Property(_app.forge().make(static_cast<float>(canvas_y)),
 	                        ctx));
 	return result;
 }
