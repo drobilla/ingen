@@ -72,6 +72,8 @@ ingen_load_library(Log& log, const string& name)
 		return nullptr;
 	}
 
+	log.info("Loading module %1%\n", path);
+
 	std::unique_ptr<Library> library = std::make_unique<Library>(path);
 	if (*library) {
 		return library;
@@ -344,7 +346,7 @@ World::load_module(const char* name)
 	if (i != _impl->modules.end()) {
 		return true;
 	}
-	log().info("Loading %1% module\n", name);
+
 	std::unique_ptr<ingen::Library> lib = ingen_load_library(log(), name);
 
 	ingen::Module* (*module_load)() =
