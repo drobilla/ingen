@@ -13,10 +13,10 @@
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/main/sampler> ;
+	patch:subject <ingen:/main/metro> ;
 	patch:body [
 		a ingen:Block ;
-		lv2:prototype <http://lv2plug.in/plugins/eg-sampler>
+		lv2:prototype <http://lv2plug.in/plugins/eg-metro>
 	] .
 
 <msg2>
@@ -85,7 +85,7 @@
 	patch:body [
 		a ingen:Arc ;
 		ingen:tail <ingen:/main/control> ;
-		ingen:head <ingen:/main/sampler/control>
+		ingen:head <ingen:/main/metro/control>
 	] .
 
 <msg10>
