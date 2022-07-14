@@ -20,6 +20,7 @@
 #include "ClientUpdate.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
+#include "SetPortValue.hpp"
 #include "State.hpp"
 #include "types.hpp"
 
@@ -33,6 +34,8 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+
+// IWYU pragma: no_include <algorithm>
 
 namespace ingen {
 
@@ -50,8 +53,6 @@ class PreProcessContext;
 class RunContext;
 
 namespace events {
-
-class SetPortValue;
 
 /** Set properties of a graph object.
  * \ingroup engine

@@ -21,6 +21,7 @@
 
 #include <boost/utility/string_view.hpp> // IWYU pragma: export
 
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include <utility>

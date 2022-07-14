@@ -33,7 +33,9 @@
 #include "internals/Trigger.hpp"
 #include "lilv/lilv.h"
 
+#include <algorithm>
 #include <cstdint>
+#include <iterator>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -84,11 +86,10 @@ BlockFactory::refresh()
 	}
 
 	// Add any resurrected plugins to response
-	for (const auto& z : zombies) {
-		if (!z->is_zombie()) {
-			new_plugins.insert(z);
-		}
-	}
+	std::copy_if(zombies.begin(),
+	             zombies.end(),
+	             std::inserter(new_plugins, new_plugins.end()),
+	             [](const auto& z) { return !z->is_zombie(); });
 
 	return new_plugins;
 }

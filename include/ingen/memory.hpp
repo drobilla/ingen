@@ -18,8 +18,6 @@
 #define INGEN_MEMORY_HPP
 
 #include <cstdlib>
-#include <memory>
-#include <utility>
 
 namespace ingen {
 

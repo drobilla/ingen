@@ -390,7 +390,7 @@ World::new_interface(const URI&                        engine_uri,
                      const std::shared_ptr<Interface>& respondee)
 {
 	const Impl::InterfaceFactories::const_iterator i =
-	    _impl->interface_factories.find(std::string(engine_uri.scheme()));
+		_impl->interface_factories.find(std::string{engine_uri.scheme()});
 	if (i == _impl->interface_factories.end()) {
 		log().warn("Unknown URI scheme `%1%'\n", engine_uri.scheme());
 		return nullptr;

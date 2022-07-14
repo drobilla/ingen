@@ -24,7 +24,6 @@
 
 #include <cctype>
 #include <cstring>
-#include <iosfwd>
 #include <memory>
 #include <string>
 #include <utility>

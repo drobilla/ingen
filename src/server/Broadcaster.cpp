@@ -22,7 +22,6 @@
 #include "ingen/Interface.hpp"
 
 #include <cstddef>
-#include <map>
 #include <memory>
 #include <utility>
 

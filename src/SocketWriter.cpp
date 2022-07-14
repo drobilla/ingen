@@ -23,7 +23,6 @@
 
 #include <memory>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <utility>
 
 #ifndef MSG_NOSIGNAL

@@ -34,7 +34,6 @@
 #include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 
-#include <map>
 #include <memory>
 #include <mutex>
 #include <set>

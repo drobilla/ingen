@@ -26,7 +26,6 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
-#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>

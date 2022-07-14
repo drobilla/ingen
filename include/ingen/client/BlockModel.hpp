@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+// IWYU pragma: no_include <algorithm>
+
 namespace raul {
 class Path;
 class Symbol;

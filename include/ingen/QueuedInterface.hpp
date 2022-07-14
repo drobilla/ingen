@@ -21,7 +21,6 @@
 #include "ingen/Message.hpp"
 #include "ingen/URI.hpp"
 
-#include <algorithm>
 #include <memory>
 #include <mutex>
 #include <utility>

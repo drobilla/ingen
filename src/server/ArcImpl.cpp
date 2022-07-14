@@ -27,7 +27,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <string>
 
 namespace ingen {
 namespace server {

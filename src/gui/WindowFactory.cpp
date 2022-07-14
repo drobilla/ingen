@@ -16,7 +16,6 @@
 
 #include "App.hpp"
 #include "GraphBox.hpp"
-#include "GraphView.hpp"
 #include "GraphWindow.hpp"
 #include "LoadGraphWindow.hpp"
 #include "LoadPluginWindow.hpp"

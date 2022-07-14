@@ -31,7 +31,6 @@
 #include <mutex>
 #include <poll.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <utility>
 
 namespace ingen {

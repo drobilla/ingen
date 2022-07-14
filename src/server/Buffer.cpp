@@ -23,7 +23,6 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen_config.h"
 #include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
 #include "lv2/urid/urid.h"
