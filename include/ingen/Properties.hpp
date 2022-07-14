@@ -58,7 +58,12 @@ public:
 	using Graph = Property::Graph;
 
 	Properties() = default;
-	Properties(const Properties& copy) = default;
+
+	Properties(const Properties&) = default;
+	Properties& operator=(const Properties&) = default;
+
+	Properties(Properties&&) = default;
+	Properties& operator=(Properties&&) = default;
 
 	Properties(std::initializer_list<value_type> l)
 		: std::multimap<URI, Property>(l)
