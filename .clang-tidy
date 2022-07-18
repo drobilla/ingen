@@ -82,5 +82,5 @@ CheckOptions:
   - key:   cppcoreguidelines-explicit-virtual-functions.AllowOverrideAndFinal
     value: 'true'
 WarningsAsErrors: '*'
-HeaderFilterRegex: 'include/ingen/.*|tests/.*|src/.*'
+HeaderFilterRegex: '.*'
 FormatStyle: file
