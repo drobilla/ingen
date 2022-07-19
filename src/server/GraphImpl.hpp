@@ -20,6 +20,7 @@
 #include "BlockImpl.hpp"
 #include "DuplexPort.hpp"
 #include "ThreadManager.hpp"
+#include "server.h"
 #include "types.hpp"
 
 #include "ingen/Node.hpp"
@@ -63,7 +64,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class GraphImpl final : public BlockImpl
+class INGEN_SERVER_API GraphImpl final : public BlockImpl
 {
 public:
 	GraphImpl(Engine&             engine,

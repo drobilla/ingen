@@ -18,8 +18,8 @@
 #define INGEN_ENGINE_BUFFERFACTORY_HPP
 
 #include "ingen/URIs.hpp"
-#include "ingen/ingen.h"
 #include "lv2/urid/urid.h"
+#include "server.h"
 
 #include "BufferRef.hpp"
 #include "types.hpp"
@@ -39,7 +39,7 @@ namespace server {
 class Buffer;
 class Engine;
 
-class INGEN_API BufferFactory {
+class INGEN_SERVER_API BufferFactory {
 public:
 	BufferFactory(Engine& engine, URIs& uris);
 	~BufferFactory();

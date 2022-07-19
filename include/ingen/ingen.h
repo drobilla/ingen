@@ -17,21 +17,14 @@
 #ifndef INGEN_INGEN_H
 #define INGEN_INGEN_H
 
-#ifdef INGEN_SHARED
-#    ifdef _WIN32
-#        define INGEN_LIB_IMPORT __declspec(dllimport)
-#        define INGEN_LIB_EXPORT __declspec(dllexport)
-#    else
-#        define INGEN_LIB_IMPORT __attribute__((visibility("default")))
-#        define INGEN_LIB_EXPORT __attribute__((visibility("default")))
-#    endif
-#    ifdef INGEN_INTERNAL
-#        define INGEN_API INGEN_LIB_EXPORT
-#    else
-#        define INGEN_API INGEN_LIB_IMPORT
-#    endif
+#if defined(_WIN32) && !defined(INGEN_STATIC) && defined(INGEN_INTERNAL)
+#	define INGEN_API __declspec(dllexport)
+#elif defined(_WIN32) && !defined(INGEN_STATIC)
+#	define INGEN_API __declspec(dllimport)
+#elif defined(__GNUC__)
+#	define INGEN_API __attribute__((visibility("default")))
 #else
-#    define INGEN_API
+#	define INGEN_API
 #endif
 
 #define INGEN_NS "http://drobilla.net/ns/ingen#"

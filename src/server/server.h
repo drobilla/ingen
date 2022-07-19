@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2014-2022 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,27 +14,18 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Module.hpp"
+#ifndef INGEN_SERVER_SERVER_H
+#define INGEN_SERVER_SERVER_H
 
-namespace ingen {
+#if defined(_WIN32) && !defined(INGEN_SERVER_STATIC) && \
+    defined(INGEN_SERVER_INTERNAL)
+#	define INGEN_SERVER_API __declspec(dllexport)
+#elif defined(_WIN32) && !defined(INGEN_SERVER_STATIC)
+#	define INGEN_SERVER_API __declspec(dllimport)
+#elif defined(__GNUC__)
+#	define INGEN_SERVER_API __attribute__((visibility("default")))
+#else
+#	define INGEN_SERVER_API
+#endif
 
-class World;
-
-namespace client {
-
-struct ClientModule : public ingen::Module {
-	void load(ingen::World& world) override {}
-};
-
-} // namespace client
-} // namespace ingen
-
-extern "C" {
-
-INGEN_MODULE_EXPORT ingen::Module*
-ingen_module_load()
-{
-	return new ingen::client::ClientModule();
-}
-
-} // extern "C"
+#endif // INGEN_SERVER_SERVER_H

@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_THREADMANAGER_HPP
 #define INGEN_ENGINE_THREADMANAGER_HPP
 
-#include "ingen/ingen.h"
+#include "server.h"
 
 #include <cassert>
 
@@ -31,7 +31,7 @@ enum ThreadFlag {
 	THREAD_MESSAGE      = 1 << 3,
 };
 
-class INGEN_API ThreadManager {
+class INGEN_SERVER_API ThreadManager {
 public:
 	static inline void set_flag(ThreadFlag f) {
 #ifndef NDEBUG

@@ -22,12 +22,12 @@
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
 #include "RunContext.hpp"
+#include "server.h"
 #include "types.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/ingen.h"
 #include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
@@ -57,7 +57,7 @@ class BlockImpl;
  *
  * \ingroup engine
  */
-class INGEN_API PortImpl : public NodeImpl
+class INGEN_SERVER_API PortImpl : public NodeImpl
 {
 public:
 	struct SetState {

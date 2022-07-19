@@ -17,9 +17,8 @@
 #ifndef INGEN_ENGINE_POSTPROCESSOR_HPP
 #define INGEN_ENGINE_POSTPROCESSOR_HPP
 
+#include "server.h"
 #include "types.hpp"
-
-#include "ingen/ingen.h"
 
 #include <atomic>
 
@@ -41,7 +40,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class INGEN_API PostProcessor
+class INGEN_SERVER_API PostProcessor
 {
 public:
 	explicit PostProcessor(Engine& engine);

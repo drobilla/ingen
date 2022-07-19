@@ -20,10 +20,10 @@
 #include "InputPort.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
+#include "server.h"
 #include "types.hpp"
 
 #include "ingen/URI.hpp"
-#include "ingen/ingen.h"
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 
@@ -55,7 +55,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class INGEN_API DuplexPort final
+class INGEN_SERVER_API DuplexPort final
     : public InputPort
     , public boost::intrusive::slist_base_hook<> // In GraphImpl
 {

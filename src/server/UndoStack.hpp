@@ -18,10 +18,10 @@
 #define INGEN_ENGINE_UNDOSTACK_HPP
 
 #include "ingen/AtomSink.hpp"
-#include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
 #include "serd/serd.h"
+#include "server.h"
 #include "sratom/sratom.h"
 
 #include <algorithm>
@@ -39,7 +39,7 @@ class URIs;
 
 namespace server {
 
-class INGEN_API UndoStack : public AtomSink {
+class INGEN_SERVER_API UndoStack : public AtomSink {
 public:
 	struct Entry {
 		Entry(time_t t=0) : time(t) {}

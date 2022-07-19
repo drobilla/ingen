@@ -41,7 +41,7 @@ struct EngineModule : public Module {
 
 extern "C" {
 
-ingen::Module*
+INGEN_MODULE_EXPORT ingen::Module*
 ingen_module_load()
 {
 	return new ingen::EngineModule();

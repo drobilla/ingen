@@ -19,12 +19,12 @@
 
 #include "Event.hpp"
 #include "Load.hpp"
+#include "server.h"
 #include "types.hpp"
 
 #include "ingen/Clock.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Properties.hpp"
-#include "ingen/ingen.h"
 
 #include <chrono>
 #include <condition_variable>
@@ -75,7 +75,7 @@ class Worker;
 
    @ingroup engine
 */
-class INGEN_API Engine final : public EngineBase
+class INGEN_SERVER_API Engine final : public EngineBase
 {
 public:
 	explicit Engine(ingen::World& world);

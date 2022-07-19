@@ -55,8 +55,14 @@ public:
 
 extern "C" {
 
+#ifdef _WIN32
+#	define INGEN_MODULE_EXPORT __declspec(dllexport)
+#else
+#	define INGEN_MODULE_EXPORT __attribute__((visibility("default")))
+#endif
+
 /** Prototype for the ingen_module_load() entry point in an ingen module. */
-INGEN_API ingen::Module* ingen_module_load();
+INGEN_MODULE_EXPORT ingen::Module* ingen_module_load();
 
 }
 

@@ -20,10 +20,10 @@
 #include "BufferFactory.hpp"
 #include "BufferRef.hpp"
 #include "PortType.hpp"
+#include "server.h"
 #include "types.hpp"
 
 #include "ingen/URIs.hpp"
-#include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 #include "lv2/urid/urid.h"
 
@@ -40,7 +40,7 @@ namespace server {
 
 class RunContext;
 
-class INGEN_API Buffer
+class INGEN_SERVER_API Buffer
 {
 public:
 	Buffer(BufferFactory& bufs,
