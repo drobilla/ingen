@@ -242,16 +242,11 @@ ingen:BundleEnd
 	rdfs:label "Bundle End" ;
 	rdfs:comment "The end of an undo transaction." .
 
-ingen:Option
-	a rdfs:Class ;
-	rdfs:subClassOf rdf:Property ;
-	rdfs:label "Ingen Option" .
-
 ingen:shortSwitch
 	a rdf:Property ,
 		owl:DatatypeProperty ,
 		owl:FunctionalProperty ;
-	rdfs:domain ingen:Option ;
+	rdfs:domain rdf:Property ;
 	rdfs:range xsd:string ;
 	rdfs:label "short switch" ;
 	rdfs:comment "Single character switch for short command line argument." .
@@ -260,15 +255,14 @@ ingen:longSwitch
 	a rdf:Property ,
 		owl:DatatypeProperty ,
 		owl:FunctionalProperty ;
-	rdfs:domain ingen:Option ;
+	rdfs:domain rdf:Property ;
 	rdfs:range xsd:string ;
 	rdfs:label "long switch" ;
 	rdfs:comment "Lowercase, hyphenated switch for long command line argument." .
 
 ingen:numThreads
 	a rdf:Property ,
-		owl:ObjectProperty ,
-		ingen:Option ;
+		owl:ObjectProperty ;
 	rdfs:label "number of threads" ;
 	ingen:shortSwitch "p" ;
 	ingen:longSwitch "threads" .
