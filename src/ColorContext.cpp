@@ -17,7 +17,7 @@
 #include "ingen/ColorContext.hpp"
 #include "ingen_config.h"
 
-#ifdef HAVE_ISATTY
+#if USE_ISATTY
 #    include <unistd.h>
 #else
 inline int isatty(int fd) { return 0; }

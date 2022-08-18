@@ -31,7 +31,7 @@
 #include "raul/Symbol.hpp"
 #include "serd/serd.h"
 
-#ifdef HAVE_SOCKET
+#if USE_SOCKET
 #include "ingen/client/SocketClient.hpp"
 #endif
 
@@ -134,7 +134,7 @@ run(int argc, char** argv)
 		world->engine()->listen();
 	}
 
-#ifdef HAVE_SOCKET
+#if USE_SOCKET
 	client::SocketClient::register_factories(*world);
 #endif
 

@@ -19,6 +19,7 @@
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "RunContext.hpp"
+#include "ingen_config.h"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Log.hpp"
@@ -432,7 +433,7 @@ Buffer::update_value_buffer(SampleCount offset)
 
 void* Buffer::aligned_alloc(size_t size)
 {
-#ifdef HAVE_POSIX_MEMALIGN
+#if USE_POSIX_MEMALIGN
 	void* buf = nullptr;
 	if (!posix_memalign(static_cast<void**>(&buf), 16, size)) {
 		memset(buf, 0, size);

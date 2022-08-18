@@ -39,7 +39,7 @@
 #include "events/CreateGraph.hpp"
 #include "ingen_config.h"
 
-#ifdef HAVE_SOCKET
+#if USE_SOCKET
 #include "SocketListener.hpp"
 #endif
 
@@ -187,7 +187,7 @@ Engine::~Engine()
 void
 Engine::listen()
 {
-#ifdef HAVE_SOCKET
+#if USE_SOCKET
 	_listener = std::make_unique<SocketListener>(*this);
 #endif
 }

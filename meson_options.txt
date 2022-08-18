@@ -1,0 +1,26 @@
+option('bindings_py', type: 'feature', value: 'auto', yield: true,
+       description: 'Build Python bindings')
+
+option('checks', type: 'boolean', value: true, yield: true,
+       description: 'Check for features with the build system')
+
+option('docs', type: 'feature', value: 'auto', yield: true,
+       description: 'Build documentation')
+
+option('gui', type: 'feature', value: 'auto', yield: true,
+       description: 'Build GUI')
+
+option('jack', type: 'feature', value: 'auto', yield: true,
+       description: 'Build JACK audio and MIDI support')
+
+option('lv2dir', type: 'string', value: '', yield: true,
+       description: 'LV2 bundle installation directory')
+
+option('portaudio', type: 'feature', value: 'auto', yield: true,
+       description: 'Build PortAudio driver')
+
+option('strict', type: 'boolean', value: false, yield: true,
+       description: 'Enable ultra-strict warnings')
+
+option('title', type: 'string', value: 'Ingen',
+       description: 'Project title')

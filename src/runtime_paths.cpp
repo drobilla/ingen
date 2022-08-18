@@ -70,7 +70,7 @@ set_bundle_path_from_code(void (*function)())
 	Dl_info dli;
 	dladdr(reinterpret_cast<void*>(function), &dli);
 
-#ifdef BUNDLE
+#if INGEN_BUNDLED
 	char bin_loc[PATH_MAX];
 	realpath(dli.dli_fname, bin_loc);
 #else
@@ -117,7 +117,7 @@ data_file_path(const std::string& name)
 std::vector<FilePath>
 ingen_module_dirs()
 {
-#ifdef BUNDLE
+#if INGEN_BUNDLED
 	const FilePath default_dir = FilePath(bundle_path) / INGEN_MODULE_DIR;
 #else
 	const FilePath default_dir = INGEN_MODULE_DIR;
@@ -186,7 +186,7 @@ data_dirs()
 	std::vector<FilePath> paths    = system_data_dirs();
 	const FilePath        user_dir = user_data_dir();
 
-#ifdef BUNDLE
+#if INGEN_BUNDLED
 	paths.insert(paths.begin(), bundle_path / INGEN_DATA_DIR);
 #endif
 

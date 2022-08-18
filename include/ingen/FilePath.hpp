@@ -26,8 +26,12 @@
 #include <string>
 #include <utility>
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
-#define USE_WINDOWS_FILE_PATHS 1
+#ifndef USE_WINDOWS_FILE_PATHS
+#	if defined(_WIN32) && !defined(__CYGWIN__)
+#		define USE_WINDOWS_FILE_PATHS 1
+#	else
+#		define USE_WINDOWS_FILE_PATHS 0
+#	endif
 #endif
 
 namespace ingen {
@@ -41,7 +45,7 @@ namespace ingen {
 class INGEN_API FilePath
 {
 public:
-#ifdef USE_WINDOWS_FILE_PATHS
+#if USE_WINDOWS_FILE_PATHS
 	using value_type = wchar_t;
 	static constexpr value_type preferred_separator = L'\\';
 #else

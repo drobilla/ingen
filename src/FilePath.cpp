@@ -26,7 +26,7 @@ template <typename Char>
 static bool
 is_sep(const Char chr)
 {
-#ifdef USE_WINDOWS_FILE_PATHS
+#if USE_WINDOWS_FILE_PATHS
 	return chr == L'/' || chr == preferred_separator;
 #else
 	return chr == '/';
@@ -98,7 +98,7 @@ FilePath::operator+=(boost::basic_string_view<value_type> sv)
 FilePath
 FilePath::root_name()
 {
-#ifdef USE_WINDOWS_FILE_PATHS
+#if USE_WINDOWS_FILE_PATHS
 	if (_str.length() >= 2 && _str[0] >= 'A' && _str[0] <= 'Z' &&
 	    _str[1] == ':') {
 		return FilePath(_str.substr(0, 2));
@@ -111,7 +111,7 @@ FilePath::root_name()
 FilePath
 FilePath::root_directory() const
 {
-#ifdef USE_WINDOWS_FILE_PATHS
+#if USE_WINDOWS_FILE_PATHS
 	const auto name = root_name().string();
 	return name.empty() ? Path() : Path(name + preferred_separator);
 #endif
@@ -122,7 +122,7 @@ FilePath::root_directory() const
 FilePath
 FilePath::root_path() const
 {
-#ifdef USE_WINDOWS_FILE_PATHS
+#if USE_WINDOWS_FILE_PATHS
 	const auto name = root_name();
 	return name.empty() ? FilePath() : name / root_directory();
 #endif
@@ -180,7 +180,7 @@ FilePath::extension() const
 bool
 FilePath::is_absolute() const
 {
-#ifdef USE_WINDOWS_FILE_PATHS
+#if USE_WINDOWS_FILE_PATHS
 	return !root_name().empty();
 #else
 	return !root_directory().empty();

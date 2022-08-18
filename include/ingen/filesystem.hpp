@@ -17,9 +17,6 @@
 #ifndef INGEN_FILESYSTEM_HPP
 #define INGEN_FILESYSTEM_HPP
 
-#define _BSD_SOURCE     1
-#define _DEFAULT_SOURCE 1
-
 #include "ingen/FilePath.hpp"
 
 #ifdef _WIN32

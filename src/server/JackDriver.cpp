@@ -44,7 +44,7 @@
 #include <jack/midiport.h>
 #include <jack/transport.h>
 
-#ifdef HAVE_JACK_METADATA
+#if USE_JACK_METADATA
 #include "jackey.h"
 #include <jack/metadata.h>
 #endif
@@ -271,7 +271,7 @@ JackDriver::rename_port(const raul::Path& old_path,
 {
 	EnginePort* eport = get_port(old_path);
 	if (eport) {
-#ifdef HAVE_JACK_PORT_RENAME
+#if USE_JACK_PORT_RENAME
 		jack_port_rename(_client,
 		                 static_cast<jack_port_t*>(eport->handle()),
 		                 new_path.substr(1).c_str());
@@ -287,7 +287,7 @@ JackDriver::port_property(const raul::Path& path,
                           const URI&        uri,
                           const Atom&       value)
 {
-#ifdef HAVE_JACK_METADATA
+#if USE_JACK_METADATA
 	EnginePort* eport = get_port(path);
 	if (eport) {
 		const auto* const jport =
@@ -303,7 +303,7 @@ JackDriver::port_property_internal(const jack_port_t* jport,
                                    const URI&         uri,
                                    const Atom&        value)
 {
-#ifdef HAVE_JACK_METADATA
+#if USE_JACK_METADATA
 	if (uri == _engine.world().uris().lv2_name) {
 		jack_set_property(_client, jack_port_uuid(jport),
 		                  JACK_METADATA_PRETTY_NAME, value.ptr<char>(), "text/plain");

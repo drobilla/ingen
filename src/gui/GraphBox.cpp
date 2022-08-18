@@ -27,6 +27,7 @@
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ingen_config.h"
 
 #include "ganv/canvas.h"
 #include "ingen/Atom.hpp"
@@ -87,8 +88,8 @@
 #include <sigc++/functors/mem_fun.h>
 #include <sigc++/signal.h>
 
-#ifdef HAVE_WEBKIT
-#include <webkit/webkit.h>
+#if USE_WEBKIT
+#	include <webkit/webkit.h>
 #endif
 
 #include <cassert>
@@ -449,7 +450,7 @@ GraphBox::set_documentation(const std::string& doc, bool html)
 		_doc_scrolledwindow->hide();
 		return;
 	}
-#ifdef HAVE_WEBKIT
+#if USE_WEBKIT
 	WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
 	webkit_web_view_load_html_string(view, doc.c_str(), "");
 	Gtk::Widget* widget = Gtk::manage(Glib::wrap(GTK_WIDGET(view)));

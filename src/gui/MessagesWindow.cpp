@@ -18,6 +18,7 @@
 
 #include "App.hpp"
 #include "Window.hpp"
+#include "ingen_config.h"
 
 #include "ingen/URIs.hpp"
 #include "lv2/urid/urid.h"
@@ -102,7 +103,7 @@ MessagesWindow::log(LV2_URID type, const char* fmt, va_list args)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
-#ifdef HAVE_VASPRINTF
+#if USE_VASPRINTF
 	char*     buf = nullptr;
 	const int len = vasprintf(&buf, fmt, args);
 #else

@@ -24,6 +24,7 @@
 #include "Style.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ingen_config.h"
 #include "rgba.hpp"
 
 #include "ingen/Atom.hpp"
@@ -551,7 +552,7 @@ Port::on_selected(gboolean b)
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && win->documentation_is_visible() && block->plugin_model()) {
 				bool html = false;
-#ifdef HAVE_WEBKIT
+#if USE_WEBKIT
 				html = true;
 #endif
 				const std::string& doc = block->plugin_model()->port_documentation(

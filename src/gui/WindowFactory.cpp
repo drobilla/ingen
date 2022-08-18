@@ -14,8 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "WindowFactory.hpp"
+
 #include "App.hpp"
 #include "GraphBox.hpp"
+#include "GraphView.hpp"
 #include "GraphWindow.hpp"
 #include "LoadGraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
@@ -23,7 +26,6 @@
 #include "PropertiesWindow.hpp"
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"
-#include "WindowFactory.hpp"
 
 #include "ingen/Log.hpp"
 #include "ingen/client/BlockModel.hpp"

@@ -25,6 +25,7 @@
 #include "SubgraphModule.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ingen_config.h"
 
 #include "ganv/Port.hpp"
 #include "ingen/Atom.hpp"
@@ -531,7 +532,7 @@ NodeModule::on_selected(gboolean selected)
 	if (selected && win->documentation_is_visible()) {
 		std::string doc;
 		bool html = false;
-#ifdef HAVE_WEBKIT
+#if USE_WEBKIT
 		html = true;
 #endif
 		if (block()->plugin_model()) {
