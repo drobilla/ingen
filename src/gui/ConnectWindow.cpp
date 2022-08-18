@@ -215,9 +215,9 @@ ConnectWindow::connect(bool existing)
 	if (_app->client()) {
 		error("Already connected");
 		return;
-	} else if (_attached) {
-		_attached = false;
 	}
+
+	_attached = false;
 
 	set_connecting_widget_states();
 	_connect_stage = 0;
@@ -265,10 +265,14 @@ ConnectWindow::connect(bool existing)
 			if (!world.load_module("server")) {
 				error("Failed to load server module");
 				return;
-			} else if (!world.load_module("jack")) {
+			}
+
+			if (!world.load_module("jack")) {
 				error("Failed to load jack module");
 				return;
-			} else if (!world.engine()->activate()) {
+			}
+
+			if (!world.engine()->activate()) {
 				error("Failed to activate engine");
 				return;
 			}
@@ -556,9 +560,9 @@ ConnectWindow::gtk_callback()
 			_progress_label->set_text(std::string("Disconnected"));
 		}
 		return false;
-	} else {
-		return true;
 	}
+
+	return true;
 }
 
 void

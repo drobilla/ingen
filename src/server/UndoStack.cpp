@@ -87,18 +87,18 @@ UndoStack::ignore_later_event(const LV2_Atom* first,
 int
 UndoStack::finish_entry()
 {
-	if (--_depth > 0) {
-		return _depth;
-	} else if (_stack.back().events.empty()) {
-		// Disregard empty entry
-		_stack.pop_back();
-	} else if (_stack.size() > 1 && _stack.back().events.size() == 1) {
-		// This entry and the previous one have one event, attempt to merge
-		auto i = _stack.rbegin();
-		++i;
-		if (i->events.size() == 1) {
-			if (ignore_later_event(i->events[0], _stack.back().events[0])) {
-				_stack.pop_back();
+	if (--_depth == 0) {
+		if (_stack.back().events.empty()) {
+			// Disregard empty entry
+			_stack.pop_back();
+		} else if (_stack.size() > 1 && _stack.back().events.size() == 1) {
+			// This entry and the previous one have one event, attempt to merge
+			auto i = _stack.rbegin();
+			++i;
+			if (i->events.size() == 1) {
+				if (ignore_later_event(i->events[0], _stack.back().events[0])) {
+					_stack.pop_back();
+				}
 			}
 		}
 	}

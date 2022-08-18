@@ -32,10 +32,10 @@ inline bool uri_is_path(const URI& uri)
 	const size_t root_len = main_uri().string().length();
 	if (uri == main_uri()) {
 		return true;
-	} else {
-		return uri.string().substr(0, root_len + 1) ==
-		       main_uri().string() + "/";
 	}
+
+	return uri.string().substr(0, root_len + 1) ==
+		main_uri().string() + "/";
 }
 
 inline raul::Path uri_to_path(const URI& uri)

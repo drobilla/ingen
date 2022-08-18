@@ -1,7 +1,6 @@
 Checks: >
   *,
   -*-avoid-c-arrays,
-  -*-else-after-return,
   -*-magic-numbers,
   -*-named-parameter,
   -*-narrowing-conversions,

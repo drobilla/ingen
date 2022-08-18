@@ -330,9 +330,13 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_is_driver_port || _parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
-	} else if (_poly == poly) {
+	}
+
+	if (_poly == poly) {
 		return true;
-	} else if (_prepared_voices && _prepared_voices->size() != poly) {
+	}
+
+	if (_prepared_voices && _prepared_voices->size() != poly) {
 		_prepared_voices.reset();
 	}
 
@@ -353,7 +357,9 @@ PortImpl::apply_poly(RunContext& ctx, uint32_t poly)
 	if (_parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
-	} else if (!_prepared_voices) {
+	}
+
+	if (!_prepared_voices) {
 		return true;
 	}
 

@@ -436,14 +436,14 @@ GraphCanvas::get_port_view(const std::shared_ptr<PortModel>& port)
 		return ppm
 			? *ppm->begin()
 			: dynamic_cast<Ganv::Port*>(module);
-	} else {
-		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
-		if (module) {
-			for (auto* p : *module) {
-				auto* pv = dynamic_cast<gui::Port*>(p);
-				if (pv && pv->model() == port) {
-					return pv;
-				}
+	}
+
+	module = dynamic_cast<NodeModule*>(_views[port->parent()]);
+	if (module) {
+		for (auto* p : *module) {
+			auto* pv = dynamic_cast<gui::Port*>(p);
+			if (pv && pv->model() == port) {
+				return pv;
 			}
 		}
 	}

@@ -496,7 +496,9 @@ LV2Block::save_state(const FilePath& dir) const
 
 	if (!state) {
 		return false;
-	} else if (lilv_state_get_num_properties(state.get()) == 0) {
+	}
+
+	if (lilv_state_get_num_properties(state.get()) == 0) {
 		return false;
 	}
 

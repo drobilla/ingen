@@ -357,7 +357,9 @@ Port::on_event(GdkEvent* ev)
 				Gtk::Menu* menu = build_enum_menu();
 				menu->popup(ev->button.button, ev->button.time);
 				return true;
-			} else if (model()->is_uri()) {
+			}
+
+			if (model()->is_uri()) {
 				Gtk::Menu* menu = build_uri_menu();
 				if (menu) {
 					menu->popup(ev->button.button, ev->button.time);
@@ -385,9 +387,9 @@ peak_color(float peak)
 
 	if (peak < 1.0f) {
 		return rgba_interpolate(min, max, peak);
-	} else {
-		return rgba_interpolate(peak_min, peak_max, fminf(peak, 2.0f) - 1.0f);
 	}
+
+	return rgba_interpolate(peak_min, peak_max, fminf(peak, 2.0f) - 1.0f);
 }
 
 void

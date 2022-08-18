@@ -297,9 +297,9 @@ GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 		auto arc = std::dynamic_pointer_cast<ArcImpl>(i->second);
 		_arcs.erase(i);
 		return arc;
-	} else {
-		return nullptr;
 	}
+
+	return nullptr;
 }
 
 bool

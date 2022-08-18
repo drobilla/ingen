@@ -212,9 +212,12 @@ operator==(const URIs::Quark& lhs, const Atom& rhs)
 {
 	if (rhs.type() == lhs.urid_atom().type()) {
 		return rhs == lhs.urid_atom();
-	} else if (rhs.type() == lhs.uri_atom().type()) {
+	}
+
+	if (rhs.type() == lhs.uri_atom().type()) {
 		return rhs == lhs.uri_atom();
 	}
+
 	return false;
 }
 

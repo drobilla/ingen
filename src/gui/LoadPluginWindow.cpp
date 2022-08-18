@@ -515,9 +515,9 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 	if (event->keyval == GDK_w && event->state & GDK_CONTROL_MASK) {
 		hide();
 		return true;
-	} else {
-		return Gtk::Window::on_key_press_event(event);
 	}
+
+	return Gtk::Window::on_key_press_event(event);
 }
 
 void

@@ -105,10 +105,14 @@ run(int argc, char** argv)
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", std::cout);
 			return EXIT_FAILURE;
-		} else if (world->conf().option("help").get<int32_t>()) {
+		}
+
+		if (world->conf().option("help").get<int32_t>()) {
 			world->conf().print_usage("ingen", std::cout);
 			return EXIT_SUCCESS;
-		} else if (world->conf().option("version").get<int32_t>()) {
+		}
+
+		if (world->conf().option("version").get<int32_t>()) {
 			return print_version();
 		}
 	} catch (std::exception& e) {

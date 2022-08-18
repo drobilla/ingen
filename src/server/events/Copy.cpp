@@ -79,19 +79,23 @@ Copy::pre_process(PreProcessContext& ctx)
 		if (uri_is_path(_msg.new_uri)) {
 			// Copy to path within the engine
 			return engine_to_engine(ctx);
-		} else if (_msg.new_uri.scheme() == "file") {
+		}
+
+		if (_msg.new_uri.scheme() == "file") {
 			// Copy to filesystem path (i.e. save)
 			return engine_to_filesystem(ctx);
-		} else {
-			return Event::pre_process_done(Status::BAD_REQUEST);
 		}
-	} else if (_msg.old_uri.scheme() == "file") {
+
+		return Event::pre_process_done(Status::BAD_REQUEST);
+	}
+
+	if (_msg.old_uri.scheme() == "file") {
 		if (uri_is_path(_msg.new_uri)) {
 			return filesystem_to_engine(ctx);
-		} else {
-			// Ingen is not your file manager
-			return Event::pre_process_done(Status::BAD_REQUEST);
 		}
+
+		// Ingen is not your file manager
+		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
 	return Event::pre_process_done(Status::BAD_URI);

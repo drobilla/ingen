@@ -110,7 +110,9 @@ PreProcessor::process(RunContext& ctx, PostProcessor& dest, size_t limit)
 
 		if (_block_state == BlockState::BLOCKED) {
 			break;  // Waiting for PRE_UNBLOCKED
-		} else if (ev->time() < ctx.start()) {
+		}
+
+		if (ev->time() < ctx.start()) {
 			ev->set_time(ctx.start());  // Too late, nudge to context start
 		} else if (_block_state != BlockState::PROCESSING &&
 		           ev->time() >= ctx.end()) {

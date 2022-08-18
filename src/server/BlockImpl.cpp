@@ -207,7 +207,9 @@ BlockImpl::bypass(RunContext& ctx)
 			PortImpl* out = nth_port_by_type(i, false, t);
 			if (!out) {
 				break;  // Finished writing all outputs
-			} else if (in) {
+			}
+
+			if (in) {
 				// Copy corresponding input to output
 				for (uint32_t v = 0; v < _polyphony; ++v) {
 					out->buffer(v)->copy(ctx, in->buffer(v).get());

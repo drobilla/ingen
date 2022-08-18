@@ -167,7 +167,9 @@ SocketReader::run()
 		if (ret == -1 || (pfd.revents & (POLLERR|POLLHUP|POLLNVAL))) {
 			on_hangup();
 			break;  // Hangup
-		} else if (!ret) {
+		}
+
+		if (!ret) {
 			continue;  // No data, shouldn't happen
 		}
 
@@ -178,7 +180,9 @@ SocketReader::run()
 		SerdStatus st = serd_reader_read_chunk(reader);
 		if (st == SERD_FAILURE || !_msg_node) {
 			continue;  // Read nothing, e.g. just whitespace
-		} else if (st) {
+		}
+
+		if (st) {
 			_world.log().error("Read error: %1%\n", serd_strerror(st));
 			continue;
 		}

@@ -69,9 +69,12 @@ public:
 	static Graph uri_to_graph(const URI& uri) {
 		if (uri == INGEN_NS "externalContext") {
 			return Graph::EXTERNAL;
-		} else if (uri == INGEN_NS "internalContext") {
+		}
+
+		if (uri == INGEN_NS "internalContext") {
 			return Graph::INTERNAL;
 		}
+
 		return Graph::DEFAULT;
 	}
 

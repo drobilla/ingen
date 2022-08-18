@@ -168,12 +168,12 @@ ClientStore::_object(const raul::Path& path)
 	const auto i = find(path);
 	if (i == end()) {
 		return nullptr;
-	} else {
-		auto model = std::dynamic_pointer_cast<ObjectModel>(i->second);
-		assert(model);
-		assert(model->path().is_root() || model->parent());
-		return model;
 	}
+
+	auto model = std::dynamic_pointer_cast<ObjectModel>(i->second);
+	assert(model);
+	assert(model->path().is_root() || model->parent());
+	return model;
 }
 
 std::shared_ptr<const ObjectModel>
@@ -187,9 +187,9 @@ ClientStore::_resource(const URI& uri)
 {
 	if (uri_is_path(uri)) {
 		return _object(uri_to_path(uri));
-	} else {
-		return _plugin(uri);
 	}
+
+	return _plugin(uri);
 }
 
 std::shared_ptr<const Resource>
@@ -281,7 +281,9 @@ ClientStore::operator()(const Put& msg)
 				plug->add_preset(uri, l->second.ptr<char>());
 			}
 			return;
-		} else if (_uris.ingen_Graph == type) {
+		}
+
+		if (_uris.ingen_Graph == type) {
 			is_graph = true;
 		} else if (_uris.ingen_Internal == type || _uris.lv2_Plugin == type) {
 			std::shared_ptr<PluginModel> p(new PluginModel(uris(), uri, type, properties));
@@ -452,10 +454,10 @@ ClientStore::attempt_connection(const raul::Path& tail_path,
 		std::shared_ptr<ArcModel>   arc(new ArcModel(tail, head));
 		graph->add_arc(arc);
 		return true;
-	} else {
-		_log.warn("Failed to connect %1% => %2%\n", tail_path, head_path);
-		return false;
 	}
+
+	_log.warn("Failed to connect %1% => %2%\n", tail_path, head_path);
+	return false;
 }
 
 void

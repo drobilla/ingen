@@ -79,9 +79,9 @@ LV2Plugin::symbol() const
 		if ( (symbol[0] >= 'a' && symbol[0] <= 'z')
 		     || (symbol[0] >= 'A' && symbol[0] <= 'Z') ) {
 			return raul::Symbol::symbolify(symbol);
-		} else {
-			working = working.substr(0, last_slash);
 		}
+
+		working = working.substr(0, last_slash);
 	}
 
 	return raul::Symbol("lv2_symbol");
@@ -101,9 +101,9 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
 	if (!b->instantiate(bufs, state)) {
 		delete b;
 		return nullptr;
-	} else {
-		return b;
 	}
+
+	return b;
 }
 
 void

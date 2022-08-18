@@ -139,9 +139,12 @@ user_config_dir()
 {
 	if (const char* xdg_config_home = getenv("XDG_CONFIG_HOME")) {
 		return FilePath(xdg_config_home);
-	} else if (const char* home = getenv("HOME")) {
+	}
+
+	if (const char* home = getenv("HOME")) {
 		return FilePath(home) / ".config";
 	}
+
 	return FilePath();
 }
 
@@ -150,9 +153,12 @@ user_data_dir()
 {
 	if (const char* xdg_data_home = getenv("XDG_DATA_HOME")) {
 		return FilePath(xdg_data_home);
-	} else if (const char* home = getenv("HOME")) {
+	}
+
+	if (const char* home = getenv("HOME")) {
 		return FilePath(home) / ".local/share";
 	}
+
 	return FilePath();
 }
 

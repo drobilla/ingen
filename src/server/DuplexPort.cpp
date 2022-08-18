@@ -154,9 +154,12 @@ DuplexPort::get_buffers(BufferFactory&                   bufs,
 {
 	if (!_is_driver_port && is_output()) {
 		return InputPort::get_buffers(bufs, get, voices, poly, num_in_arcs);
-	} else if (!_is_driver_port && is_input()) {
+	}
+
+	if (!_is_driver_port && is_input()) {
 		return PortImpl::get_buffers(bufs, get, voices, poly, num_in_arcs);
 	}
+
 	return false;
 }
 
@@ -165,9 +168,12 @@ DuplexPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
 {
 	if (!_is_driver_port && is_output()) {
 		return InputPort::setup_buffers(ctx, bufs, poly);
-	} else if (!_is_driver_port && is_input()) {
+	}
+
+	if (!_is_driver_port && is_input()) {
 		return PortImpl::setup_buffers(ctx, bufs, poly);
 	}
+
 	return false;
 }
 

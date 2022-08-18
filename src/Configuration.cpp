@@ -109,9 +109,12 @@ Configuration::variable_string(LV2_URID type) const
 {
 	if (type == _forge.String) {
 		return "=STRING";
-	} else if (type == _forge.Int) {
+	}
+
+	if (type == _forge.Int) {
 		return "=INT";
 	}
+
 	return "";
 }
 
@@ -186,7 +189,9 @@ Configuration::parse(int argc, char** argv)
 			const auto o = _options.find(name);
 			if (o == _options.end()) {
 				throw OptionError(fmt("Unrecognized option `%1%'", name));
-			} else if (o->second.type == _forge.Bool) { // --flag
+			}
+
+			if (o->second.type == _forge.Bool) { // --flag
 				o->second.value = _forge.make(true);
 			} else if (equals) {  // --opt=val
 				set_value_from_string(o->second, equals + 1);
@@ -379,9 +384,9 @@ Configuration::option(const std::string& long_name) const
 	auto o = _options.find(long_name);
 	if (o == _options.end()) {
 		return nil;
-	} else {
-		return o->second.value;
 	}
+
+	return o->second.value;
 }
 
 bool

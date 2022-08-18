@@ -108,9 +108,9 @@ GraphModel::get_arc(const Node* tail, const Node* head)
 	auto i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
 		return std::dynamic_pointer_cast<ArcModel>(i->second);
-	} else {
-		return nullptr;
 	}
+
+	return nullptr;
 }
 
 /** Add a connection to this graph.

@@ -134,14 +134,13 @@ Store::child_name_offset(const raul::Path&   parent,
 		if (offset > 0) {
 			ss << "_" << offset;
 		}
+
 		if (find(parent.child(raul::Symbol(ss.str()))) == end() &&
 		    (allow_zero || offset > 0)) {
 			break;
-		} else if (offset == 0) {
-			offset = 2;
-		} else {
-			++offset;
 		}
+
+		offset = (offset == 0) ? 2 : (offset + 1);
 	}
 
 	return offset;

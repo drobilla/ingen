@@ -408,9 +408,9 @@ NodeModule::popup_gui()
 			_gui_window->present();
 
 			return true;
-		} else {
-			app().log().warn("No LV2 GUI for %1%\n", _block->path());
 		}
+
+		app().log().warn("No LV2 GUI for %1%\n", _block->path());
 	}
 
 	return false;
@@ -449,9 +449,13 @@ NodeModule::on_event(GdkEvent* ev)
 {
 	if (ev->type == GDK_BUTTON_PRESS && ev->button.button == 3) {
 		return show_menu(&ev->button);
-	} else if (ev->type == GDK_2BUTTON_PRESS) {
+	}
+
+	if (ev->type == GDK_2BUTTON_PRESS) {
 		return on_double_click(&ev->button);
-	} else if (ev->type == GDK_ENTER_NOTIFY) {
+	}
+
+	if (ev->type == GDK_ENTER_NOTIFY) {
 		GraphBox* const box = app().window_factory()->graph_box(
 			std::dynamic_pointer_cast<const GraphModel>(_block->parent()));
 		if (box) {

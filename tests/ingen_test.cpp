@@ -105,7 +105,9 @@ run(int argc, char** argv)
 		          << std::endl;
 
 		return EXIT_FAILURE;
-	} else if (run_path.empty()) {
+	}
+
+	if (run_path.empty()) {
 		std::cerr << "error: command file '" << run_path << "' does not exist"
 		          << std::endl;
 

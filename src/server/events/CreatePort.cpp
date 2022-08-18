@@ -94,9 +94,13 @@ CreatePort::pre_process(PreProcessContext&)
 {
 	if (_port_type == PortType::UNKNOWN || !_flow) {
 		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
-	} else if (_path.is_root()) {
+	}
+
+	if (_path.is_root()) {
 		return Event::pre_process_done(Status::BAD_URI, _path);
-	} else if (_engine.store()->get(_path)) {
+	}
+
+	if (_engine.store()->get(_path)) {
 		return Event::pre_process_done(Status::EXISTS, _path);
 	}
 
@@ -104,10 +108,14 @@ CreatePort::pre_process(PreProcessContext&)
 	Node* const      parent      = _engine.store()->get(parent_path);
 	if (!parent) {
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, parent_path);
-	} else if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
+	}
+
+	if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
 		return Event::pre_process_done(Status::INVALID_PARENT, parent_path);
-	} else if (!_graph->parent() && _engine.activated() &&
-	           !_engine.driver()->dynamic_ports()) {
+	}
+
+	if (!_graph->parent() && _engine.activated() &&
+	    !_engine.driver()->dynamic_ports()) {
 		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}
 

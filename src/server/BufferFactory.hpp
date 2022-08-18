@@ -85,13 +85,17 @@ private:
 	inline std::atomic<Buffer*>& free_list(LV2_URID type) {
 		if (type == _uris.atom_Float) {
 			return _free_control;
-		} else if (type == _uris.atom_Sound) {
-			return _free_audio;
-		} else if (type == _uris.atom_Sequence) {
-			return _free_sequence;
-		} else {
-			return _free_object;
 		}
+
+		if (type == _uris.atom_Sound) {
+			return _free_audio;
+		}
+
+		if (type == _uris.atom_Sequence) {
+			return _free_sequence;
+		}
+
+		return _free_object;
 	}
 
 	static void free_list(Buffer* head);

@@ -147,7 +147,9 @@ Buffer::copy(const RunContext& ctx, const Buffer* src)
 {
 	if (!_buf) {
 		return;
-	} else if (_type == src->type()) {
+	}
+
+	if (_type == src->type()) {
 		const uint32_t src_size = src->size();
 		if (src_size <= _capacity) {
 			memcpy(_buf, src->_buf, src_size);
@@ -416,7 +418,9 @@ Buffer::update_value_buffer(SampleCount offset)
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames > offset) {
 			break;
-		} else if (ev->body.type == _value_type) {
+		}
+
+		if (ev->body.type == _value_type) {
 			latest = ev;
 		}
 	}

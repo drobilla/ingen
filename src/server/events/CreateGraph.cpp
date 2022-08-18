@@ -167,8 +167,10 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		if (!ancestor) {
 			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND,
 			                               prototype);
-		} else if (!(_graph = dynamic_cast<GraphImpl*>(
-		                 ancestor->duplicate(_engine, symbol, _parent)))) {
+		}
+
+		if (!(_graph = dynamic_cast<GraphImpl*>(
+		          ancestor->duplicate(_engine, symbol, _parent)))) {
 			return Event::pre_process_done(Status::CREATION_FAILED, _path);
 		}
 	} else {

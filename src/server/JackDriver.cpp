@@ -153,10 +153,10 @@ JackDriver::activate()
 	if (jack_activate(_client)) {
 		_engine.log().error("Could not activate Jack client, aborting\n");
 		return false;
-	} else {
-		_engine.log().info("Activated Jack client `%1%'\n",
-		                   world.conf().option("jack-name").ptr<char>());
 	}
+
+	_engine.log().info("Activated Jack client `%1%'\n",
+	                   world.conf().option("jack-name").ptr<char>());
 	return true;
 }
 

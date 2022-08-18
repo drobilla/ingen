@@ -155,12 +155,15 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 {
 	if (value.type() == uris.atom_Path) {
 		return lilv_new_file_uri(lworld, nullptr, value.ptr<char>());
-	} else if (uris.forge.is_uri(value)) {
+	}
+
+	if (uris.forge.is_uri(value)) {
 		const std::string str = uris.forge.str(value, false);
 		if (str.substr(0, 5) == "file:") {
 			return lilv_new_uri(lworld, value.ptr<char>());
 		}
 	}
+
 	return nullptr;
 }
 
@@ -205,9 +208,9 @@ Delta::pre_process(PreProcessContext& ctx)
 
 		if ((_preset = block->save_preset(_subject, _properties))) {
 			return Event::pre_process_done(Status::SUCCESS);
-		} else {
-			return Event::pre_process_done(Status::FAILURE);
 		}
+
+		return Event::pre_process_done(Status::FAILURE);
 	}
 
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());

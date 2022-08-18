@@ -51,21 +51,29 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 	if (uri() == NS_INTERNALS "BlockDelay") {
 		return new internals::BlockDelayNode(
 		    this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri() == NS_INTERNALS "Controller") {
+	}
+
+	if (uri() == NS_INTERNALS "Controller") {
 		return new internals::ControllerNode(
 		    this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri() == NS_INTERNALS "Note") {
+	}
+
+	if (uri() == NS_INTERNALS "Note") {
 		return new internals::NoteNode(
 		    this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri() == NS_INTERNALS "Time") {
+	}
+
+	if (uri() == NS_INTERNALS "Time") {
 		return new internals::TimeNode(
 		    this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri() == NS_INTERNALS "Trigger") {
+	}
+
+	if (uri() == NS_INTERNALS "Trigger") {
 		return new internals::TriggerNode(
 		    this, bufs, symbol, polyphonic, parent, srate);
-	} else {
-		return nullptr;
 	}
+
+	return nullptr;
 }
 
 } // namespace server

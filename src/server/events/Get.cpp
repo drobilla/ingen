@@ -58,9 +58,13 @@ Get::pre_process(PreProcessContext&)
 	if (uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();
 		return Event::pre_process_done(Status::SUCCESS);
-	} else if (uri == "ingen:/engine") {
+	}
+
+	if (uri == "ingen:/engine") {
 		return Event::pre_process_done(Status::SUCCESS);
-	} else if (uri_is_path(uri)) {
+	}
+
+	if (uri_is_path(uri)) {
 		if ((_object = _engine.store()->get(uri_to_path(uri)))) {
 			const BlockImpl* block = nullptr;
 			const GraphImpl* graph = nullptr;
@@ -77,12 +81,14 @@ Get::pre_process(PreProcessContext&)
 			return Event::pre_process_done(Status::SUCCESS);
 		}
 		return Event::pre_process_done(Status::NOT_FOUND, uri);
-	} else if ((_plugin = _engine.block_factory()->plugin(uri))) {
+	}
+
+	if ((_plugin = _engine.block_factory()->plugin(uri))) {
 		_response.put_plugin(_plugin);
 		return Event::pre_process_done(Status::SUCCESS);
-	} else {
-		return Event::pre_process_done(Status::NOT_FOUND, uri);
 	}
+
+	return Event::pre_process_done(Status::NOT_FOUND, uri);
 }
 
 void

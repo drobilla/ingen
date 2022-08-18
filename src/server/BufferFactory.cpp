@@ -100,19 +100,25 @@ BufferFactory::default_size(LV2_URID type) const
 {
 	if (type == _uris.atom_Float) {
 		return sizeof(LV2_Atom_Float);
-	} else if (type == _uris.atom_Sound) {
+	}
+
+	if (type == _uris.atom_Sound) {
 		return audio_buffer_size(_engine.block_length());
-	} else if (type == _uris.atom_URID) {
+	}
+
+	if (type == _uris.atom_URID) {
 		return sizeof(LV2_Atom_URID);
-	} else if (type == _uris.atom_Sequence) {
+	}
+
+	if (type == _uris.atom_Sequence) {
 		if (_seq_size == 0) {
 			return _engine.sequence_size();
-		} else {
-			return _seq_size;
 		}
-	} else {
-		return 0;
+
+		return _seq_size;
 	}
+
+	return 0;
 }
 
 Buffer*

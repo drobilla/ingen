@@ -158,7 +158,9 @@ Disconnect::pre_process(PreProcessContext& ctx)
 
 	if (!_graph) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR, _msg.head);
-	} else if (!_graph->has_arc(tail, head)) {
+	}
+
+	if (!_graph->has_arc(tail, head)) {
 		return Event::pre_process_done(Status::NOT_FOUND, _msg.head);
 	}
 

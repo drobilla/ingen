@@ -317,7 +317,9 @@ App::property_change(const URI&      subject,
 {
 	if (subject != URI("ingen:/engine")) {
 		return;
-	} else if (key == uris().param_sampleRate && value.type() == forge().Int) {
+	}
+
+	if (key == uris().param_sampleRate && value.type() == forge().Int) {
 		_sample_rate = value.get<int32_t>();
 	} else if (key == uris().bufsz_maxBlockLength && value.type() == forge().Int) {
 		_block_length = value.get<int32_t>();

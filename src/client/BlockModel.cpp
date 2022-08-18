@@ -246,11 +246,13 @@ BlockModel::label() const
 	const Atom& name_property = get_property(_uris.lv2_name);
 	if (name_property.type() == _uris.forge.String) {
 		return name_property.ptr<char>();
-	} else if (plugin_model()) {
-		return plugin_model()->human_name();
-	} else {
-		return symbol().c_str();
 	}
+
+	if (plugin_model()) {
+		return plugin_model()->human_name();
+	}
+
+	return symbol().c_str();
 }
 
 std::string

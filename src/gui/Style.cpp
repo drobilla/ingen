@@ -69,17 +69,28 @@ uint32_t
 Style::get_port_color(const client::PortModel* p)
 {
 	const URIs& uris = _app.uris();
+
 	if (p->is_a(uris.lv2_AudioPort)) {
 		return _audio_port_color;
-	} else if (p->is_a(uris.lv2_ControlPort)) {
+	}
+
+	if (p->is_a(uris.lv2_ControlPort)) {
 		return _control_port_color;
-	} else if (p->is_a(uris.lv2_CVPort)) {
+	}
+
+	if (p->is_a(uris.lv2_CVPort)) {
 		return _cv_port_color;
-	} else if (p->supports(uris.atom_String)) {
+	}
+
+	if (p->supports(uris.atom_String)) {
 		return _string_port_color;
-	} else if (_app.can_control(p)) {
+	}
+
+	if (_app.can_control(p)) {
 		return _control_port_color;
-	} else if (p->is_a(uris.atom_AtomPort)) {
+	}
+
+	if (p->is_a(uris.atom_AtomPort)) {
 		return _event_port_color;
 	}
 

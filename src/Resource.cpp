@@ -69,11 +69,11 @@ Resource::set_property(const URI& uri, const Atom& value, Resource::Graph ctx)
 		const Atom& v = _properties.emplace(uri, Property(value, ctx))->second;
 		on_property(uri, v);
 		return v;
-	} else {
-		// Announce ephemeral activity, but do not store
-		on_property(uri, value);
-		return value;
 	}
+
+	// Announce ephemeral activity, but do not store
+	on_property(uri, value);
+	return value;
 }
 
 const Atom&
@@ -176,14 +176,14 @@ Resource::type(const URIs&       uris,
 	if (graph && block && !port) { // => graph
 		block = false;
 		return true;
-	} else if (port && (graph || block)) { // nonsense
+	}
+
+	if (port && (graph || block)) { // nonsense
 		port = false;
 		return false;
-	} else if (graph || block || port) { // recognized type
-		return true;
-	} else { // unknown
-		return false;
 	}
+
+	return graph || block || port; // recognized type
 }
 
 void

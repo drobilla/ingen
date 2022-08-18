@@ -104,9 +104,9 @@ BreadCrumbs::build(const raul::Path&                 path,
 			but->show();
 			if (suffix.find('/') == string::npos) {
 				break;
-			} else {
-				suffix = suffix.substr(suffix.find('/') + 1);
 			}
+
+			suffix = suffix.substr(suffix.find('/') + 1);
 		}
 
 		for (const auto& b : _breadcrumbs) {
@@ -148,9 +148,9 @@ BreadCrumbs::build(const raul::Path&                 path,
 			but->show();
 			if (suffix.find('/') == string::npos) {
 				break;
-			} else {
-				suffix = suffix.substr(suffix.find('/')+1);
 			}
+
+			suffix = suffix.substr(suffix.find('/')+1);
 		}
 	}
 

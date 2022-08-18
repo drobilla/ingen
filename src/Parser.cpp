@@ -450,7 +450,9 @@ parse_arc(ingen::World&      world,
 	if (t.end()) {
 		world.log().error("Arc has no tail\n");
 		return false;
-	} else if (h.end()) {
+	}
+
+	if (h.end()) {
 		world.log().error("Arc has no head\n");
 		return false;
 	}
@@ -472,7 +474,9 @@ parse_arc(ingen::World&      world,
 	if (!(++t).end()) {
 		world.log().error("Arc has multiple tails\n");
 		return false;
-	} else if (!(++h).end()) {
+	}
+
+	if (!(++h).end()) {
 		world.log().error("Arc has multiple heads\n");
 		return false;
 	}
@@ -660,10 +664,10 @@ Parser::parse_file(ingen::World&                        world,
 		                    URI(INGEN__file),
 		                    world.forge().alloc_uri(uri.string()));
 		return true;
-	} else {
-		world.log().warn("Document URI lost\n");
-		return false;
 	}
+
+	world.log().warn("Document URI lost\n");
+	return false;
 }
 
 boost::optional<URI>

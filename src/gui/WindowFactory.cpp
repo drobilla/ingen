@@ -109,9 +109,9 @@ WindowFactory::graph_box(const std::shared_ptr<const GraphModel>& graph)
 	GraphWindow* window = graph_window(graph);
 	if (window) {
 		return window->box();
-	} else {
-		return _main_box;
 	}
+
+	return _main_box;
 }
 
 GraphWindow*

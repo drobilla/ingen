@@ -184,16 +184,24 @@ PropertiesWindow::datatype_supported(const rdfs::URISet& types,
 	if (types.find(_app->uris().atom_Int) != types.end()) {
 		*widget_type = _app->uris().atom_Int;
 		return true;
-	} else if (types.find(_app->uris().atom_Float) != types.end()) {
+	}
+
+	if (types.find(_app->uris().atom_Float) != types.end()) {
 		*widget_type = _app->uris().atom_Float;
 		return true;
-	} else if (types.find(_app->uris().atom_Bool) != types.end()) {
+	}
+
+	if (types.find(_app->uris().atom_Bool) != types.end()) {
 		*widget_type = _app->uris().atom_Bool;
 		return true;
-	} else if (types.find(_app->uris().atom_String) != types.end()) {
+	}
+
+	if (types.find(_app->uris().atom_String) != types.end()) {
 		*widget_type = _app->uris().atom_String;
 		return true;
-	} else if (types.find(_app->uris().atom_URID) != types.end()) {
+	}
+
+	if (types.find(_app->uris().atom_URID) != types.end()) {
 		*widget_type = _app->uris().atom_URID;
 		return true;
 	}
@@ -332,7 +340,9 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		widget->signal_value_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (type == _app->uris().atom_Float) {
+	}
+
+	if (type == _app->uris().atom_Float) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 4));
 		widget->property_numeric() = true;
 		widget->set_snap_to_ticks(false);
@@ -344,7 +354,9 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		widget->signal_value_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (type == _app->uris().atom_Bool) {
+	}
+
+	if (type == _app->uris().atom_Bool) {
 		Gtk::CheckButton* widget = manage(new Gtk::CheckButton());
 		if (value.is_valid()) {
 			widget->set_active(value.get<int32_t>());
@@ -352,7 +364,9 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		widget->signal_toggled().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (type == _app->uris().atom_String) {
+	}
+
+	if (type == _app->uris().atom_String) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
 		if (value.is_valid()) {
 			widget->set_text(value.ptr<char>());
@@ -360,7 +374,9 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		widget->signal_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (type == _app->uris().atom_URID) {
+	}
+
+	if (type == _app->uris().atom_URID) {
 		const char* str = (value.is_valid()
 		                   ? world.uri_map().unmap_uri(value.get<int32_t>())
 		                   : "");
@@ -486,9 +502,8 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 		auto* uri_entry = dynamic_cast<URIEntry*>(value_widget);
 		if (uri_entry && URI::is_valid(uri_entry->get_text())) {
 			return _app->forge().make_urid(URI(uri_entry->get_text()));
-		} else {
-			_app->log().error("Invalid URI <%1%>\n", uri_entry->get_text());
 		}
+		_app->log().error("Invalid URI <%1%>\n", uri_entry->get_text());
 	} else if (type == forge.String) {
 		auto* entry = dynamic_cast<Gtk::Entry*>(value_widget);
 		if (entry) {

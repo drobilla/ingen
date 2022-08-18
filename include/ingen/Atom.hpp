@@ -125,11 +125,11 @@ public:
 	inline bool set_rt(const Atom& other) {
 		if (is_reference()) {
 			return false;
-		} else {
-			_atom     = other._atom;
-			_body.val = other._body.val;
-			return true;
 		}
+
+		_atom     = other._atom;
+		_body.val = other._body.val;
+		return true;
 	}
 
 	inline uint32_t size()     const { return _atom.size; }

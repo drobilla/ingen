@@ -125,15 +125,21 @@ PluginModel::get_property(const URI& key) const
 				ret = set_property(
 					key, _uris.forge.make_urid(URI(lilv_node_as_uri(value))));
 				break;
-			} else if (lilv_node_is_string(value)) {
+			}
+
+			if (lilv_node_is_string(value)) {
 				ret = set_property(
 					key, _uris.forge.alloc(lilv_node_as_string(value)));
 				break;
-			} else if (lilv_node_is_float(value)) {
+			}
+
+			if (lilv_node_is_float(value)) {
 				ret = set_property(
 					key, _uris.forge.make(lilv_node_as_float(value)));
 				break;
-			} else if (lilv_node_is_int(value)) {
+			}
+
+			if (lilv_node_is_int(value)) {
 				ret = set_property(
 					key, _uris.forge.make(lilv_node_as_int(value)));
 				break;
@@ -179,9 +185,9 @@ PluginModel::default_block_symbol() const
 	const Atom& name_atom = get_property(_uris.lv2_symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String) {
 		return raul::Symbol::symbolify(name_atom.ptr<char>());
-	} else {
-		return raul::Symbol("_");
 	}
+
+	return raul::Symbol("_");
 }
 
 string
@@ -190,9 +196,9 @@ PluginModel::human_name() const
 	const Atom& name_atom = get_property(_uris.doap_name);
 	if (name_atom.type() == _uris.forge.String) {
 		return name_atom.ptr<char>();
-	} else {
-		return default_block_symbol().c_str();
 	}
+
+	return default_block_symbol().c_str();
 }
 
 string
@@ -255,9 +261,9 @@ heading(const std::string& text, bool html, unsigned level)
 	if (html) {
 		const std::string tag = std::string("h") + std::to_string(level);
 		return std::string("<") + tag + ">" + text + "</" + tag + ">\n";
-	} else {
-		return text + ":\n\n";
 	}
+
+	return text + ":\n\n";
 }
 
 static std::string
@@ -265,9 +271,9 @@ link(const std::string& addr, bool html)
 {
 	if (html) {
 		return std::string("<a href=\"") + addr + "\">" + addr + "</a>";
-	} else {
-		return addr;
 	}
+
+	return addr;
 }
 
 std::string

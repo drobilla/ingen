@@ -251,9 +251,9 @@ LoadGraphWindow::avoid_symbol_clash(const raul::Symbol& symbol)
 		std::stringstream ss;
 		ss << symbol << "_" << offset;
 		return raul::Symbol(ss.str());
-	} else {
-		return symbol;
 	}
+
+	return symbol;
 }
 
 void

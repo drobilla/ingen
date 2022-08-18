@@ -70,7 +70,9 @@ PortAudioDriver::attach()
 	_outputParameters.device = Pa_GetDefaultOutputDevice();
 	if (_inputParameters.device == paNoDevice) {
 		return pa_error("No default input device", paDeviceUnavailable);
-	} else if (_outputParameters.device == paNoDevice) {
+	}
+
+	if (_outputParameters.device == paNoDevice) {
 		return pa_error("No default output device", paDeviceUnavailable);
 	}
 

@@ -72,9 +72,9 @@ WidgetFactory::create(const std::string& toplevel_widget)
 
 	if (toplevel_widget.empty()) {
 		return Gtk::Builder::create_from_file(ui_filename);
-	} else {
-		return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
 	}
+
+	return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
 }
 
 } // namespace gui

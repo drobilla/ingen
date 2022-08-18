@@ -495,7 +495,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	if (!map) {
 		lv2_log_error(&logger, "host did not provide URI map feature\n");
 		return nullptr;
-	} else if (!unmap) {
+	}
+
+	if (!unmap) {
 		lv2_log_error(&logger, "host did not provide URI unmap feature\n");
 		return nullptr;
 	}

@@ -50,12 +50,14 @@ public:
 	bool must_compile(GraphImpl& graph) {
 		if (!graph.enabled()) {
 			return false;
-		} else if (_in_bundle) {
+		}
+
+		if (_in_bundle) {
 			_dirty_graphs.insert(&graph);
 			return false;
-		} else {
-			return true;
 		}
+
+		return true;
 	}
 
 	/** Compile graph and return the result if necessary.

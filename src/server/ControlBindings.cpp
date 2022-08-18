@@ -155,9 +155,9 @@ ControlBindings::set_port_binding(RunContext&,
 		binding->port = port;
 		_bindings->insert(*binding);
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 void

@@ -77,9 +77,13 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 	// Check sanity of target path
 	if (_path.is_root()) {
 		return Event::pre_process_done(Status::BAD_URI, _path);
-	} else if (store->get(_path)) {
+	}
+
+	if (store->get(_path)) {
 		return Event::pre_process_done(Status::EXISTS, _path);
-	} else if (!(_graph = dynamic_cast<GraphImpl*>(store->get(_path.parent())))) {
+	}
+
+	if (!(_graph = dynamic_cast<GraphImpl*>(store->get(_path.parent())))) {
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _path.parent());
 	}
 
@@ -115,8 +119,11 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 			store->get(uri_to_path(prototype)));
 		if (!ancestor) {
 			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);
-		} else if (!(_block = ancestor->duplicate(
-			             _engine, raul::Symbol(_path.symbol()), _graph))) {
+		}
+
+		if (!(_block = ancestor->duplicate(_engine,
+		                                   raul::Symbol(_path.symbol()),
+		                                   _graph))) {
 			return Event::pre_process_done(Status::CREATION_FAILED, _path);
 		}
 

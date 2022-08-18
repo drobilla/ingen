@@ -95,9 +95,12 @@ public:
 		if (is_control()) {
 			return static_cast<const Sample*>(
 			    LV2_ATOM_BODY_CONST(get<LV2_Atom_Float>()));
-		} else if (is_audio()) {
+		}
+
+		if (is_audio()) {
 			return static_cast<const Sample*>(_buf);
 		}
+
 		return nullptr;
 	}
 
@@ -105,9 +108,12 @@ public:
 	inline Sample* samples() {
 		if (is_control()) {
 			return static_cast<Sample*>(LV2_ATOM_BODY(get<LV2_Atom_Float>()));
-		} else if (is_audio()) {
+		}
+
+		if (is_audio()) {
 			return static_cast<Sample*>(_buf);
 		}
+
 		return nullptr;
 	}
 
@@ -115,9 +121,12 @@ public:
 	inline Sample value_at(SampleCount offset) const {
 		if (is_audio() || is_control()) {
 			return samples()[offset];
-		} else if (_value_buffer) {
+		}
+
+		if (_value_buffer) {
 			return reinterpret_cast<const LV2_Atom_Float*>(value())->body;
 		}
+
 		return 0.0f;
 	}
 

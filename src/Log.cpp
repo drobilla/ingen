@@ -87,7 +87,9 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 	int ret = 0;
 	if (type == _uris.log_Trace && !_trace) {
 		return 0;
-	} else if (_sink) {
+	}
+
+	if (_sink) {
 		_sink(type, fmt, args);
 	}
 
