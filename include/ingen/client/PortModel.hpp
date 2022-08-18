@@ -48,10 +48,10 @@ public:
 
 	bool supports(const URIs::Quark& value_type) const;
 
-	inline uint32_t    index()     const { return _index; }
-	inline const Atom& value()     const { return get_property(_uris.ingen_value); }
-	inline bool        is_input()  const { return (_direction == Direction::INPUT); }
-	inline bool        is_output() const { return (_direction == Direction::OUTPUT); }
+	uint32_t    index()     const { return _index; }
+	const Atom& value()     const { return get_property(_uris.ingen_value); }
+	bool        is_input()  const { return (_direction == Direction::INPUT); }
+	bool        is_output() const { return (_direction == Direction::OUTPUT); }
 
 	bool port_property(const URIs::Quark& uri) const;
 
@@ -65,7 +65,7 @@ public:
 	}
 	bool is_uri() const;
 
-	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
+	bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
 	void on_property(const URI& uri, const Atom& value) override;
 

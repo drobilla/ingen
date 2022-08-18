@@ -41,12 +41,12 @@ namespace ingen {
 namespace server {
 
 struct Notification {
-	explicit inline Notification(PortImpl* p = nullptr,
-	                             FrameTime f = 0,
-	                             LV2_URID  k = 0,
-	                             uint32_t  s = 0,
-	                             LV2_URID  t = 0)
-		: port(p), time(f), key(k), size(s), type(t)
+	explicit Notification(PortImpl* p = nullptr,
+	                      FrameTime f = 0,
+	                      LV2_URID  k = 0,
+	                      uint32_t  s = 0,
+	                      LV2_URID  t = 0)
+	    : port(p), time(f), key(k), size(s), type(t)
 	{}
 
 	PortImpl* port;

@@ -103,17 +103,17 @@ public:
 	 * cycle (other than the fact that it must be processed in significantly
 	 * less time to avoid a dropout when running in real time).
 	 */
-	inline uint64_t duration() const {
+	uint64_t duration() const {
 		return static_cast<uint64_t>(_nframes) * 1e6 / _rate;
 	}
 
-	inline void locate(FrameTime s, SampleCount nframes) {
+	void locate(FrameTime s, SampleCount nframes) {
 		_start   = s;
 		_end     = s + nframes;
 		_nframes = nframes;
 	}
 
-	inline void slice(SampleCount offset, SampleCount nframes) {
+	void slice(SampleCount offset, SampleCount nframes) {
 		_offset  = offset;
 		_nframes = nframes;
 	}
@@ -129,16 +129,16 @@ public:
 
     void join();
 
-	inline Engine&     engine()   const { return _engine; }
-	inline Task*       task()     const { return _task; }
-	inline unsigned    id()       const { return _id; }
-	inline FrameTime   start()    const { return _start; }
-	inline FrameTime   time()     const { return _start + _offset; }
-	inline FrameTime   end()      const { return _end; }
-	inline SampleCount offset()   const { return _offset; }
-	inline SampleCount nframes()  const { return _nframes; }
-	inline SampleCount rate()     const { return _rate; }
-	inline bool        realtime() const { return _realtime; }
+	Engine&     engine()   const { return _engine; }
+	Task*       task()     const { return _task; }
+	unsigned    id()       const { return _id; }
+	FrameTime   start()    const { return _start; }
+	FrameTime   time()     const { return _start + _offset; }
+	FrameTime   end()      const { return _end; }
+	SampleCount offset()   const { return _offset; }
+	SampleCount nframes()  const { return _nframes; }
+	SampleCount rate()     const { return _rate; }
+	bool        realtime() const { return _realtime; }
 
 protected:
 	void run();

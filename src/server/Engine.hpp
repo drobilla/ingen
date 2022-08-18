@@ -114,7 +114,7 @@ public:
 	 *
 	 * This value is comparable to the value returned by current_time().
 	 */
-	inline uint64_t cycle_start_time(const RunContext&) const {
+	uint64_t cycle_start_time(const RunContext&) const {
 		return _cycle_start_time;
 	}
 

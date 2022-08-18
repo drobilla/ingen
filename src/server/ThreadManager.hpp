@@ -34,23 +34,23 @@ enum ThreadFlag {
 class INGEN_SERVER_API ThreadManager
 {
 public:
-	static inline void set_flag(ThreadFlag f) {
+	static void set_flag(ThreadFlag f) {
 #ifndef NDEBUG
 		flags = (static_cast<unsigned>(flags) | f);
 #endif
 	}
 
-	static inline void unset_flag(ThreadFlag f) {
+	static void unset_flag(ThreadFlag f) {
 #ifndef NDEBUG
 		flags = (static_cast<unsigned>(flags) & (~f));
 #endif
 	}
 
-	static inline void assert_thread(ThreadFlag f) {
+	static void assert_thread(ThreadFlag f) {
 		assert(single_threaded || (flags & f));
 	}
 
-	static inline void assert_not_thread(ThreadFlag f) {
+	static void assert_not_thread(ThreadFlag f) {
 		assert(single_threaded || !(flags & f));
 	}
 

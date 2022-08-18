@@ -139,9 +139,9 @@ public:
 
 	sigc::signal<void, const std::string&> signal_status_text_changed;
 
-	inline ingen::World& world() const { return _world; }
-	inline ingen::URIs&  uris()  const { return _world.uris(); }
-	inline ingen::Log&   log()   const { return _world.log(); }
+	ingen::World& world() const { return _world; }
+	ingen::URIs&  uris()  const { return _world.uris(); }
+	ingen::Log&   log()   const { return _world.log(); }
 
 protected:
 	explicit App(ingen::World& world);

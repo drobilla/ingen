@@ -60,8 +60,8 @@ public:
 	ArcImpl(PortImpl* tail, PortImpl* head);
 	~ArcImpl() override;
 
-	inline PortImpl* tail() const { return _tail; }
-	inline PortImpl* head() const { return _head; }
+	PortImpl* tail() const { return _tail; }
+	PortImpl* head() const { return _head; }
 
 	const raul::Path& tail_path() const override;
 	const raul::Path& head_path() const override;

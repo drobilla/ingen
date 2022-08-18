@@ -94,21 +94,22 @@ public:
 		return *this;
 	}
 
-	inline bool operator==(const Atom& other) const {
+	bool operator==(const Atom& other) const {
 		if (_atom.type != other._atom.type ||
 		    _atom.size != other._atom.size) {
 			return false;
 		}
+
 		return is_reference()
 			? !memcmp(_body.ptr, other._body.ptr, sizeof(LV2_Atom) + _atom.size)
 			: _body.val == other._body.val;
 	}
 
-	inline bool operator!=(const Atom& other) const {
+	bool operator!=(const Atom& other) const {
 		return !operator==(other);
 	}
 
-	inline bool operator<(const Atom& other) const {
+	bool operator<(const Atom& other) const {
 		if (_atom.type == other._atom.type) {
 			const uint32_t min_size = std::min(_atom.size, other._atom.size);
 			const int cmp           = is_reference()
@@ -116,6 +117,7 @@ public:
 				: memcmp(&_body.val, &other._body.val, min_size);
 			return cmp < 0 || (cmp == 0 && _atom.size < other._atom.size);
 		}
+
 		return type() < other.type();
 	}
 
@@ -123,7 +125,7 @@ public:
 	 * Always real-time safe.
 	 * @return true iff set succeeded.
 	 */
-	inline bool set_rt(const Atom& other) {
+	bool set_rt(const Atom& other) {
 		if (is_reference()) {
 			return false;
 		}
@@ -133,15 +135,15 @@ public:
 		return true;
 	}
 
-	inline uint32_t size()     const { return _atom.size; }
-	inline LV2_URID type()     const { return _atom.type; }
-	inline bool     is_valid() const { return _atom.type; }
+	uint32_t size()     const { return _atom.size; }
+	LV2_URID type()     const { return _atom.type; }
+	bool     is_valid() const { return _atom.type; }
 
-	inline const void* get_body() const {
+	const void* get_body() const {
 		return is_reference() ? static_cast<void*>(_body.ptr + 1) : &_body.val;
 	}
 
-	inline void* get_body() {
+	void* get_body() {
 		return is_reference() ? static_cast<void*>(_body.ptr + 1) : &_body.val;
 	}
 
@@ -160,14 +162,14 @@ public:
 
 private:
 	/** Free dynamically allocated value, if applicable. */
-	inline void dealloc() {
+	void dealloc() {
 		if (is_reference()) {
 			free(_body.ptr);
 		}
 	}
 
 	/** Return true iff this value is dynamically allocated. */
-	inline bool is_reference() const {
+	bool is_reference() const {
 		return _atom.size > sizeof(_body.val);
 	}
 

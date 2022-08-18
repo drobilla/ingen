@@ -50,7 +50,7 @@ enum class Status {
 	COMPILATION_FAILED
 };
 
-static inline const char*
+inline const char*
 ingen_status_string(Status st)
 {
 	switch (st) {

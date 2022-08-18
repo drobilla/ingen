@@ -91,15 +91,15 @@ public:
 private:
 	friend class PortAudioPort;
 
-	inline static int
-	pa_process_cb(const void*                     inputs,
-	              void*                           outputs,
-	              unsigned long                   nframes,
-	              const PaStreamCallbackTimeInfo* time,
-	              PaStreamCallbackFlags           flags,
-	              void*                           handle) {
+	static int pa_process_cb(const void*                     inputs,
+	                         void*                           outputs,
+	                         unsigned long                   nframes,
+	                         const PaStreamCallbackTimeInfo* time,
+	                         PaStreamCallbackFlags           flags,
+	                         void*                           handle)
+	{
 		return static_cast<PortAudioDriver*>(handle)->process_cb(
-			inputs, outputs, nframes, time, flags);
+		    inputs, outputs, nframes, time, flags);
 	}
 
 	int process_cb(const void*                     inputs,

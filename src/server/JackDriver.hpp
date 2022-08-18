@@ -96,8 +96,8 @@ public:
 
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
-	inline const jack_position_t* position()        { return &_position; }
-	inline jack_transport_state_t transport_state() { return _transport_state; }
+	const jack_position_t* position()        { return &_position; }
+	jack_transport_state_t transport_state() { return _transport_state; }
 
 	void append_time_events(RunContext& ctx, Buffer& buffer) override;
 
@@ -123,15 +123,20 @@ private:
 	static void thread_init_cb(void* jack_driver);
 
 	// Static JACK callbacks which call the non-static callbacks (methods)
-	inline static void shutdown_cb(void* const jack_driver) {
+
+	static void shutdown_cb(void* const jack_driver) {
 		return static_cast<JackDriver*>(jack_driver)->_shutdown_cb();
 	}
-	inline static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
+
+	static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
 		return static_cast<JackDriver*>(jack_driver)->_process_cb(nframes);
 	}
-	inline static int block_length_cb(jack_nframes_t nframes, void* const jack_driver) {
+
+	static int block_length_cb(jack_nframes_t nframes, void* const jack_driver) {
 		return static_cast<JackDriver*>(jack_driver)->_block_length_cb(nframes);
 	}
+
+	// Internal methods for processing
 
 	void pre_process_port(RunContext& ctx, EnginePort* port);
 	void post_process_port(RunContext& ctx, EnginePort* port) const;

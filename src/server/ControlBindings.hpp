@@ -71,16 +71,16 @@ public:
 		    : type(t), num(n)
 		{}
 
-		inline bool operator<(const Key& other) const {
+		bool operator<(const Key& other) const {
 			return ((type < other.type) ||
 			        (type == other.type && num < other.num));
 		}
 
-		inline bool operator==(const Key& other) const {
+		bool operator==(const Key& other) const {
 			return type == other.type && num == other.num;
 		}
 
-		inline bool operator!() const { return type == Type::NULL_CONTROL; }
+		bool operator!() const { return type == Type::NULL_CONTROL; }
 
 		Type    type;
 		int16_t num;
@@ -91,7 +91,7 @@ public:
 	                 public raul::Maid::Disposable {
 		Binding(Key k=Key(), PortImpl* p=nullptr) : key(k), port(p) {}
 
-		inline bool operator<(const Binding& rhs) const { return key < rhs.key; }
+		bool operator<(const Binding& rhs) const { return key < rhs.key; }
 
 		Key       key;
 		PortImpl* port;

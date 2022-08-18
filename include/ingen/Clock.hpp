@@ -35,7 +35,7 @@ public:
 
 	Clock() { mach_timebase_info(&_timebase); }
 
-	inline uint64_t now_microseconds() const {
+	uint64_t now_microseconds() const {
 		const uint64_t now = mach_absolute_time();
 		return now * _timebase.numer / _timebase.denom / 1e3;
 	}
@@ -45,7 +45,7 @@ private:
 
 #else
 
-	inline uint64_t now_microseconds() const {
+	uint64_t now_microseconds() const {
 		struct timespec time{};
 		clock_gettime(_clock, &time);
 		return static_cast<uint64_t>(time.tv_sec) * 1e6 +

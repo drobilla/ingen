@@ -65,21 +65,21 @@ public:
 	 * @{
 	 */
 
-	inline void operator()(const Message& msg) { message(msg); }
+	void operator()(const Message& msg) { message(msg); }
 
-	inline void set_response_id(int32_t id) { _seq = id; }
+	void set_response_id(int32_t id) { _seq = id; }
 
-	inline void bundle_begin() { message(BundleBegin{_seq++}); }
-	inline void bundle_end()   { message(BundleEnd{_seq++}); }
+	void bundle_begin() { message(BundleBegin{_seq++}); }
+	void bundle_end()   { message(BundleEnd{_seq++}); }
 
-	inline void put(const URI&        uri,
+	void put(const URI&        uri,
 	                const Properties& properties,
 	                Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{
 		message(Put{_seq++, uri, properties, ctx});
 	}
 
-	inline void delta(const URI&        uri,
+	void delta(const URI&        uri,
 	                  const Properties& remove,
 	                  const Properties& add,
 	                  Resource::Graph   ctx = Resource::Graph::DEFAULT)
@@ -87,34 +87,34 @@ public:
 		message(Delta{_seq++, uri, remove, add, ctx});
 	}
 
-	inline void copy(const URI& old_uri, const URI& new_uri)
+	void copy(const URI& old_uri, const URI& new_uri)
 	{
 		message(Copy{_seq++, old_uri, new_uri});
 	}
 
-	inline void move(const raul::Path& old_path, const raul::Path& new_path)
+	void move(const raul::Path& old_path, const raul::Path& new_path)
 	{
 		message(Move{_seq++, old_path, new_path});
 	}
 
-	inline void del(const URI& uri) { message(Del{_seq++, uri}); }
+	void del(const URI& uri) { message(Del{_seq++, uri}); }
 
-	inline void connect(const raul::Path& tail, const raul::Path& head)
+	void connect(const raul::Path& tail, const raul::Path& head)
 	{
 		message(Connect{_seq++, tail, head});
 	}
 
-	inline void disconnect(const raul::Path& tail, const raul::Path& head)
+	void disconnect(const raul::Path& tail, const raul::Path& head)
 	{
 		message(Disconnect{_seq++, tail, head});
 	}
 
-	inline void disconnect_all(const raul::Path& graph, const raul::Path& path)
+	void disconnect_all(const raul::Path& graph, const raul::Path& path)
 	{
 		message(DisconnectAll{_seq++, graph, path});
 	}
 
-	inline void set_property(const URI&      subject,
+	void set_property(const URI&      subject,
 	                         const URI&      predicate,
 	                         const Atom&     value,
 	                         Resource::Graph ctx = Resource::Graph::DEFAULT)
@@ -122,18 +122,18 @@ public:
 		message(SetProperty{_seq++, subject, predicate, value, ctx});
 	}
 
-	inline void undo() { message(Undo{_seq++}); }
+	void undo() { message(Undo{_seq++}); }
 
-	inline void redo() { message(Redo{_seq++}); }
+	void redo() { message(Redo{_seq++}); }
 
-	inline void get(const URI& uri) { message(Get{_seq++, uri}); }
+	void get(const URI& uri) { message(Get{_seq++, uri}); }
 
-	inline void response(int32_t id, Status status, const std::string& subject)
+	void response(int32_t id, Status status, const std::string& subject)
 	{
 		message(Response{id, status, subject});
 	}
 
-	inline void error(const std::string& error_message)
+	void error(const std::string& error_message)
 	{
 		message(Error{_seq++, error_message});
 	}

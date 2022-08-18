@@ -133,7 +133,7 @@ private:
 	};
 
 	struct OptionNameOrder {
-		inline bool operator()(const Option& a, const Option& b) {
+		bool operator()(const Option& a, const Option& b) {
 			return a.name < b.name;
 		}
 	};

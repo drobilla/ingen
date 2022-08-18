@@ -152,7 +152,7 @@ protected:
 	struct Response : public raul::Maid::Disposable
 	                , public raul::Noncopyable
 	                , public boost::intrusive::slist_base_hook<> {
-		inline Response(uint32_t s, const void* d)
+		Response(uint32_t s, const void* d)
 			: size(s)
 			, data(malloc(s))
 		{

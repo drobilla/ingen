@@ -59,22 +59,22 @@ public:
 
 	PortType(ID id) noexcept : _id(id) {}
 
-	inline const URI& uri() const { return type_uri(_id); }
-	inline ID         id() const { return _id; }
+	const URI& uri() const { return type_uri(_id); }
+	ID         id() const { return _id; }
 
-	inline bool operator==(const ID& id) const { return (_id == id); }
-	inline bool operator!=(const ID& id) const { return (_id != id); }
-	inline bool operator==(const PortType& type) const { return (_id == type._id); }
-	inline bool operator!=(const PortType& type) const { return (_id != type._id); }
-	inline bool operator<(const PortType& type)  const { return (_id < type._id); }
+	bool operator==(const ID& id) const { return (_id == id); }
+	bool operator!=(const ID& id) const { return (_id != id); }
+	bool operator==(const PortType& type) const { return (_id == type._id); }
+	bool operator!=(const PortType& type) const { return (_id != type._id); }
+	bool operator<(const PortType& type)  const { return (_id < type._id); }
 
-	inline bool is_audio()   { return _id == AUDIO; }
-	inline bool is_control() { return _id == CONTROL; }
-	inline bool is_cv()      { return _id == CV; }
-	inline bool is_atom()    { return _id == ATOM; }
+	bool is_audio()   { return _id == AUDIO; }
+	bool is_control() { return _id == CONTROL; }
+	bool is_cv()      { return _id == CV; }
+	bool is_atom()    { return _id == ATOM; }
 
 private:
-	static inline const URI& type_uri(unsigned id_num) {
+	static const URI& type_uri(unsigned id_num) {
 		assert(id_num <= ATOM);
 		static const URI uris[] = {
 			URI("http://www.w3.org/2002/07/owl#Nothing"),

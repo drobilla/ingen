@@ -68,8 +68,8 @@ public:
 
 		bool execute(RunContext& ctx, bool set_head_buffers);
 
-		inline PortImpl*  tail() { return _tail; }
-		inline InputPort* head() { return _head; }
+		PortImpl*  tail() { return _tail; }
+		InputPort* head() { return _head; }
 
 	private:
 		Engine&                             _engine;

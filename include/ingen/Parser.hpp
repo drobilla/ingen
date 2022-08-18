@@ -53,11 +53,11 @@ public:
 
 	/** Record of a resource listed in a bundle manifest. */
 	struct ResourceRecord {
-		inline ResourceRecord(URI u, FilePath f)
+		ResourceRecord(URI u, FilePath f)
 			: uri(std::move(u)), filename(std::move(f))
 		{}
 
-		inline bool operator<(const ResourceRecord& r) const {
+		bool operator<(const ResourceRecord& r) const {
 			return uri < r.uri;
 		}
 

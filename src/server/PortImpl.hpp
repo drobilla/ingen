@@ -145,10 +145,11 @@ public:
 	void set_minimum(const Atom& min) { _min.set_rt(min); }
 	void set_maximum(const Atom& max) { _max.set_rt(max); }
 
-	inline BufferRef buffer(uint32_t voice) const {
+	BufferRef buffer(uint32_t voice) const {
 		return _voices->at((_poly == 1) ? 0 : voice).buffer;
 	}
-	inline BufferRef prepared_buffer(uint32_t voice) const {
+
+	BufferRef prepared_buffer(uint32_t voice) const {
 		return _prepared_voices->at(voice).buffer;
 	}
 
@@ -205,7 +206,7 @@ public:
 	uint32_t index() const { return _index; }
 	void set_index(RunContext&, uint32_t index) { _index = index; }
 
-	inline bool is_a(PortType type) const { return _type == type; }
+	bool is_a(PortType type) const { return _type == type; }
 
 	bool has_value() const;
 

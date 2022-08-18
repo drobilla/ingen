@@ -85,13 +85,13 @@ public:
 	virtual void undo(Interface& target) {}
 
 	/** Return true iff this event has been pre-processed. */
-	inline bool is_prepared() const { return _status != Status::NOT_PREPARED; }
+	bool is_prepared() const { return _status != Status::NOT_PREPARED; }
 
 	/** Return the time stamp of this event. */
-	inline SampleCount time() const { return _time; }
+	SampleCount time() const { return _time; }
 
 	/** Set the time stamp of this event. */
-	inline void set_time(SampleCount time) { _time = time; }
+	void set_time(SampleCount time) { _time = time; }
 
 	/** Get the next event to be processed after this one. */
 	Event* next() const { return _next.load(); }
@@ -111,7 +111,7 @@ public:
 	/** Set the undo mode of this event. */
 	void set_mode(Mode mode) { _mode = mode; }
 
-	inline Engine& engine() { return _engine; }
+	Engine& engine() { return _engine; }
 
 protected:
 	Event(Engine&                    engine,
@@ -137,22 +137,22 @@ protected:
 		, _mode(Mode::NORMAL)
 	{}
 
-	inline bool pre_process_done(Status st) {
+	bool pre_process_done(Status st) {
 		_status = st;
 		return st == Status::SUCCESS;
 	}
 
-	inline bool pre_process_done(Status st, const URI& subject) {
+	bool pre_process_done(Status st, const URI& subject) {
 		_err_subject = subject;
 		return pre_process_done(st);
 	}
 
-	inline bool pre_process_done(Status st, const raul::Path& subject) {
+	bool pre_process_done(Status st, const raul::Path& subject) {
 		return pre_process_done(st, path_to_uri(subject));
 	}
 
 	/** Respond to the originating client. */
-	inline Status respond() {
+	Status respond() {
 		if (_request_client && _request_id) {
 			_request_client->response(_request_id, _status, _err_subject);
 		}

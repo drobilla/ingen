@@ -42,7 +42,7 @@ public:
 	~PreProcessor();
 
 	/** Return true iff no events are enqueued. */
-	inline bool empty() const { return !_head.load(); }
+	bool empty() const { return !_head.load(); }
 
 	/** Enqueue an event.
 	 * This is safe to call from any non-realtime thread (it locks).

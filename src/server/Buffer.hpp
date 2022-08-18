@@ -61,10 +61,10 @@ public:
 	void*       port_data(PortType port_type, SampleCount offset);
 	const void* port_data(PortType port_type, SampleCount offset) const;
 
-	inline LV2_URID type()       const { return _type; }
-	inline LV2_URID value_type() const { return _value_type; }
-	inline uint32_t capacity()   const { return _capacity; }
-	inline uint32_t size()       const {
+	LV2_URID type()       const { return _type; }
+	LV2_URID value_type() const { return _value_type; }
+	uint32_t capacity()   const { return _capacity; }
+	uint32_t size()       const {
 		return is_audio() ? _capacity : sizeof(LV2_Atom) + get<LV2_Atom>()->size;
 	}
 
@@ -78,20 +78,20 @@ public:
 	 */
 	void set_type(GetFn get_func, LV2_URID type, LV2_URID value_type);
 
-	inline bool is_audio() const {
+	bool is_audio() const {
 		return _type == _factory.uris().atom_Sound;
 	}
 
-	inline bool is_control() const {
+	bool is_control() const {
 		return _type == _factory.uris().atom_Float;
 	}
 
-	inline bool is_sequence() const {
+	bool is_sequence() const {
 		return _type == _factory.uris().atom_Sequence;
 	}
 
 	/// Audio or float buffers only
-	inline const Sample* samples() const {
+	const Sample* samples() const {
 		if (is_control()) {
 			return static_cast<const Sample*>(
 			    LV2_ATOM_BODY_CONST(get<LV2_Atom_Float>()));
@@ -105,7 +105,7 @@ public:
 	}
 
 	/// Audio buffers only
-	inline Sample* samples() {
+	Sample* samples() {
 		if (is_control()) {
 			return static_cast<Sample*>(LV2_ATOM_BODY(get<LV2_Atom_Float>()));
 		}
@@ -118,7 +118,7 @@ public:
 	}
 
 	/// Numeric buffers only
-	inline Sample value_at(SampleCount offset) const {
+	Sample value_at(SampleCount offset) const {
 		if (is_audio() || is_control()) {
 			return samples()[offset];
 		}
@@ -130,9 +130,8 @@ public:
 		return 0.0f;
 	}
 
-	inline void set_block(const Sample      val,
-	                      const SampleCount start,
-	                      const SampleCount end)
+	void
+	set_block(const Sample val, const SampleCount start, const SampleCount end)
 	{
 		if (is_sequence()) {
 			append_event(start, sizeof(val), _factory.uris().atom_Float,
@@ -151,9 +150,8 @@ public:
 		}
 	}
 
-	inline void add_block(const Sample      val,
-	                      const SampleCount start,
-	                      const SampleCount end)
+	void
+	add_block(const Sample val, const SampleCount start, const SampleCount end)
 	{
 		assert(is_audio() || is_control());
 		assert(end <= _capacity / sizeof(Sample));
@@ -164,10 +162,10 @@ public:
 		}
 	}
 
-	inline void write_block(const Sample      val,
-	                        const SampleCount start,
-	                        const SampleCount end,
-	                        const bool        add)
+	void write_block(const Sample      val,
+	                 const SampleCount start,
+	                 const SampleCount end,
+	                 const bool        add)
 	{
 		if (add) {
 			add_block(val, start, end);
@@ -221,9 +219,9 @@ public:
 	template<typename T> const T* get() const { return reinterpret_cast<const T*>(_buf); }
 	template<typename T> T*       get()       { return reinterpret_cast<T*>(_buf); }
 
-	inline void ref() { ++_refs; }
+	void ref() { ++_refs; }
 
-	inline void deref() {
+	void deref() {
 		if ((--_refs) == 0) {
 			recycle();
 		}

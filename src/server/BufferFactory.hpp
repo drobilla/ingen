@@ -85,7 +85,7 @@ private:
 
 	Buffer* try_get_buffer(LV2_URID type);
 
-	inline std::atomic<Buffer*>& free_list(LV2_URID type) {
+	std::atomic<Buffer*>& free_list(LV2_URID type) {
 		if (type == _uris.atom_Float) {
 			return _free_control;
 		}
