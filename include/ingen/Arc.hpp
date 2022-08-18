@@ -20,7 +20,9 @@
 #include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
 
-namespace raul { class Path; }
+namespace raul {
+class Path;
+} // namespace raul
 
 namespace ingen {
 

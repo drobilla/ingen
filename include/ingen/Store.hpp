@@ -27,7 +27,9 @@
 #include <mutex>
 #include <utility>
 
-namespace raul { class Symbol; }
+namespace raul {
+class Symbol;
+} // namespace raul
 
 namespace ingen {
 

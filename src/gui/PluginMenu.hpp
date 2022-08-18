@@ -36,7 +36,9 @@ namespace ingen {
 
 class World;
 
-namespace client { class PluginModel; }
+namespace client {
+class PluginModel;
+} // namespace client
 
 namespace gui {
 

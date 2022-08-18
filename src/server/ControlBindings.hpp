@@ -30,7 +30,9 @@
 #include <memory>
 #include <vector>
 
-namespace raul { class Path; }
+namespace raul {
+class Path;
+} // namespace raul
 
 namespace boost {
 namespace intrusive {

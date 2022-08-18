@@ -25,7 +25,9 @@
 #include <memory>
 #include <string>
 
-namespace raul { class Path; }
+namespace raul {
+class Path;
+} // namespace raul
 
 namespace ingen {
 

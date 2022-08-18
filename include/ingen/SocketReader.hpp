@@ -25,7 +25,9 @@
 #include <memory>
 #include <thread>
 
-namespace raul { class Socket; }
+namespace raul {
+class Socket;
+} // namespace raul
 
 namespace ingen {
 

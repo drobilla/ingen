@@ -28,7 +28,9 @@
 #include <cstdint>
 #include <mutex>
 
-namespace raul { class Maid; }
+namespace raul {
+class Maid;
+} // namespace raul
 
 namespace ingen {
 

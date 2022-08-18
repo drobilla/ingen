@@ -29,7 +29,9 @@ namespace ingen {
 
 class World;
 
-namespace client { class ObjectModel; }
+namespace client {
+class ObjectModel;
+} // namespace client
 
 namespace gui {
 

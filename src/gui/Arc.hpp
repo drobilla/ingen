@@ -28,7 +28,9 @@ class Node;
 
 namespace ingen {
 
-namespace client { class ArcModel; }
+namespace client {
+class ArcModel;
+} // namespace client
 
 namespace gui {
 

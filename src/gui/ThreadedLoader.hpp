@@ -43,7 +43,9 @@ class Parser;
 class Properties;
 class URI;
 
-namespace client { class GraphModel; }
+namespace client {
+class GraphModel;
+} // namespace client
 
 namespace gui {
 

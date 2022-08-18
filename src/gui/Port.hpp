@@ -38,7 +38,9 @@ namespace ingen {
 class URI;
 class Atom;
 
-namespace client { class PortModel; }
+namespace client {
+class PortModel;
+} // namespace client
 
 namespace gui {
 

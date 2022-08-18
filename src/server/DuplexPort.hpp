@@ -32,7 +32,9 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace raul { class Symbol; }
+namespace raul {
+class Symbol;
+} // namespace raul
 
 namespace ingen {
 

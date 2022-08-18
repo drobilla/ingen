@@ -32,7 +32,9 @@
 #include <cstdint>
 #include <memory>
 
-namespace raul { class Path; }
+namespace raul {
+class Path;
+} // namespace raul
 
 namespace boost {
 namespace intrusive {

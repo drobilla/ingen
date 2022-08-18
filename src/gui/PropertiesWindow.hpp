@@ -54,7 +54,9 @@ class Widget;
 
 namespace ingen {
 
-namespace client { class ObjectModel; }
+namespace client {
+class ObjectModel;
+} // namespace client
 
 namespace gui {
 

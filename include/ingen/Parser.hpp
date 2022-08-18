@@ -30,7 +30,9 @@
 #include <string>
 #include <utility>
 
-namespace Sord { class World; }
+namespace Sord {
+class World;
+} // namespace Sord
 
 namespace ingen {
 

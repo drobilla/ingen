@@ -29,7 +29,9 @@
 
 using LilvWorld = struct LilvWorldImpl;
 
-namespace Sord { class World; }
+namespace Sord {
+class World;
+} // namespace Sord
 
 namespace ingen {
 

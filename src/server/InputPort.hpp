@@ -30,7 +30,9 @@
 #include <cstdint>
 #include <cstdlib>
 
-namespace raul { class Symbol; }
+namespace raul {
+class Symbol;
+} // namespace raul
 
 namespace boost {
 namespace intrusive {
