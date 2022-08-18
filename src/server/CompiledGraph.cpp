@@ -43,7 +43,8 @@ namespace ingen {
 namespace server {
 
 /** Graph contains ambiguous feedback with no delay nodes. */
-class FeedbackException : public std::exception {
+class FeedbackException : public std::exception
+{
 public:
 	explicit FeedbackException(const BlockImpl* n)
 	    : node(n)

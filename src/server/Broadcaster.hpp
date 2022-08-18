@@ -76,7 +76,8 @@ public:
 	 * This makes doing the right thing in recursive functions that send
 	 * updates simple (e.g. Event::post_process()).
 	 */
-	class Transfer : public raul::Noncopyable {
+	class Transfer : public raul::Noncopyable
+	{
 	public:
 		explicit Transfer(Broadcaster& b) : broadcaster(b) {
 			if (++broadcaster._bundle_depth == 1) {

@@ -32,7 +32,8 @@ namespace ingen {
  * of its contents).  Ports with different types can contain the same type of
  * data, but may e.g. have different access semantics.
  */
-class PortType {
+class PortType
+{
 public:
 	enum ID {
 		UNKNOWN = 0,

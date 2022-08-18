@@ -43,7 +43,8 @@ class BlockModel;
  *
  * @ingroup IngenClient
  */
-class INGEN_API PluginUI {
+class INGEN_API PluginUI
+{
 public:
 	~PluginUI();
 

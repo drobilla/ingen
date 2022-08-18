@@ -44,7 +44,8 @@ class RunContext;
  *
  * \ingroup engine
  */
-class Driver : public raul::Noncopyable {
+class Driver : public raul::Noncopyable
+{
 public:
 	virtual ~Driver() = default;
 

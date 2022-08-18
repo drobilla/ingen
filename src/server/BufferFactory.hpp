@@ -39,7 +39,8 @@ namespace server {
 class Buffer;
 class Engine;
 
-class INGEN_SERVER_API BufferFactory {
+class INGEN_SERVER_API BufferFactory
+{
 public:
 	BufferFactory(Engine& engine, URIs& uris);
 	~BufferFactory();

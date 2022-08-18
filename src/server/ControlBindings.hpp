@@ -51,7 +51,8 @@ class Engine;
 class RunContext;
 class PortImpl;
 
-class ControlBindings {
+class ControlBindings
+{
 public:
 	enum class Type : uint16_t {
 		NULL_CONTROL,

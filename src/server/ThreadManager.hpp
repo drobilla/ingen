@@ -31,7 +31,8 @@ enum ThreadFlag {
 	THREAD_MESSAGE      = 1 << 3,
 };
 
-class INGEN_SERVER_API ThreadManager {
+class INGEN_SERVER_API ThreadManager
+{
 public:
 	static inline void set_flag(ThreadFlag f) {
 #ifndef NDEBUG

@@ -23,7 +23,8 @@
 namespace ingen {
 
 /** A dynamically loaded library (module, plugin). */
-class INGEN_API Library {
+class INGEN_API Library
+{
 public:
 	Library(const FilePath& path);
 	~Library();

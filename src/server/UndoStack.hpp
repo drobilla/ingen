@@ -39,7 +39,8 @@ class URIs;
 
 namespace server {
 
-class INGEN_SERVER_API UndoStack : public AtomSink {
+class INGEN_SERVER_API UndoStack : public AtomSink
+{
 public:
 	struct Entry {
 		Entry(time_t t = 0) noexcept : time(t) {}

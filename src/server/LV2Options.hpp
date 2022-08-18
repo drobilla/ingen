@@ -34,7 +34,8 @@ class World;
 
 namespace server {
 
-class LV2Options : public ingen::LV2Features::Feature {
+class LV2Options : public ingen::LV2Features::Feature
+{
 public:
 	explicit LV2Options(const URIs& uris)
 		: _uris(uris)

@@ -23,7 +23,8 @@
 
 namespace ingen {
 
-class INGEN_API ColorContext {
+class INGEN_API ColorContext
+{
 public:
 	enum class Color { RED = 31, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 

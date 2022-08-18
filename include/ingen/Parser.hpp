@@ -42,7 +42,8 @@ class World;
 
    @ingroup Ingen
 */
-class INGEN_API Parser {
+class INGEN_API Parser
+{
 public:
 	explicit Parser() = default;
 

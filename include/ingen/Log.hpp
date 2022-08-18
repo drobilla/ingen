@@ -37,7 +37,8 @@ class Node;
 class URIs;
 class World;
 
-class INGEN_API Log {
+class INGEN_API Log
+{
 public:
 	using Sink = std::function<int(LV2_URID, const char*, va_list)>;
 

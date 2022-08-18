@@ -26,7 +26,8 @@ namespace server {
 
 class PreProcessContext;
 
-class Sentinel : public Event {
+class Sentinel : public Event
+{
 public:
 	explicit Sentinel(Engine& engine) noexcept : Event(engine) {}
 

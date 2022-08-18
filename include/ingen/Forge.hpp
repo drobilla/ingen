@@ -33,7 +33,8 @@ class URI;
 /** Forge for Atoms.
  * @ingroup IngenShared
  */
-class INGEN_API Forge : public LV2_Atom_Forge {
+class INGEN_API Forge : public LV2_Atom_Forge
+{
 public:
 	explicit Forge(URIMap& map);
 

@@ -32,7 +32,8 @@ namespace server {
 class BlockImpl;
 class RunContext;
 
-class Task {
+class Task
+{
 public:
 	enum class Mode {
 		SINGLE,      ///< Single block to run

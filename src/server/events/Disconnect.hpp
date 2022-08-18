@@ -61,7 +61,8 @@ public:
 	void post_process() override;
 	void undo(Interface& target) override;
 
-	class Impl {
+	class Impl
+	{
 	public:
 		Impl(Engine& e, GraphImpl* graph, PortImpl* t, InputPort* h);
 

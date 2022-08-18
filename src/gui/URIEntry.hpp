@@ -39,7 +39,8 @@ namespace gui {
 
 class App;
 
-class URIEntry : public Gtk::HBox {
+class URIEntry : public Gtk::HBox
+{
 public:
 	/** Create a widget for entering URIs.
 	 *

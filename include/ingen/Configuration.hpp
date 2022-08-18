@@ -37,7 +37,8 @@ class URIMap;
 /** Ingen configuration (command line options and/or configuration file).
  * @ingroup IngenShared
  */
-class INGEN_API Configuration {
+class INGEN_API Configuration
+{
 public:
 	explicit Configuration(Forge& forge);
 

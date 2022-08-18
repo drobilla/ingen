@@ -31,7 +31,8 @@ namespace gui {
  *
  * \ingroup GUI
  */
-class WidgetFactory {
+class WidgetFactory
+{
 public:
 	static Glib::RefPtr<Gtk::Builder>
 	create(const std::string& toplevel_widget="");

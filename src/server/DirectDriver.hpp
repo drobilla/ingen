@@ -51,7 +51,8 @@ class Buffer;
 /** Driver for running Ingen directly as a library.
  * \ingroup engine
  */
-class DirectDriver : public Driver {
+class DirectDriver : public Driver
+{
 public:
 	DirectDriver(Engine&     engine,
 	             double      sample_rate,

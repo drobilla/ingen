@@ -53,7 +53,8 @@ class RenameWindow;
  * as well as an enumeration of all windows (the goal being to reduce that
  * number as much as possible).
  */
-class WindowFactory {
+class WindowFactory
+{
 public:
 	explicit WindowFactory(App& app);
 	~WindowFactory();

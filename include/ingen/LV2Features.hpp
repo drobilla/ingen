@@ -33,11 +33,13 @@ class World;
 /** Features for use by LV2 plugins.
  * @ingroup IngenShared
  */
-class INGEN_API LV2Features {
+class INGEN_API LV2Features
+{
 public:
 	LV2Features() = default;
 
-	class Feature {
+	class Feature
+	{
 	public:
 		virtual ~Feature() = default;
 
@@ -50,7 +52,8 @@ public:
 		static void free_feature(LV2_Feature* feature);
 	};
 
-	class EmptyFeature : public Feature {
+	class EmptyFeature : public Feature
+	{
 	public:
 		explicit EmptyFeature(const char* uri) noexcept : _uri(uri) {}
 
@@ -64,7 +67,8 @@ public:
 		const char* _uri;
 	};
 
-	class FeatureArray : public raul::Noncopyable {
+	class FeatureArray : public raul::Noncopyable
+	{
 	public:
 		using FeatureVector = std::vector<std::shared_ptr<LV2_Feature>>;
 

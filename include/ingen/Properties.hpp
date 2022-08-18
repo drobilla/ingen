@@ -28,7 +28,8 @@
 namespace ingen {
 
 /** A property value (an Atom with a context). */
-class Property : public Atom {
+class Property : public Atom
+{
 public:
 	enum class Graph {
 		DEFAULT,  ///< Default context for "universal" properties
@@ -53,7 +54,8 @@ private:
 	Graph _ctx;
 };
 
-class Properties : public std::multimap<URI, Property> {
+class Properties : public std::multimap<URI, Property>
+{
 public:
 	using Graph = Property::Graph;
 

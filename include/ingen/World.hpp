@@ -62,7 +62,8 @@ class URIs;
  *
  * @ingroup IngenShared
  */
-class INGEN_API World : public raul::Noncopyable {
+class INGEN_API World : public raul::Noncopyable
+{
 public:
 	/** Construct a new Ingen world.
 	 * @param map LV2 URID map implementation, or null to use internal.

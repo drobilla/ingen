@@ -41,7 +41,8 @@ namespace ingen {
    In either case, the data is stored in a binary compatible format to LV2_Atom
    (i.e., if the value is dynamically allocated, the header is repeated there).
 */
-class INGEN_API Atom {
+class INGEN_API Atom
+{
 public:
 	Atom() noexcept = default;
 

@@ -28,7 +28,8 @@
 
 namespace ingen {
 
-class Clock {
+class Clock
+{
 public:
 #ifdef __MACH__
 

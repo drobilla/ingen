@@ -31,7 +31,8 @@ class World;
  * All components of Ingen reside in one of these.
  * @ingroup IngenShared
  */
-class INGEN_API Module {
+class INGEN_API Module
+{
 public:
 	Module() noexcept : library(nullptr) {}
 

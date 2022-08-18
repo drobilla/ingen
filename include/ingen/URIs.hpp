@@ -37,7 +37,8 @@ class URIMap;
  *
  * @ingroup ingen
  */
-class INGEN_API URIs : public raul::Noncopyable {
+class INGEN_API URIs : public raul::Noncopyable
+{
 public:
 	URIs(ingen::Forge& ingen_forge, URIMap* map, LilvWorld* lworld);
 

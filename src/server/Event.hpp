@@ -63,10 +63,10 @@ public:
 
 	/** Execution mode for events that block and unblock preprocessing. */
 	enum class Execution {
-		NORMAL,  ///< Normal pipelined execution
-		ATOMIC,  ///< Block pre-processing until this event is executed
-		BLOCK,   ///< Begin atomic block of events
-		UNBLOCK  ///< Finish atomic executed block of events
+		NORMAL, ///< Normal pipelined execution
+		ATOMIC, ///< Block pre-processing until this event is executed
+		BLOCK,  ///< Begin atomic block of events
+		UNBLOCK ///< Finish atomic executed block of events
 	};
 
 	/** Claim position in undo stack before pre-processing (non-realtime). */

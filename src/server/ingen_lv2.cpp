@@ -90,7 +90,8 @@ struct LV2Graph : public Parser::ResourceRecord {
 };
 
 /** Ingen LV2 library. */
-class Lib {
+class Lib
+{
 public:
 	explicit Lib(const char* bundle_path);
 

@@ -40,7 +40,8 @@ class World;
 /** URI to integer map and implementation of LV2 URID extension.
  * @ingroup IngenShared
  */
-class INGEN_API URIMap : public raul::Noncopyable {
+class INGEN_API URIMap : public raul::Noncopyable
+{
 public:
 	URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap);
 
@@ -48,7 +49,8 @@ public:
 	uint32_t    map_uri(const std::string& uri) { return map_uri(uri.c_str()); }
 	const char* unmap_uri(uint32_t urid) const;
 
-	class Feature : public LV2Features::Feature {
+	class Feature : public LV2Features::Feature
+	{
 	public:
 		Feature(const char* URI, void* data) : _feature{URI, data} {}
 

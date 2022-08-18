@@ -88,7 +88,8 @@ protected:
 
 private:
 	/** Columns for the plugin list */
-	class ModelColumns : public Gtk::TreeModel::ColumnRecord {
+	class ModelColumns : public Gtk::TreeModel::ColumnRecord
+	{
 	public:
 		ModelColumns() {
 			add(_col_name);
@@ -110,7 +111,8 @@ private:
 	};
 
 	/** Column for the filter criteria combo box. */
-	class CriteriaColumns : public Gtk::TreeModel::ColumnRecord {
+	class CriteriaColumns : public Gtk::TreeModel::ColumnRecord
+	{
 	public:
 		enum class Criteria { NAME, TYPE, PROJECT, AUTHOR, URI, };
 
