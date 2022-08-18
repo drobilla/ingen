@@ -110,7 +110,7 @@ Store::rename(const iterator top, const raul::Path& new_path)
 
 	// Rename all the removed objects
 	for (const auto& r : removed) {
-		const raul::Path path = (r.first == old_path)
+		const auto path = (r.first == old_path)
 			? new_path
 			: new_path.child(
 				raul::Path(r.first.substr(old_path.base().length() - 1)));

@@ -78,8 +78,9 @@ ClashAvoider::map_path(const raul::Path& in)
 	do {
 		auto p = _symbol_map.find(parent);
 		if (p != _symbol_map.end()) {
-			const raul::Path mapped = raul::Path(
-				p->second.base() + in.substr(parent.base().length()));
+			const auto mapped = raul::Path{p->second.base() +
+			                               in.substr(parent.base().length())};
+
 			auto i = _symbol_map.emplace(in, mapped);
 			return i.first->second;
 		}

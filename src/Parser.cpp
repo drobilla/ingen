@@ -338,13 +338,11 @@ parse_graph(ingen::World&                        world,
 	const Sord::Node  nil;
 
 	// Build graph path and symbol
-	raul::Path graph_path;
+	raul::Path graph_path{"/"};
 	if (parent && symbol) {
 		graph_path = parent->child(*symbol);
 	} else if (parent) {
 		graph_path = *parent;
-	} else {
-		graph_path = raul::Path("/");
 	}
 
 	// Create graph
