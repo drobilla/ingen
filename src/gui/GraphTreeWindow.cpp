@@ -56,8 +56,6 @@ namespace gui {
 GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
-	, _graphs_treeview(nullptr)
-	, _enable_signal(true)
 {
 	xml->get_widget_derived("graphs_treeview", _graphs_treeview);
 

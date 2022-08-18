@@ -95,11 +95,11 @@ private:
 	void run();
 
 	App&                       _app;
-	raul::Semaphore            _sem;
+	raul::Semaphore            _sem{0};
 	std::shared_ptr<Interface> _engine;
 	std::mutex                 _mutex;
 	std::list<Closure>         _events;
-	bool                       _exit_flag;
+	bool                       _exit_flag{false};
 	std::thread                _thread;
 };
 

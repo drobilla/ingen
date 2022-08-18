@@ -43,9 +43,6 @@ public:
 	Task(Mode mode, BlockImpl* block = nullptr)
 		: _block(block)
 		, _mode(mode)
-		, _done_end(0)
-		, _next(0)
-		, _done(false)
 	{
 		assert(!(mode == Mode::SINGLE && !block));
 	}
@@ -110,12 +107,12 @@ private:
 		_children.emplace_back(std::move(t));
 	}
 
-	Children              _children;  ///< Vector of child tasks
-	BlockImpl*            _block;     ///< Used for SINGLE only
-	Mode                  _mode;      ///< Execution mode
-	unsigned              _done_end;  ///< Index of rightmost done sub-task
-	std::atomic<unsigned> _next;      ///< Index of next sub-task
-	std::atomic<bool>     _done;      ///< Completion phase
+	Children              _children;    ///< Vector of child tasks
+	BlockImpl*            _block;       ///< Used for SINGLE only
+	Mode                  _mode;        ///< Execution mode
+	unsigned              _done_end{0}; ///< Index of rightmost done sub-task
+	std::atomic<unsigned> _next{0};     ///< Index of next sub-task
+	std::atomic<bool>     _done{false}; ///< Completion phase
 };
 
 } // namespace server

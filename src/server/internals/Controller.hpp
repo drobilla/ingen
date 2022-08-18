@@ -74,7 +74,7 @@ private:
 	InputPort*  _min_port;
 	InputPort*  _max_port;
 	OutputPort* _audio_port;
-	bool        _learning;
+	bool        _learning{false};
 };
 
 } // namespace internals

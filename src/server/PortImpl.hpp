@@ -297,9 +297,9 @@ protected:
 	uint32_t                  _index;
 	uint32_t                  _poly;
 	uint32_t                  _buffer_size;
-	uint32_t                  _frames_since_monitor;
-	float                     _monitor_value;
-	float                     _peak;
+	uint32_t                  _frames_since_monitor{0};
+	float                     _monitor_value{0.0f};
+	float                     _peak{0.0f};
 	PortType                  _type;
 	LV2_URID                  _buffer_type;
 	Atom                      _value;
@@ -308,15 +308,15 @@ protected:
 	raul::managed_ptr<Voices> _voices;
 	raul::managed_ptr<Voices> _prepared_voices;
 	BufferRef                 _user_buffer;
-	std::atomic_flag          _connected_flag;
-	bool                      _monitored;
-	bool                      _force_monitor_update;
-	bool                      _is_morph;
-	bool                      _is_auto_morph;
-	bool                      _is_logarithmic;
-	bool                      _is_sample_rate;
-	bool                      _is_toggled;
-	bool                      _is_driver_port;
+	std::atomic_flag          _connected_flag{false};
+	bool                      _monitored{false};
+	bool                      _force_monitor_update{false};
+	bool                      _is_morph{false};
+	bool                      _is_auto_morph{false};
+	bool                      _is_logarithmic{false};
+	bool                      _is_sample_rate{false};
+	bool                      _is_toggled{false};
+	bool                      _is_driver_port{false};
 	bool                      _is_output;
 };
 

@@ -37,7 +37,6 @@ using std::string;
 BreadCrumbs::BreadCrumbs(App& app)
 	: _active_path("/")
 	, _full_path("/")
-	, _enable_signal(true)
 {
 	app.sig_client()->signal_message().connect(
 		sigc::mem_fun(this, &BreadCrumbs::message));

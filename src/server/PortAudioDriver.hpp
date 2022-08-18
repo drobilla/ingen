@@ -124,16 +124,16 @@ protected:
 	Ports                       _ports;
 	PaStreamParameters          _inputParameters;
 	PaStreamParameters          _outputParameters;
-	raul::Semaphore             _sem;
+	raul::Semaphore             _sem{0};
 	std::unique_ptr<FrameTimer> _timer;
-	PaStream*                   _stream;
-	size_t                      _seq_size;
+	PaStream*                   _stream{nullptr};
+	size_t                      _seq_size{4096};
 	uint32_t                    _block_length;
-	uint32_t                    _sample_rate;
-	uint32_t                    _n_inputs;
-	uint32_t                    _n_outputs;
-	std::atomic<bool>           _flag;
-	bool                        _is_activated;
+	uint32_t                    _sample_rate{48000};
+	uint32_t                    _n_inputs{0};
+	uint32_t                    _n_outputs{0};
+	std::atomic<bool>           _flag{false};
+	bool                        _is_activated{false};
 };
 
 } // namespace server

@@ -68,8 +68,8 @@ private:
 	raul::Path                       _path;
 	Properties&                      _properties;
 	ClientUpdate                     _update;
-	GraphImpl*                       _graph;
-	BlockImpl*                       _block;
+	GraphImpl*                       _graph{nullptr};
+	BlockImpl*                       _block{nullptr};
 	raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 

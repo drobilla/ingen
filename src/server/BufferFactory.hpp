@@ -96,15 +96,15 @@ private:
 
 	static void free_list(Buffer* head);
 
-	std::atomic<Buffer*> _free_audio;
-	std::atomic<Buffer*> _free_control;
-	std::atomic<Buffer*> _free_sequence;
-	std::atomic<Buffer*> _free_object;
+	std::atomic<Buffer*> _free_audio{nullptr};
+	std::atomic<Buffer*> _free_control{nullptr};
+	std::atomic<Buffer*> _free_sequence{nullptr};
+	std::atomic<Buffer*> _free_object{nullptr};
 
 	std::mutex  _mutex;
 	Engine&     _engine;
 	URIs&       _uris;
-	uint32_t    _seq_size;
+	uint32_t    _seq_size{0};
 
 	BufferRef _silent_buffer;
 };

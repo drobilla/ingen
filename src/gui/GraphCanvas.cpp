@@ -129,10 +129,6 @@ GraphCanvas::GraphCanvas(App&                              app,
     : Canvas(width, height)
     , _app(app)
     , _graph(std::move(graph))
-    , _auto_position_count(0)
-    , _menu_x(0)
-    , _menu_y(0)
-    , _paste_count(0)
 {
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);

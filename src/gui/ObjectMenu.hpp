@@ -76,18 +76,18 @@ protected:
 
 	void property_changed(const URI& predicate, const Atom& value);
 
-	App*                                       _app;
+	App*                                       _app{nullptr};
 	std::shared_ptr<const client::ObjectModel> _object;
-	Gtk::MenuItem*                             _learn_menuitem;
-	Gtk::MenuItem*                             _unlearn_menuitem;
-	Gtk::CheckMenuItem*                        _polyphonic_menuitem;
-	Gtk::MenuItem*                             _disconnect_menuitem;
-	Gtk::MenuItem*                             _rename_menuitem;
-	Gtk::MenuItem*                             _destroy_menuitem;
-	Gtk::MenuItem*                             _properties_menuitem;
-	Gtk::SeparatorMenuItem*                    _separator_menuitem;
+	Gtk::MenuItem*                             _learn_menuitem{nullptr};
+	Gtk::MenuItem*                             _unlearn_menuitem{nullptr};
+	Gtk::CheckMenuItem*                        _polyphonic_menuitem{nullptr};
+	Gtk::MenuItem*                             _disconnect_menuitem{nullptr};
+	Gtk::MenuItem*                             _rename_menuitem{nullptr};
+	Gtk::MenuItem*                             _destroy_menuitem{nullptr};
+	Gtk::MenuItem*                             _properties_menuitem{nullptr};
+	Gtk::SeparatorMenuItem*                    _separator_menuitem{nullptr};
 
-	bool _enable_signal;
+	bool _enable_signal{false};
 };
 
 } // namespace gui

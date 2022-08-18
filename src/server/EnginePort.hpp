@@ -40,9 +40,6 @@ class EnginePort : public raul::Noncopyable
 public:
 	explicit EnginePort(DuplexPort* port)
 		: _graph_port(port)
-		, _buffer(nullptr)
-		, _handle(nullptr)
-		, _driver_index(0)
 	{}
 
 	void set_buffer(void* buf)            { _buffer = buf; }
@@ -57,9 +54,9 @@ public:
 
 protected:
 	DuplexPort* _graph_port;
-	void*       _buffer;
-	void*       _handle;
-	uint32_t    _driver_index;
+	void*       _buffer{nullptr};
+	void*       _handle{nullptr};
+	uint32_t    _driver_index{0};
 };
 
 } // namespace server

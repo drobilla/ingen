@@ -116,13 +116,11 @@ Worker::Schedule::feature(World&, Node* n)
 Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)
 	: _schedule(new Schedule(synchronous))
 	, _log(log)
-	, _sem(0)
 	, _requests(buffer_size)
 	, _responses(buffer_size)
 	, _buffer(static_cast<uint8_t*>(malloc(buffer_size)))
 	, _buffer_size(buffer_size)
 	, _thread(nullptr)
-	, _exit_flag(false)
 	, _synchronous(synchronous)
 {
 	if (!synchronous) {

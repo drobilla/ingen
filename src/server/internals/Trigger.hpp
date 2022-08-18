@@ -71,7 +71,7 @@ public:
 	static InternalPlugin* internal_plugin(URIs& uris);
 
 private:
-	bool _learning;
+	bool _learning{false};
 
 	InputPort*  _midi_in_port;
 	OutputPort* _midi_out_port;

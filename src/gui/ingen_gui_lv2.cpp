@@ -73,19 +73,13 @@ struct IngenLV2AtomSink : public AtomSink {
 };
 
 struct IngenLV2UI {
-	IngenLV2UI()
-		: argc(0)
-		, argv(nullptr)
-		, forge(nullptr)
-		, world(nullptr)
-		, sink(nullptr)
-	{}
+	IngenLV2UI() = default;
 
-	int                                         argc;
-	char**                                      argv;
-	Forge*                                      forge;
-	World*                                      world;
-	IngenLV2AtomSink*                           sink;
+	int                                         argc{0};
+	char**                                      argv{nullptr};
+	Forge*                                      forge{nullptr};
+	World*                                      world{nullptr};
+	IngenLV2AtomSink*                           sink{nullptr};
 	std::shared_ptr<gui::App>                   app;
 	std::shared_ptr<gui::GraphBox>              view;
 	std::shared_ptr<Interface>                  engine;

@@ -78,9 +78,6 @@ NodeModule::NodeModule(GraphCanvas&                             canvas,
                        const std::shared_ptr<const BlockModel>& block)
     : Ganv::Module(canvas, block->path().symbol(), 0, 0, true)
     , _block(block)
-    , _gui_widget(nullptr)
-    , _gui_window(nullptr)
-    , _initialised(false)
 {
 	block->signal_new_port().connect(
 		sigc::mem_fun(this, &NodeModule::new_port_view));

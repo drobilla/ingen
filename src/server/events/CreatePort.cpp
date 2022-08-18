@@ -58,10 +58,6 @@ CreatePort::CreatePort(Engine&                           engine,
     : Event(engine, client, id, timestamp)
     , _path(std::move(path))
     , _port_type(PortType::UNKNOWN)
-    , _buf_type(0)
-    , _graph(nullptr)
-    , _graph_port(nullptr)
-    , _engine_port(nullptr)
     , _properties(properties)
 {
 	const ingen::URIs& uris = _engine.world().uris();

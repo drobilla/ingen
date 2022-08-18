@@ -61,7 +61,6 @@ GraphImpl::GraphImpl(Engine&             engine,
 	, _engine(engine)
 	, _poly_pre(internal_poly)
 	, _poly_process(internal_poly)
-	, _process(false)
 {
 	assert(internal_poly >= 1);
 	assert(internal_poly <= 128);

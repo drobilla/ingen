@@ -61,22 +61,10 @@ namespace ingen {
 namespace server {
 
 JackDriver::JackDriver(Engine& engine)
-	: _engine(engine)
-	, _forge()
-	, _sem(0)
-	, _flag(false)
-	, _client(nullptr)
-	, _block_length(0)
-	, _seq_size(0)
-	, _sample_rate(0)
-	, _is_activated(false)
-	, _position()
-	, _transport_state()
-	, _old_bpm(120.0)
-	, _old_frame(0)
-	, _old_rolling(false)
+    : _engine(engine)
+    , _forge()
+    , _midi_event_type(_engine.world().uris().midi_MidiEvent)
 {
-	_midi_event_type = _engine.world().uris().midi_MidiEvent;
 	lv2_atom_forge_init(&_forge, &engine.world().uri_map().urid_map());
 }
 

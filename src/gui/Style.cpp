@@ -27,22 +27,15 @@ namespace ingen {
 namespace gui {
 
 Style::Style(App& app)
-	// Colours from the Tango palette with modified V
-	: _app(app)
-#ifdef INGEN_USE_LIGHT_THEME
-	, _audio_port_color(0xC8E6ABFF) // Green
-	, _control_port_color(0xAAC0E6FF) // Blue
-	, _cv_port_color(0xACE6E0FF) // Teal (between audio and control)
-	, _event_port_color(0xE6ABABFF) // Red
-	, _string_port_color(0xD8ABE6FF) // Plum
-#else
-	, _audio_port_color(0x4A8A0EFF) // Green
-	, _control_port_color(0x244678FF) // Blue
-	, _cv_port_color(0x248780FF) // Teal (between audio and control)
-	, _event_port_color(0x960909FF) // Red
-	, _string_port_color(0x5C3566FF) // Plum
-#endif
+    : _app(app)
 {
+#ifdef INGEN_USE_LIGHT_THEME
+	_audio_port_color   = 0xC8E6ABFF;
+	_control_port_color = 0xAAC0E6FF;
+	_cv_port_color      = 0xACE6E0FF;
+	_event_port_color   = 0xE6ABABFF;
+	_string_port_color  = 0xD8ABE6FF;
+#endif
 }
 
 /** Loads settings from the rc file.  Passing no parameter will load from

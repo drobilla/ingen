@@ -64,7 +64,6 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
                    SampleRate          srate)
 	: InternalBlock(plugin, symbol, polyphonic, parent, srate)
 	, _voices(bufs.maid().make_managed<Voices>(_polyphony))
-	, _sustain(false)
 {
 	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(8);

@@ -47,8 +47,6 @@ Get::Get(Engine&                           engine,
          const ingen::Get&                 msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _object(nullptr)
-	, _plugin(nullptr)
 {}
 
 bool

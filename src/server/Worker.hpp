@@ -63,13 +63,13 @@ private:
 	std::shared_ptr<Schedule> _schedule;
 
 	Log&                         _log;
-	raul::Semaphore              _sem;
+	raul::Semaphore              _sem{0};
 	raul::RingBuffer             _requests;
 	raul::RingBuffer             _responses;
 	uint8_t* const               _buffer;
 	const uint32_t               _buffer_size;
 	std::unique_ptr<std::thread> _thread;
-	bool                         _exit_flag;
+	bool                         _exit_flag{false};
 	bool                         _synchronous;
 
 	void run();

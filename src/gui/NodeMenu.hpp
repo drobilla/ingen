@@ -79,11 +79,11 @@ protected:
 	void on_save_preset_activated();
 	void on_preset_activated(const std::string& uri);
 
-	Gtk::MenuItem*      _popup_gui_menuitem;
-	Gtk::CheckMenuItem* _embed_gui_menuitem;
-	Gtk::CheckMenuItem* _enabled_menuitem;
-	Gtk::MenuItem*      _randomize_menuitem;
-	Gtk::Menu*          _presets_menu;
+	Gtk::MenuItem*      _popup_gui_menuitem{nullptr};
+	Gtk::CheckMenuItem* _embed_gui_menuitem{nullptr};
+	Gtk::CheckMenuItem* _enabled_menuitem{nullptr};
+	Gtk::MenuItem*      _randomize_menuitem{nullptr};
+	Gtk::Menu*          _presets_menu{nullptr};
 	sigc::connection    _preset_connection;
 };
 

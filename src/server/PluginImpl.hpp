@@ -48,8 +48,6 @@ public:
 	PluginImpl(ingen::URIs& uris, const Atom& type, const URI& uri)
 	    : Resource(uris, uri)
 	    , _type(type)
-	    , _presets_loaded(false)
-	    , _is_zombie(false)
 	{
 	}
 
@@ -90,8 +88,8 @@ public:
 protected:
 	Atom    _type;
 	Presets _presets;
-	bool    _presets_loaded;
-	bool    _is_zombie;
+	bool    _presets_loaded{false};
+	bool    _is_zombie{false};
 };
 
 } // namespace server

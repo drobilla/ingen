@@ -38,7 +38,6 @@ BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 	, _free_object(nullptr)
 	, _engine(engine)
 	, _uris(uris)
-	, _seq_size(0)
 	, _silent_buffer(nullptr)
 {
 }

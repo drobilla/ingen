@@ -124,7 +124,7 @@ private:
 	Atom              _type;
 	const LilvPlugin* _lilv_plugin;
 	Presets           _presets;
-	bool              _fetched;
+	bool              _fetched{false};
 };
 
 } // namespace client

@@ -36,7 +36,6 @@ namespace server {
 
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
-	, _event_mode(Event::Mode::NORMAL)
 {
 }
 

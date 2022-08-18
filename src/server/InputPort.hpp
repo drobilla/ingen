@@ -136,8 +136,8 @@ protected:
 	                 uint32_t                         poly,
 	                 size_t num_in_arcs) const override;
 
-	size_t _num_arcs;  ///< Pre-process thread
-	Arcs   _arcs;      ///< Audio thread
+	size_t _num_arcs{0}; ///< Pre-process thread
+	Arcs   _arcs;        ///< Audio thread
 };
 
 } // namespace server

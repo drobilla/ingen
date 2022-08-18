@@ -68,16 +68,10 @@ Delta::Delta(Engine&                           engine,
              SampleCount                       timestamp,
              const ingen::Put&                 msg)
 	: Event(engine, client, msg.seq, timestamp)
-	, _create_event(nullptr)
 	, _subject(msg.uri)
 	, _properties(msg.properties)
-	, _object(nullptr)
-	, _graph(nullptr)
-	, _binding(nullptr)
-	, _state()
 	, _context(msg.ctx)
 	, _type(Type::PUT)
-	, _block(false)
 {
 	init();
 }
@@ -91,13 +85,8 @@ Delta::Delta(Engine&                           engine,
 	, _subject(msg.uri)
 	, _properties(msg.add)
 	, _remove(msg.remove)
-	, _object(nullptr)
-	, _graph(nullptr)
-	, _binding(nullptr)
-	, _state(nullptr)
 	, _context(msg.ctx)
 	, _type(Type::PATCH)
-	, _block(false)
 {
 	init();
 }
@@ -109,13 +98,8 @@ Delta::Delta(Engine&                           engine,
 	: Event(engine, client, msg.seq, timestamp)
 	, _subject(msg.subject)
 	, _properties{{msg.predicate, msg.value}}
-	, _object(nullptr)
-	, _graph(nullptr)
-	, _binding(nullptr)
-	, _state(nullptr)
 	, _context(msg.ctx)
 	, _type(Type::SET)
-	, _block(false)
 {
 	init();
 }

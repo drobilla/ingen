@@ -55,7 +55,6 @@ namespace gui {
 PortMenu::PortMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
-	, _internal_graph_port(false)
 {
 	xml->get_widget("object_menu", _port_menu);
 	xml->get_widget("port_set_min_menuitem", _set_min_menuitem);

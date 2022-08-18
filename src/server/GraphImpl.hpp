@@ -211,7 +211,7 @@ private:
 	PortList                         _inputs;  ///< Pre-process thread only
 	PortList                         _outputs; ///< Pre-process thread only
 	Blocks                           _blocks;  ///< Pre-process thread only
-	bool                             _process; ///< True iff graph is enabled
+	bool                             _process{false}; ///< True iff graph is enabled
 };
 
 } // namespace server

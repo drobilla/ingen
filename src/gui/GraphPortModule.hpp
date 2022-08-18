@@ -76,7 +76,7 @@ protected:
 	void property_changed(const URI& key, const Atom& value);
 
 	std::shared_ptr<const client::PortModel> _model;
-	Port*                                    _port;
+	Port*                                    _port{nullptr};
 };
 
 } // namespace gui

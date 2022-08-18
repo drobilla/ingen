@@ -72,8 +72,8 @@ private:
 	const raul::Path                  _path;
 	Properties                        _properties;
 	ClientUpdate                      _update;
-	GraphImpl*                        _graph;
-	GraphImpl*                        _parent;
+	GraphImpl*                        _graph{nullptr};
+	GraphImpl*                        _parent{nullptr};
 	raul::managed_ptr<CompiledGraph>  _compiled_graph;
 	std::list<std::unique_ptr<Event>> _child_events;
 };

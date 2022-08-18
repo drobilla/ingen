@@ -45,11 +45,12 @@ public:
 private:
 	App& _app;
 
-	uint32_t _audio_port_color;
-	uint32_t _control_port_color;
-	uint32_t _cv_port_color;
-	uint32_t _event_port_color;
-	uint32_t _string_port_color;
+	// Colours from the Tango palette with modified V
+	uint32_t _audio_port_color{0x4A8A0EFF};   // Green
+	uint32_t _control_port_color{0x244678FF}; // Blue
+	uint32_t _cv_port_color{0x248780FF};      // Teal {between audio/control}
+	uint32_t _event_port_color{0x960909FF};   // Red
+	uint32_t _string_port_color{0x5C3566FF};  // Plum
 };
 
 } // namespace gui

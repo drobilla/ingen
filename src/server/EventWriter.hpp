@@ -74,7 +74,7 @@ public:
 protected:
 	Engine&                    _engine;
 	std::shared_ptr<Interface> _respondee;
-	Event::Mode                _event_mode;
+	Event::Mode                _event_mode{Event::Mode::NORMAL};
 
 private:
 	SampleCount now() const;

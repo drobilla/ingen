@@ -64,8 +64,6 @@ CreateBlock::CreateBlock(Engine&                           engine,
     : Event(engine, client, id, timestamp)
     , _path(std::move(path))
     , _properties(properties)
-    , _graph(nullptr)
-    , _block(nullptr)
 {}
 
 CreateBlock::~CreateBlock() = default;

@@ -102,6 +102,7 @@ serd_dep = dependency('serd-0',
 
 sord_dep = dependency('sord-0',
                       version: '>= 0.16.0',
+                      include_type: 'system',
                       fallback: ['sord', 'sord_dep'])
 
 sratom_dep = dependency('sratom-0',

@@ -32,10 +32,6 @@ namespace gui {
 GraphWindow::GraphWindow(BaseObjectType*                   cobject,
                          const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
-	, _box(nullptr)
-	, _position_stored(false)
-	, _x(0)
-	, _y(0)
 {
 	property_visible() = false;
 

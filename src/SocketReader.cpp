@@ -42,12 +42,7 @@ SocketReader::SocketReader(ingen::World&                 world,
                            std::shared_ptr<raul::Socket> sock)
     : _world(world)
     , _iface(iface)
-    , _env()
-    , _inserter(nullptr)
-    , _msg_node(nullptr)
     , _socket(std::move(sock))
-    , _socket_error(0)
-    , _exit_flag(false)
     , _thread(&SocketReader::run, this)
 {}
 

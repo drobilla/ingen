@@ -179,7 +179,7 @@ protected:
 	LV2Plugin*                                 _lv2_plugin;
 	raul::managed_ptr<Instances>               _instances;
 	raul::managed_ptr<Instances>               _prepared_instances;
-	const LV2_Worker_Interface*                _worker_iface;
+	const LV2_Worker_Interface*                _worker_iface{nullptr};
 	std::mutex                                 _work_mutex;
 	Responses                                  _responses;
 	std::shared_ptr<LV2Features::FeatureArray> _features;

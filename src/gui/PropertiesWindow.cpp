@@ -76,7 +76,6 @@ using URISet = std::set<URI>;
 PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
-	, _value_type(0)
 {
 	xml->get_widget("properties_vbox", _vbox);
 	xml->get_widget("properties_scrolledwindow", _scrolledwindow);

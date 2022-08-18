@@ -100,28 +100,28 @@ private:
 
 	const Glib::RefPtr<Gtk::Builder> _xml;
 
-	Gtk::Image*        _icon;
-	Gtk::ProgressBar*  _progress_bar;
-	Gtk::Label*        _progress_label;
-	Gtk::Entry*        _url_entry;
-	Gtk::RadioButton*  _server_radio;
-	Gtk::SpinButton*   _port_spinbutton;
-	Gtk::RadioButton*  _launch_radio;
-	Gtk::RadioButton*  _internal_radio;
-	Gtk::Button*       _activate_button;
-	Gtk::Button*       _deactivate_button;
-	Gtk::Button*       _disconnect_button;
-	Gtk::Button*       _connect_button;
-	Gtk::Button*       _quit_button;
+	Gtk::Image*        _icon{nullptr};
+	Gtk::ProgressBar*  _progress_bar{nullptr};
+	Gtk::Label*        _progress_label{nullptr};
+	Gtk::Entry*        _url_entry{nullptr};
+	Gtk::RadioButton*  _server_radio{nullptr};
+	Gtk::SpinButton*   _port_spinbutton{nullptr};
+	Gtk::RadioButton*  _launch_radio{nullptr};
+	Gtk::RadioButton*  _internal_radio{nullptr};
+	Gtk::Button*       _activate_button{nullptr};
+	Gtk::Button*       _deactivate_button{nullptr};
+	Gtk::Button*       _disconnect_button{nullptr};
+	Gtk::Button*       _connect_button{nullptr};
+	Gtk::Button*       _quit_button{nullptr};
 
-	Mode      _mode;
-	URI       _connect_uri;
-	int32_t   _ping_id;
-	bool      _attached;
-	bool      _finished_connecting;
-	bool      _widgets_loaded;
-	int       _connect_stage;
-	bool      _quit_flag;
+	Mode      _mode{Mode::CONNECT_REMOTE};
+	URI       _connect_uri{"unix:///tmp/ingen.sock"};
+	int32_t   _ping_id{-1};
+	bool      _attached{false};
+	bool      _finished_connecting{false};
+	bool      _widgets_loaded{false};
+	int       _connect_stage{0};
+	bool      _quit_flag{false};
 };
 
 } // namespace gui

@@ -48,13 +48,10 @@ Buffer::Buffer(BufferFactory& bufs,
                bool           external,
                void*)
 	: _factory(bufs)
-	, _next(nullptr)
 	, _buf(external ? nullptr : aligned_alloc(capacity))
-	, _latest_event(0)
 	, _type(type)
 	, _value_type(value_type)
 	, _capacity(capacity)
-	, _refs(0)
 	, _external(external)
 {
 	if (!external && !_buf) {

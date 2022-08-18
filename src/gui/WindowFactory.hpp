@@ -107,13 +107,13 @@ private:
 	                 const std::shared_ptr<GraphView>&                view);
 
 	App&               _app;
-	GraphBox*          _main_box;
+	GraphBox*          _main_box{nullptr};
 	GraphWindowMap     _graph_windows;
-	LoadPluginWindow*  _load_plugin_win;
-	LoadGraphWindow*   _load_graph_win;
-	NewSubgraphWindow* _new_subgraph_win;
-	PropertiesWindow*  _properties_win;
-	RenameWindow*      _rename_win;
+	LoadPluginWindow*  _load_plugin_win{nullptr};
+	LoadGraphWindow*   _load_graph_win{nullptr};
+	NewSubgraphWindow* _new_subgraph_win{nullptr};
+	PropertiesWindow*  _properties_win{nullptr};
+	RenameWindow*      _rename_win{nullptr};
 };
 
 } // namespace gui

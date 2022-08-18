@@ -70,7 +70,6 @@ LV2Block::LV2Block(LV2Plugin*          plugin,
                    SampleRate          srate)
 	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
-	, _worker_iface(nullptr)
 {
 	assert(_lv2_plugin);
 }

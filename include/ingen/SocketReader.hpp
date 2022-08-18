@@ -72,12 +72,12 @@ private:
 
 	World&                        _world;
 	Interface&                    _iface;
-	SerdEnv*                      _env;
-	SordInserter*                 _inserter;
-	SordNode*                     _msg_node;
+	SerdEnv*                      _env{nullptr};
+	SordInserter*                 _inserter{nullptr};
+	SordNode*                     _msg_node{nullptr};
 	std::shared_ptr<raul::Socket> _socket;
-	int                           _socket_error;
-	bool                          _exit_flag;
+	int                           _socket_error{0};
+	bool                          _exit_flag{false};
 	std::thread                   _thread;
 };
 

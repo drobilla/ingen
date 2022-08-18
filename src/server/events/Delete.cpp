@@ -62,8 +62,6 @@ Delete::Delete(Engine&                           engine,
                const ingen::Del&                 msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _engine_port(nullptr)
-	, _disconnect_event(nullptr)
 {
 	if (uri_is_path(msg.uri)) {
 		_path = uri_to_path(msg.uri);

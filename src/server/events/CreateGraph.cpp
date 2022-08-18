@@ -58,8 +58,6 @@ CreateGraph::CreateGraph(Engine&                           engine,
     : Event(engine, client, id, timestamp)
     , _path(std::move(path))
     , _properties(properties)
-    , _graph(nullptr)
-    , _parent(nullptr)
 {
 }
 

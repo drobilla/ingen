@@ -57,11 +57,11 @@ protected:
 	URIMap&     _map;
 	Sratom*     _sratom;
 	SerdNode    _base;
-	SerdURI     _base_uri;
+	SerdURI     _base_uri{SERD_URI_NULL};
 	SerdEnv*    _env;
 	SerdWriter* _writer;
 	URI         _uri;
-	bool        _wrote_prefixes;
+	bool        _wrote_prefixes{false};
 };
 
 }  // namespace ingen

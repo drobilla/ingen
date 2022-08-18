@@ -87,7 +87,7 @@ protected:
 	find_graph(Gtk::TreeModel::Children                    root,
 	           const std::shared_ptr<client::ObjectModel>& graph);
 
-	GraphTreeView* _graphs_treeview;
+	GraphTreeView* _graphs_treeview{nullptr};
 
 	struct GraphTreeModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
@@ -105,7 +105,7 @@ protected:
 	GraphTreeModelColumns            _graph_tree_columns;
 	Glib::RefPtr<Gtk::TreeStore>     _graph_treestore;
 	Glib::RefPtr<Gtk::TreeSelection> _graph_tree_selection;
-	bool                             _enable_signal;
+	bool                             _enable_signal{true};
 };
 
 /** Derived TreeView class to support context menus for graphs */
@@ -115,7 +115,6 @@ public:
 	GraphTreeView(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml)
 		: Gtk::TreeView(cobject)
-		, _window(nullptr)
 	{}
 
 	void set_window(GraphTreeWindow* win) { _window = win; }
@@ -131,7 +130,7 @@ public:
 	}
 
 private:
-	GraphTreeWindow* _window;
+	GraphTreeWindow* _window{nullptr};
 };
 
 } // namespace gui

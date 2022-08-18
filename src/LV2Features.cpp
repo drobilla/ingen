@@ -37,12 +37,10 @@ LV2Features::add_feature(const std::shared_ptr<Feature>& feature)
 }
 
 LV2Features::FeatureArray::FeatureArray(FeatureVector& features)
-	: _features(features)
+    : _features(features)
+    , _array{static_cast<LV2_Feature**>(
+          calloc(features.size() + 1, sizeof(LV2_Feature*)))}
 {
-	_array = static_cast<LV2_Feature**>(
-	    malloc(sizeof(LV2_Feature*) * (features.size() + 1)));
-
-	_array[features.size()] = nullptr;
 	for (size_t i = 0; i < features.size(); ++i) {
 		_array[i] = features[i].get();
 	}

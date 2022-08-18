@@ -99,8 +99,8 @@ private:
 	LV2_Log_Log* _log;
 	URIs&        _uris;
 	Sink         _sink;
-	bool         _flush;
-	bool         _trace;
+	bool         _flush{false};
+	bool         _trace{false};
 };
 
 } // namespace ingen

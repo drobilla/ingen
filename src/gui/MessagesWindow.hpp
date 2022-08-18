@@ -67,9 +67,9 @@ private:
 
 	std::mutex        _mutex;
 	std::stringstream _stream;
-	Gtk::TextView*    _textview;
-	Gtk::Button*      _clear_button;
-	Gtk::Button*      _close_button;
+	Gtk::TextView*    _textview{nullptr};
+	Gtk::Button*      _clear_button{nullptr};
+	Gtk::Button*      _close_button{nullptr};
 
 	Glib::RefPtr<Gtk::TextTag>                      _error_tag;
 	std::map< LV2_URID, Glib::RefPtr<Gtk::TextTag> > _tags;

@@ -63,14 +63,14 @@ private:
 	void on_menu_reset_range();
 	void on_menu_expose();
 
-	Gtk::Menu*     _port_menu;
-	Gtk::MenuItem* _set_min_menuitem;
-	Gtk::MenuItem* _set_max_menuitem;
-	Gtk::MenuItem* _reset_range_menuitem;
-	Gtk::MenuItem* _expose_menuitem;
+	Gtk::Menu*     _port_menu{nullptr};
+	Gtk::MenuItem* _set_min_menuitem{nullptr};
+	Gtk::MenuItem* _set_max_menuitem{nullptr};
+	Gtk::MenuItem* _reset_range_menuitem{nullptr};
+	Gtk::MenuItem* _expose_menuitem{nullptr};
 
 	/// True iff this is a (flipped) port on a GraphPortModule in its graph
-	bool _internal_graph_port;
+	bool _internal_graph_port{false};
 };
 
 } // namespace gui

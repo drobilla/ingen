@@ -52,11 +52,6 @@ namespace gui {
 
 WindowFactory::WindowFactory(App& app)
 	: _app(app)
-	, _main_box(nullptr)
-	, _load_plugin_win(nullptr)
-	, _load_graph_win(nullptr)
-	, _new_subgraph_win(nullptr)
-	, _properties_win(nullptr)
 {
 	WidgetFactory::get_widget_derived("load_plugin_win", _load_plugin_win);
 	WidgetFactory::get_widget_derived("load_graph_win", _load_graph_win);

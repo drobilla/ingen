@@ -60,7 +60,6 @@ Disconnect::Disconnect(Engine&                           engine,
                        const ingen::Disconnect&          msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _graph(nullptr)
 {
 }
 

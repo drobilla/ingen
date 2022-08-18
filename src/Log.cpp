@@ -33,8 +33,6 @@ namespace ingen {
 Log::Log(LV2_Log_Log* log, URIs& uris)
 	: _log(log)
 	, _uris(uris)
-	, _flush(false)
-	, _trace(false)
 {}
 
 void

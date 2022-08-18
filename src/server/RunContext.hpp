@@ -143,18 +143,18 @@ public:
 protected:
 	void run();
 
-	Engine&                      _engine;     ///< Engine we're running in
-	raul::RingBuffer*            _event_sink; ///< Updates from process context
-	Task*                        _task;       ///< Currently executing task
-	std::unique_ptr<std::thread> _thread;     ///< Thread (or null for main)
-	unsigned                     _id;         ///< Context ID
+	Engine&                      _engine;        ///< Engine we're running in
+	raul::RingBuffer*            _event_sink;    ///< Updates from notify()
+	Task*                        _task{nullptr}; ///< Currently executing task
+	std::unique_ptr<std::thread> _thread;        ///< Thread (or null for main)
+	unsigned                     _id;            ///< Context ID
 
-	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
-	FrameTime   _end;        ///< End frame of this cycle, timeline relative
-	SampleCount _offset;     ///< Offset into data buffers
-	SampleCount _nframes;    ///< Number of frames past offset to process
-	SampleCount _rate;       ///< Sample rate in Hz
-	bool        _realtime;   ///< True iff context is hard realtime
+	FrameTime   _start{0};       ///< Start frame of this cycle (timeline)
+	FrameTime   _end{0};         ///< End frame of this cycle (timeline)
+	SampleCount _offset{0};      ///< Offset into data buffers
+	SampleCount _nframes{0};     ///< Number of frames past offset to process
+	SampleCount _rate{0};        ///< Sample rate in Hz
+	bool        _realtime{true}; ///< True iff context is hard realtime
 };
 
 } // namespace server

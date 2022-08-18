@@ -99,11 +99,11 @@ private:
 
 	ingen::World&                     _world;
 	std::shared_ptr<const BlockModel> _block;
-	SuilInstance*                     _instance;
-	LilvUIs*                          _uis;
-	const LilvUI*                     _ui;
-	LilvNode*                         _ui_node;
-	LilvNode*                         _ui_type;
+	SuilInstance*                     _instance{nullptr};
+	LilvUIs*                          _uis{nullptr};
+	const LilvUI*                     _ui{nullptr};
+	LilvNode*                         _ui_node{nullptr};
+	LilvNode*                         _ui_type{nullptr};
 	std::set<uint32_t>                _subscribed_ports;
 
 	static SuilHost* ui_host;

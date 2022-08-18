@@ -199,24 +199,24 @@ private:
 	std::shared_ptr<EventWriter>     _event_writer;
 	std::shared_ptr<Interface>       _interface;
 	std::unique_ptr<AtomReader>      _atom_interface;
-	GraphImpl*                       _root_graph;
+	GraphImpl*                       _root_graph{nullptr};
 
 	std::vector<std::unique_ptr<raul::RingBuffer>> _notifications;
 	std::vector<std::unique_ptr<RunContext>>       _run_contexts;
-	uint64_t                                       _cycle_start_time;
+	uint64_t                                       _cycle_start_time{0};
 	Load                                           _run_load;
 	Clock                                          _clock;
 
 	std::mt19937                          _rand_engine;
-	std::uniform_real_distribution<float> _uniform_dist;
+	std::uniform_real_distribution<float> _uniform_dist{0.0f, 1.0f};
 
 	std::condition_variable _tasks_available;
 	std::mutex              _tasks_mutex;
 
-	bool _quit_flag;
-	bool _reset_load_flag;
+	bool _quit_flag{false};
+	bool _reset_load_flag{false};
 	bool _atomic_bundles;
-	bool _activated;
+	bool _activated{false};
 };
 
 } // namespace server

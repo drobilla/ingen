@@ -152,7 +152,7 @@ private:
 	Options           _options;
 	Keys              _keys;
 	ShortNames        _short_names;
-	size_t            _max_name_length;
+	size_t            _max_name_length{0};
 };
 
 } // namespace ingen

@@ -54,7 +54,6 @@ Configuration::Configuration(Forge& forge)
 		"  ingen -g             # Run GUI, connect to running engine\n"
 		"  ingen -eg            # Run engine and GUI in one process\n"
 		"  ingen -eg foo.ingen  # Run engine and GUI and load a graph")
-	, _max_name_length(0)
 {
 	add("atomicBundles",  "atomic-bundles", 'a', "Execute bundles atomically", GLOBAL, forge.Bool, forge.make(false));
 	add("bufferSize",     "buffer-size",    'b', "Buffer size in samples", GLOBAL, forge.Int, forge.make(1024));

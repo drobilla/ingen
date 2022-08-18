@@ -41,20 +41,18 @@ write_prefix(void* handle, const SerdNode* name, const SerdNode* uri)
 }
 
 TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
-    : AtomWriter(map, uris, *this)
-    , _map(map)
-    , _sratom(sratom_new(&map.urid_map()))
-    , _base(SERD_NODE_NULL)
-    , _base_uri(SERD_URI_NULL)
-    , _uri(std::move(uri))
-    , _wrote_prefixes(false)
+	: AtomWriter{map, uris, *this}
+    , _map{map}
+    , _sratom{sratom_new(&map.urid_map())}
+    , _base{serd_node_from_string(SERD_URI, USTR("ingen:/"))}
+    , _env{serd_env_new(&_base)}
+    , _uri{std::move(uri)}
 {
 	// Use <ingen:/> as base URI, so relative URIs are like bundle paths
-	_base = serd_node_from_string(SERD_URI, USTR("ingen:/"));
+
 	serd_uri_parse(_base.buf, &_base_uri);
 
 	// Set up serialisation environment
-	_env = serd_env_new(&_base);
 	serd_env_set_prefix_from_strings(_env, USTR("atom"),  USTR("http://lv2plug.in/ns/ext/atom#"));
 	serd_env_set_prefix_from_strings(_env, USTR("doap"),  USTR("http://usefulinc.com/ns/doap#"));
 	serd_env_set_prefix_from_strings(_env, USTR("ingen"), USTR(INGEN_NS));
@@ -67,6 +65,7 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
 	serd_env_set_prefix_from_strings(_env, USTR("xsd"),   USTR("http://www.w3.org/2001/XMLSchema#"));
 
 	// Make a Turtle writer that writes to text_sink
+	// NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
 	_writer = serd_writer_new(
 		SERD_TURTLE,
 		static_cast<SerdStyle>(SERD_STYLE_RESOLVED|SERD_STYLE_ABBREVIATED|SERD_STYLE_CURIED),

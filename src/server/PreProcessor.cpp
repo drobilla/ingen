@@ -39,11 +39,6 @@ namespace server {
 
 PreProcessor::PreProcessor(Engine& engine)
 	: _engine(engine)
-	, _sem(0)
-	, _head(nullptr)
-	, _tail(nullptr)
-	, _block_state(BlockState::UNBLOCKED)
-	, _exit_flag(false)
 	, _thread(&PreProcessor::run, this)
 {}
 

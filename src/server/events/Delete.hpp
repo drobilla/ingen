@@ -77,7 +77,7 @@ private:
 	raul::Path                          _path;
 	std::shared_ptr<BlockImpl>          _block; ///< Non-null iff a block
 	std::shared_ptr<DuplexPort>         _port; ///< Non-null iff a port
-	EnginePort*                         _engine_port;
+	EnginePort*                         _engine_port{nullptr};
 	raul::managed_ptr<GraphImpl::Ports> _ports_array; ///< New (external) ports for Graph
 	raul::managed_ptr<CompiledGraph>    _compiled_graph; ///< Graph's new process order
 	std::unique_ptr<DisconnectAll>      _disconnect_event;

@@ -64,9 +64,9 @@ private:
 	bool filesystem_to_engine(PreProcessContext& ctx);
 
 	const ingen::Copy                _msg;
-	std::shared_ptr<BlockImpl>       _old_block;
-	GraphImpl*                       _parent;
-	BlockImpl*                       _block;
+	std::shared_ptr<BlockImpl>       _old_block{nullptr};
+	GraphImpl*                       _parent{nullptr};
+	BlockImpl*                       _block{nullptr};
 	raul::managed_ptr<CompiledGraph> _compiled_graph;
 };
 

@@ -98,14 +98,8 @@ Engine::Engine(ingen::World& world)
 	, _interface(_event_writer)
 	, _atom_interface(
 		new AtomReader(world.uri_map(), world.uris(), world.log(), *_interface))
-	, _root_graph(nullptr)
-	, _cycle_start_time(0)
 	, _rand_engine(reinterpret_cast<uintptr_t>(this))
-	, _uniform_dist(0.0f, 1.0f)
-	, _quit_flag(false)
-	, _reset_load_flag(false)
 	, _atomic_bundles(world.conf().option("atomic-bundles").get<int32_t>())
-	, _activated(false)
 {
 	if (!world.store()) {
 		world.set_store(std::make_shared<ingen::Store>());

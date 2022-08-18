@@ -74,11 +74,11 @@ private:
 
 	raul::Path                          _path;
 	PortType                            _port_type;
-	LV2_URID                            _buf_type;
-	GraphImpl*                          _graph;
-	DuplexPort*                         _graph_port;
+	LV2_URID                            _buf_type{0};
+	GraphImpl*                          _graph{nullptr};
+	DuplexPort*                         _graph_port{nullptr};
 	raul::managed_ptr<BlockImpl::Ports> _ports_array; ///< New external port array for Graph
-	EnginePort*                         _engine_port; ///< Driver port if on the root
+	EnginePort*                         _engine_port{nullptr}; ///< Driver port if on the root
 	Properties                          _properties;
 	Properties                          _update;
 	boost::optional<Flow>               _flow;

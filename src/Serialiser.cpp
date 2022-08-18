@@ -57,9 +57,7 @@ struct Serialiser::Impl
 {
 	explicit Impl(World& world)
 	    : _root_path("/")
-	    , _mode(Mode::TO_FILE)
 	    , _world(world)
-	    , _model(nullptr)
 	    , _sratom(sratom_new(&_world.uri_map().urid_map()))
 	{
 	}
@@ -105,11 +103,11 @@ struct Serialiser::Impl
 	std::string finish();
 
 	raul::Path   _root_path;
-	Mode         _mode;
+	Mode         _mode{Mode::TO_FILE};
 	URI          _base_uri;
 	FilePath     _basename;
 	World&       _world;
-	Sord::Model* _model;
+	Sord::Model* _model{nullptr};
 	Sratom*      _sratom;
 };
 

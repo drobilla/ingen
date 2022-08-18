@@ -62,7 +62,7 @@ private:
 
 	Plugins       _plugins;
 	ingen::World& _world;
-	bool          _has_loaded;
+	bool          _has_loaded{false};
 };
 
 } // namespace server

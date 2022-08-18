@@ -50,7 +50,6 @@ InputPort::InputPort(BufferFactory&      bufs,
                      const Atom&         value,
                      size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size, false)
-	, _num_arcs(0)
 {
 	const ingen::URIs& uris = bufs.uris();
 

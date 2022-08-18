@@ -177,20 +177,20 @@ protected:
 
 	ingen::World& _world;
 
-	int32_t     _sample_rate;
-	int32_t     _block_length;
-	int32_t     _n_threads;
-	float       _mean_run_load;
-	float       _min_run_load;
-	float       _max_run_load;
+	int32_t     _sample_rate{48000};
+	int32_t     _block_length{1024};
+	int32_t     _n_threads{1};
+	float       _mean_run_load{0.0f};
+	float       _min_run_load{0.0f};
+	float       _max_run_load{0.0f};
 	std::string _status_text;
 
 	using ActivityPorts = std::unordered_map<Port*, bool>;
 	ActivityPorts _activity_ports;
 
-	bool _enable_signal;
-	bool _requested_plugins;
-	bool _is_plugin;
+	bool _enable_signal{true};
+	bool _requested_plugins{false};
+	bool _is_plugin{false};
 };
 
 } // namespace gui

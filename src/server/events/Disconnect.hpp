@@ -80,7 +80,7 @@ public:
 
 private:
 	const ingen::Disconnect          _msg;
-	GraphImpl*                       _graph;
+	GraphImpl*                       _graph{nullptr};
 	std::unique_ptr<Impl>            _impl;
 	raul::managed_ptr<CompiledGraph> _compiled_graph;
 };

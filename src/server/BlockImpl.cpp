@@ -43,10 +43,7 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
 	: NodeImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
-	, _mark(Mark::UNVISITED)
 	, _polyphonic(polyphonic)
-	, _activated(false)
-	, _enabled(true)
 {
 	assert(_plugin);
 	assert(_polyphony > 0);

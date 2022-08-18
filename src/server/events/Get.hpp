@@ -58,8 +58,8 @@ public:
 
 private:
 	const ingen::Get      _msg;
-	const Node*           _object;
-	PluginImpl*           _plugin;
+	const Node*           _object{nullptr};
+	PluginImpl*           _plugin{nullptr};
 	BlockFactory::Plugins _plugins;
 	ClientUpdate          _response;
 };

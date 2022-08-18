@@ -68,11 +68,11 @@ private:
 	Properties                                _initial_data;
 	std::shared_ptr<const client::GraphModel> _graph;
 
-	Gtk::Entry*      _name_entry;
-	Gtk::Label*      _message_label;
-	Gtk::SpinButton* _poly_spinbutton;
-	Gtk::Button*     _ok_button;
-	Gtk::Button*     _cancel_button;
+	Gtk::Entry*      _name_entry{nullptr};
+	Gtk::Label*      _message_label{nullptr};
+	Gtk::SpinButton* _poly_spinbutton{nullptr};
+	Gtk::Button*     _ok_button{nullptr};
+	Gtk::Button*     _cancel_button{nullptr};
 };
 
 } // namespace gui

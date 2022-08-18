@@ -27,7 +27,6 @@ Checks: >
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-no-malloc,
   -cppcoreguidelines-owning-memory,
-  -cppcoreguidelines-prefer-member-initializer,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
@@ -57,14 +56,12 @@ Checks: >
   -modernize-make-unique,
   -modernize-pass-by-value,
   -modernize-return-braced-init-list,
-  -modernize-use-default-member-init,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -portability-simd-intrinsics,
   -readability-function-cognitive-complexity,
   -readability-identifier-length,
   -readability-implicit-bool-conversion,
-  -readability-redundant-member-init,
   -readability-use-anyofallof,
 CheckOptions:
   - key:   modernize-use-override.AllowOverrideAndFinal

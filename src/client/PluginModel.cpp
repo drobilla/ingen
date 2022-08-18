@@ -44,7 +44,6 @@ PluginModel::PluginModel(URIs&             uris,
                          const Properties& properties)
 	: Resource(uris, uri)
 	, _type(type)
-	, _fetched(false)
 {
 	if (!_type.is_valid()) {
 		if (uri.string().find("ingen-internals") != string::npos) {

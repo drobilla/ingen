@@ -40,8 +40,6 @@ class AtomForge : public LV2_Atom_Forge
 public:
 	explicit AtomForge(LV2_URID_Map& map)
 		: LV2_Atom_Forge{}
-		, _size{0}
-	    , _capacity{8 * sizeof(LV2_Atom)}
 	    , _sratom{sratom_new(&map)}
 	    , _buf{static_cast<LV2_Atom*>(calloc(8, sizeof(LV2_Atom)))}
 	{
@@ -117,10 +115,10 @@ private:
 		return static_cast<AtomForge*>(self)->deref(ref);
 	}
 
-	size_t    _size;     ///< Current atom size
-	size_t    _capacity; ///< Allocated size of atom buffer
-	SratomPtr _sratom;   ///< Atom serialiser
-	AtomPtr   _buf;      ///< Atom buffer
+	size_t    _size{0};                        ///< Current atom size
+	size_t    _capacity{8 * sizeof(LV2_Atom)}; ///< Allocated size of buffer
+	SratomPtr _sratom;                         ///< Atom serialiser
+	AtomPtr   _buf;                            ///< Atom buffer
 };
 
 }  // namespace ingen

@@ -208,10 +208,10 @@ protected:
 	uint32_t                 _polyphony;
 	std::set<BlockImpl*>     _providers; ///< Blocks connected to this one's input ports
 	std::set<BlockImpl*>     _dependants; ///< Blocks this one's output ports are connected to
-	Mark                     _mark; ///< Mark for graph compilation algorithm
+	Mark                     _mark{Mark::UNVISITED}; ///< Mark for graph walks
 	bool                     _polyphonic;
-	bool                     _activated;
-	bool                     _enabled;
+	bool                     _activated{false};
+	bool                     _enabled{true};
 };
 
 } // namespace server

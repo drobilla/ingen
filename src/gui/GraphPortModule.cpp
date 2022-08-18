@@ -50,7 +50,6 @@ GraphPortModule::GraphPortModule(
     const std::shared_ptr<const client::PortModel>& model)
     : Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
     , _model(model)
-    , _port(nullptr)
 {
 	assert(model);
 

@@ -90,9 +90,7 @@ class World::Impl
 {
 public:
 	Impl(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log_feature)
-	    : argc(nullptr)
-	    , argv(nullptr)
-	    , lv2_features(nullptr)
+		: lv2_features(new LV2Features())
 	    , rdf_world(new Sord::World())
 	    , lilv_world(lilv_world_new(), lilv_world_free)
 	    , uri_map(log, map, unmap)
@@ -101,7 +99,6 @@ public:
 	    , conf(forge)
 	    , log(log_feature, uris)
 	{
-		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map.urid_map_feature());
 		lv2_features->add_feature(uri_map.urid_unmap_feature());
 		lv2_features->add_feature(std::make_shared<InstanceAccess>());
@@ -187,8 +184,8 @@ public:
 	using LilvWorldUPtr =
 	    std::unique_ptr<LilvWorld, decltype(&lilv_world_free)>;
 
-	int*                         argc;
-	char***                      argv;
+	int*                         argc{nullptr};
+	char***                      argv{nullptr};
 	LV2Features*                 lv2_features;
 	std::unique_ptr<Sord::World> rdf_world;
 	LilvWorldUPtr                lilv_world;

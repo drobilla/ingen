@@ -68,7 +68,6 @@ namespace gui {
 NodeMenu::NodeMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
-	, _presets_menu(nullptr)
 {
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);

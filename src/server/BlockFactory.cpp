@@ -45,7 +45,6 @@ namespace server {
 
 BlockFactory::BlockFactory(ingen::World& world)
 	: _world(world)
-	, _has_loaded(false)
 {
 	load_internal_plugins();
 }

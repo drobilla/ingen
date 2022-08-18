@@ -118,7 +118,7 @@ private:
 
 	raul::Path             _active_path;
 	raul::Path             _full_path;
-	bool                   _enable_signal;
+	bool                   _enable_signal{true};
 	std::list<BreadCrumb*> _breadcrumbs;
 };
 

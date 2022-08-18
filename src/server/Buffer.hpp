@@ -229,15 +229,15 @@ private:
 	BufferFactory& _factory;
 
 	// NOLINTNEXTLINE(clang-analyzer-webkit.NoUncountedMemberChecker)
-	Buffer* _next; ///< Intrusive linked list for BufferFactory
+	Buffer* _next{nullptr}; ///< Intrusive linked list for BufferFactory
 
 	void*                 _buf; ///< Actual buffer memory
 	BufferRef             _value_buffer; ///< Value buffer for numeric sequences
-	int64_t               _latest_event;
+	int64_t               _latest_event{0};
 	LV2_URID              _type;
 	LV2_URID              _value_type;
 	uint32_t              _capacity;
-	std::atomic<unsigned> _refs; ///< Intrusive reference count
+	std::atomic<unsigned> _refs{0}; ///< Intrusive reference count
 	bool                  _external; ///< Buffer is externally allocated
 };
 

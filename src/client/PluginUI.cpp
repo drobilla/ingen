@@ -166,7 +166,6 @@ PluginUI::PluginUI(ingen::World&                     world,
                    const LilvNode*                   ui_type)
     : _world(world)
     , _block(std::move(block))
-    , _instance(nullptr)
     , _uis(uis)
     , _ui(ui)
     , _ui_node(lilv_node_duplicate(lilv_ui_get_uri(ui)))

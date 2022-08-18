@@ -154,19 +154,19 @@ protected:
 	Ports                  _ports;
 	AudioBufPtr            _fallback_buffer;
 	LV2_Atom_Forge         _forge;
-	raul::Semaphore        _sem;
-	std::atomic<bool>      _flag;
-	jack_client_t*         _client;
-	jack_nframes_t         _block_length;
-	size_t                 _seq_size;
-	jack_nframes_t         _sample_rate;
+	raul::Semaphore        _sem{0};
+	std::atomic<bool>      _flag{false};
+	jack_client_t*         _client{nullptr};
+	jack_nframes_t         _block_length{0};
+	size_t                 _seq_size{0};
+	jack_nframes_t         _sample_rate{0};
 	uint32_t               _midi_event_type;
-	bool                   _is_activated;
-	jack_position_t        _position;
-	jack_transport_state_t _transport_state;
-	double                 _old_bpm;
-	jack_nframes_t         _old_frame;
-	bool                   _old_rolling;
+	bool                   _is_activated{false};
+	jack_position_t        _position{};
+	jack_transport_state_t _transport_state{};
+	double                 _old_bpm{120.0};
+	jack_nframes_t         _old_frame{0};
+	bool                   _old_rolling{false};
 };
 
 } // namespace server

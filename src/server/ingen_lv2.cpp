@@ -124,15 +124,9 @@ public:
 		          *this)
 		, _from_ui(ui_ring_size(block_length))
 		, _to_ui(ui_ring_size(block_length))
-		, _root_graph(nullptr)
-		, _notify_capacity(0)
 		, _block_length(block_length)
 		, _seq_size(seq_size)
 		, _sample_rate(sample_rate)
-		, _frame_time(0)
-		, _to_ui_overflow_sem(0)
-		, _to_ui_overflow(false)
-		, _instantiated(false)
 	{}
 
 	bool dynamic_ports() const override { return !_instantiated; }
@@ -413,15 +407,15 @@ private:
 	AtomWriter       _writer;
 	raul::RingBuffer _from_ui;
 	raul::RingBuffer _to_ui;
-	GraphImpl*       _root_graph;
-	uint32_t         _notify_capacity;
+	GraphImpl*       _root_graph{nullptr};
+	uint32_t         _notify_capacity{0};
 	SampleCount      _block_length;
 	size_t           _seq_size;
 	SampleCount      _sample_rate;
-	SampleCount      _frame_time;
-	raul::Semaphore  _to_ui_overflow_sem;
-	bool             _to_ui_overflow;
-	bool             _instantiated;
+	SampleCount      _frame_time{0};
+	raul::Semaphore  _to_ui_overflow_sem{0};
+	bool             _to_ui_overflow{false};
+	bool             _instantiated{false};
 };
 
 struct IngenPlugin {

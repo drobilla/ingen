@@ -85,10 +85,10 @@ protected:
 	bool on_key_press_event(GdkEventKey* event) override;
 
 private:
-	GraphBox* _box;
-	bool      _position_stored;
-	int       _x;
-	int       _y;
+	GraphBox* _box{nullptr};
+	bool      _position_stored{false};
+	int       _x{0};
+	int       _y{0};
 };
 
 } // namespace gui

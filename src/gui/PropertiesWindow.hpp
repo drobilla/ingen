@@ -129,16 +129,16 @@ private:
 	Glib::RefPtr<Gtk::ListStore>               _key_store;
 	sigc::connection                           _property_connection;
 	sigc::connection                           _property_removed_connection;
-	Gtk::VBox*                                 _vbox;
-	Gtk::ScrolledWindow*                       _scrolledwindow;
-	Gtk::Table*                                _table;
-	Gtk::ComboBox*                             _key_combo;
-	LV2_URID                                   _value_type;
-	Gtk::Bin*                                  _value_bin;
-	Gtk::Button*                               _add_button;
-	Gtk::Button*                               _cancel_button;
-	Gtk::Button*                               _apply_button;
-	Gtk::Button*                               _ok_button;
+	Gtk::VBox*                                 _vbox{nullptr};
+	Gtk::ScrolledWindow*                       _scrolledwindow{nullptr};
+	Gtk::Table*                                _table{nullptr};
+	Gtk::ComboBox*                             _key_combo{nullptr};
+	LV2_URID                                   _value_type{0};
+	Gtk::Bin*                                  _value_bin{nullptr};
+	Gtk::Button*                               _add_button{nullptr};
+	Gtk::Button*                               _cancel_button{nullptr};
+	Gtk::Button*                               _apply_button{nullptr};
+	Gtk::Button*                               _ok_button{nullptr};
 };
 
 } // namespace gui

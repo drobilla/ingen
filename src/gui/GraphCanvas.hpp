@@ -141,12 +141,12 @@ private:
 	using Views = std::map<std::shared_ptr<const client::ObjectModel>, Ganv::Module*>;
 	Views _views;
 
-	int                 _auto_position_count;
+	int                 _auto_position_count{0};
 	std::pair<int, int> _auto_position_scroll_offsets;
 
-	int _menu_x;
-	int _menu_y;
-	int _paste_count;
+	int _menu_x{0};
+	int _menu_y{0};
+	int _paste_count{0};
 
 	// Track pasted objects so they can be selected when they arrive
 	std::set<raul::Path> _pastees;

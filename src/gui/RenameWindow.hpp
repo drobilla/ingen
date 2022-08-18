@@ -63,11 +63,11 @@ private:
 
 	std::shared_ptr<const client::ObjectModel> _object;
 
-	Gtk::Entry*  _symbol_entry;
-	Gtk::Entry*  _label_entry;
-	Gtk::Label*  _message_label;
-	Gtk::Button* _cancel_button;
-	Gtk::Button* _ok_button;
+	Gtk::Entry*  _symbol_entry{nullptr};
+	Gtk::Entry*  _label_entry{nullptr};
+	Gtk::Label*  _message_label{nullptr};
+	Gtk::Button* _cancel_button{nullptr};
+	Gtk::Button* _ok_button{nullptr};
 };
 
 } // namespace gui

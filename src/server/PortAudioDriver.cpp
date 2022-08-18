@@ -47,15 +47,7 @@ PortAudioDriver::PortAudioDriver(Engine& engine)
 	: _engine(engine)
 	, _inputParameters()
 	, _outputParameters()
-	, _sem(0)
-	, _stream(nullptr)
-	, _seq_size(4096)
 	, _block_length(engine.world().conf().option("buffer-size").get<int32_t>())
-	, _sample_rate(48000)
-	, _n_inputs(0)
-	, _n_outputs(0)
-	, _flag(false)
-	, _is_activated(false)
 {
 }
 

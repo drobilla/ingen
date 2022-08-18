@@ -76,11 +76,11 @@ private:
 
 	Engine&                 _engine;
 	std::mutex              _mutex;
-	raul::Semaphore         _sem;
-	std::atomic<Event*>     _head;
-	std::atomic<Event*>     _tail;
-	std::atomic<BlockState> _block_state;
-	bool                    _exit_flag;
+	raul::Semaphore         _sem{0};
+	std::atomic<Event*>     _head{nullptr};
+	std::atomic<Event*>     _tail{nullptr};
+	std::atomic<BlockState> _block_state{BlockState::UNBLOCKED};
+	bool                    _exit_flag{false};
 	std::thread             _thread;
 };
 

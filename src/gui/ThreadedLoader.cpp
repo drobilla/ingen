@@ -49,9 +49,7 @@ namespace gui {
 
 ThreadedLoader::ThreadedLoader(App& app, std::shared_ptr<Interface> engine)
     : _app(app)
-    , _sem(0)
     , _engine(std::move(engine))
-    , _exit_flag(false)
     , _thread(&ThreadedLoader::run, this)
 {
 	if (!parser()) {

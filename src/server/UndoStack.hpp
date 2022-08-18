@@ -83,10 +83,7 @@ public:
 		std::deque<LV2_Atom*> events;
 	};
 
-	UndoStack(URIs& uris, URIMap& map) noexcept
-	    : _uris(uris), _map(map), _depth(0)
-	{
-	}
+	UndoStack(URIs& uris, URIMap& map) noexcept : _uris(uris), _map(map) {}
 
 	int  start_entry();
 	bool write(const LV2_Atom* msg, int32_t default_id=0) override;
@@ -109,7 +106,7 @@ private:
 	URIs&             _uris;
 	URIMap&           _map;
 	std::deque<Entry> _stack;
-	int               _depth;
+	int               _depth{0};
 };
 
 } // namespace server

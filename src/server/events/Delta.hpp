@@ -116,10 +116,10 @@ private:
 	Properties                       _properties;
 	Properties                       _remove;
 	ClientUpdate                     _update;
-	ingen::Resource*                 _object;
-	GraphImpl*                       _graph;
+	ingen::Resource*                 _object{nullptr};
+	GraphImpl*                       _graph{nullptr};
 	raul::managed_ptr<CompiledGraph> _compiled_graph;
-	ControlBindings::Binding*        _binding;
+	ControlBindings::Binding*        _binding{nullptr};
 	StatePtr                         _state;
 	Resource::Graph                  _context;
 	Type                             _type;
@@ -131,7 +131,7 @@ private:
 
 	boost::optional<Resource> _preset;
 
-	bool _block;
+	bool _block{false};
 };
 
 } // namespace events

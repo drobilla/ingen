@@ -106,11 +106,11 @@ protected:
 	bool show_menu(GdkEventButton* ev);
 
 	std::shared_ptr<const client::BlockModel> _block;
-	NodeMenu*                                 _menu;
+	NodeMenu*                                 _menu{nullptr};
 	std::shared_ptr<client::PluginUI>         _plugin_ui;
-	Gtk::Widget*                              _gui_widget;
-	Gtk::Window*                              _gui_window; ///< iff popped up
-	bool                                      _initialised;
+	Gtk::Widget*                              _gui_widget{nullptr};
+	Gtk::Window*                              _gui_window{nullptr}; ///< iff popped up
+	bool                                      _initialised{false};
 };
 
 } // namespace gui

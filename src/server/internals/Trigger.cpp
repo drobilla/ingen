@@ -60,7 +60,6 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
                          GraphImpl*          parent,
                          SampleRate          srate)
 	: InternalBlock(plugin, symbol, false, parent, srate)
-	, _learning(false)
 {
 	const ingen::URIs& uris = bufs.uris();
 	_ports = bufs.maid().make_managed<Ports>(6);
