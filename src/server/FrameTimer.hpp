@@ -43,8 +43,7 @@ public:
 	    , b(sqrt(2) * omega)
 	    , c(omega * omega)
 	    , nper(period_size)
-	{
-	}
+	{}
 
 	/** Update the timer for current real time `usec` and frame `frame`. */
 	void update(uint64_t usec, uint64_t frame) {

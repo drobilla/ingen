@@ -36,16 +36,14 @@ ObjectModel::ObjectModel(URIs& uris, const raul::Path& path)
 	: Node(uris, path)
 	, _path(path)
 	, _symbol((path == "/") ? "root" : path.symbol())
-{
-}
+{}
 
 ObjectModel::ObjectModel(const ObjectModel& copy)
 	: Node(copy)
 	, _parent(copy._parent)
 	, _path(copy._path)
 	, _symbol(copy._symbol)
-{
-}
+{}
 
 bool
 ObjectModel::is_a(const URIs::Quark& type) const

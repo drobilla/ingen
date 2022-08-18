@@ -81,8 +81,7 @@ Undo::pre_process(PreProcessContext&)
 
 void
 Undo::execute(RunContext&)
-{
-}
+{}
 
 void
 Undo::post_process()

@@ -79,8 +79,7 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	, _uris(uris)
 	, _sink(sink)
 	, _forge(map.urid_map())
-{
-}
+{}
 
 void
 AtomWriter::finish_msg()
@@ -630,8 +629,7 @@ AtomWriter::operator()(const Response& response)
 
 void
 AtomWriter::operator()(const Error&)
-{
-}
+{}
 
 /** @page protocol
  * @section loading Loading and Unloading Bundles

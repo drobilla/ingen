@@ -71,8 +71,7 @@ private:
 	    : BlockModel(uris,
 	                 static_cast<const URI&>(uris.ingen_Graph),
 	                 graph_path)
-	{
-	}
+	{}
 
 	void clear() override;
 	void add_child(const std::shared_ptr<ObjectModel>& c) override;

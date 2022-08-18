@@ -29,8 +29,7 @@ namespace ingen {
 URIMap::URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 	: _urid_map_feature(new URIDMapFeature(this, map, log))
 	, _urid_unmap_feature(new URIDUnmapFeature(this, unmap))
-{
-}
+{}
 
 URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
                                        LV2_URID_Map* impl,

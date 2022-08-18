@@ -48,8 +48,7 @@ public:
 	PluginImpl(ingen::URIs& uris, const Atom& type, const URI& uri)
 	    : Resource(uris, uri)
 	    , _type(type)
-	{
-	}
+	{}
 
 	PluginImpl(const PluginImpl&) = delete;
 	PluginImpl& operator=(const PluginImpl&) = delete;

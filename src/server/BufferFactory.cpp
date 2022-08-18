@@ -39,8 +39,7 @@ BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 	, _engine(engine)
 	, _uris(uris)
 	, _silent_buffer(nullptr)
-{
-}
+{}
 
 BufferFactory::~BufferFactory()
 {

@@ -36,8 +36,7 @@ namespace server {
 
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
-{
-}
+{}
 
 SampleCount
 EventWriter::now() const

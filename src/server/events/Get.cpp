@@ -93,8 +93,7 @@ Get::pre_process(PreProcessContext&)
 
 void
 Get::execute(RunContext&)
-{
-}
+{}
 
 void
 Get::post_process()

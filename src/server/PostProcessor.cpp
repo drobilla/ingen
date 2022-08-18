@@ -40,8 +40,7 @@ PostProcessor::PostProcessor(Engine& engine)
 	, _head(new Sentinel(engine))
 	, _tail(_head.load())
 	, _max_time(0)
-{
-}
+{}
 
 PostProcessor::~PostProcessor()
 {

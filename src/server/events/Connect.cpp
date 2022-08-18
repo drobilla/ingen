@@ -52,8 +52,7 @@ Connect::Connect(Engine&                           engine,
                  const ingen::Connect&             msg)
     : Event(engine, client, msg.seq, timestamp)
     , _msg(msg)
-{
-}
+{}
 
 Connect::~Connect() = default;
 

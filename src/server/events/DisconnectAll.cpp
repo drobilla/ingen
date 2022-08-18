@@ -53,8 +53,7 @@ DisconnectAll::DisconnectAll(Engine&                           engine,
     , _block(nullptr)
     , _port(nullptr)
     , _deleting(false)
-{
-}
+{}
 
 /** Internal version for use by other events.
  */
@@ -67,8 +66,7 @@ DisconnectAll::DisconnectAll(Engine&    engine,
 	, _block(dynamic_cast<BlockImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
 	, _deleting(true)
-{
-}
+{}
 
 DisconnectAll::~DisconnectAll()
 {

@@ -37,8 +37,7 @@ NodeImpl::NodeImpl(const ingen::URIs&  uris,
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : raul::Path("/"))
 	, _symbol(symbol)
-{
-}
+{}
 
 const Atom&
 NodeImpl::get_property(const URI& key) const

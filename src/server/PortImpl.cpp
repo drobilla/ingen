@@ -564,8 +564,7 @@ PortImpl::pre_process(RunContext& ctx)
 
 void
 PortImpl::pre_run(RunContext&)
-{
-}
+{}
 
 void
 PortImpl::post_process(RunContext& ctx)

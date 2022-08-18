@@ -38,8 +38,7 @@ public:
 
 	explicit Window(BaseObjectType* cobject)
 	    : Gtk::Window(cobject)
-	{
-	}
+	{}
 
 	virtual void init_window(App& app) { _app = &app; }
 
@@ -66,8 +65,7 @@ public:
 
 	explicit Dialog(BaseObjectType* cobject)
 	    : Gtk::Dialog(cobject)
-	{
-	}
+	{}
 
 	virtual void init_dialog(App& app) { _app = &app; }
 

@@ -70,8 +70,7 @@ ConnectWindow::ConnectWindow(BaseObjectType*            cobject,
                              Glib::RefPtr<Gtk::Builder> xml)
 	: Dialog(cobject)
 	, _xml(std::move(xml))
-{
-}
+{}
 
 void
 ConnectWindow::message(const Message& msg)

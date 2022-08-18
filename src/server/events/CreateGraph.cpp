@@ -58,8 +58,7 @@ CreateGraph::CreateGraph(Engine&                           engine,
     : Event(engine, client, id, timestamp)
     , _path(std::move(path))
     , _properties(properties)
-{
-}
+{}
 
 CreateGraph::~CreateGraph() = default;
 

@@ -68,8 +68,7 @@ URI::URI(SerdNode node, SerdURI uri)
 
 URI::URI(const Sord::Node& node)
 	: URI(*node.to_serd_node())
-{
-}
+{}
 
 URI::URI(const FilePath& path)
     : _uri(SERD_URI_NULL)

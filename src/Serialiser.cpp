@@ -59,8 +59,7 @@ struct Serialiser::Impl
 	    : _root_path("/")
 	    , _world(world)
 	    , _sratom(sratom_new(&_world.uri_map().urid_map()))
-	{
-	}
+	{}
 
 	~Impl() { sratom_free(_sratom); }
 

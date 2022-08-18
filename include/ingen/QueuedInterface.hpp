@@ -37,8 +37,7 @@ class QueuedInterface : public Interface
 public:
 	explicit QueuedInterface(std::shared_ptr<Interface> sink)
 	    : _sink(std::move(sink))
-	{
-	}
+	{}
 
 	URI uri() const override { return URI("ingen:/QueuedInterface"); }
 

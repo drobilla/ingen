@@ -42,8 +42,7 @@ Move::Move(Engine&                           engine,
            const ingen::Move&                msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-{
-}
+{}
 
 bool
 Move::pre_process(PreProcessContext&)
@@ -75,8 +74,7 @@ Move::pre_process(PreProcessContext&)
 
 void
 Move::execute(RunContext&)
-{
-}
+{}
 
 void
 Move::post_process()

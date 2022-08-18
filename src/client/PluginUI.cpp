@@ -170,8 +170,7 @@ PluginUI::PluginUI(ingen::World&                     world,
     , _ui(ui)
     , _ui_node(lilv_node_duplicate(lilv_ui_get_uri(ui)))
     , _ui_type(lilv_node_duplicate(ui_type))
-{
-}
+{}
 
 PluginUI::~PluginUI()
 {

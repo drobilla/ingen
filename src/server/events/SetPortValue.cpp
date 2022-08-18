@@ -51,8 +51,7 @@ SetPortValue::SetPortValue(Engine&                           engine,
 	, _value(value)
 	, _activity(activity)
 	, _synthetic(synthetic)
-{
-}
+{}
 
 bool
 SetPortValue::pre_process(PreProcessContext&)

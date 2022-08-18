@@ -114,7 +114,8 @@ public:
 		return _client ? jack_frame_time(_client) : 0;
 	}
 
-	class PortRegistrationFailedException : public std::exception {};
+	class PortRegistrationFailedException : public std::exception
+	{};
 
 private:
 	friend class JackPort;

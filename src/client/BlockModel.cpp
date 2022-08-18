@@ -46,8 +46,7 @@ BlockModel::BlockModel(URIs&                               uris,
     , _num_values(0)
     , _min_values(nullptr)
     , _max_values(nullptr)
-{
-}
+{}
 
 BlockModel::BlockModel(URIs& uris, URI plugin_uri, const raul::Path& path)
     : ObjectModel(uris, path)
@@ -55,8 +54,7 @@ BlockModel::BlockModel(URIs& uris, URI plugin_uri, const raul::Path& path)
     , _num_values(0)
     , _min_values(nullptr)
     , _max_values(nullptr)
-{
-}
+{}
 
 BlockModel::BlockModel(const BlockModel& copy)
 	: ObjectModel(copy)

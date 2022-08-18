@@ -139,8 +139,7 @@ struct ListContext {
 	    , s(*subject)
 	    , p(*predicate)
 	    , flags(statement_flags | SERD_LIST_O_BEGIN)
-	{
-	}
+	{}
 
 	SerdNode start_node(SerdWriter* writer) {
 		const SerdNode node = ids.get();

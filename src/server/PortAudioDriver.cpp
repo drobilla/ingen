@@ -49,8 +49,7 @@ PortAudioDriver::PortAudioDriver(Engine& engine)
 	, _inputParameters()
 	, _outputParameters()
 	, _block_length(engine.world().conf().option("buffer-size").get<int32_t>())
-{
-}
+{}
 
 PortAudioDriver::~PortAudioDriver()
 {
@@ -179,26 +178,22 @@ PortAudioDriver::remove_port(RunContext&, EnginePort* port)
 
 void
 PortAudioDriver::register_port(EnginePort& port)
-{
-}
+{}
 
 void
 PortAudioDriver::unregister_port(EnginePort& port)
-{
-}
+{}
 
 void
 PortAudioDriver::rename_port(const raul::Path& old_path,
                              const raul::Path& new_path)
-{
-}
+{}
 
 void
 PortAudioDriver::port_property(const raul::Path& path,
                                const URI&        uri,
                                const Atom&       value)
-{
-}
+{}
 
 EnginePort*
 PortAudioDriver::create_port(DuplexPort* graph_port)
@@ -260,8 +255,7 @@ PortAudioDriver::post_process_port(RunContext&,
                                    EnginePort* port,
                                    const void* inputs,
                                    void*       outputs)
-{
-}
+{}
 
 int
 PortAudioDriver::process_cb(const void*                     inputs,
