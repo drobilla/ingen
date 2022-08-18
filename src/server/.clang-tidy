@@ -16,7 +16,6 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
-  -bugprone-signed-char-misuse,
   -bugprone-suspicious-string-compare,
   -cert-dcl37-c,
   -cert-dcl51-cpp,
