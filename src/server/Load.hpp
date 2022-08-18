@@ -24,8 +24,7 @@
 namespace ingen {
 namespace server {
 
-struct Load
-{
+struct Load {
 	void update(uint64_t time, uint64_t available) {
 		const uint64_t load = time * 100 / available;
 		if (load < min) {

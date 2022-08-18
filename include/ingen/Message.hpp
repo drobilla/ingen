@@ -31,38 +31,32 @@
 
 namespace ingen {
 
-struct BundleBegin
-{
+struct BundleBegin {
 	int32_t seq;
 };
 
-struct BundleEnd
-{
+struct BundleEnd {
 	int32_t seq;
 };
 
-struct Connect
-{
+struct Connect {
 	int32_t    seq;
 	raul::Path tail;
 	raul::Path head;
 };
 
-struct Copy
-{
+struct Copy {
 	int32_t seq;
 	URI     old_uri;
 	URI     new_uri;
 };
 
-struct Del
-{
+struct Del {
 	int32_t seq;
 	URI     uri;
 };
 
-struct Delta
-{
+struct Delta {
 	int32_t         seq;
 	URI             uri;
 	Properties      remove;
@@ -70,61 +64,52 @@ struct Delta
 	Resource::Graph ctx;
 };
 
-struct Disconnect
-{
+struct Disconnect {
 	int32_t    seq;
 	raul::Path tail;
 	raul::Path head;
 };
 
-struct DisconnectAll
-{
+struct DisconnectAll {
 	int32_t    seq;
 	raul::Path graph;
 	raul::Path path;
 };
 
-struct Error
-{
+struct Error {
 	int32_t     seq;
 	std::string message;
 };
 
-struct Get
-{
+struct Get {
 	int32_t seq;
 	URI     subject;
 };
 
-struct Move
-{
+struct Move {
 	int32_t    seq;
 	raul::Path old_path;
 	raul::Path new_path;
 };
 
-struct Put
-{
+struct Put {
 	int32_t         seq;
 	URI             uri;
 	Properties      properties;
 	Resource::Graph ctx;
 };
 
-struct Redo
-{
+struct Redo {
 	int32_t seq;
 };
 
-struct Response
-{
+struct Response {
 	int32_t     id;
 	Status      status;
 	std::string subject;
 };
 
-struct SetProperty
-{
+struct SetProperty {
 	int32_t         seq;
 	URI             subject;
 	URI             predicate;
@@ -132,8 +117,7 @@ struct SetProperty
 	Resource::Graph ctx;
 };
 
-struct Undo
-{
+struct Undo {
 	int32_t seq;
 };
 

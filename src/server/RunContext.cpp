@@ -40,8 +40,7 @@
 namespace ingen {
 namespace server {
 
-struct Notification
-{
+struct Notification {
 	explicit inline Notification(PortImpl* p = nullptr,
 	                             FrameTime f = 0,
 	                             LV2_URID  k = 0,

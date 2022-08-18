@@ -24,8 +24,7 @@
 namespace ingen {
 namespace server {
 
-struct StateDeleter
-{
+struct StateDeleter {
 	void operator()(LilvState* state) { lilv_state_free(state); }
 };
 

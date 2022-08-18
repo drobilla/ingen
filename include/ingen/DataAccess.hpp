@@ -30,8 +30,7 @@
 
 namespace ingen {
 
-struct DataAccess : public ingen::LV2Features::Feature
-{
+struct DataAccess : public ingen::LV2Features::Feature {
 	static void delete_feature(LV2_Feature* feature) {
 		free(feature->data);
 		delete feature;

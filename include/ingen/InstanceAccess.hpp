@@ -28,8 +28,7 @@
 
 namespace ingen {
 
-struct InstanceAccess : public ingen::LV2Features::Feature
-{
+struct InstanceAccess : public ingen::LV2Features::Feature {
 	const char* uri() const override { return "http://lv2plug.in/ns/ext/instance-access"; }
 
 	std::shared_ptr<LV2_Feature> feature(World& world, Node* node) override {

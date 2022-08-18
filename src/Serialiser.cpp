@@ -53,8 +53,7 @@
 
 namespace ingen {
 
-struct Serialiser::Impl
-{
+struct Serialiser::Impl {
 	explicit Impl(World& world)
 	    : _root_path("/")
 	    , _world(world)

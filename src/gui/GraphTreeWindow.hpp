@@ -89,8 +89,7 @@ protected:
 
 	GraphTreeView* _graphs_treeview{nullptr};
 
-	struct GraphTreeModelColumns : public Gtk::TreeModel::ColumnRecord
-	{
+	struct GraphTreeModelColumns : public Gtk::TreeModel::ColumnRecord {
 		GraphTreeModelColumns() {
 			add(name_col);
 			add(enabled_col);
