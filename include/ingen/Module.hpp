@@ -33,7 +33,8 @@ class World;
  */
 class INGEN_API Module {
 public:
-	Module() : library(nullptr) {}
+	Module() noexcept : library(nullptr) {}
+
 	virtual ~Module() = default;
 
 	Module(const Module&) = delete;

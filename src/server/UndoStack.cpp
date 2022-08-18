@@ -118,7 +118,7 @@ UndoStack::pop()
 }
 
 struct BlankIDs {
-	explicit BlankIDs(char prefix='b') : c(prefix) {}
+	explicit BlankIDs(const char prefix = 'b') noexcept : c{prefix} {}
 
 	SerdNode get() {
 		snprintf(buf, sizeof(buf), "%c%u", c, n++);
@@ -127,7 +127,7 @@ struct BlankIDs {
 
 	char       buf[16]{};
 	unsigned   n{0};
-	const char c{'b'};
+	const char c;
 };
 
 struct ListContext {

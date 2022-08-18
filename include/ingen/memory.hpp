@@ -22,10 +22,10 @@
 namespace ingen {
 
 template <class T>
-void NullDeleter(T* ptr) {}
+void NullDeleter(T* ptr) noexcept {}
 
 template <class T>
-struct FreeDeleter { void operator()(T* const ptr) { free(ptr); } };
+struct FreeDeleter { void operator()(T* const ptr) noexcept { free(ptr); } };
 
 } // namespace ingen
 

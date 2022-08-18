@@ -62,12 +62,12 @@ public:
 	void operator()(const Delta&);
 	void operator()(const Disconnect&);
 	void operator()(const DisconnectAll&);
-	void operator()(const Error&) {}
+	void operator()(const Error&) noexcept {}
 	void operator()(const Get&);
 	void operator()(const Move&);
 	void operator()(const Put&);
 	void operator()(const Redo&);
-	void operator()(const Response&) {}
+	void operator()(const Response&) noexcept {}
 	void operator()(const SetProperty&);
 	void operator()(const Undo&);
 

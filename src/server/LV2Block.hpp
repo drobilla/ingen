@@ -125,7 +125,7 @@ public:
 
 protected:
 	struct Instance : public raul::Noncopyable {
-		explicit Instance(LilvInstance* i) : instance(i) {}
+		explicit Instance(LilvInstance* i) noexcept : instance(i) {}
 
 		~Instance() { lilv_instance_free(instance); }
 

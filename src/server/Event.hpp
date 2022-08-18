@@ -114,7 +114,10 @@ public:
 	inline Engine& engine() { return _engine; }
 
 protected:
-	Event(Engine& engine, std::shared_ptr<Interface> client, int32_t id, FrameTime time)
+	Event(Engine&                    engine,
+	      std::shared_ptr<Interface> client,
+	      int32_t                    id,
+	      FrameTime                  time) noexcept
 	    : _engine(engine)
 	    , _next(nullptr)
 	    , _request_client(std::move(client))

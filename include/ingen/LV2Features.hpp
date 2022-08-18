@@ -52,7 +52,7 @@ public:
 
 	class EmptyFeature : public Feature {
 	public:
-		explicit EmptyFeature(const char* uri) : _uri(uri) {}
+		explicit EmptyFeature(const char* uri) noexcept : _uri(uri) {}
 
 		const char* uri() const override { return _uri; }
 

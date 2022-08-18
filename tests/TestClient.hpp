@@ -32,7 +32,7 @@ namespace ingen {
 class TestClient : public Interface
 {
 public:
-	explicit TestClient(Log& log) : _log(log) {}
+	explicit TestClient(Log& log) noexcept : _log(log) {}
 
 	~TestClient() override = default;
 

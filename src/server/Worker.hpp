@@ -44,7 +44,7 @@ public:
 	~Worker();
 
 	struct Schedule : public LV2Features::Feature {
-		Schedule(bool sync) : synchronous(sync) {}
+		Schedule(bool sync) noexcept : synchronous(sync) {}
 
 		const char* uri() const override { return LV2_WORKER__schedule; }
 

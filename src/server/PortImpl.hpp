@@ -91,10 +91,8 @@ public:
 	};
 
 	struct Voice {
-		Voice() : buffer(nullptr) {}
-
 		SetState  set_state;
-		BufferRef buffer;
+		BufferRef buffer{nullptr};
 	};
 
 	using Voices = raul::Array<Voice>;

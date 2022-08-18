@@ -42,7 +42,7 @@ namespace server {
 class INGEN_SERVER_API UndoStack : public AtomSink {
 public:
 	struct Entry {
-		Entry(time_t t=0) : time(t) {}
+		Entry(time_t t = 0) noexcept : time(t) {}
 
 		Entry(const Entry& copy)
 			: time(copy.time)
@@ -83,7 +83,10 @@ public:
 		std::deque<LV2_Atom*> events;
 	};
 
-	UndoStack(URIs& uris, URIMap& map) : _uris(uris), _map(map), _depth(0) {}
+	UndoStack(URIs& uris, URIMap& map) noexcept
+	    : _uris(uris), _map(map), _depth(0)
+	{
+	}
 
 	int  start_entry();
 	bool write(const LV2_Atom* msg, int32_t default_id=0) override;

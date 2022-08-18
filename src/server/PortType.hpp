@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-	PortType(ID id) : _id(id) {}
+	PortType(ID id) noexcept : _id(id) {}
 
 	inline const URI& uri() const { return type_uri(_id); }
 	inline ID         id() const { return _id; }

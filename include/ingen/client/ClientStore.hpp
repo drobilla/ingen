@@ -78,22 +78,22 @@ public:
 
 	void message(const Message& msg) override;
 
-	void operator()(const BundleBegin&) {}
-	void operator()(const BundleEnd&) {}
+	void operator()(const BundleBegin&) noexcept {}
+	void operator()(const BundleEnd&) noexcept {}
 	void operator()(const Connect&);
 	void operator()(const Copy&);
 	void operator()(const Del&);
 	void operator()(const Delta&);
 	void operator()(const Disconnect&);
 	void operator()(const DisconnectAll&);
-	void operator()(const Error&) {}
-	void operator()(const Get&) {}
+	void operator()(const Error&) noexcept {}
+	void operator()(const Get&) noexcept {}
 	void operator()(const Move&);
 	void operator()(const Put&);
-	void operator()(const Redo&) {}
-	void operator()(const Response&) {}
+	void operator()(const Redo&) noexcept {}
+	void operator()(const Response&) noexcept {}
 	void operator()(const SetProperty&);
-	void operator()(const Undo&) {}
+	void operator()(const Undo&) noexcept {}
 
 	INGEN_SIGNAL(new_object, void, std::shared_ptr<ObjectModel>)
 	INGEN_SIGNAL(new_plugin, void, std::shared_ptr<PluginModel>)

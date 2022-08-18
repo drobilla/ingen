@@ -34,7 +34,7 @@ class Tee : public Interface
 public:
 	using Sinks = std::vector<std::shared_ptr<Interface>>;
 
-	explicit Tee(Sinks sinks) : _sinks(std::move(sinks)) {}
+	explicit Tee(Sinks sinks) noexcept : _sinks(std::move(sinks)) {}
 
 	std::shared_ptr<Interface> respondee() const override {
 		return _sinks.front()->respondee();

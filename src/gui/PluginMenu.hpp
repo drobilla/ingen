@@ -57,7 +57,9 @@ public:
 
 private:
 	struct MenuRecord {
-		MenuRecord(Gtk::MenuItem* i, Gtk::Menu* m) : item(i), menu(m) {}
+		MenuRecord(Gtk::MenuItem* i, Gtk::Menu* m) noexcept : item(i), menu(m)
+		{}
+
 		Gtk::MenuItem* item;
 		Gtk::Menu*     menu;
 	};
