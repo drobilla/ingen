@@ -377,7 +377,7 @@ Port::on_event(GdkEvent* ev)
 	return false;
 }
 
-inline static uint32_t
+static inline uint32_t
 peak_color(float peak)
 {
 	static const uint32_t min      = 0x4A8A0EC0;

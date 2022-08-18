@@ -29,7 +29,7 @@ namespace gui {
 
 Glib::ustring WidgetFactory::ui_filename = "";
 
-inline static bool
+static inline bool
 is_readable(const std::string& filename)
 {
 	std::ifstream fs(filename.c_str());
