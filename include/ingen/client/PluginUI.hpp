@@ -82,11 +82,12 @@ public:
 	 * The application must connect to this signal to communicate with the
 	 * engine and/or update itself as necessary.
 	 */
-	INGEN_SIGNAL(property_changed, void,
-	             const URI&,        // Subject
-	             const URI&,        // Predicate
-	             const Atom&,       // Object
-	             Resource::Graph)   // Context
+	INGEN_SIGNAL(property_changed,
+	             void,
+	             const URI&,      // Subject
+	             const URI&,      // Predicate
+	             const Atom&,     // Object
+	             Resource::Graph) // Context
 
 	ingen::World&                     world() const { return _world; }
 	std::shared_ptr<const BlockModel> block() const { return _block; }

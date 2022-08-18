@@ -36,8 +36,9 @@ namespace server {
 
 /// A message in the Worker::_requests ring
 struct MessageHeader {
-	LV2Block* block;  ///< Node this message is from
+	LV2Block* block; ///< Node this message is from
 	uint32_t  size;  ///< Size of following data
+
 	// `size' bytes of data follow here
 };
 

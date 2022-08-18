@@ -204,14 +204,16 @@ public:
 	Engine& engine() { return _engine; }
 
 private:
-	Engine&                          _engine;
-	uint32_t                         _poly_pre;     ///< Pre-process thread only
-	uint32_t                         _poly_process; ///< Process thread only
-	raul::managed_ptr<CompiledGraph> _compiled_graph; ///< Process thread only
-	PortList                         _inputs;  ///< Pre-process thread only
-	PortList                         _outputs; ///< Pre-process thread only
-	Blocks                           _blocks;  ///< Pre-process thread only
-	bool                             _process{false}; ///< True iff graph is enabled
+	using CompiledGraphPtr = raul::managed_ptr<CompiledGraph>;
+
+	Engine&          _engine;
+	uint32_t         _poly_pre;       ///< Pre-process thread only
+	uint32_t         _poly_process;   ///< Process thread only
+	CompiledGraphPtr _compiled_graph; ///< Process thread only
+	PortList         _inputs;         ///< Pre-process thread only
+	PortList         _outputs;        ///< Pre-process thread only
+	Blocks           _blocks;         ///< Pre-process thread only
+	bool             _process{false}; ///< True iff graph is enabled
 };
 
 } // namespace server

@@ -138,6 +138,6 @@ using Message = boost::variant<BundleBegin,
                                SetProperty,
                                Undo>;
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_MESSAGE_HPP
+#endif // INGEN_MESSAGE_HPP

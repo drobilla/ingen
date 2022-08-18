@@ -64,6 +64,6 @@ protected:
 	bool        _wrote_prefixes{false};
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_TURTLEWRITER_HPP
+#endif // INGEN_TURTLEWRITER_HPP

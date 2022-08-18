@@ -173,4 +173,4 @@ operator<<(std::basic_ostream<Char, Traits>& os, const URI& uri)
 
 } // namespace ingen
 
-#endif  // INGEN_URI_HPP
+#endif // INGEN_URI_HPP

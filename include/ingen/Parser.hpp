@@ -61,8 +61,8 @@ public:
 			return uri < r.uri;
 		}
 
-		URI      uri;       ///< URI of resource (e.g. a Graph)
-		FilePath filename;  ///< Path of describing file (seeAlso)
+		URI      uri;      ///< URI of resource (e.g. a Graph)
+		FilePath filename; ///< Path of describing file (seeAlso)
 	};
 
 	/** Find all resources of a given type listed in a manifest file. */

@@ -59,15 +59,15 @@ mix(const RunContext&   ctx,
 		const SampleCount        end = ctx.nframes();
 		for (uint32_t i = 1; i < num_srcs; ++i) {
 			const Sample* __restrict const in = srcs[i]->samples();
-			if (srcs[i]->is_control()) {  // control => audio
+			if (srcs[i]->is_control()) { // control => audio
 				for (SampleCount j = 0; j < end; ++j) {
 					out[j] += in[0];
 				}
-			} else if (srcs[i]->is_audio()) {  // audio => audio
+			} else if (srcs[i]->is_audio()) { // audio => audio
 				for (SampleCount j = 0; j < end; ++j) {
 					out[j] += in[j];
 				}
-			} else if (srcs[i]->is_sequence()) {  // sequence => audio
+			} else if (srcs[i]->is_sequence()) { // sequence => audio
 				dst->render_sequence(ctx, srcs[i], true);
 			}
 		}

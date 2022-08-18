@@ -49,7 +49,7 @@ public:
 	void run(RunContext& ctx);
 
 private:
-	friend class raul::Maid;  ///< Allow make_managed to construct
+	friend class raul::Maid; ///< Allow make_managed to construct
 
 	CompiledGraph(GraphImpl* graph);
 

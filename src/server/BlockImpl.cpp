@@ -206,7 +206,7 @@ BlockImpl::bypass(RunContext& ctx)
 			PortImpl* in  = nth_port_by_type(i, true, t);
 			PortImpl* out = nth_port_by_type(i, false, t);
 			if (!out) {
-				break;  // Finished writing all outputs
+				break; // Finished writing all outputs
 			}
 
 			if (in) {

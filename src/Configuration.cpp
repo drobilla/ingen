@@ -193,9 +193,9 @@ Configuration::parse(int argc, char** argv)
 
 			if (o->second.type == _forge.Bool) { // --flag
 				o->second.value = _forge.make(true);
-			} else if (equals) {  // --opt=val
+			} else if (equals) { // --opt=val
 				set_value_from_string(o->second, equals + 1);
-			} else if (++i < argc) {  // --opt val
+			} else if (++i < argc) { // --opt val
 				set_value_from_string(o->second, argv[i]);
 			} else {
 				throw OptionError(fmt("Missing value for `%1%'", name));
@@ -211,15 +211,15 @@ Configuration::parse(int argc, char** argv)
 				}
 
 				const auto o = _options.find(n->second);
-				if (j < len - 1) {  // Non-final POSIX style flag
+				if (j < len - 1) { // Non-final POSIX style flag
 					if (o->second.type != _forge.Bool) {
 						throw OptionError(
 							fmt("Missing value for `%1%'", letter));
 					}
 					o->second.value = _forge.make(true);
-				} else if (o->second.type == _forge.Bool) {  // -f
+				} else if (o->second.type == _forge.Bool) { // -f
 					o->second.value = _forge.make(true);
-				} else if (++i < argc) {  // -v val
+				} else if (++i < argc) { // -v val
 					set_value_from_string(o->second, argv[i]);
 				} else {
 					throw OptionError(fmt("Missing value for `%1%'", letter));

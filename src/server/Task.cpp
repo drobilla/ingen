@@ -93,7 +93,7 @@ Task::get_task(RunContext& ctx)
 		}
 
 		if (_done_end >= _children.size()) {
-			return nullptr;  // All child tasks are finished
+			return nullptr; // All child tasks are finished
 		}
 
 		// All child tasks claimed, but some are unfinished, steal a task

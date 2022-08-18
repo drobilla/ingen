@@ -85,7 +85,7 @@ GraphModel::remove_arcs_on(const std::shared_ptr<PortModel>& p)
 		    || arc->head_path().parent() == p->path()
 		    || arc->head_path() == p->path()) {
 			_signal_removed_arc.emit(arc);
-			_arcs.erase(j);  // Cuts our reference
+			_arcs.erase(j); // Cuts our reference
 		}
 		j = next;
 	}

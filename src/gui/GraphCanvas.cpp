@@ -479,7 +479,7 @@ GraphCanvas::disconnection(const std::shared_ptr<const ArcModel>& arc)
 		if (arc->head()->is_a(_app.uris().lv2_AudioPort)) {
 			auto* const h = dynamic_cast<gui::Port*>(head);
 			if (h) {
-				h->activity(_app.forge().make(0.0f));  // Reset peaks
+				h->activity(_app.forge().make(0.0f)); // Reset peaks
 			}
 		}
 	} else {

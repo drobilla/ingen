@@ -146,7 +146,7 @@ public:
 			                              lv2_atom_total_size(
 			                                  static_cast<LV2_Atom*>(lv2_buf)));
 
-			if (graph_port->symbol() == "control") {  // TODO: Safe to use index?
+			if (graph_port->symbol() == "control") { // TODO: Safe to use index?
 				auto* seq = reinterpret_cast<LV2_Atom_Sequence*>(lv2_buf);
 
 				bool enqueued = false;
@@ -360,14 +360,14 @@ public:
 			if (seq->atom.size + lv2_atom_pad_size(
 				    sizeof(LV2_Atom_Event) + atom.size)
 			    > _notify_capacity) {
-				break;  // Output port buffer full, resume next time
+				break; // Output port buffer full, resume next time
 			}
 
 			auto* ev = reinterpret_cast<LV2_Atom_Event*>(
 				reinterpret_cast<uint8_t*>(seq) +
 				lv2_atom_total_size(&seq->atom));
 
-			ev->time.frames = 0;  // TODO: Time?
+			ev->time.frames = 0; // TODO: Time?
 			ev->body        = atom;
 
 			_to_ui.skip(sizeof(LV2_Atom));

@@ -42,7 +42,7 @@
 namespace ingen {
 namespace server {
 
-static const uint32_t monitor_rate = 25.0;  // Hz
+static const uint32_t monitor_rate = 25.0; // Hz
 
 /** The length of time between monitor updates in frames */
 static inline uint32_t

@@ -223,11 +223,11 @@ Port::on_value_changed(double value)
 	const URIs& uris          = _app.uris();
 	const Atom& current_value = model()->value();
 	if (current_value.type() != uris.forge.Float) {
-		return;  // Non-float, unsupported
+		return; // Non-float, unsupported
 	}
 
 	if (current_value.get<float>() == static_cast<float>(value)) {
-		return;  // No change
+		return; // No change
 	}
 
 	const Atom atom = _app.forge().make(float(value));

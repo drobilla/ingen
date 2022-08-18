@@ -98,7 +98,7 @@ protected:
 		: Resource(uris, path_to_uri(path))
 	{}
 
-	Arcs _arcs;  ///< Graphs only
+	Arcs _arcs; ///< Graphs only
 };
 
 } // namespace ingen

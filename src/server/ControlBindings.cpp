@@ -414,7 +414,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 
 	_feedback->clear();
 	if ((!_learn_binding && _bindings->empty()) || !buffer->get<LV2_Atom>()) {
-		return;  // Don't bother reading input
+		return; // Don't bother reading input
 	}
 
 	auto* seq = buffer->get<LV2_Atom_Sequence>();
@@ -424,7 +424,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 			const Key   key = midi_event_key(ev->body.size, buf, value);
 
 			if (_learn_binding && !!key) {
-				finish_learn(ctx, key);  // Learn new binding
+				finish_learn(ctx, key); // Learn new binding
 			}
 
 			// Set all controls bound to this key

@@ -359,7 +359,7 @@ NoteNode::free_voice(RunContext& ctx, uint32_t voice, FrameTime time)
 		}
 	}
 
-	if (replace_key != nullptr) {  // Found a key to assign to freed voice
+	if (replace_key != nullptr) { // Found a key to assign to freed voice
 		assert(&_keys[replace_key_num] == replace_key);
 		assert(replace_key->state == Key::State::ON_UNASSIGNED);
 

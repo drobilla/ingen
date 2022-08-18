@@ -61,11 +61,11 @@ protected:
 
 private:
 	enum class BlockState {
-		UNBLOCKED,      ///< Normal, unblocked execution
-		PRE_BLOCKED,    ///< Preprocess thread has enqueued blocking event
-		BLOCKED,        ///< Process thread has reached blocking event
-		PRE_UNBLOCKED,  ///< Preprocess thread has enqueued unblocking event
-		PROCESSING      ///< Process thread is executing all events in-between
+		UNBLOCKED,     ///< Normal, unblocked execution
+		PRE_BLOCKED,   ///< Preprocess thread has enqueued blocking event
+		BLOCKED,       ///< Process thread has reached blocking event
+		PRE_UNBLOCKED, ///< Preprocess thread has enqueued unblocking event
+		PROCESSING     ///< Process thread is executing all events in-between
 	};
 
 	void wait_for_block_state(const BlockState state) {

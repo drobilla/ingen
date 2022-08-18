@@ -105,7 +105,7 @@ private:
 	raul::managed_ptr<Voices> _prepared_voices;
 
 	Key  _keys[128];
-	bool _sustain{false};  ///< Whether or not hold pedal is depressed
+	bool _sustain{false}; ///< Whether or not hold pedal is depressed
 
 	InputPort*  _midi_in_port;
 	OutputPort* _freq_port;

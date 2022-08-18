@@ -83,6 +83,6 @@ private:
 	std::thread                   _thread;
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_SOCKETREADER_HPP
+#endif // INGEN_SOCKETREADER_HPP

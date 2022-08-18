@@ -121,6 +121,6 @@ private:
 	AtomPtr   _buf;                            ///< Atom buffer
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_ATOMFORGE_HPP
+#endif // INGEN_ATOMFORGE_HPP

@@ -86,7 +86,7 @@ private:
 	SocketReader               _reader;
 };
 
-}  // namespace client
-}  // namespace ingen
+} // namespace client
+} // namespace ingen
 
-#endif  // INGEN_CLIENT_SOCKET_CLIENT_HPP
+#endif // INGEN_CLIENT_SOCKET_CLIENT_HPP

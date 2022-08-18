@@ -35,6 +35,6 @@ private:
 	FILE* _stream;
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_COLORCONTEXT_HPP
+#endif // INGEN_COLORCONTEXT_HPP

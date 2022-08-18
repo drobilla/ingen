@@ -217,7 +217,7 @@ Buffer::port_data(PortType port_type, SampleCount offset) const
 static inline __m128
 mm_abs_ps(__m128 x)
 {
-	const __m128 sign_mask = _mm_set1_ps(-0.0f);  // -0.0f = 1 << 31
+	const __m128 sign_mask = _mm_set1_ps(-0.0f); // -0.0f = 1 << 31
 	return _mm_andnot_ps(sign_mask, x);
 }
 #endif
@@ -299,7 +299,7 @@ Buffer::append_event(int64_t        frames,
 
 	auto* atom = get<LV2_Atom>();
 	if (atom->type == _factory.uris().atom_Chunk) {
-		clear();  // Chunk initialized with prepare_output_write(), clear
+		clear(); // Chunk initialized with prepare_output_write(), clear
 	}
 
 	if (sizeof(LV2_Atom) + atom->size + lv2_atom_pad_size(size) > _capacity) {
@@ -339,14 +339,14 @@ Buffer::append_event_buffer(const Buffer* buf)
 	    reinterpret_cast<const LV2_Atom_Sequence*>(buf->get<LV2_Atom>());
 
 	if (seq->atom.type == _factory.uris().atom_Chunk) {
-		clear();  // Chunk initialized with prepare_output_write(), clear
+		clear(); // Chunk initialized with prepare_output_write(), clear
 	}
 
 	const uint32_t total_size = lv2_atom_total_size(&seq->atom);
 	uint8_t* const end        = reinterpret_cast<uint8_t*>(seq) + total_size;
 	const uint32_t n_bytes    = bseq->atom.size - sizeof(bseq->body);
 	if (sizeof(LV2_Atom) + total_size + n_bytes >= _capacity) {
-		return false;  // Not enough space
+		return false; // Not enough space
 	}
 
 	memcpy(end, bseq + 1, n_bytes);

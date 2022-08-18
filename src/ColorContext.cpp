@@ -41,4 +41,4 @@ ColorContext::~ColorContext()
 	}
 }
 
-}  // namespace ingen
+} // namespace ingen

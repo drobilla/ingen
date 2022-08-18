@@ -99,7 +99,7 @@ PostProcessor::process()
 
 		// Post-process event
 		ev->post_process();
-		next = ev->next();  // [1] (see below)
+		next = ev->next(); // [1] (see below)
 	} while (next && next->time() < end_time);
 
 	/* Reached the tail (as far as we're concerned).  There may be successors

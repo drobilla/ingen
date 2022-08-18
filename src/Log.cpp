@@ -165,4 +165,4 @@ Log::Feature::feature(World& world, Node* block)
 	return std::shared_ptr<LV2_Feature>(f, &free_log_feature);
 }
 
-}  // namespace ingen
+} // namespace ingen

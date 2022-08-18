@@ -195,7 +195,7 @@ get_port(ingen::World&     world,
 	const raul::Symbol port_sym(sym);
 	const raul::Path   port_path(parent.child(port_sym));
 
-	props.erase(uris.lv2_symbol);  // Don't set symbol property in engine
+	props.erase(uris.lv2_symbol); // Don't set symbol property in engine
 	return make_pair(port_path, props);
 }
 
@@ -381,7 +381,7 @@ parse_graph(ingen::World&                        world,
 	}
 
 	if (ctx != Resource::Graph::INTERNAL) {
-		return {graph_path};  // Not parsing graph internals, finished now
+		return {graph_path}; // Not parsing graph internals, finished now
 	}
 
 	// For each block in this graph

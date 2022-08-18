@@ -36,9 +36,9 @@ class Task
 {
 public:
 	enum class Mode {
-		SINGLE,      ///< Single block to run
-		SEQUENTIAL,  ///< Elements must be run sequentially in order
-		PARALLEL     ///< Elements may be run in any order in parallel
+		SINGLE,     ///< Single block to run
+		SEQUENTIAL, ///< Elements must be run sequentially in order
+		PARALLEL    ///< Elements may be run in any order in parallel
 	};
 
 	Task(Mode mode, BlockImpl* block = nullptr)

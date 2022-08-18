@@ -106,4 +106,4 @@ private:
 
 } // namespace ingen
 
-#endif  // INGEN_LOG_HPP
+#endif // INGEN_LOG_HPP

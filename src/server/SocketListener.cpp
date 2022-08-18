@@ -141,7 +141,7 @@ ingen_listen(Engine* engine, raul::Socket* unix_sock, raul::Socket* net_sock)
 	}
 
 	if (unix_sock->fd() == -1 && net_sock->fd() == -1) {
-		return;  // No sockets to listen to, exit thread
+		return; // No sockets to listen to, exit thread
 	}
 
 	struct pollfd pfds[2];

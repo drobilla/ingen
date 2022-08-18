@@ -47,9 +47,9 @@ public:
 	 * This controls when and where an option will be saved or restored.
 	 */
 	enum Scope {
-		GLOBAL  = 1,     ///< Applies to any Ingen instance
-		SESSION = 1<<1,  ///< Applies to this Ingen instance only
-		GUI     = 1<<2   ///< Persistent GUI settings saved at exit
+		GLOBAL  = 1,      ///< Applies to any Ingen instance
+		SESSION = 1 << 1, ///< Applies to this Ingen instance only
+		GUI     = 1 << 2  ///< Persistent GUI settings saved at exit
 	};
 
 	/** Add a configuration option.

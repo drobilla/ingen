@@ -128,4 +128,4 @@ URI::make_relative(const URI& base) const
 	return URI(node, uri);
 }
 
-}  // namespace ingen
+} // namespace ingen

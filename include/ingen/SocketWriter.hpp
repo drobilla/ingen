@@ -52,6 +52,6 @@ protected:
 	std::shared_ptr<raul::Socket> _socket;
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_SOCKETWRITER_HPP
+#endif // INGEN_SOCKETWRITER_HPP

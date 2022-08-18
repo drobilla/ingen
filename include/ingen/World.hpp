@@ -151,6 +151,6 @@ private:
 	Impl* _impl;
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_WORLD_HPP
+#endif // INGEN_WORLD_HPP

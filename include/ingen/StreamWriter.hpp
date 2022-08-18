@@ -47,6 +47,6 @@ protected:
 	ColorContext::Color _color;
 };
 
-}  // namespace ingen
+} // namespace ingen
 
-#endif  // INGEN_STREAMWRITER_HPP
+#endif // INGEN_STREAMWRITER_HPP

@@ -78,7 +78,7 @@ lv2_ui_write(SuilController controller,
 		const float value = *static_cast<const float*>(buffer);
 		if (port->value().type() == uris.atom_Float &&
 		    value == port->value().get<float>()) {
-			return;  // Ignore feedback
+			return; // Ignore feedback
 		}
 
 		ui->signal_property_changed()(

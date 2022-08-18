@@ -109,14 +109,14 @@ PreProcessor::process(RunContext& ctx, PostProcessor& dest, size_t limit)
 		}
 
 		if (_block_state == BlockState::BLOCKED) {
-			break;  // Waiting for PRE_UNBLOCKED
+			break; // Waiting for PRE_UNBLOCKED
 		}
 
 		if (ev->time() < ctx.start()) {
-			ev->set_time(ctx.start());  // Too late, nudge to context start
+			ev->set_time(ctx.start()); // Too late, nudge to context start
 		} else if (_block_state != BlockState::PROCESSING &&
 		           ev->time() >= ctx.end()) {
-			break;  // Event is for a future cycle
+			break; // Event is for a future cycle
 		}
 
 		// Execute event

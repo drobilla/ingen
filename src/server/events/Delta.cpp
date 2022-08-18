@@ -246,7 +246,7 @@ Delta::pre_process(PreProcessContext& ctx)
 		}
 		if (_create_event) {
 			if (_create_event->pre_process(ctx)) {
-				_object = _engine.store()->get(path);  // Get object for setting
+				_object = _engine.store()->get(path); // Get object for setting
 			} else {
 				return Event::pre_process_done(Status::CREATION_FAILED, _subject);
 			}
@@ -358,7 +358,7 @@ Delta::pre_process(PreProcessContext& ctx)
 				}
 			} else if ((block = dynamic_cast<BlockImpl*>(_object))) {
 				if (key == uris.midi_binding && value == uris.patch_wildcard) {
-					op = SpecialType::CONTROL_BINDING;  // Internal block learn
+					op = SpecialType::CONTROL_BINDING; // Internal block learn
 				} else if (key == uris.ingen_enabled) {
 					if (value.type() == uris.forge.Bool) {
 						op = SpecialType::ENABLE;
@@ -599,13 +599,13 @@ Delta::post_process()
 	if (_create_event) {
 		_create_event->post_process();
 		if (_create_event->status() != Status::SUCCESS) {
-			return;  // Creation failed, nothing else to do
+			return; // Creation failed, nothing else to do
 		}
 	}
 
 	for (auto& s : _set_events) {
 		if (s->synthetic() || s->status() != Status::SUCCESS) {
-			s->post_process();  // Set failed, report error
+			s->post_process(); // Set failed, report error
 		}
 	}
 

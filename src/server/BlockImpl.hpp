@@ -62,7 +62,7 @@ class Worker;
  * \ingroup engine
  */
 class BlockImpl : public NodeImpl
-                , public boost::intrusive::slist_base_hook<>  // In GraphImpl
+                , public boost::intrusive::slist_base_hook<> // In GraphImpl
 {
 public:
 	using Ports = raul::Array<PortImpl*>;

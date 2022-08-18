@@ -166,11 +166,11 @@ SocketReader::run()
 		const int ret = poll(&pfd, 1, -1);
 		if (ret == -1 || (pfd.revents & (POLLERR|POLLHUP|POLLNVAL))) {
 			on_hangup();
-			break;  // Hangup
+			break; // Hangup
 		}
 
 		if (!ret) {
-			continue;  // No data, shouldn't happen
+			continue; // No data, shouldn't happen
 		}
 
 		// Lock RDF world
@@ -179,7 +179,7 @@ SocketReader::run()
 		// Read until the next '.'
 		SerdStatus st = serd_reader_read_chunk(reader);
 		if (st == SERD_FAILURE || !_msg_node) {
-			continue;  // Read nothing, e.g. just whitespace
+			continue; // Read nothing, e.g. just whitespace
 		}
 
 		if (st) {
@@ -210,4 +210,4 @@ SocketReader::run()
 	_socket.reset();
 }
 
-}  // namespace ingen
+} // namespace ingen

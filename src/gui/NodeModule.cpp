@@ -127,7 +127,7 @@ bool
 NodeModule::idle_init()
 {
 	if (_block->ports().empty()) {
-		return true;  // Need to embed GUI, but ports haven't shown up yet
+		return true; // Need to embed GUI, but ports haven't shown up yet
 	}
 
 	// Ports have arrived, embed GUI and deregister this callback
