@@ -14,10 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "events/Move.hpp"
+
 #include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "events/Move.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/Status.hpp"

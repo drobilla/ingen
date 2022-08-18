@@ -14,12 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "LV2Block.hpp"
+
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
-#include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"

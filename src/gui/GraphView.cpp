@@ -14,9 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "GraphView.hpp"
+
 #include "App.hpp"
 #include "GraphCanvas.hpp"
-#include "GraphView.hpp"
 #include "WidgetFactory.hpp"
 
 #include "ingen/Atom.hpp"

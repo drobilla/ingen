@@ -14,10 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "PortAudioDriver.hpp"
+
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "FrameTimer.hpp"
-#include "PortAudioDriver.hpp"
 #include "PortType.hpp"
 #include "RunContext.hpp"
 #include "ingen/Atom.hpp"

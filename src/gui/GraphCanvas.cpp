@@ -14,9 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "GraphCanvas.hpp"
+
 #include "App.hpp"
 #include "Arc.hpp"
-#include "GraphCanvas.hpp"
 #include "GraphPortModule.hpp"
 #include "GraphWindow.hpp"
 #include "NodeModule.hpp"

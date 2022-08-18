@@ -14,9 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "GraphPortModule.hpp"
+
 #include "App.hpp"
 #include "GraphCanvas.hpp"
-#include "GraphPortModule.hpp"
 #include "Port.hpp"
 
 #include "ingen/Atom.hpp"

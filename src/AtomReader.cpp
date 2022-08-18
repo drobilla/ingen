@@ -14,8 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Atom.hpp"
 #include "ingen/AtomReader.hpp"
+
+#include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Message.hpp"

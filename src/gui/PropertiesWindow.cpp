@@ -14,8 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "App.hpp"
 #include "PropertiesWindow.hpp"
+
+#include "App.hpp"
 #include "RDFS.hpp"
 #include "URIEntry.hpp"
 #include "Window.hpp"

@@ -14,8 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "App.hpp"
 #include "GraphTreeWindow.hpp"
+
+#include "App.hpp"
 #include "Window.hpp"
 #include "WindowFactory.hpp"
 

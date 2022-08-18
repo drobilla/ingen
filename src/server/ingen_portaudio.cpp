@@ -16,8 +16,8 @@
 
 // IWYU pragma: no_include "ingen/FilePath.hpp"
 
-#include "PortAudioDriver.hpp"
 #include "Engine.hpp"
+#include "PortAudioDriver.hpp"
 
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
