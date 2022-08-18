@@ -166,7 +166,9 @@ run(int argc, char** argv)
 	int n_events = 0;
 	for (;; ++n_events) {
 		std::string subject_str = fmt("msg%1%", n_events);
-		Sord::URI subject(*world->rdf_world(), subject_str,
+
+		Sord::URI subject(*world->rdf_world(),
+		                  subject_str,
 		                  reinterpret_cast<const char*>(cmds_file_uri.buf));
 
 		auto iter = cmds->find(subject, nil, nil);

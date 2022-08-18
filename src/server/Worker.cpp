@@ -38,8 +38,7 @@ namespace server {
 struct MessageHeader {
 	LV2Block* block; ///< Node this message is from
 	uint32_t  size;  ///< Size of following data
-
-	// `size' bytes of data follow here
+	                 // `size' bytes of data follow here
 };
 
 static LV2_Worker_Status

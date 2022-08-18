@@ -95,8 +95,13 @@ public:
 
 	const LV2_URID_Map&   urid_map() const { return _urid_map_feature->data(); }
 	LV2_URID_Map&         urid_map() { return _urid_map_feature->data(); }
-	const LV2_URID_Unmap& urid_unmap() const { return _urid_unmap_feature->data(); }
-	LV2_URID_Unmap&       urid_unmap() { return _urid_unmap_feature->data(); }
+
+	const LV2_URID_Unmap& urid_unmap() const
+	{
+		return _urid_unmap_feature->data();
+	}
+
+	LV2_URID_Unmap& urid_unmap() { return _urid_unmap_feature->data(); }
 
 	std::shared_ptr<URIDMapFeature> urid_map_feature()
 	{
