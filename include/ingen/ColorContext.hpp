@@ -31,6 +31,11 @@ public:
 	ColorContext(FILE* stream, Color color);
 	~ColorContext();
 
+	ColorContext(const ColorContext&)            = delete;
+	ColorContext& operator=(const ColorContext&) = delete;
+	ColorContext(ColorContext&&)                 = delete;
+	ColorContext& operator=(ColorContext&)       = delete;
+
 private:
 	FILE* _stream;
 };

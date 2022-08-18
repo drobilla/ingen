@@ -5,7 +5,6 @@ Checks: >
   -*-named-parameter,
   -*-narrowing-conversions,
   -*-non-private-member-variables-in-classes,
-  -*-special-member-functions,
   -*-uppercase-literal-suffix,
   -abseil-string-find-str-contains,
   -altera-*,

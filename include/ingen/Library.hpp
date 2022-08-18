@@ -29,8 +29,10 @@ public:
 	Library(const FilePath& path);
 	~Library();
 
-	Library(const Library&) = delete;
+	Library(const Library&)            = delete;
 	Library& operator=(const Library&) = delete;
+	Library(Library&&)                 = delete;
+	Library& operator=(Library&&)      = delete;
 
 	using VoidFuncPtr = void (*)();
 
