@@ -23,7 +23,7 @@
 namespace ingen {
 namespace gui {
 
-static inline uint32_t
+inline uint32_t
 rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	return ((static_cast<uint32_t>(r) << 24) |
@@ -32,7 +32,7 @@ rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	        (static_cast<uint32_t>(a)));
 }
 
-static inline uint8_t
+inline uint8_t
 mono_interpolate(uint8_t v1, uint8_t v2, float f)
 {
 	return static_cast<int>(rintf((v2) * (f) + (v1) * (1 - (f))));
@@ -43,7 +43,7 @@ mono_interpolate(uint8_t v1, uint8_t v2, float f)
 #define RGBA_B(x) ((static_cast<uint32_t>(x) >> 8) & 0xFF)
 #define RGBA_A(x) (static_cast<uint32_t>(x) & 0xFF)
 
-static inline uint32_t
+inline uint32_t
 rgba_interpolate(uint32_t c1, uint32_t c2, float f)
 {
 	return rgba_to_uint(
