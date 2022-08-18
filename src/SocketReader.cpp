@@ -23,6 +23,8 @@
 #include "ingen/World.hpp"
 #include "lv2/urid/urid.h"
 #include "raul/Socket.hpp"
+#include "serd/serd.h"
+#include "sord/sord.h"
 #include "sord/sordmm.hpp"
 
 #include <cerrno>

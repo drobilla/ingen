@@ -17,6 +17,8 @@
 #include "ingen/URI.hpp"
 
 #include "ingen/FilePath.hpp"
+#include "serd/serd.h"
+#include "sord/sordmm.hpp"
 
 #include <cassert>
 

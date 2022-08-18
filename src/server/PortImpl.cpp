@@ -31,9 +31,11 @@
 #include "lv2/urid/urid.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Path.hpp"
 
 #include <algorithm>
 #include <cassert>
+#include <cstdio>
 #include <memory>
 #include <utility>
 

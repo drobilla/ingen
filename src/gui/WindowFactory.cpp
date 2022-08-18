@@ -152,8 +152,6 @@ WindowFactory::present_graph(const std::shared_ptr<const GraphModel>& graph,
                              GraphWindow*                             preferred,
                              const std::shared_ptr<GraphView>&        view)
 {
-	assert(!view || view->graph() == graph);
-
 	auto w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end()) {
@@ -177,8 +175,6 @@ GraphWindow*
 WindowFactory::new_graph_window(const std::shared_ptr<const GraphModel>& graph,
                                 const std::shared_ptr<GraphView>&        view)
 {
-	assert(!view || view->graph() == graph);
-
 	GraphWindow* win = nullptr;
 	WidgetFactory::get_widget_derived("graph_win", win);
 	if (!win) {

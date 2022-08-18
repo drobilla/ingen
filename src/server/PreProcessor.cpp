@@ -24,10 +24,14 @@
 #include "ThreadManager.hpp"
 #include "UndoStack.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/AtomWriter.hpp"
+#include "ingen/Configuration.hpp"
 #include "ingen/World.hpp"
 
 #include <cassert>
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 
 namespace ingen {
