@@ -156,14 +156,14 @@ BlockFactory::load_lv2_plugins()
 	}
 
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world.lilv_world());
-	LILV_FOREACH(plugins, i, plugins) {
+	LILV_FOREACH (plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
 		const URI         uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		// Ignore plugins that require features Ingen doesn't support
 		LilvNodes* features  = lilv_plugin_get_required_features(lv2_plug);
 		bool       supported = true;
-		LILV_FOREACH(nodes, f, features) {
+		LILV_FOREACH (nodes, f, features) {
 			const char* feature = lilv_node_as_uri(lilv_nodes_get(features, f));
 			if (!_world.lv2_features().is_supported(feature)) {
 				supported = false;

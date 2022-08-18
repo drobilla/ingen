@@ -123,7 +123,7 @@ TriggerNode::run(RunContext& ctx)
 	// Initialise output to the empty sequence
 	midi_out->prepare_write(ctx);
 
-	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+	LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 		const int64_t t = ev->time.frames;
 		const auto*   buf =
 		    static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(&ev->body));

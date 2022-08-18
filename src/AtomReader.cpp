@@ -72,7 +72,7 @@ AtomReader::get_props(const LV2_Atom_Object* obj,
 		const Atom type(sizeof(int32_t), _uris.atom_URID, &obj->body.otype);
 		props.emplace(_uris.rdf_type, type);
 	}
-	LV2_ATOM_OBJECT_FOREACH(obj, p) {
+	LV2_ATOM_OBJECT_FOREACH (obj, p) {
 		Atom val;
 		get_atom(&p->value, val);
 		props.emplace(URI(_map.unmap_uri(p->key)), val);

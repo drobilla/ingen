@@ -418,7 +418,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 	}
 
 	auto* seq = buffer->get<LV2_Atom_Sequence>();
-	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+	LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 		if (ev->body.type == uris.midi_MidiEvent) {
 			const auto* buf = static_cast<const uint8_t*>(LV2_ATOM_BODY(&ev->body));
 			const Key   key = midi_event_key(ev->body.size, buf, value);

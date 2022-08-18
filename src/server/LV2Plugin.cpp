@@ -114,7 +114,7 @@ LV2Plugin::load_presets()
 	LilvNodes*  presets = lilv_plugin_get_related(_lilv_plugin, uris.pset_Preset);
 
 	if (presets) {
-		LILV_FOREACH(nodes, i, presets) {
+		LILV_FOREACH (nodes, i, presets) {
 			const LilvNode* preset = lilv_nodes_get(presets, i);
 			lilv_world_load_resource(lworld, preset);
 

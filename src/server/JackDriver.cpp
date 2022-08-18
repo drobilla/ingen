@@ -386,7 +386,7 @@ JackDriver::post_process_port(RunContext& ctx, EnginePort* port) const
 			auto*         seq       = graph_buf->get<LV2_Atom_Sequence>();
 
 			jack_midi_clear_buffer(jack_buf);
-			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+			LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 				const auto* buf =
 				    static_cast<const uint8_t*>(LV2_ATOM_BODY(&ev->body));
 

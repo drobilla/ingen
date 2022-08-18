@@ -56,7 +56,7 @@ PluginMenu::clear()
 
 	// Build skeleton
 	LV2Children children;
-	LILV_FOREACH(plugin_classes, i, classes) {
+	LILV_FOREACH (plugin_classes, i, classes) {
 		const LilvPluginClass* c = lilv_plugin_classes_get(classes, i);
 		const LilvNode*        p = lilv_plugin_class_get_parent_uri(c);
 		if (!p) {

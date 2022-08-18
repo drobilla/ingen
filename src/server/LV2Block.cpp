@@ -271,7 +271,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 				is_morph = true;
 				LilvNodes* types = lilv_port_get_value(
 					plug, id, uris.morph_supportsType);
-				LILV_FOREACH(nodes, i, types) {
+				LILV_FOREACH (nodes, i, types) {
 					const LilvNode* type = lilv_nodes_get(types, i);
 					if (lilv_node_equals(type, uris.lv2_CVPort)) {
 						port_type   = PortType::CV;
@@ -302,7 +302,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		if (!buffer_type) {
 			LilvNodes* types = lilv_port_get_value(
 				plug, id, uris.atom_bufferType);
-			LILV_FOREACH(nodes, i, types) {
+			LILV_FOREACH (nodes, i, types) {
 				const LilvNode* type = lilv_nodes_get(types, i);
 				if (lilv_node_is_uri(type)) {
 					buffer_type = world.uri_map().map_uri(
@@ -327,7 +327,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
 			LilvNodes* defaults = lilv_port_get_value(plug, id, uris.lv2_default);
-			LILV_FOREACH(nodes, i, defaults) {
+			LILV_FOREACH (nodes, i, defaults) {
 				const LilvNode* d = lilv_nodes_get(defaults, i);
 				if (lilv_node_is_string(d)) {
 					const char*    str_val     = lilv_node_as_string(d);
@@ -347,7 +347,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 
 			// Get minimum size, if set in data
 			LilvNodes* sizes = lilv_port_get_value(plug, id, uris.rsz_minimumSize);
-			LILV_FOREACH(nodes, i, sizes) {
+			LILV_FOREACH (nodes, i, sizes) {
 				const LilvNode* d = lilv_nodes_get(sizes, i);
 				if (lilv_node_is_int(d)) {
 					uint32_t size_val = lilv_node_as_int(d);
@@ -415,7 +415,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		                            nullptr };
 		for (int p = 0; preds[p]; ++p) {
 			LilvNodes* values = lilv_port_get_value(plug, id, preds[p]);
-			LILV_FOREACH(nodes, v, values) {
+			LILV_FOREACH (nodes, v, values) {
 				const LilvNode* value = lilv_nodes_get(values, v);
 				if (lilv_node_is_uri(value)) {
 					port->add_property(URI(lilv_node_as_uri(preds[p])),

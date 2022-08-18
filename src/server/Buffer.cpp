@@ -132,7 +132,7 @@ Buffer::render_sequence(const RunContext& ctx, const Buffer* src, bool add)
 	float          value      = init ? init->body : 0.0f;
 	SampleCount    offset     = ctx.offset();
 
-	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+	LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 		if (ev->time.frames >= offset && ev->body.type == atom_Float) {
 			write_block(value, offset, ev->time.frames, add);
 			value  = reinterpret_cast<const LV2_Atom_Float*>(&ev->body)->body;
@@ -362,7 +362,7 @@ Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 {
 	if (_type == _factory.uris().atom_Sequence && _value_type) {
 		const auto* seq = get<const LV2_Atom_Sequence>();
-		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+		LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 			if (ev->time.frames >  offset   &&
 			    ev->time.frames <  end &&
 			    ev->body.type   == _value_type) {
@@ -415,7 +415,7 @@ Buffer::update_value_buffer(SampleCount offset)
 
 	auto*           seq    = get<LV2_Atom_Sequence>();
 	LV2_Atom_Event* latest = nullptr;
-	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+	LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 		if (ev->time.frames > offset) {
 			break;
 		}

@@ -485,7 +485,7 @@ PortImpl::monitor(RunContext& ctx, bool send_now)
 			} else if (_monitored) {
 				/* Sequence explicitly monitored, send everything. */
 				const auto* seq = reinterpret_cast<const LV2_Atom_Sequence*>(atom);
-				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+				LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 					ctx.notify(uris.ingen_activity,
 					           ctx.start() + ev->time.frames,
 					           this,

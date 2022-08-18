@@ -310,7 +310,7 @@ Port::build_uri_menu()
 	rdfs::URISet ranges;
 	LilvNodes* range = lilv_world_find_nodes(
 		world.lilv_world(), designation, rdfs_range, nullptr);
-	LILV_FOREACH(nodes, r, range) {
+	LILV_FOREACH (nodes, r, range) {
 		ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 	}
 	rdfs::classes(world, ranges, false);

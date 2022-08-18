@@ -203,7 +203,7 @@ PluginUI::create(ingen::World&                            world,
 	LilvUIs*        uis     = lilv_plugin_get_uis(plugin);
 	const LilvUI*   ui      = nullptr;
 	const LilvNode* ui_type = nullptr;
-	LILV_FOREACH(uis, u, uis) {
+	LILV_FOREACH (uis, u, uis) {
 		const LilvUI* this_ui = lilv_uis_get(uis, u);
 		if (lilv_ui_is_supported(this_ui,
 		                         suil_ui_supported,
@@ -245,7 +245,7 @@ PluginUI::instantiate()
 	LilvNode*  ui_plugin           = lilv_new_uri(lworld, LV2_UI__plugin);
 	LilvNodes* notes               = lilv_world_find_nodes(
 		lworld, lilv_ui_get_uri(_ui), ui_portNotification, nullptr);
-	LILV_FOREACH(nodes, n, notes) {
+	LILV_FOREACH (nodes, n, notes) {
 		const LilvNode* note = lilv_nodes_get(notes, n);
 		const LilvNode* sym  = lilv_world_get(lworld, note, uris.lv2_symbol, nullptr);
 		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, nullptr);

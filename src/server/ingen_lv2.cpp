@@ -149,7 +149,7 @@ public:
 				auto* seq = reinterpret_cast<LV2_Atom_Sequence*>(lv2_buf);
 
 				bool enqueued = false;
-				LV2_ATOM_SEQUENCE_FOREACH(seq, ev)
+				LV2_ATOM_SEQUENCE_FOREACH (seq, ev)
 				{
 					if (AtomReader::is_message(uris, &ev->body)) {
 						enqueued = enqueue_message(&ev->body) || enqueued;
@@ -262,7 +262,7 @@ public:
 		const URIs& uris = _engine.world().uris();
 		auto*       seq  = static_cast<LV2_Atom_Sequence*>(_ports[0]->buffer());
 
-		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+		LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 			if (ev->body.type == uris.atom_Object) {
 				const LV2_Atom_Object* obj =
 				    reinterpret_cast<LV2_Atom_Object*>(&ev->body);

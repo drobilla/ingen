@@ -119,7 +119,7 @@ PluginModel::get_property(const URI& key) const
 		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.c_str());
 		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
 		lilv_node_free(lv2_pred);
-		LILV_FOREACH(nodes, i, values) {
+		LILV_FOREACH (nodes, i, values) {
 			const LilvNode* value = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(value)) {
 				ret = set_property(
@@ -222,7 +222,7 @@ PluginModel::port_scale_points(const uint32_t index) const
 	if (_lilv_plugin) {
 		const LilvPort*  port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
 		LilvScalePoints* sp   = lilv_port_get_scale_points(_lilv_plugin, port);
-		LILV_FOREACH(scale_points, i, sp) {
+		LILV_FOREACH (scale_points, i, sp) {
 			const LilvScalePoint* p = lilv_scale_points_get(sp, i);
 			points.emplace(
 				lilv_node_as_float(lilv_scale_point_get_value(p)),
