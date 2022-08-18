@@ -73,16 +73,16 @@ public:
 	void bundle_end()   { message(BundleEnd{_seq++}); }
 
 	void put(const URI&        uri,
-	                const Properties& properties,
-	                Resource::Graph   ctx = Resource::Graph::DEFAULT)
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{
 		message(Put{_seq++, uri, properties, ctx});
 	}
 
 	void delta(const URI&        uri,
-	                  const Properties& remove,
-	                  const Properties& add,
-	                  Resource::Graph   ctx = Resource::Graph::DEFAULT)
+	           const Properties& remove,
+	           const Properties& add,
+	           Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{
 		message(Delta{_seq++, uri, remove, add, ctx});
 	}
@@ -115,9 +115,9 @@ public:
 	}
 
 	void set_property(const URI&      subject,
-	                         const URI&      predicate,
-	                         const Atom&     value,
-	                         Resource::Graph ctx = Resource::Graph::DEFAULT)
+	                  const URI&      predicate,
+	                  const Atom&     value,
+	                  Resource::Graph ctx = Resource::Graph::DEFAULT)
 	{
 		message(SetProperty{_seq++, subject, predicate, value, ctx});
 	}
