@@ -90,7 +90,7 @@ JackDriver::attach(const std::string& server_name,
 			}
 		}
 
-		// Either server name not specified, or supplied server name does not exist
+		// Server name not specified, or that server doesn't exist
 		// Connect to default server
 		if (!_client) {
 			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, nullptr))) {

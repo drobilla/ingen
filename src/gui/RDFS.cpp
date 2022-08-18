@@ -128,7 +128,7 @@ types(World& world, const std::shared_ptr<const client::ObjectModel>& model)
 			const URI type(world.forge().str(t->second, false));
 			types.insert(type);
 			if (world.uris().ingen_Graph == type) {
-				// Add lv2:Plugin as a type for graphs so plugin properties show up
+				// Add lv2:Plugin as a type so plugin properties show up
 				types.insert(world.uris().lv2_Plugin);
 			}
 		} else {

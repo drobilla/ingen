@@ -395,7 +395,7 @@ Delta::pre_process(PreProcessContext& ctx)
 				if (key == uris.ingen_enabled) {
 					if (value.type() == uris.forge.Bool) {
 						op = SpecialType::ENABLE;
-						// FIXME: defer this until all other metadata has been processed
+						// FIXME: defer until all other data has been processed
 						if (value.get<int32_t>() && !_graph->enabled()) {
 							if (!(_compiled_graph = compile(*_engine.maid(), *_graph))) {
 								_status = Status::COMPILATION_FAILED;

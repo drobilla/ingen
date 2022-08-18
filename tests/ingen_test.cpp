@@ -203,7 +203,7 @@ run(int argc, char** argv)
 	const FilePath    out_path = filesystem::current_path() / out_name;
 	world->serialiser()->write_bundle(r->second, URI(out_path));
 
-	// Undo every event (should result in a graph identical to the original)
+	// Undo every event (makes the graph identical to the original)
 	for (int i = 0; i < n_events; ++i) {
 		world->interface()->undo();
 		world->engine()->flush_events(std::chrono::milliseconds(20));
@@ -215,7 +215,7 @@ run(int argc, char** argv)
 	const FilePath    undo_path = filesystem::current_path() / undo_name;
 	world->serialiser()->write_bundle(r->second, URI(undo_path));
 
-	// Redo every event (should result in a graph identical to the pre-undo output)
+	// Redo every event (makes the graph identical to the pre-undo output)
 	for (int i = 0; i < n_events; ++i) {
 		world->interface()->redo();
 		world->engine()->flush_events(std::chrono::milliseconds(20));

@@ -77,7 +77,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 					b->set_view(view);
 				}
 
-				// views are expensive, having two around for the same graph is a bug
+				// Views are expensive, having two around is a bug
 				assert(b->view() == view);
 
 			} else {
@@ -89,7 +89,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 		_enable_signal = old_enable_signal;
 
 	} else if (!_breadcrumbs.empty() && path.is_child_of(_full_path)) {
-		// Moving to a child of the full path, just append crumbs (preserve view cache)
+		// Moving to a child of the full path, append crumbs (preserve cache)
 
 		string suffix = path.substr(_full_path.length());
 		while (suffix.length() > 0) {
@@ -115,8 +115,8 @@ BreadCrumbs::build(const raul::Path&                 path,
 		_breadcrumbs.back()->set_active(true);
 
 	} else {
-		// Rebuild from scratch
-		// Getting here is bad unless absolutely necessary, since the GraphView cache is lost
+		/* Rebuild from scratch.  Getting here is bad unless absolutely
+		   necessary, since the GraphView cache is lost. */
 
 		_full_path = path;
 		_active_path = path;
