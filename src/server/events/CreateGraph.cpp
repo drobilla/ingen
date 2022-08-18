@@ -136,11 +136,9 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 
 	const ingen::URIs& uris = _engine.world().uris();
 
-	using iterator = Properties::const_iterator;
-
-	uint32_t ext_poly = 1;
-	uint32_t int_poly = 1;
-	iterator p        = _properties.find(uris.ingen_polyphony);
+	uint32_t   ext_poly = 1;
+	uint32_t   int_poly = 1;
+	const auto p        = _properties.find(uris.ingen_polyphony);
 	if (p != _properties.end() && p->second.type() == uris.forge.Int) {
 		int_poly = p->second.get<int32_t>();
 	}
@@ -156,7 +154,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 	const raul::Symbol symbol(_path.is_root() ? "graph" : _path.symbol());
 
 	// Get graph prototype
-	iterator t = _properties.find(uris.lv2_prototype);
+	auto t = _properties.find(uris.lv2_prototype);
 	if (t == _properties.end()) {
 		t = _properties.find(uris.lv2_prototype);
 	}

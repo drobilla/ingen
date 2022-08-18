@@ -118,13 +118,10 @@ datatypes(World& world, URISet& types, bool super)
 URISet
 types(World& world, const std::shared_ptr<const client::ObjectModel>& model)
 {
-	using PropIter  = Properties::const_iterator;
-	using PropRange = std::pair<PropIter, PropIter>;
-
 	// Start with every rdf:type
 	URISet types;
 	types.insert(URI(LILV_NS_RDFS "Resource"));
-	PropRange range = model->properties().equal_range(world.uris().rdf_type);
+	const auto range = model->properties().equal_range(world.uris().rdf_type);
 	for (auto t = range.first; t != range.second; ++t) {
 		if (t->second.type() == world.forge().URI ||
 		    t->second.type() == world.forge().URID) {

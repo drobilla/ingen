@@ -82,7 +82,7 @@ public:
 	}
 
 	bool contains(const URI& key, const Atom& value) {
-		for (const_iterator i = find(key); i != end() && i->first == key; ++i) {
+		for (auto i = find(key); i != end() && i->first == key; ++i) {
 			if (i->second == value) {
 				return true;
 			}

@@ -108,8 +108,8 @@ void
 GraphTreeWindow::add_graph(const std::shared_ptr<GraphModel>& pm)
 {
 	if (!pm->parent()) {
-		Gtk::TreeModel::iterator iter = _graph_treestore->append();
-		Gtk::TreeModel::Row row = *iter;
+		const auto iter = _graph_treestore->append();
+		auto       row  = *iter;
 		if (pm->path().is_root()) {
 			row[_graph_tree_columns.name_col] = _app->interface()->uri().string();
 		} else {
@@ -119,12 +119,13 @@ GraphTreeWindow::add_graph(const std::shared_ptr<GraphModel>& pm)
 		row[_graph_tree_columns.graph_model_col] = pm;
 		_graphs_treeview->expand_row(_graph_treestore->get_path(iter), true);
 	} else {
-		Gtk::TreeModel::Children children = _graph_treestore->children();
-		Gtk::TreeModel::iterator c = find_graph(children, pm->parent());
+		const auto& children = _graph_treestore->children();
+		auto        c        = find_graph(children, pm->parent());
 
 		if (c != children.end()) {
-			Gtk::TreeModel::iterator iter = _graph_treestore->append(c->children());
-			Gtk::TreeModel::Row row = *iter;
+			const auto iter = _graph_treestore->append(c->children());
+			auto       row  = *iter;
+
 			row[_graph_tree_columns.name_col] = pm->symbol().c_str();
 			row[_graph_tree_columns.enabled_col] = pm->enabled();
 			row[_graph_tree_columns.graph_model_col] = pm;
@@ -148,7 +149,7 @@ GraphTreeWindow::add_graph(const std::shared_ptr<GraphModel>& pm)
 void
 GraphTreeWindow::remove_graph(const std::shared_ptr<GraphModel>& pm)
 {
-	Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), pm);
+	const auto i = find_graph(_graph_treestore->children(), pm);
 	if (i != _graph_treestore->children().end()) {
 		_graph_treestore->erase(i);
 	}
@@ -158,12 +159,12 @@ Gtk::TreeModel::iterator
 GraphTreeWindow::find_graph(Gtk::TreeModel::Children                    root,
                             const std::shared_ptr<client::ObjectModel>& graph)
 {
-	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
+	for (auto c = root.begin(); c != root.end(); ++c) {
 		std::shared_ptr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
 		if (graph == pm) {
 			return c;
 		} else if (!(*c)->children().empty()) {
-			Gtk::TreeModel::iterator ret = find_graph(c->children(), graph);
+			auto ret = find_graph(c->children(), graph);
 			if (ret != c->children().end()) {
 				return ret;
 			}
@@ -177,10 +178,12 @@ GraphTreeWindow::find_graph(Gtk::TreeModel::Children                    root,
 void
 GraphTreeWindow::show_graph_menu(GdkEventButton* ev)
 {
-	Gtk::TreeModel::iterator active = _graph_tree_selection->get_selected();
+	const auto active = _graph_tree_selection->get_selected();
 	if (active) {
-		Gtk::TreeModel::Row         row = *active;
-		std::shared_ptr<GraphModel> pm  = row[_graph_tree_columns.graph_model_col];
+		auto row = *active;
+		auto col = _graph_tree_columns.graph_model_col;
+
+		const std::shared_ptr<GraphModel>& pm = row[col];
 		if (pm) {
 			_app->log().warn("TODO: graph menu from tree window");
 		}
@@ -191,9 +194,10 @@ void
 GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
                                        Gtk::TreeView::Column*      col)
 {
-	Gtk::TreeModel::iterator    active = _graph_treestore->get_iter(path);
-	Gtk::TreeModel::Row         row    = *active;
-	std::shared_ptr<GraphModel> pm     = row[_graph_tree_columns.graph_model_col];
+	const auto active = _graph_treestore->get_iter(path);
+	auto       row    = *active;
+
+	std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 
 	_app->window_factory()->present_graph(pm);
 }
@@ -201,9 +205,9 @@ GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
 void
 GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 {
-	Gtk::TreeModel::Path     path(path_str);
-	Gtk::TreeModel::iterator active = _graph_treestore->get_iter(path);
-	Gtk::TreeModel::Row      row    = *active;
+	Gtk::TreeModel::Path path(path_str);
+	auto                 active = _graph_treestore->get_iter(path);
+	auto                 row    = *active;
 
 	std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 	assert(pm);
@@ -224,9 +228,9 @@ GraphTreeWindow::graph_property_changed(
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
 	if (key == uris.ingen_enabled && value.type() == uris.forge.Bool) {
-		Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), graph);
+		const auto i = find_graph(_graph_treestore->children(), graph);
 		if (i != _graph_treestore->children().end()) {
-			Gtk::TreeModel::Row row = *i;
+			auto row = *i;
 			row[_graph_tree_columns.enabled_col] = value.get<int32_t>();
 		} else {
 			_app->log().error("Unable to find graph %1%\n", graph->path());
@@ -240,11 +244,9 @@ GraphTreeWindow::graph_moved(const std::shared_ptr<GraphModel>& graph)
 {
 	_enable_signal = false;
 
-	Gtk::TreeModel::iterator i
-		= find_graph(_graph_treestore->children(), graph);
-
+	auto i = find_graph(_graph_treestore->children(), graph);
 	if (i != _graph_treestore->children().end()) {
-		Gtk::TreeModel::Row row = *i;
+		auto row = *i;
 		row[_graph_tree_columns.name_col] = graph->symbol().c_str();
 	} else {
 		_app->log().error("Unable to find graph %1%\n", graph->path());

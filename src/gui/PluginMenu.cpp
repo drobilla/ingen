@@ -78,8 +78,6 @@ PluginMenu::clear()
 void
 PluginMenu::add_plugin(const std::shared_ptr<client::PluginModel>& p)
 {
-	using iterator = ClassMenus::iterator;
-
 	if (!p->lilv_plugin() || lilv_plugin_is_replaced(p->lilv_plugin())) {
 		return;
 	}
@@ -88,7 +86,7 @@ PluginMenu::add_plugin(const std::shared_ptr<client::PluginModel>& p)
 	const LilvNode*        class_uri     = lilv_plugin_class_get_uri(pc);
 	const char*            class_uri_str = lilv_node_as_string(class_uri);
 
-	std::pair<iterator, iterator> range = _class_menus.equal_range(class_uri_str);
+	const auto range = _class_menus.equal_range(class_uri_str);
 	if (range.first == _class_menus.end() || range.first == range.second
 	    || range.first->second.menu == this) {
 		// Add to uncategorized plugin menu
@@ -112,16 +110,14 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 	const LilvNode* class_uri     = lilv_plugin_class_get_uri(plugin_class);
 	const char*     class_uri_str = lilv_node_as_string(class_uri);
 
-	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
-		= children.equal_range(class_uri_str);
-
+	const auto kids = children.equal_range(class_uri_str);
 	if (kids.first == children.end()) {
 		return 0;
 	}
 
 	// Add submenus
 	ancestors.insert(class_uri_str);
-	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
+	for (auto i = kids.first; i != kids.second; ++i) {
 		const LilvPluginClass* c = i->second;
 		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
 		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));

@@ -44,7 +44,7 @@ public:
 	void add(Node* o);
 
 	Node* get(const raul::Path& path) {
-		const iterator i = find(path);
+		const auto i = find(path);
 		return (i == end()) ? nullptr : i->second.get();
 	}
 

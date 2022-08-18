@@ -29,9 +29,8 @@ bool
 Resource::add_property(const URI& uri, const Atom& value, Graph ctx)
 {
 	// Ignore duplicate statements
-	using iterator = Properties::const_iterator;
-	const std::pair<iterator, iterator> range = _properties.equal_range(uri);
-	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i) {
+	const auto range = _properties.equal_range(uri);
+	for (auto i = range.first; i != range.second && i != _properties.end(); ++i) {
 		if (i->second == value && i->second.context() == ctx) {
 			return false;
 		}
@@ -119,8 +118,9 @@ Resource::has_property(const URI& uri, const Atom& value) const
 bool
 Resource::has_property(const URI& uri, const URIs::Quark& value) const
 {
-	Properties::const_iterator i = _properties.find(uri);
-	for (; (i != _properties.end()) && (i->first == uri); ++i) {
+	for (auto i = _properties.find(uri);
+	     (i != _properties.end()) && (i->first == uri);
+	     ++i) {
 		if (value == i->second) {
 			return true;
 		}
@@ -138,7 +138,8 @@ const Atom&
 Resource::get_property(const URI& uri) const
 {
 	static const Atom nil;
-	Properties::const_iterator i = _properties.find(uri);
+
+	const auto i = _properties.find(uri);
 	return (i != _properties.end()) ? i->second : nil;
 }
 
@@ -150,11 +151,10 @@ Resource::type(const URIs&       uris,
                bool&             port,
                bool&             is_output)
 {
-	using iterator = Properties::const_iterator;
-	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
+	const auto types_range = properties.equal_range(uris.rdf_type);
 
 	graph = block = port = is_output = false;
-	for (iterator i = types_range.first; i != types_range.second; ++i) {
+	for (auto i = types_range.first; i != types_range.second; ++i) {
 		const Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
 			continue; // Non-URI type, ignore garbage data

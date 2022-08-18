@@ -729,7 +729,7 @@ LV2Block::save_preset(const URI&        uri,
 	                                            nullptr)};
 
 	if (state) {
-		const Properties::const_iterator l = props.find(_uris.rdfs_label);
+		const auto l = props.find(_uris.rdfs_label);
 		if (l != props.end() && l->second.type() == _uris.atom_String) {
 			lilv_state_set_label(state.get(), l->second.ptr<char>());
 		}

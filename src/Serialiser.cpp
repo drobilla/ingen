@@ -352,7 +352,7 @@ Serialiser::Impl::serialise_graph(const std::shared_ptr<const Node>& graph,
 	std::set<const Resource*> plugins;
 
 	const Store::const_range kids = _world.store()->children_range(graph);
-	for (Store::const_iterator n = kids.first; n != kids.second; ++n) {
+	for (auto n = kids.first; n != kids.second; ++n) {
 		if (n->first.parent() != graph->path()) {
 			continue;
 		}

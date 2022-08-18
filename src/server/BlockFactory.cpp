@@ -98,7 +98,7 @@ PluginImpl*
 BlockFactory::plugin(const URI& uri)
 {
 	load_plugin(uri);
-	const Plugins::const_iterator i = _plugins.find(uri);
+	const auto i = _plugins.find(uri);
 	return ((i != _plugins.end()) ? i->second.get() : nullptr);
 }
 

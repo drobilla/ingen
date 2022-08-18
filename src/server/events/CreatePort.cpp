@@ -66,11 +66,8 @@ CreatePort::CreatePort(Engine&                           engine,
 {
 	const ingen::URIs& uris = _engine.world().uris();
 
-	using Iterator = Properties::const_iterator;
-	using Range    = std::pair<Iterator, Iterator>;
-
-	const Range types = properties.equal_range(uris.rdf_type);
-	for (Iterator i = types.first; i != types.second; ++i) {
+	const auto types = properties.equal_range(uris.rdf_type);
+	for (auto i = types.first; i != types.second; ++i) {
 		const Atom& type = i->second;
 		if (type == uris.lv2_AudioPort) {
 			_port_type = PortType::AUDIO;
@@ -87,8 +84,8 @@ CreatePort::CreatePort(Engine&                           engine,
 		}
 	}
 
-	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
-	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
+	const auto buffer_types = properties.equal_range(uris.atom_bufferType);
+	for (auto i = buffer_types.first; i != buffer_types.second; ++i) {
 		if (uris.forge.is_uri(i->second)) {
 			_buf_type = _engine.world().uri_map().map_uri(
 				uris.forge.str(i->second, false));
@@ -123,10 +120,8 @@ CreatePort::pre_process(PreProcessContext&)
 	const uint32_t buf_size    = bufs.default_size(_buf_type);
 	const int32_t  old_n_ports = _graph->num_ports_non_rt();
 
-	using PropIter = Properties::const_iterator;
-
-	PropIter index_i = _properties.find(uris.lv2_index);
-	int32_t  index   = 0;
+	auto    index_i = _properties.find(uris.lv2_index);
+	int32_t index   = 0;
 	if (index_i != _properties.end()) {
 		// Ensure given index is sane and not taken
 		if (index_i->second.type() != uris.forge.Int) {
@@ -144,7 +139,7 @@ CreatePort::pre_process(PreProcessContext&)
 		                              _engine.world().forge().make(index));
 	}
 
-	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);
+	const auto poly_i     = _properties.find(uris.ingen_polyphonic);
 	const bool polyphonic = (poly_i != _properties.end() &&
 	                         poly_i->second.type() == uris.forge.Bool &&
 	                         poly_i->second.get<int32_t>());

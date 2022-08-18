@@ -284,7 +284,7 @@ GraphCanvas::build()
 	const Store::const_range kids = _app.store()->children_range(_graph);
 
 	// Create modules for blocks
-	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
+	for (auto i = kids.first; i != kids.second; ++i) {
 		auto block = std::dynamic_pointer_cast<BlockModel>(i->second);
 		if (block && block->parent() == _graph) {
 			add_block(block);
@@ -707,8 +707,6 @@ GraphCanvas::copy_selection()
 void
 GraphCanvas::paste()
 {
-	using PropIter = Properties::const_iterator;
-
 	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 
 	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
@@ -807,8 +805,8 @@ GraphCanvas::paste()
 		}
 
 		// Set coordinates so paste origin is at the mouse pointer
-		PropIter xi = node->properties().find(uris.ingen_canvasX);
-		PropIter yi = node->properties().find(uris.ingen_canvasY);
+		const auto xi = node->properties().find(uris.ingen_canvasX);
+		const auto yi = node->properties().find(uris.ingen_canvasY);
 		if (xi != node->properties().end()) {
 			const float x = xi->second.get<float>() - min_x + paste_x;
 			props.insert({xi->first, Property(_app.forge().make(x),

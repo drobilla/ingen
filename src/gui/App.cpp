@@ -376,7 +376,7 @@ App::status_text() const
 void
 App::port_activity(Port* port)
 {
-	std::pair<ActivityPorts::iterator, bool> inserted = _activity_ports.emplace(port, false);
+	const auto inserted = _activity_ports.emplace(port, false);
 	if (inserted.second) {
 		inserted.first->second = false;
 	}

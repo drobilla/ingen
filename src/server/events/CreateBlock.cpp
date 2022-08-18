@@ -73,8 +73,6 @@ CreateBlock::~CreateBlock() = default;
 bool
 CreateBlock::pre_process(PreProcessContext& ctx)
 {
-	using iterator = Properties::const_iterator;
-
 	const ingen::URIs&           uris  = _engine.world().uris();
 	const std::shared_ptr<Store> store = _engine.store();
 
@@ -88,7 +86,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 	}
 
 	// Map old ingen:prototype to new lv2:prototype
-	auto range = _properties.equal_range(uris.ingen_prototype);
+	const auto range = _properties.equal_range(uris.ingen_prototype);
 	for (auto i = range.first; i != range.second;) {
 		const auto value = i->second;
 		auto       next  = i;
@@ -98,7 +96,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 	}
 
 	// Get prototype
-	iterator t = _properties.find(uris.lv2_prototype);
+	const auto t = _properties.find(uris.lv2_prototype);
 	if (t == _properties.end() || !uris.forge.is_uri(t->second)) {
 		// Missing/invalid prototype
 		return Event::pre_process_done(Status::BAD_REQUEST);
@@ -107,10 +105,10 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 	const URI prototype(uris.forge.str(t->second, false));
 
 	// Find polyphony
-	const iterator p          = _properties.find(uris.ingen_polyphonic);
-	const bool     polyphonic = (p != _properties.end() &&
-	                             p->second.type() == uris.forge.Bool &&
-	                             p->second.get<int32_t>());
+	const auto p          = _properties.find(uris.ingen_polyphonic);
+	const bool polyphonic = (p != _properties.end() &&
+	                         p->second.type() == uris.forge.Bool &&
+	                         p->second.get<int32_t>());
 
 	// Find and instantiate/duplicate prototype (plugin/existing node)
 	if (uri_is_path(prototype)) {

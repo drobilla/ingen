@@ -72,7 +72,7 @@ Delete::Delete(Engine&                           engine,
 
 Delete::~Delete()
 {
-	for (ControlBindings::Binding* b : _removed_bindings) {
+	for (auto* b : _removed_bindings) {
 		delete b;
 	}
 }

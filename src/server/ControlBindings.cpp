@@ -426,7 +426,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 
 			// Set all controls bound to this key
 			const Binding k = {key, nullptr};
-			for (Bindings::const_iterator i = _bindings->lower_bound(k);
+			for (auto i = _bindings->lower_bound(k);
 			     i != _bindings->end() && i->key == key;
 			     ++i) {
 				set_port_value(ctx, i->port, key.type, value);

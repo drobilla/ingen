@@ -69,7 +69,7 @@ Copy::pre_process(PreProcessContext& ctx)
 		const raul::Path old_path = uri_to_path(_msg.old_uri);
 
 		// Find the old node
-		const Store::iterator i = _engine.store()->find(old_path);
+		const auto i = _engine.store()->find(old_path);
 		if (i == _engine.store()->end()) {
 			return Event::pre_process_done(Status::NOT_FOUND, old_path);
 		}
@@ -115,8 +115,8 @@ Copy::engine_to_engine(PreProcessContext& ctx)
 	}
 
 	// Find new parent graph
-	const raul::Path      parent_path = new_path.parent();
-	const Store::iterator p           = _engine.store()->find(parent_path);
+	const raul::Path parent_path = new_path.parent();
+	const auto       p           = _engine.store()->find(parent_path);
 	if (p == _engine.store()->end()) {
 		return Event::pre_process_done(Status::NOT_FOUND, parent_path);
 	}

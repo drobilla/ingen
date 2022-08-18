@@ -123,7 +123,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 
 	// Create disconnect events to erase adjacent arcs in parent's parent
 	if (_port && _parent->parent()) {
-		GraphImpl* parent_parent = dynamic_cast<GraphImpl*>(_parent->parent());
+		auto* const parent_parent = dynamic_cast<GraphImpl*>(_parent->parent());
 		for (const auto& a : adjacent_arcs(parent_parent)) {
 			_impls.push_back(
 				new Disconnect::Impl(_engine,

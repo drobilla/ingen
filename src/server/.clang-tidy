@@ -8,7 +8,6 @@ Checks: >
   -*-non-private-member-variables-in-classes,
   -*-special-member-functions,
   -*-uppercase-literal-suffix,
-  -*-use-auto,
   -*-vararg,
   -abseil-string-find-str-contains,
   -altera-*,

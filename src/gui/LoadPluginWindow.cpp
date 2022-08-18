@@ -102,8 +102,9 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	_criteria_liststore = Gtk::ListStore::create(_criteria_columns);
 	_filter_combo->set_model(_criteria_liststore);
 
-	Gtk::TreeModel::iterator iter = _criteria_liststore->append();
-	Gtk::TreeModel::Row      row  = *iter;
+	auto iter = _criteria_liststore->append();
+	auto row  = *iter;
+
 	row[_criteria_columns._col_label] = "Name contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::Criteria::NAME;
 	_filter_combo->set_active(iter);
@@ -326,8 +327,8 @@ LoadPluginWindow::add_plugin(const std::shared_ptr<const PluginModel>& plugin)
 		return;
 	}
 
-	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
-	Gtk::TreeModel::Row      row  = *iter;
+	auto iter = _plugins_liststore->append();
+	auto row  = *iter;
 	_rows.emplace(plugin->uri(), iter);
 
 	set_row(row, plugin);
@@ -355,13 +356,16 @@ LoadPluginWindow::plugin_selection_changed()
 		_name_entry->set_text("");
 		_name_entry->set_sensitive(false);
 	} else if (n_selected == 1) {
-		Gtk::TreeModel::iterator iter = _plugins_liststore->get_iter(
-			*_selection->get_selected_rows().begin());
+		auto iter = _plugins_liststore->get_iter(
+		    *_selection->get_selected_rows().begin());
 		if (iter) {
-			Gtk::TreeModel::Row row = *iter;
-			auto                p = row.get_value(_plugins_columns._col_plugin);
-			_name_offset = _app->store()->child_name_offset(
-				_graph->path(), p->default_block_symbol());
+			auto row = *iter;
+			auto p   = row.get_value(_plugins_columns._col_plugin);
+
+			_name_offset =
+			    _app->store()->child_name_offset(_graph->path(),
+			                                     p->default_block_symbol());
+
 			_name_entry->set_text(generate_module_name(p, _name_offset));
 			_name_entry->set_sensitive(true);
 		} else {
@@ -397,11 +401,11 @@ LoadPluginWindow::generate_module_name(
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 {
-	const URIs&         uris       = _app->uris();
-	Gtk::TreeModel::Row row        = *iter;
-	auto                plugin     = row.get_value(_plugins_columns._col_plugin);
-	bool                polyphonic = _polyphonic_checkbutton->get_active();
-	string              name       = _name_entry->get_text();
+	const URIs& uris       = _app->uris();
+	auto        row        = *iter;
+	auto        plugin     = row.get_value(_plugins_columns._col_plugin);
+	bool        polyphonic = _polyphonic_checkbutton->get_active();
+	string      name       = _name_entry->get_text();
 
 	if (name.empty()) {
 		name = generate_module_name(plugin, _name_offset);
@@ -451,7 +455,7 @@ LoadPluginWindow::filter_changed()
 	transform(search.begin(), search.end(), search.begin(), ::toupper);
 
 	// Get selected criteria
-	const Gtk::TreeModel::Row row = *(_filter_combo->get_active());
+	const auto row = *(_filter_combo->get_active());
 	CriteriaColumns::Criteria criteria = row[_criteria_columns._col_criteria];
 
 	string field;
@@ -523,7 +527,7 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 {
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {
-		Rows::const_iterator i = _rows.find(plugin);
+		const auto i = _rows.find(plugin);
 		if (i != _rows.end() && value.type() == uris.forge.String) {
 			(*i->second)[_plugins_columns._col_name] = value.ptr<char>();
 		}

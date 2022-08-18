@@ -103,7 +103,7 @@ std::shared_ptr<ObjectModel>
 ClientStore::remove_object(const raul::Path& path)
 {
 	// Find the object, the "top" of the tree to remove
-	const iterator top = find(path);
+	const auto top = find(path);
 	if (top == end()) {
 		return nullptr;
 	}
@@ -142,7 +142,7 @@ ClientStore::remove_object(const raul::Path& path)
 std::shared_ptr<PluginModel>
 ClientStore::_plugin(const URI& uri)
 {
-	const Plugins::iterator i = _plugins->find(uri);
+	const auto i = _plugins->find(uri);
 	return (i == _plugins->end()) ? std::shared_ptr<PluginModel>() : (*i).second;
 }
 
@@ -152,7 +152,7 @@ ClientStore::_plugin(const Atom& uri)
 	/* FIXME: Should probably be stored with URIs rather than strings, to make
 	   this a fast case. */
 
-	const Plugins::iterator i = _plugins->find(URI(_uris.forge.str(uri, false)));
+	const auto i = _plugins->find(URI(_uris.forge.str(uri, false)));
 	return (i == _plugins->end()) ? std::shared_ptr<PluginModel>() : (*i).second;
 }
 
@@ -165,7 +165,7 @@ ClientStore::plugin(const URI& uri) const
 std::shared_ptr<ObjectModel>
 ClientStore::_object(const raul::Path& path)
 {
-	const iterator i = find(path);
+	const auto i = find(path);
 	if (i == end()) {
 		return nullptr;
 	} else {
@@ -235,7 +235,7 @@ ClientStore::operator()(const Copy&)
 void
 ClientStore::operator()(const Move& msg)
 {
-	const iterator top = find(msg.old_path);
+	const auto top = find(msg.old_path);
 	if (top != end()) {
 		rename(top, msg.new_path);
 	}
@@ -250,8 +250,6 @@ ClientStore::message(const Message& msg)
 void
 ClientStore::operator()(const Put& msg)
 {
-	using Iterator = Properties::const_iterator;
-
 	const auto& uri        = msg.uri;
 	const auto& properties = msg.properties;
 
@@ -263,12 +261,12 @@ ClientStore::operator()(const Put& msg)
 	               is_graph, is_block, is_port, is_output);
 
 	// Check for specially handled types
-	const Iterator t = properties.find(_uris.rdf_type);
+	const auto t = properties.find(_uris.rdf_type);
 	if (t != properties.end()) {
 		const Atom& type(t->second);
 		if (_uris.pset_Preset == type) {
-			const Iterator p = properties.find(_uris.lv2_appliesTo);
-			const Iterator l = properties.find(_uris.rdfs_label);
+			const auto p = properties.find(_uris.lv2_appliesTo);
+			const auto l = properties.find(_uris.rdfs_label);
 			std::shared_ptr<PluginModel> plug;
 			if (p == properties.end()) {
 				_log.error("Preset <%1%> with no plugin\n", uri.c_str());
@@ -341,8 +339,8 @@ ClientStore::operator()(const Put& msg)
 		PortModel::Direction pdir = (is_output)
 			? PortModel::Direction::OUTPUT
 			: PortModel::Direction::INPUT;
-		uint32_t       index = 0;
-		const Iterator i     = properties.find(_uris.lv2_index);
+		uint32_t   index = 0;
+		const auto i     = properties.find(_uris.lv2_index);
 		if (i != properties.end() && i->second.type() == _uris.forge.Int) {
 			index = i->second.get<int32_t>();
 		}

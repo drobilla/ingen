@@ -67,7 +67,7 @@ Store::find_descendants_end(const iterator parent)
 Store::const_iterator
 Store::find_descendants_end(const const_iterator parent) const
 {
-	const_iterator descendants_end = parent;
+	auto descendants_end = parent;
 	++descendants_end;
 	while (descendants_end != end() &&
 	       descendants_end->first.is_child_of(parent->first)) {
@@ -80,9 +80,9 @@ Store::find_descendants_end(const const_iterator parent) const
 Store::const_range
 Store::children_range(const std::shared_ptr<const Node>& o) const
 {
-	const const_iterator parent = find(o->path());
+	const auto parent = find(o->path());
 	if (parent != end()) {
-		const_iterator first_child = parent;
+		auto first_child = parent;
 		++first_child;
 		return std::make_pair(first_child, find_descendants_end(parent));
 	}
@@ -93,7 +93,7 @@ void
 Store::remove(const iterator top, Objects& removed)
 {
 	if (top != end()) {
-		const iterator descendants_end = find_descendants_end(top);
+		const auto descendants_end = find_descendants_end(top);
 		removed.insert(top, descendants_end);
 		erase(top, descendants_end);
 	}
@@ -109,15 +109,15 @@ Store::rename(const iterator top, const raul::Path& new_path)
 	remove(top, removed);
 
 	// Rename all the removed objects
-	for (Objects::const_iterator i = removed.begin(); i != removed.end(); ++i) {
-		const raul::Path path = (i->first == old_path)
+	for (const auto& r : removed) {
+		const raul::Path path = (r.first == old_path)
 			? new_path
 			: new_path.child(
-				raul::Path(i->first.substr(old_path.base().length() - 1)));
+				raul::Path(r.first.substr(old_path.base().length() - 1)));
 
-		i->second->set_path(path);
-		assert(find(path) == end());  // Shouldn't be dropping objects!
-		emplace(path, i->second);
+		r.second->set_path(path);
+		assert(find(path) == end()); // Shouldn't be dropping objects!
+		emplace(path, r.second);
 	}
 }
 

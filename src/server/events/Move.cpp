@@ -53,7 +53,7 @@ Move::pre_process(PreProcessContext&)
 		return Event::pre_process_done(Status::PARENT_DIFFERS, _msg.new_path);
 	}
 
-	const Store::iterator i = _engine.store()->find(_msg.old_path);
+	const auto i = _engine.store()->find(_msg.old_path);
 	if (i == _engine.store()->end()) {
 		return Event::pre_process_done(Status::NOT_FOUND, _msg.old_path);
 	}

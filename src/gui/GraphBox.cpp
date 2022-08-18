@@ -717,18 +717,17 @@ GraphBox::event_export_image()
 		dialog.set_transient_for(*_window);
 	}
 
-	using Types = std::map<std::string, std::string>;
-	Types types;
+	std::map<std::string, std::string> types;
 	types["*.dot"] = "Graphviz DOT";
 	types["*.pdf"] = "Portable Document Format";
 	types["*.ps"]  = "PostScript";
 	types["*.svg"] = "Scalable Vector Graphics";
-	for (Types::const_iterator t = types.begin(); t != types.end(); ++t) {
+	for (const auto& t : types) {
 		Gtk::FileFilter filt;
-		filt.add_pattern(t->first);
-		filt.set_name(t->second);
+		filt.add_pattern(t.first);
+		filt.set_name(t.second);
 		dialog.add_filter(filt);
-		if (t->first == "*.pdf") {
+		if (t.first == "*.pdf") {
 			dialog.set_filter(filt);
 		}
 	}

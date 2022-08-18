@@ -170,7 +170,7 @@ Configuration::parse(int argc, char** argv)
 	for (int i = 1; i < argc; ++i) {
 		if (argv[i][0] != '-' || !strcmp(argv[i], "-")) {
 			// File argument
-			const Options::iterator o = _options.find("load");
+			const auto o = _options.find("load");
 			if (!o->second.value.is_valid()) {
 				_options.find("load")->second.value = _forge.alloc(argv[i]);
 			} else {
@@ -184,7 +184,7 @@ Configuration::parse(int argc, char** argv)
 				name = name.substr(0, name.find('='));
 			}
 
-			const Options::iterator o = _options.find(name);
+			const auto o = _options.find(name);
 			if (o == _options.end()) {
 				throw OptionError(fmt("Unrecognized option `%1%'", name));
 			} else if (o->second.type == _forge.Bool) { // --flag
@@ -200,13 +200,13 @@ Configuration::parse(int argc, char** argv)
 			// Short option
 			const size_t len = strlen(argv[i]);
 			for (size_t j = 1; j < len; ++j) {
-				const char                 letter = argv[i][j];
-				const ShortNames::iterator n      = _short_names.find(letter);
+				const char letter = argv[i][j];
+				const auto n      = _short_names.find(letter);
 				if (n == _short_names.end()) {
 					throw OptionError(fmt("Unrecognized option `%1%'", letter));
 				}
 
-				const Options::iterator o = _options.find(n->second);
+				const auto o = _options.find(n->second);
 				if (j < len - 1) {  // Non-final POSIX style flag
 					if (o->second.type != _forge.Bool) {
 						throw OptionError(
@@ -244,12 +244,12 @@ Configuration::load(const FilePath& path)
 
 	Sord::Node nodemm(world, Sord::Node::URI, reinterpret_cast<const char*>(node.buf));
 	Sord::Node nil;
-	for (Sord::Iter i = model.find(nodemm, nil, nil); !i.end(); ++i) {
-		const Sord::Node& pred = i.get_predicate();
-		const Sord::Node& obj  = i.get_object();
+	for (auto i = model.find(nodemm, nil, nil); !i.end(); ++i) {
+		const auto& pred = i.get_predicate();
+		const auto& obj  = i.get_object();
 		if (pred.to_string().substr(0, sizeof(INGEN_NS) - 1) == INGEN_NS) {
 			const std::string key = pred.to_string().substr(sizeof(INGEN_NS) - 1);
-			const Keys::iterator k = _keys.find(key);
+			const auto        k   = _keys.find(key);
 			if (k != _keys.end() && obj.type() == Sord::Node::LITERAL) {
 				set_value_from_string(_options.find(k->second)->second,
 				                      obj.to_string());

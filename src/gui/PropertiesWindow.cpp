@@ -276,8 +276,9 @@ PropertiesWindow::set_object(const std::shared_ptr<const ObjectModel>& model)
 	}
 
 	for (const auto& e : entries) {
-		Gtk::ListStore::iterator ki  = _key_store->append();
-		Gtk::ListStore::Row      row = *ki;
+		auto ki  = _key_store->append();
+		auto row = *ki;
+
 		row[_combo_columns.uri_col]   = e.second.string();
 		row[_combo_columns.label_col] = e.first;
 	}
@@ -521,7 +522,7 @@ PropertiesWindow::on_change(const URI& key)
 std::string
 PropertiesWindow::active_key() const
 {
-	const Gtk::ListStore::iterator iter = _key_combo->get_active();
+	const auto iter = _key_combo->get_active();
 	if (!iter) {
 		return "";
 	}

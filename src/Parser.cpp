@@ -66,16 +66,17 @@ Parser::find_resources(Sord::World& world,
 	model.load_file(env, SERD_TURTLE, manifest_uri.string());
 
 	std::set<ResourceRecord> resources;
-	for (Sord::Iter i = model.find(nil, rdf_type, type); !i.end(); ++i) {
-		const Sord::Node  resource     = i.get_subject();
-		const std::string resource_uri = resource.to_c_string();
-		Sord::Iter        f            = model.find(resource, rdfs_seeAlso, nil);
-		std::string       file_path;
+	for (auto i = model.find(nil, rdf_type, type); !i.end(); ++i) {
+		const auto  resource = i.get_subject();
+		auto        f        = model.find(resource, rdfs_seeAlso, nil);
+
+		std::string file_path;
 		if (!f.end()) {
 			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), nullptr);
 			file_path = reinterpret_cast<const char*>(p);
 			serd_free(p);
 		}
+
 		resources.insert(ResourceRecord(resource, file_path));
 	}
 
@@ -112,7 +113,7 @@ get_properties(ingen::World&                      world,
 
 	const Sord::Node nil;
 	Properties       props;
-	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
+	for (auto i = model.find(subject, nil, nil); !i.end(); ++i) {
 		if (!skip_property(world.uris(), i.get_predicate())) {
 			forge.clear();
 			forge.read(
@@ -162,7 +163,7 @@ get_port(ingen::World&     world,
 
 	// Get index if requested (for Graphs)
 	if (index) {
-		Properties::const_iterator i = props.find(uris.lv2_index);
+		const auto i = props.find(uris.lv2_index);
 		if (i == props.end()
 		    || i->second.type() != world.forge().Int
 		    || i->second.get<int32_t>() < 0) {
@@ -173,8 +174,8 @@ get_port(ingen::World&     world,
 	}
 
 	// Get symbol
-	Properties::const_iterator s = props.find(uris.lv2_symbol);
-	std::string                sym;
+	auto        s = props.find(uris.lv2_symbol);
+	std::string sym;
 	if (s != props.end() && s->second.type() == world.forge().String) {
 		sym = s->second.ptr<char>();
 	} else {
@@ -353,7 +354,7 @@ parse_graph(ingen::World&                        world,
 	// For each port on this graph
 	using PortRecords = std::map<uint32_t, PortRecord>;
 	PortRecords ports;
-	for (Sord::Iter p = model.find(graph, lv2_port, nil); !p.end(); ++p) {
+	for (auto p = model.find(graph, lv2_port, nil); !p.end(); ++p) {
 		Sord::Node port = p.get_object();
 
 		// Get all properties
@@ -386,7 +387,7 @@ parse_graph(ingen::World&                        world,
 	}
 
 	// For each block in this graph
-	for (Sord::Iter n = model.find(subject, ingen_block, nil); !n.end(); ++n) {
+	for (auto n = model.find(subject, ingen_block, nil); !n.end(); ++n) {
 		Sord::Node node     = n.get_object();
 		URI        node_uri = node;
 		assert(!node_uri.path().empty() && node_uri.path() != "/");
@@ -398,7 +399,7 @@ parse_graph(ingen::World&                        world,
 		            boost::optional<Properties>());
 
 		// For each port on this block
-		for (Sord::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
+		for (auto p = model.find(node, lv2_port, nil); !p.end(); ++p) {
 			Sord::Node port = p.get_object();
 
 			Resource::Graph subctx = Resource::Graph::DEFAULT;
@@ -443,8 +444,8 @@ parse_arc(ingen::World&      world,
 	const Sord::URI  ingen_head(*world.rdf_world(), uris.ingen_head);
 	const Sord::Node nil;
 
-	Sord::Iter t = model.find(subject, ingen_tail, nil);
-	Sord::Iter h = model.find(subject, ingen_head, nil);
+	auto t = model.find(subject, ingen_tail, nil);
+	auto h = model.find(subject, ingen_head, nil);
 
 	if (t.end()) {
 		world.log().error("Arc has no tail\n");
@@ -492,7 +493,7 @@ parse_arcs(ingen::World&      world,
 	const Sord::URI  ingen_arc(*world.rdf_world(), world.uris().ingen_arc);
 	const Sord::Node nil;
 
-	for (Sord::Iter i = model.find(subject, ingen_arc, nil); !i.end(); ++i) {
+	for (auto i = model.find(subject, ingen_arc, nil); !i.end(); ++i) {
 		parse_arc(world, target, model, base_uri, i.get_object(), graph);
 	}
 
@@ -531,7 +532,7 @@ parse(ingen::World&                        world,
 	// Get all subjects and their types (?subject a ?type)
 	using Subjects = std::map< Sord::Node, std::set<Sord::Node> >;
 	Subjects subjects;
-	for (Sord::Iter i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
+	for (auto i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
 		const Sord::Node& rdf_class = i.get_object();
 
 		assert(rdf_class.is_uri());

@@ -515,7 +515,7 @@ Delta::execute(RunContext& ctx)
 	auto* const block  = dynamic_cast<BlockImpl*>(_object);
 	auto* const port   = dynamic_cast<PortImpl*>(_object);
 
-	std::vector<SpecialType>::const_iterator t = _types.begin();
+	auto t = _types.begin();
 	for (const auto& p : _properties) {
 		const URI&  key   = p.first;
 		const Atom& value = p.second;
