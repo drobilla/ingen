@@ -83,9 +83,31 @@ ControlBindings::binding_key(const Atom& binding) const
 	if (binding.type() == uris.atom_Object) {
 		const auto* obj = static_cast<const LV2_Atom_Object_Body*>(binding.get_body());
 		if (obj->otype == uris.midi_Bender) {
-			key = Key(Type::MIDI_BENDER);
+			lv2_atom_object_body_get(binding.size(),
+			                         obj,
+			                         uris.midi_channel.urid(),
+			                         &num,
+			                         nullptr);
+			if (!num) {
+				_engine.log().rt_error("bender binding missing channel\n");
+			} else if (num->type != uris.atom_Int) {
+				_engine.log().rt_error("bender channel not an integer\n");
+			} else {
+				key = Key(Type::MIDI_BENDER, reinterpret_cast<LV2_Atom_Int*>(num)->body);
+			}
 		} else if (obj->otype == uris.midi_ChannelPressure) {
-			key = Key(Type::MIDI_CHANNEL_PRESSURE);
+			lv2_atom_object_body_get(binding.size(),
+			                         obj,
+			                         uris.midi_channel.urid(),
+			                         &num,
+			                         nullptr);
+			if (!num) {
+				_engine.log().rt_error("pressure binding missing channel\n");
+			} else if (num->type != uris.atom_Int) {
+				_engine.log().rt_error("pressure channel not an integer\n");
+			} else {
+				key = Key(Type::MIDI_CHANNEL_PRESSURE, reinterpret_cast<LV2_Atom_Int*>(num)->body);
+			}
 		} else if (obj->otype == uris.midi_Controller) {
 			lv2_atom_object_body_get(binding.size(),
 			                         obj,
@@ -125,19 +147,19 @@ ControlBindings::midi_event_key(uint16_t, const uint8_t* buf, uint16_t& value)
 	switch (lv2_midi_message_type(buf)) {
 	case LV2_MIDI_MSG_CONTROLLER:
 		value = buf[2];
-		return {Type::MIDI_CC, static_cast<int8_t>(buf[1])};
+		return {Type::MIDI_CC, static_cast<int16_t>(((buf[0] & 0x0F) << 8 ) | buf[1])};
 	case LV2_MIDI_MSG_BENDER:
 		value = (buf[2] << 7U) + buf[1];
-		return {Type::MIDI_BENDER};
+		return {Type::MIDI_BENDER, static_cast<int16_t>((buf[0] & 0x0F))};
 	case LV2_MIDI_MSG_CHANNEL_PRESSURE:
 		value = buf[1];
-		return {Type::MIDI_CHANNEL_PRESSURE};
+		return {Type::MIDI_CHANNEL_PRESSURE, static_cast<int16_t>((buf[0] & 0x0F))};
 	case LV2_MIDI_MSG_NOTE_ON:
 		value = 1;
-		return {Type::MIDI_NOTE, buf[1]};
+		return {Type::MIDI_NOTE, static_cast<int16_t>(((buf[0] & 0x0F) << 8 ) | buf[1])};
 	case LV2_MIDI_MSG_NOTE_OFF:
 		value = 0;
-		return {Type::MIDI_NOTE, buf[1]};
+		return {Type::MIDI_NOTE, static_cast<int16_t>(((buf[0] & 0x0F) << 8 ) | buf[1])};
 	default:
 		return {};
 	}
@@ -325,9 +347,13 @@ forge_binding(const URIs&           uris,
 		break;
 	case ControlBindings::Type::MIDI_BENDER:
 		lv2_atom_forge_object(forge, &frame, 0, uris.midi_Bender);
+		lv2_atom_forge_key(forge, uris.midi_channel);
+		lv2_atom_forge_int(forge, value);
 		break;
 	case ControlBindings::Type::MIDI_CHANNEL_PRESSURE:
 		lv2_atom_forge_object(forge, &frame, 0, uris.midi_ChannelPressure);
+		lv2_atom_forge_key(forge, uris.midi_channel);
+		lv2_atom_forge_int(forge, value);
 		break;
 	case ControlBindings::Type::MIDI_NOTE:
 		lv2_atom_forge_object(forge, &frame, 0, uris.midi_NoteOn);
