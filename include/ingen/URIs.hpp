@@ -162,6 +162,7 @@ public:
 	const Quark midi_binding;
 	const Quark midi_controllerNumber;
 	const Quark midi_noteNumber;
+	const Quark midi_channel;
 	const Quark morph_AutoMorphPort;
 	const Quark morph_MorphPort;
 	const Quark morph_currentType;
