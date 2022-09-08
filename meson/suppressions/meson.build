@@ -1,5 +1,5 @@
 # Copyright 2020-2022 David Robillard <d@drobilla.net>
-# SPDX-License-Identifier: CC0-1.0 OR GPL-3.0-or-later
+# SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
 # Project-specific warning suppressions.
 #
