@@ -1,0 +1,16 @@
+Checks: >
+  -*-no-malloc,
+  -*-vararg,
+  -android-cloexec-fopen,
+  -cert-err33-c,
+  -concurrency-mt-unsafe,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -fuchsia-statically-constructed-objects,
+  -google-readability-casting,
+  -google-readability-todo,
+  -readability-function-cognitive-complexity,
+InheritParentConfig: true

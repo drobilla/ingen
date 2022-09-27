@@ -1,0 +1,3 @@
+Checks: >
+  -google-readability-todo,
+InheritParentConfig: true
