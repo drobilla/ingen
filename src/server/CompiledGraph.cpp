@@ -37,6 +37,7 @@
 #include <cstdio>
 #include <exception>
 #include <limits>
+#include <memory>
 #include <utility>
 
 namespace ingen {
@@ -71,7 +72,7 @@ has_provider_with_many_dependants(const BlockImpl* n)
 }
 
 CompiledGraph::CompiledGraph(GraphImpl* graph)
-	: _master(std::unique_ptr<Task>(new Task(Task::Mode::SEQUENTIAL)))
+	: _master{std::make_unique<Task>(Task::Mode::SEQUENTIAL)}
 {
 	compile_graph(graph);
 }

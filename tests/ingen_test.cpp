@@ -78,7 +78,7 @@ run(int argc, char** argv)
 {
 	// Create world
 	try {
-		world = std::unique_ptr<World>{new World(nullptr, nullptr, nullptr)};
+		world = std::make_unique<World>(nullptr, nullptr, nullptr);
 		world->load_configuration(argc, argv);
 	} catch (std::exception& e) {
 		std::cout << "ingen: " << e.what() << std::endl;

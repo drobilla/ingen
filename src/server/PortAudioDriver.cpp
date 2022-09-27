@@ -85,8 +85,7 @@ PortAudioDriver::attach()
 
 	_sample_rate = in_dev->defaultSampleRate;
 
-	_timer = std::unique_ptr<FrameTimer>(
-		new FrameTimer(_block_length, _sample_rate));
+	_timer = std::make_unique<FrameTimer>(_block_length, _sample_rate);
 
 	return true;
 }

@@ -62,8 +62,7 @@ run(int argc, char** argv)
 {
 	// Create world
 	try {
-		world = std::unique_ptr<ingen::World>{
-		    new ingen::World(nullptr, nullptr, nullptr)};
+		world = std::make_unique<ingen::World>(nullptr, nullptr, nullptr);
 
 		world->conf().add(
 			"output", "output", 'O', "File to write benchmark output",

@@ -20,7 +20,6 @@ Checks: >
   -llvmlibc-*,
   -misc-unused-parameters,
   -modernize-concat-nested-namespaces,
-  -modernize-make-unique,
   -modernize-pass-by-value,
   -modernize-return-braced-init-list,
   -modernize-use-nodiscard,

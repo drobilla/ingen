@@ -99,8 +99,7 @@ run(int argc, char** argv)
 {
 	// Create world
 	try {
-		world = std::unique_ptr<ingen::World>(
-			new ingen::World(nullptr, nullptr, nullptr));
+		world = std::make_unique<ingen::World>(nullptr, nullptr, nullptr);
 		world->load_configuration(argc, argv);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", std::cout);
