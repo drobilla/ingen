@@ -50,7 +50,7 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
 {
 	// Use <ingen:/> as base URI, so relative URIs are like bundle paths
 
-	serd_uri_parse(_base.buf, &_base_uri);
+	serd_uri_parse(USTR("ingen:/"), &_base_uri);
 
 	// Set up serialisation environment
 	serd_env_set_prefix_from_strings(_env, USTR("atom"),  USTR("http://lv2plug.in/ns/ext/atom#"));

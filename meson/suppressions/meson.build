@@ -29,7 +29,6 @@ if is_variable('cpp')
         '-Wno-implicit-float-conversion',
         '-Wno-implicit-int-conversion',
         '-Wno-nullability-extension',
-        '-Wno-nullable-to-nonnull-conversion',
         '-Wno-padded',
         '-Wno-reserved-id-macro',
         '-Wno-shadow-field',

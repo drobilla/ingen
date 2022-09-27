@@ -226,7 +226,7 @@ UndoStack::save(FILE* stream, const char* name)
 
 	const SerdNode base = serd_node_from_string(SERD_URI, USTR("ingen:/"));
 	SerdURI        base_uri;
-	serd_uri_parse(base.buf, &base_uri);
+	serd_uri_parse(USTR("ingen:/"), &base_uri);
 
 	SerdWriter* writer =
 	    serd_writer_new(SERD_TURTLE,
