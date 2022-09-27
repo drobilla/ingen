@@ -54,10 +54,10 @@ CreateGraph::CreateGraph(Engine&                           engine,
                          int32_t                           id,
                          SampleCount                       timestamp,
                          raul::Path                        path,
-                         const Properties&                 properties)
+                         Properties                        properties)
     : Event(engine, client, id, timestamp)
     , _path(std::move(path))
-    , _properties(properties)
+    , _properties(std::move(properties))
 {}
 
 CreateGraph::~CreateGraph() = default;

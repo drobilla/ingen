@@ -55,7 +55,7 @@ public:
 	            int32_t                           id,
 	            SampleCount                       timestamp,
 	            raul::Path                        path,
-	            const Properties&                 properties);
+	            Properties                        properties);
 
 	~CreateGraph() override;
 
