@@ -39,6 +39,7 @@
 #include <boost/intrusive/bstree.hpp>
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <string>
@@ -74,6 +75,12 @@ ControlBindings::port_binding(PortImpl* port) const
 	return binding_key(binding);
 }
 
+static int16_t
+get_atom_num(const LV2_Atom* const atom)
+{
+	return static_cast<int16_t>(reinterpret_cast<const LV2_Atom_Int*>(atom)->body);
+}
+
 ControlBindings::Key
 ControlBindings::binding_key(const Atom& binding) const
 {
@@ -93,7 +100,7 @@ ControlBindings::binding_key(const Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().rt_error("Bender channel not an integer\n");
 			} else {
-				key = Key(Type::MIDI_BENDER, reinterpret_cast<LV2_Atom_Int*>(num)->body);
+				key = Key(Type::MIDI_BENDER, get_atom_num(num));
 			}
 		} else if (obj->otype == uris.midi_ChannelPressure) {
 			lv2_atom_object_body_get(binding.size(),
@@ -106,7 +113,7 @@ ControlBindings::binding_key(const Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().rt_error("Pressure channel not an integer\n");
 			} else {
-				key = Key(Type::MIDI_CHANNEL_PRESSURE, reinterpret_cast<LV2_Atom_Int*>(num)->body);
+				key = Key(Type::MIDI_CHANNEL_PRESSURE, get_atom_num(num));
 			}
 		} else if (obj->otype == uris.midi_Controller) {
 			lv2_atom_object_body_get(binding.size(),
@@ -119,7 +126,7 @@ ControlBindings::binding_key(const Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().rt_error("Controller number not an integer\n");
 			} else {
-				key = Key(Type::MIDI_CC, reinterpret_cast<LV2_Atom_Int*>(num)->body);
+				key = Key(Type::MIDI_CC, get_atom_num(num));
 			}
 		} else if (obj->otype == uris.midi_NoteOn) {
 			lv2_atom_object_body_get(binding.size(),
@@ -132,7 +139,7 @@ ControlBindings::binding_key(const Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().rt_error("Note number not an integer\n");
 			} else {
-				key = Key(Type::MIDI_NOTE, reinterpret_cast<LV2_Atom_Int*>(num)->body);
+				key = Key(Type::MIDI_NOTE, get_atom_num(num));
 			}
 		}
 	} else if (binding.type()) {
@@ -142,7 +149,7 @@ ControlBindings::binding_key(const Atom& binding) const
 }
 
 ControlBindings::Key
-ControlBindings::midi_event_key(uint16_t, const uint8_t* buf, uint16_t& value)
+ControlBindings::midi_event_key(const uint8_t* buf, uint16_t& value)
 {
 	switch (lv2_midi_message_type(buf)) {
 	case LV2_MIDI_MSG_CONTROLLER:
@@ -150,7 +157,7 @@ ControlBindings::midi_event_key(uint16_t, const uint8_t* buf, uint16_t& value)
 		return {Type::MIDI_CC,
 		        static_cast<int16_t>(((buf[0] & 0x0FU) << 8U) | buf[1])};
 	case LV2_MIDI_MSG_BENDER:
-		value = (buf[2] << 7U) + buf[1];
+		value = static_cast<uint16_t>((buf[2] << 7U) + buf[1]);
 		return {Type::MIDI_BENDER, static_cast<int16_t>((buf[0] & 0x0FU))};
 	case LV2_MIDI_MSG_CHANNEL_PRESSURE:
 		value = buf[1];
@@ -202,7 +209,7 @@ ControlBindings::port_value_changed(RunContext& ctx,
 		case Type::MIDI_CC:
 			size = 3;
 			buf[0] = LV2_MIDI_MSG_CONTROLLER;
-			buf[1] = key.num;
+			buf[1] = static_cast<uint8_t>(key.num);
 			buf[2] = static_cast<int8_t>(value);
 			break;
 		case Type::MIDI_CHANNEL_PRESSURE:
@@ -223,7 +230,7 @@ ControlBindings::port_value_changed(RunContext& ctx,
 			} else if (value == 0) {
 				buf[0] = LV2_MIDI_MSG_NOTE_OFF;
 			}
-			buf[1] = key.num;
+			buf[1] = static_cast<uint8_t>(key.num);
 			buf[2] = 0x64; // MIDI spec default
 			break;
 		default:
@@ -326,9 +333,9 @@ ControlBindings::port_value_to_control(RunContext& ctx,
 	switch (type) {
 	case Type::MIDI_CC:
 	case Type::MIDI_CHANNEL_PRESSURE:
-		return lrintf(normal * 127.0f);
+		return static_cast<int16_t>(lrintf(normal * 127.0f));
 	case Type::MIDI_BENDER:
-		return lrintf(normal * 16383.0f);
+		return static_cast<int16_t>(lrintf(normal * 16383.0f));
 	case Type::MIDI_NOTE:
 		return (value > 0.0f) ? 1 : 0;
 	default:
@@ -451,7 +458,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 	LV2_ATOM_SEQUENCE_FOREACH (seq, ev) {
 		if (ev->body.type == uris.midi_MidiEvent) {
 			const auto* buf = static_cast<const uint8_t*>(LV2_ATOM_BODY(&ev->body));
-			const Key   key = midi_event_key(ev->body.size, buf, value);
+			const Key   key = midi_event_key(buf, value);
 
 			if (_learn_binding && !!key) {
 				finish_learn(ctx, key); // Learn new binding

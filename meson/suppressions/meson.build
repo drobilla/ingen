@@ -27,7 +27,6 @@ if is_variable('cpp')
         '-Wno-format-nonliteral',
         '-Wno-global-constructors',
         '-Wno-implicit-float-conversion',
-        '-Wno-implicit-int-conversion',
         '-Wno-nullability-extension',
         '-Wno-padded',
         '-Wno-reserved-id-macro',

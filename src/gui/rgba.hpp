@@ -35,7 +35,7 @@ rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 inline uint8_t
 mono_interpolate(uint8_t v1, uint8_t v2, float f)
 {
-	return static_cast<int>(rintf((v2) * (f) + (v1) * (1 - (f))));
+	return static_cast<uint8_t>(rintf((v2) * (f) + (v1) * (1 - (f))));
 }
 
 #define RGBA_R(x) (static_cast<uint32_t>(x) >> 24)

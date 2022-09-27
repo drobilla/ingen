@@ -138,7 +138,7 @@ private:
 	                                   boost::intrusive::compare<BindingLess>>;
 
 	static Key
-	midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
+	midi_event_key(const uint8_t* buf, uint16_t& value);
 
 	void set_port_value(RunContext& ctx,
 	                    PortImpl*   port,
