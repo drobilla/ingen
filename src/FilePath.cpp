@@ -105,7 +105,7 @@ FilePath::root_name()
 	}
 #endif
 
-	return FilePath();
+	return {};
 }
 
 FilePath

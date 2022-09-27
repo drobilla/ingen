@@ -83,7 +83,7 @@ boost::optional<URI>
 AtomReader::atom_to_uri(const LV2_Atom* atom)
 {
 	if (!atom) {
-		return boost::optional<URI>();
+		return {};
 	}
 
 	if (atom->type == _uris.atom_URI) {
@@ -112,7 +112,7 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 		_log.warn("Unknown URID %1%\n", str);
 	}
 
-	return boost::optional<URI>();
+	return {};
 }
 
 boost::optional<raul::Path>
@@ -122,7 +122,7 @@ AtomReader::atom_to_path(const LV2_Atom* atom)
 	if (uri && uri_is_path(*uri)) {
 		return uri_to_path(*uri);
 	}
-	return boost::optional<raul::Path>();
+	return {};
 }
 
 Resource::Graph

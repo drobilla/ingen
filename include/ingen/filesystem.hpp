@@ -75,7 +75,7 @@ inline FilePath current_path()
 
 	std::unique_ptr<char, Freer> cpath(realpath(".", nullptr));
 
-	return FilePath(cpath.get());
+	return {cpath.get()};
 }
 
 } // namespace filesystem

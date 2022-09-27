@@ -57,7 +57,7 @@ public:
 
 	bool empty() const { return !_node.buf; }
 
-	std::string string() const { return std::string(c_str(), _node.n_bytes); }
+	std::string string() const { return {c_str(), _node.n_bytes}; }
 	size_t      length() const { return _node.n_bytes; }
 
 	const char* c_str() const
@@ -102,7 +102,7 @@ private:
 	URI(SerdNode node, SerdURI uri);
 
 	static Chunk make_chunk(const SerdChunk& chunk) {
-		return Chunk(reinterpret_cast<const char*>(chunk.buf), chunk.len);
+		return {reinterpret_cast<const char*>(chunk.buf), chunk.len};
 	}
 
 	SerdURI  _uri;

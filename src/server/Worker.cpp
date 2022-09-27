@@ -110,7 +110,7 @@ Worker::Schedule::feature(World&, Node* n)
 	f->URI  = LV2_WORKER__schedule;
 	f->data = data;
 
-	return std::shared_ptr<LV2_Feature>(f, &free_feature);
+	return {f, &free_feature};
 }
 
 Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)

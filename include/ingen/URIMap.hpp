@@ -58,8 +58,7 @@ public:
 
 		std::shared_ptr<LV2_Feature> feature(World&, Node*) override
 		{
-			return std::shared_ptr<LV2_Feature>(&_feature,
-			                                    NullDeleter<LV2_Feature>);
+			return {&_feature, NullDeleter<LV2_Feature>};
 		}
 
 	private:

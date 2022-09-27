@@ -35,7 +35,7 @@ Atom
 Forge::make_urid(const ingen::URI& u)
 {
 	const LV2_URID urid = _map.map_uri(u.string());
-	return Atom(sizeof(int32_t), URID, &urid);
+	return {sizeof(int32_t), URID, &urid};
 }
 
 std::string

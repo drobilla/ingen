@@ -168,7 +168,7 @@ get_port(ingen::World&     world,
 		    || i->second.type() != world.forge().Int
 		    || i->second.get<int32_t>() < 0) {
 			world.log().error("Port %1% has no valid index\n", subject);
-			return boost::optional<PortRecord>();
+			return {};
 		}
 		*index = i->second.get<int32_t>();
 	}
@@ -189,7 +189,7 @@ get_port(ingen::World&     world,
 
 	if (!raul::Symbol::is_valid(sym)) {
 		world.log().error("Port %1% has invalid symbol `%2%'\n", subject, sym);
-		return boost::optional<PortRecord>();
+		return {};
 	}
 
 	const raul::Symbol port_sym(sym);
@@ -270,7 +270,7 @@ parse_block(ingen::World&                      world,
 	if (!prototype.is_valid()) {
 		world.log().error("Block %1% (%2%) missing mandatory lv2:prototype\n",
 		                  subject, path);
-		return boost::optional<raul::Path>();
+		return {};
 	}
 
 	const auto* type_uri =
@@ -361,7 +361,7 @@ parse_graph(ingen::World&                        world,
 			world, model, port, ctx, graph_path, &index);
 		if (!port_record) {
 			world.log().error("Invalid port %1%\n", port);
-			return boost::optional<raul::Path>();
+			return {};
 		}
 
 		// Store port information in ports map
@@ -412,7 +412,7 @@ parse_graph(ingen::World&                        world,
 				world, model, port, subctx, block_path, nullptr);
 			if (!port_record) {
 				world.log().error("Invalid port %1%\n", port);
-				return boost::optional<raul::Path>();
+				return {};
 			}
 
 			// Create port and/or set all port properties
@@ -577,7 +577,7 @@ parse(ingen::World&                        world,
 		}
 	}
 
-	return boost::optional<raul::Path>();
+	return {};
 }
 
 bool

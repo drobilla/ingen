@@ -66,7 +66,7 @@ public:
 		f->URI  = LV2_OPTIONS__options;
 		f->data = malloc(sizeof(options));
 		memcpy(f->data, options, sizeof(options));
-		return std::shared_ptr<LV2_Feature>(f, &free_feature);
+		return {f, &free_feature};
 	}
 
 private:

@@ -758,7 +758,7 @@ LV2Block::save_preset(const URI&        uri,
 		return {preset};
 	}
 
-	return boost::optional<Resource>();
+	return {};
 }
 
 void

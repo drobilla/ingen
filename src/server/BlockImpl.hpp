@@ -117,7 +117,7 @@ public:
 	/** Save current state as preset. */
 	virtual boost::optional<Resource>
 	save_preset(const URI&        bundle,
-	            const Properties& props) { return boost::optional<Resource>(); }
+	            const Properties& props) { return {}; }
 
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}

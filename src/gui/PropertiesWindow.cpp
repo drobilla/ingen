@@ -512,7 +512,7 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 		}
 	}
 
-	return Atom();
+	return {};
 }
 
 void

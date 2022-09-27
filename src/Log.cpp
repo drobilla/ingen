@@ -162,7 +162,7 @@ Log::Feature::feature(World& world, Node* block)
 	f->URI  = LV2_LOG__log;
 	f->data = &handle->lv2_log;
 
-	return std::shared_ptr<LV2_Feature>(f, &free_log_feature);
+	return {f, &free_log_feature};
 }
 
 } // namespace ingen

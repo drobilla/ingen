@@ -21,7 +21,6 @@ Checks: >
   -misc-unused-parameters,
   -modernize-concat-nested-namespaces,
   -modernize-pass-by-value,
-  -modernize-return-braced-init-list,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -readability-identifier-length,

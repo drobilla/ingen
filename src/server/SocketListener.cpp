@@ -51,7 +51,7 @@ get_link_target(const char* link_path)
 	// Stat the link to get the required size for the target path
 	struct stat link_stat{};
 	if (lstat(link_path, &link_stat)) {
-		return std::string();
+		return {};
 	}
 
 	// Allocate buffer and read link target
@@ -63,7 +63,7 @@ get_link_target(const char* link_path)
 	}
 
 	free(target);
-	return std::string();
+	return {};
 }
 
 static void ingen_listen(Engine*       engine,

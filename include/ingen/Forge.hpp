@@ -44,38 +44,38 @@ public:
 		return atom.type() == URI || atom.type() == URID;
 	}
 
-	static Atom make()   { return Atom(); }
-	Atom make(int32_t v) { return Atom(sizeof(v), Int, &v); }
-	Atom make(float v)   { return Atom(sizeof(v), Float, &v); }
+	static Atom make()   { return {}; }
+	Atom make(int32_t v) { return {sizeof(v), Int, &v}; }
+	Atom make(float v)   { return {sizeof(v), Float, &v}; }
 	Atom make(bool v) {
 		const int32_t iv = v ? 1 : 0;
-		return Atom(sizeof(int32_t), Bool, &iv);
+		return {sizeof(int32_t), Bool, &iv};
 	}
 
-	Atom make_urid(int32_t v) { return Atom(sizeof(int32_t), URID, &v); }
+	Atom make_urid(int32_t v) { return {sizeof(int32_t), URID, &v}; }
 
 	Atom make_urid(const ingen::URI& u);
 
 	static Atom alloc(uint32_t s, uint32_t t, const void* v) {
-		return Atom(s, t, v);
+		return {s, t, v};
 	}
 
 	Atom alloc(const char* v) {
-		const size_t len = strlen(v);
-		return Atom(len + 1, String, v);
+		const auto len = static_cast<uint32_t>(strlen(v));
+		return {len + 1U, String, v};
 	}
 
 	Atom alloc(const std::string& v) {
-		return Atom(v.length() + 1, String, v.c_str());
+		return {static_cast<uint32_t>(v.length()) + 1U, String, v.c_str()};
 	}
 
 	Atom alloc_uri(const char* v) {
-		const size_t len = strlen(v);
-		return Atom(len + 1, URI, v);
+		const auto len = static_cast<uint32_t>(strlen(v));
+		return {len + 1U, URI, v};
 	}
 
 	Atom alloc_uri(const std::string& v) {
-		return Atom(v.length() + 1, URI, v.c_str());
+		return {static_cast<uint32_t>(v.length()) + 1U, URI, v.c_str()};
 	}
 
 private:

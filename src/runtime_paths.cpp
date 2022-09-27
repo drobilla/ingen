@@ -138,28 +138,28 @@ FilePath
 user_config_dir()
 {
 	if (const char* xdg_config_home = getenv("XDG_CONFIG_HOME")) {
-		return FilePath(xdg_config_home);
+		return {xdg_config_home};
 	}
 
 	if (const char* home = getenv("HOME")) {
 		return FilePath(home) / ".config";
 	}
 
-	return FilePath();
+	return {};
 }
 
 FilePath
 user_data_dir()
 {
 	if (const char* xdg_data_home = getenv("XDG_DATA_HOME")) {
-		return FilePath(xdg_data_home);
+		return {xdg_data_home};
 	}
 
 	if (const char* home = getenv("HOME")) {
 		return FilePath(home) / ".local/share";
 	}
 
-	return FilePath();
+	return {};
 }
 
 std::vector<FilePath>

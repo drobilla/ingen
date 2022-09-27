@@ -150,7 +150,7 @@ BufferFactory::get_buffer(LV2_URID type,
 	try_head->_next = nullptr;
 	try_head->set_type(&BufferFactory::get_buffer, type, value_type);
 	try_head->clear();
-	return BufferRef(try_head);
+	return {try_head};
 }
 
 BufferRef
@@ -159,12 +159,12 @@ BufferFactory::claim_buffer(LV2_URID type, LV2_URID value_type, uint32_t)
 	Buffer* try_head = try_get_buffer(type);
 	if (!try_head) {
 		_engine.world().log().rt_error("Failed to obtain buffer");
-		return BufferRef();
+		return {};
 	}
 
 	try_head->_next = nullptr;
 	try_head->set_type(&BufferFactory::claim_buffer, type, value_type);
-	return BufferRef(try_head);
+	return {try_head};
 }
 
 BufferRef
@@ -185,7 +185,7 @@ BufferFactory::create(LV2_URID type, LV2_URID value_type, uint32_t capacity)
 		capacity = std::max(capacity, default_size(_uris.atom_Sound));
 	}
 
-	return BufferRef(new Buffer(*this, type, value_type, capacity));
+	return {new Buffer(*this, type, value_type, capacity)};
 }
 
 void
