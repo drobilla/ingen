@@ -75,7 +75,7 @@ GraphModel::remove_arcs_on(const std::shared_ptr<PortModel>& p)
 {
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (auto j = _arcs.begin(); j != _arcs.end();) {
+	for (auto j = _graph_arcs.begin(); j != _graph_arcs.end();) {
 		auto next = j;
 		++next;
 
@@ -85,7 +85,7 @@ GraphModel::remove_arcs_on(const std::shared_ptr<PortModel>& p)
 		    || arc->head_path().parent() == p->path()
 		    || arc->head_path() == p->path()) {
 			_signal_removed_arc.emit(arc);
-			_arcs.erase(j); // Cuts our reference
+			_graph_arcs.erase(j); // Cuts our reference
 		}
 		j = next;
 	}
@@ -94,19 +94,19 @@ GraphModel::remove_arcs_on(const std::shared_ptr<PortModel>& p)
 void
 GraphModel::clear()
 {
-	_arcs.clear();
+	_graph_arcs.clear();
 
 	BlockModel::clear();
 
-	assert(_arcs.empty());
+	assert(_graph_arcs.empty());
 	assert(_ports.empty());
 }
 
 std::shared_ptr<ArcModel>
 GraphModel::get_arc(const Node* tail, const Node* head)
 {
-	auto i = _arcs.find(std::make_pair(tail, head));
-	if (i != _arcs.end()) {
+	auto i = _graph_arcs.find(std::make_pair(tail, head));
+	if (i != _graph_arcs.end()) {
 		return std::dynamic_pointer_cast<ArcModel>(i->second);
 	}
 
@@ -142,8 +142,9 @@ GraphModel::add_arc(const std::shared_ptr<ArcModel>& arc)
 		assert(arc->tail() == existing->tail());
 		assert(arc->head() == existing->head());
 	} else {
-		_arcs.emplace(std::make_pair(arc->tail().get(), arc->head().get()),
-		              arc);
+		_graph_arcs.emplace(std::make_pair(arc->tail().get(),
+		                                   arc->head().get()),
+		                    arc);
 		_signal_new_arc.emit(arc);
 	}
 }
@@ -151,11 +152,11 @@ GraphModel::add_arc(const std::shared_ptr<ArcModel>& arc)
 void
 GraphModel::remove_arc(const Node* tail, const Node* head)
 {
-	auto i = _arcs.find(std::make_pair(tail, head));
-	if (i != _arcs.end()) {
+	auto i = _graph_arcs.find(std::make_pair(tail, head));
+	if (i != _graph_arcs.end()) {
 		auto arc = std::dynamic_pointer_cast<ArcModel>(i->second);
 		_signal_removed_arc.emit(arc);
-		_arcs.erase(i);
+		_graph_arcs.erase(i);
 	}
 }
 

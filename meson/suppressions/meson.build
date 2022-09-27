@@ -31,7 +31,6 @@ if is_variable('cpp')
         '-Wno-nullability-extension',
         '-Wno-padded',
         '-Wno-reserved-id-macro',
-        '-Wno-shadow-field',
         '-Wno-shorten-64-to-32',
         '-Wno-sign-conversion',
         '-Wno-switch-enum',

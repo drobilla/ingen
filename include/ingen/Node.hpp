@@ -65,8 +65,8 @@ public:
 	using Arcs    = std::map<ArcsKey, std::shared_ptr<Arc>>;
 
 	// Graphs only
-	Arcs&       arcs()       { return _arcs; }
-	const Arcs& arcs() const { return _arcs; }
+	Arcs&       arcs()       { return _graph_arcs; }
+	const Arcs& arcs() const { return _graph_arcs; }
 
 	// Blocks and graphs only
 	virtual uint32_t        num_ports()          const { return 0; }
@@ -98,7 +98,7 @@ protected:
 		: Resource(uris, path_to_uri(path))
 	{}
 
-	Arcs _arcs; ///< Graphs only
+	Arcs _graph_arcs; ///< Graphs only
 };
 
 } // namespace ingen

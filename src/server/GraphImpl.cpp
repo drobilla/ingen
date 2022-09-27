@@ -122,7 +122,7 @@ GraphImpl::duplicate(Engine&             engine,
 	}
 
 	// Add duplicates of all arcs
-	for (const auto& a : _arcs) {
+	for (const auto& a : _graph_arcs) {
 		auto arc = std::dynamic_pointer_cast<ArcImpl>(a.second);
 		if (arc) {
 			auto t = port_map.find(arc->tail());
@@ -285,17 +285,17 @@ void
 GraphImpl::add_arc(const std::shared_ptr<ArcImpl>& a)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_arcs.emplace(std::make_pair(a->tail(), a->head()), a);
+	_graph_arcs.emplace(std::make_pair(a->tail(), a->head()), a);
 }
 
 std::shared_ptr<ArcImpl>
 GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	auto i = _arcs.find(std::make_pair(tail, dst_port));
-	if (i != _arcs.end()) {
+	auto i = _graph_arcs.find(std::make_pair(tail, dst_port));
+	if (i != _graph_arcs.end()) {
 		auto arc = std::dynamic_pointer_cast<ArcImpl>(i->second);
-		_arcs.erase(i);
+		_graph_arcs.erase(i);
 		return arc;
 	}
 
@@ -306,8 +306,8 @@ bool
 GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	auto i = _arcs.find(std::make_pair(tail, dst_port));
-	return (i != _arcs.end());
+	auto i = _graph_arcs.find(std::make_pair(tail, dst_port));
+	return (i != _graph_arcs.end());
 }
 
 void
