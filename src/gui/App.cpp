@@ -47,7 +47,6 @@
 #include "lilv/lilv.h"
 #include "suil/suil.h"
 
-#include <boost/variant/get.hpp>
 #include <glib.h>
 #include <glibmm/main.h>
 #include <glibmm/miscutils.h>
@@ -73,6 +72,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <variant>
 
 namespace ingen {
 namespace gui {
@@ -239,13 +239,13 @@ App::serialiser()
 void
 App::message(const Message& msg)
 {
-	if (const Response* const r = boost::get<Response>(&msg)) {
+	if (const Response* const r = std::get_if<Response>(&msg)) {
 		response(r->id, r->status, r->subject);
-	} else if (const Error* const e = boost::get<Error>(&msg)) {
+	} else if (const Error* const e = std::get_if<Error>(&msg)) {
 		error_message(e->message);
-	} else if (const Put* const p = boost::get<Put>(&msg)) {
+	} else if (const Put* const p = std::get_if<Put>(&msg)) {
 		put(p->uri, p->properties, p->ctx);
-	} else if (const SetProperty* const s = boost::get<SetProperty>(&msg)) {
+	} else if (const SetProperty* const s = std::get_if<SetProperty>(&msg)) {
 		property_change(s->subject, s->predicate, s->value, s->ctx);
 	}
 }

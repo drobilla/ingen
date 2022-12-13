@@ -37,7 +37,6 @@
 #include "raul/Path.hpp"
 #include "raul/Process.hpp"
 
-#include <boost/variant/get.hpp>
 #include <glib.h>
 #include <glibmm/main.h>
 #include <glibmm/signalproxy.h>
@@ -62,6 +61,7 @@
 #include <string>
 #include <sys/time.h>
 #include <utility>
+#include <variant>
 
 namespace ingen {
 namespace gui {
@@ -75,9 +75,9 @@ ConnectWindow::ConnectWindow(BaseObjectType*            cobject,
 void
 ConnectWindow::message(const Message& msg)
 {
-	if (const Response* const r = boost::get<Response>(&msg)) {
+	if (const Response* const r = std::get_if<Response>(&msg)) {
 		ingen_response(r->id, r->status, r->subject);
-	} else if (const Error* const e = boost::get<Error>(&msg)) {
+	} else if (const Error* const e = std::get_if<Error>(&msg)) {
 		error(e->message);
 	}
 }

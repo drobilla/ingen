@@ -22,12 +22,12 @@
 #include "ingen/client/SigClientInterface.hpp"
 #include "raul/Symbol.hpp"
 
-#include <boost/variant/get.hpp>
 #include <glibmm/signalproxy.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 
 #include <string>
+#include <variant>
 
 namespace ingen {
 namespace gui {
@@ -196,7 +196,7 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 void
 BreadCrumbs::message(const Message& msg)
 {
-	if (const Del* const del = boost::get<Del>(&msg)) {
+	if (const Del* const del = std::get_if<Del>(&msg)) {
 		object_destroyed(del->uri);
 	}
 }

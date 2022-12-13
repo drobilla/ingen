@@ -29,7 +29,7 @@
 #include "events/Move.hpp"
 #include "events/Undo.hpp"
 
-#include <boost/variant/apply_visitor.hpp>
+#include <variant>
 
 namespace ingen {
 namespace server {
@@ -47,7 +47,7 @@ EventWriter::now() const
 void
 EventWriter::message(const Message& msg)
 {
-	boost::apply_visitor(*this, msg);
+	std::visit(*this, msg);
 }
 
 void

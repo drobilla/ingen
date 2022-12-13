@@ -19,11 +19,10 @@
 #include "ingen/URI.hpp"
 #include "raul/Socket.hpp"
 
-#include <boost/variant/get.hpp>
-
 #include <memory>
 #include <sys/socket.h>
 #include <utility>
+#include <variant>
 
 #ifndef MSG_NOSIGNAL
 #    define MSG_NOSIGNAL 0
@@ -43,7 +42,7 @@ void
 SocketWriter::message(const Message& message)
 {
 	TurtleWriter::message(message);
-	if (boost::get<BundleEnd>(&message)) {
+	if (std::get_if<BundleEnd>(&message)) {
 		// Send a null byte to indicate end of bundle
 		const char end[] = { 0 };
 		send(_socket->fd(), end, 1, MSG_NOSIGNAL);

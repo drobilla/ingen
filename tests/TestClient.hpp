@@ -23,7 +23,7 @@
 #include "ingen/Status.hpp"
 #include "ingen/URI.hpp"
 
-#include <boost/variant/get.hpp>
+#include <variant>
 
 #include <cstdlib>
 
@@ -39,7 +39,7 @@ public:
 	URI uri() const override { return URI("ingen:testClient"); }
 
 	void message(const Message& msg) override {
-		if (const Response* const response = boost::get<Response>(&msg)) {
+		if (const Response* const response = std::get_if<Response>(&msg)) {
 			if (response->status != Status::SUCCESS) {
 				_log.error("error on message %1%: %2% (%3%)\n",
 				           response->id,
@@ -47,7 +47,7 @@ public:
 				           response->subject);
 				exit(EXIT_FAILURE);
 			}
-		} else if (const Error* const error = boost::get<Error>(&msg)) {
+		} else if (const Error* const error = std::get_if<Error>(&msg)) {
 			_log.error("error: %1%\n", error->message);
 			exit(EXIT_FAILURE);
 		}

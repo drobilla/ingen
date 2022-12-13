@@ -64,13 +64,12 @@
 #include "raul/Path.hpp"
 #include "serd/serd.h"
 
-#include <boost/variant/apply_visitor.hpp>
-
 #include <cassert>
 #include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
+#include <variant>
 
 namespace ingen {
 
@@ -92,7 +91,7 @@ AtomWriter::finish_msg()
 void
 AtomWriter::message(const Message& message)
 {
-	boost::apply_visitor(*this, message);
+	std::visit(*this, message);
 }
 
 /** @page protocol

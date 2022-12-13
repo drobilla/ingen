@@ -24,10 +24,9 @@
 #include "ingen/URI.hpp"
 #include "raul/Path.hpp"
 
-#include <boost/variant/variant.hpp>
-
 #include <cstdint>
 #include <string>
+#include <variant>
 
 namespace ingen {
 
@@ -121,22 +120,22 @@ struct Undo {
 	int32_t seq;
 };
 
-using Message = boost::variant<BundleBegin,
-                               BundleEnd,
-                               Connect,
-                               Copy,
-                               Del,
-                               Delta,
-                               Disconnect,
-                               DisconnectAll,
-                               Error,
-                               Get,
-                               Move,
-                               Put,
-                               Redo,
-                               Response,
-                               SetProperty,
-                               Undo>;
+using Message = std::variant<BundleBegin,
+                             BundleEnd,
+                             Connect,
+                             Copy,
+                             Del,
+                             Delta,
+                             Disconnect,
+                             DisconnectAll,
+                             Error,
+                             Get,
+                             Move,
+                             Put,
+                             Redo,
+                             Response,
+                             SetProperty,
+                             Undo>;
 
 } // namespace ingen
 

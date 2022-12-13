@@ -33,7 +33,6 @@
 #include "ingen/paths.hpp"
 #include "raul/Path.hpp"
 
-#include <boost/variant/apply_visitor.hpp>
 #include <sigc++/functors/mem_fun.h>
 
 #include <cassert>
@@ -41,6 +40,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <variant>
 
 namespace ingen {
 namespace client {
@@ -244,7 +244,7 @@ ClientStore::operator()(const Move& msg)
 void
 ClientStore::message(const Message& msg)
 {
-	boost::apply_visitor(*this, msg);
+	std::visit(*this, msg);
 }
 
 void
