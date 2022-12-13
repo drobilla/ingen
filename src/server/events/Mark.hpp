@@ -20,6 +20,8 @@
 #include "Event.hpp"
 #include "types.hpp"
 
+// IWYU pragma: no_include "CompiledGraph.hpp"
+
 #include "raul/Maid.hpp"
 
 #include <map>
@@ -33,7 +35,7 @@ struct BundleEnd;
 
 namespace server {
 
-class CompiledGraph;
+class CompiledGraph; // IWYU pragma: keep
 class Engine;
 class GraphImpl;
 class PreProcessContext;

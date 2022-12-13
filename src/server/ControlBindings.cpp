@@ -38,7 +38,6 @@
 
 #include <boost/intrusive/bstree.hpp>
 
-#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <string>
