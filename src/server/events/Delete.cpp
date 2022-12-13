@@ -48,6 +48,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <string_view>
 
 namespace ingen {
 namespace server {

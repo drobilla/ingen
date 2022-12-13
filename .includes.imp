@@ -20,6 +20,7 @@
                 "<boost/intrusive/options.hpp>", "public" ] },
 
   { "include": [ "<bits/chrono.h>",      "private", "<chrono>",    "public", ] },
+  { "include": [ "<bits/utility.h>",     "private", "<utility>",    "public", ] },
   { "include": [ "<ext/alloc_traits.h>", "private", "<string>",    "public", ] },
   { "include": [ "<ext/alloc_traits.h>", "private", "<vector>",    "public", ] },
   { "include": [ "<gdk/gdkevents.h>",    "private", "<gdk/gdk.h>", "public", ] },

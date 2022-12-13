@@ -20,7 +20,6 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/DataAccess.hpp"
 #include "ingen/EngineBase.hpp"
-#include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/InstanceAccess.hpp"
 #include "ingen/LV2Features.hpp"
@@ -40,9 +39,11 @@
 #include "sord/sordmm.hpp"
 
 #include <cstdint>
+#include <filesystem>
 #include <list>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utility>
 

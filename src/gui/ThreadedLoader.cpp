@@ -20,13 +20,11 @@
 
 #include "ingen/Log.hpp"
 #include "ingen/Parser.hpp"
-#include "ingen/Properties.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
 
 #include <boost/optional/optional.hpp>
 #include <glibmm/ustring.h>
@@ -35,8 +33,10 @@
 #include <sigc++/functors/mem_fun.h>
 
 #include <cassert>
+#include <filesystem>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <utility>
 
 using boost::optional;

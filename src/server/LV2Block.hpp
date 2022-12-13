@@ -38,6 +38,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <memory>
 #include <mutex>
 
@@ -59,7 +60,6 @@ struct constant_time_size;
 
 namespace ingen {
 
-class FilePath;
 class Resource;
 class URIs;
 class World;
@@ -91,7 +91,7 @@ public:
 	bool instantiate(BufferFactory& bufs, const LilvState* state);
 
 	LilvInstance* instance() override { return instance(0); }
-	bool          save_state(const FilePath& dir) const override;
+	bool          save_state(const std::filesystem::path& dir) const override;
 
 	BlockImpl* duplicate(Engine&             engine,
 	                     const raul::Symbol& symbol,
@@ -121,7 +121,7 @@ public:
 	                     const BufferRef& buf,
 	                     SampleCount      offset) override;
 
-	static StatePtr load_state(World& world, const FilePath& path);
+	static StatePtr load_state(World& world, const std::filesystem::path& path);
 
 protected:
 	struct Instance : public raul::Noncopyable {

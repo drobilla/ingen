@@ -17,7 +17,6 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/URIMap.hpp"
-#include "ingen/filesystem.hpp"
 #include "ingen/fmt.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
@@ -33,7 +32,9 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <memory>
+#include <sstream>
 #include <thread>
 #include <utility>
 #include <vector>
@@ -232,7 +233,7 @@ Configuration::parse(int argc, char** argv)
 bool
 Configuration::load(const FilePath& path)
 {
-	if (!filesystem::exists(path)) {
+	if (!std::filesystem::exists(path)) {
 		return false;
 	}
 
@@ -280,7 +281,7 @@ Configuration::save(URIMap&            uri_map,
 
 	// Create parent directories if necessary
 	const FilePath dir = path.parent_path();
-	if (!filesystem::create_directories(dir)) {
+	if (!std::filesystem::create_directories(dir)) {
 		throw FileError(fmt("Error creating directory %1% (%2%)",
 		                    dir, strerror(errno)));
 	}

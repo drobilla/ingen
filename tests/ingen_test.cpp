@@ -29,7 +29,6 @@
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
-#include "ingen/filesystem.hpp"
 #include "ingen/fmt.hpp"
 #include "ingen/memory.hpp"
 #include "ingen/runtime_paths.hpp"
@@ -42,9 +41,11 @@
 #include <cstdint>
 #include <cstdlib>
 #include <exception>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utility>
 
@@ -202,7 +203,7 @@ run(int argc, char** argv)
 	auto              r        = world->store()->find(raul::Path("/"));
 	const std::string base     = run_path.stem();
 	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
-	const FilePath    out_path = filesystem::current_path() / out_name;
+	const FilePath    out_path = std::filesystem::current_path() / out_name;
 	world->serialiser()->write_bundle(r->second, URI(out_path));
 
 	// Undo every event (makes the graph identical to the original)
@@ -214,7 +215,7 @@ run(int argc, char** argv)
 	// Save completely undone graph
 	r = world->store()->find(raul::Path("/"));
 	const std::string undo_name = base.substr(0, base.find('.')) + ".undo.ingen";
-	const FilePath    undo_path = filesystem::current_path() / undo_name;
+	const FilePath    undo_path = std::filesystem::current_path() / undo_name;
 	world->serialiser()->write_bundle(r->second, URI(undo_path));
 
 	// Redo every event (makes the graph identical to the pre-undo output)
@@ -226,7 +227,7 @@ run(int argc, char** argv)
 	// Save completely redone graph
 	r = world->store()->find(raul::Path("/"));
 	const std::string redo_name = base.substr(0, base.find('.')) + ".redo.ingen";
-	const FilePath    redo_path = filesystem::current_path() / redo_name;
+	const FilePath    redo_path = std::filesystem::current_path() / redo_name;
 	world->serialiser()->write_bundle(r->second, URI(redo_path));
 
 	serd_env_free(env);

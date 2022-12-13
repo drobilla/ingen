@@ -27,7 +27,6 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/filesystem.hpp"
 #include "ingen/paths.hpp"
 #include "lv2/atom/atom.h"
 #include "lv2/core/lv2.h"
@@ -40,9 +39,12 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <map>
 #include <set>
+#include <sstream>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -591,11 +593,11 @@ Parser::parse_file(ingen::World&                        world,
 	// Get absolute file path
 	FilePath file_path = path;
 	if (!file_path.is_absolute()) {
-		file_path = filesystem::current_path() / file_path;
+		file_path = std::filesystem::current_path() / file_path;
 	}
 
 	// Find file to use as manifest
-	const bool     is_bundle = filesystem::is_directory(file_path);
+	const bool     is_bundle = std::filesystem::is_directory(file_path);
 	const FilePath manifest_path =
 		(is_bundle ? file_path / "manifest.ttl" : file_path);
 

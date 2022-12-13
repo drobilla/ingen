@@ -24,6 +24,7 @@
 #include "lilv/lilv.h"
 
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <string>
@@ -37,7 +38,6 @@ class Symbol;
 namespace ingen {
 
 class Arc;
-class FilePath;
 class URIs;
 
 /** A node in the audio graph.
@@ -75,7 +75,11 @@ public:
 
 	// Plugin blocks only
 	virtual LilvInstance* instance() { return nullptr; }
-	virtual bool save_state(const FilePath& dir) const { return false; }
+
+	virtual bool save_state(const std::filesystem::path& dir) const
+	{
+		return false;
+	}
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;

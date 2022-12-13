@@ -22,20 +22,18 @@
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 
-#include <boost/utility/string_view.hpp>     // IWYU pragma: export
-#include <boost/utility/string_view_fwd.hpp> // IWYU pragma: export
-
 #include <cstddef>
 #include <cstdint>
 #include <ostream>
 #include <string>
+#include <string_view>
 
 namespace ingen {
 
 class INGEN_API URI
 {
 public:
-	using Chunk = boost::string_view;
+	using Chunk = std::string_view;
 
 	URI();
 	explicit URI(const std::string& str);

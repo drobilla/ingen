@@ -17,12 +17,11 @@
 #include "ingen/runtime_paths.hpp"
 
 #include "ingen/FilePath.hpp"
-#include "ingen/filesystem.hpp"
 #include "ingen_config.h"
 
-#include <algorithm>
 #include <cstdlib>
 #include <dlfcn.h>
+#include <filesystem>
 #include <sstream>
 #include <string>
 
@@ -92,7 +91,7 @@ find_in_search_path(const std::string&           name,
 {
 	for (const auto& dir : search_path) {
 		FilePath path = dir / name;
-		if (filesystem::exists(path)) {
+		if (std::filesystem::exists(path)) {
 			return path;
 		}
 	}

@@ -6,7 +6,6 @@
 ##############
 
 unit_tests = [
-  'FilePath',
 ]
 
 foreach test : unit_tests

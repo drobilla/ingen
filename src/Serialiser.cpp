@@ -28,7 +28,6 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/filesystem.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/state/state.h"
@@ -44,11 +43,14 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <set>
+#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace ingen {
@@ -190,12 +192,12 @@ Serialiser::Impl::write_bundle(const std::shared_ptr<const Node>& graph,
                                const URI&                         uri)
 {
 	FilePath path(uri.path());
-	if (filesystem::exists(path) && !filesystem::is_directory(path)) {
+	if (std::filesystem::exists(path) && !std::filesystem::is_directory(path)) {
 		path = path.parent_path();
 	}
 
 	_world.log().info("Writing bundle %1%\n", path);
-	filesystem::create_directories(path);
+	std::filesystem::create_directories(path);
 
 	const FilePath   main_file     = path / "main.ttl";
 	const raul::Path old_root_path = _root_path;
@@ -454,7 +456,7 @@ Serialiser::Impl::serialise_block(const std::shared_ptr<const Node>& block,
 	if (_base_uri.scheme() == "file") {
 		const FilePath base_path  = _base_uri.file_path();
 		const FilePath graph_dir  = base_path.parent_path();
-		const FilePath state_dir  = graph_dir / block->symbol();
+		const FilePath state_dir  = graph_dir / std::string(block->symbol());
 		const FilePath state_file = state_dir / "state.ttl";
 		if (block->save_state(state_dir)) {
 			_model->add_statement(block_id,

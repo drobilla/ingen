@@ -7,7 +7,6 @@ sources = files(
   'ClashAvoider.cpp',
   'ColorContext.cpp',
   'Configuration.cpp',
-  'FilePath.cpp',
   'Forge.cpp',
   'LV2Features.cpp',
   'Library.cpp',
