@@ -80,8 +80,8 @@ run(int argc, char** argv)
 	try {
 		world = std::make_unique<World>(nullptr, nullptr, nullptr);
 		world->load_configuration(argc, argv);
-	} catch (std::exception& e) {
-		std::cout << "ingen: " << e.what() << std::endl;
+	} catch (const std::exception& e) {
+		std::cerr << "ingen: " << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -245,8 +245,13 @@ run(int argc, char** argv)
 int
 main(int argc, char** argv)
 {
-	ingen::set_bundle_path_from_code(
-	    reinterpret_cast<void (*)()>(&ingen::test::ingen_try));
+	try {
+		ingen::set_bundle_path_from_code(
+			reinterpret_cast<void (*)()>(&ingen::test::ingen_try));
 
-	return ingen::test::run(argc, argv);
+		return ingen::test::run(argc, argv);
+	} catch (const std::exception& e) {
+		std::cerr << "ingen: " << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 }
