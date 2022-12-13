@@ -8,7 +8,7 @@ project('ingen', 'cpp',
         default_options: [
           'b_ndebug=if-release',
           'buildtype=release',
-          'cpp_std=c++14',
+          'cpp_std=c++17',
         ])
 
 ingen_src_root = meson.current_source_dir()
