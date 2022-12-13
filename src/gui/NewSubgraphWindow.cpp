@@ -47,8 +47,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
                                      const Glib::RefPtr<Gtk::Builder>& xml)
@@ -138,5 +137,4 @@ NewSubgraphWindow::cancel_clicked()
 	hide();
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

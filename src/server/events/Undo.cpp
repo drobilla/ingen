@@ -28,9 +28,7 @@
 #include <deque>
 #include <memory>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 Undo::Undo(Engine&                           engine,
            const std::shared_ptr<Interface>& client,
@@ -89,6 +87,4 @@ Undo::post_process()
 	respond();
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

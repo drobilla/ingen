@@ -19,8 +19,7 @@
 
 #include <cstdint>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Buffer;
 class RunContext;
@@ -31,7 +30,6 @@ mix(const RunContext&   ctx,
     const Buffer*const* srcs,
     uint32_t            num_srcs);
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_MIX_HPP

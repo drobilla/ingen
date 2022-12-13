@@ -29,8 +29,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 struct GUIModule : public Module {
 	using SigClientInterface = client::SigClientInterface;
@@ -63,8 +62,7 @@ struct GUIModule : public Module {
 	std::shared_ptr<gui::App> app;
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 extern "C" {
 

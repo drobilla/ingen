@@ -30,9 +30,7 @@
 #include <unordered_set>
 #include <utility>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 Mark::Mark(Engine&                           engine,
            const std::shared_ptr<Interface>& client,
@@ -136,6 +134,4 @@ Mark::get_execution() const
 	return Execution::NORMAL;
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

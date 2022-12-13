@@ -38,8 +38,7 @@
 #    include <xmmintrin.h>
 #endif
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 Buffer::Buffer(BufferFactory& bufs,
                LV2_URID       type,
@@ -458,5 +457,4 @@ intrusive_ptr_release(Buffer* b)
 	b->deref();
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

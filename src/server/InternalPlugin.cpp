@@ -28,8 +28,7 @@
 
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 InternalPlugin::InternalPlugin(URIs& uris, const URI& uri, raul::Symbol symbol)
     : PluginImpl(uris, uris.ingen_Internal.urid_atom(), uri)
@@ -76,5 +75,4 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 	return nullptr;
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

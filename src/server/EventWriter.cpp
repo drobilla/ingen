@@ -31,8 +31,7 @@
 
 #include <variant>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
@@ -150,5 +149,4 @@ EventWriter::operator()(const Get& msg)
 	                      _event_mode);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

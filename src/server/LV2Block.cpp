@@ -56,8 +56,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** Partially construct a LV2Block.
  *
@@ -774,5 +773,4 @@ LV2Block::set_port_buffer(uint32_t         voice,
 		buf ? buf->port_data(_ports->at(port_num)->type(), offset) : nullptr);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

@@ -34,8 +34,7 @@
 #include <cstdio>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 PreProcessor::PreProcessor(Engine& engine)
 	: _engine(engine)
@@ -246,5 +245,4 @@ PreProcessor::run()
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

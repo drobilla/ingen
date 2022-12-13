@@ -34,8 +34,7 @@ class Button;
 class Menu;
 } // namespace Gtk
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 class App;
 
@@ -73,7 +72,6 @@ private:
 	Gtk::Entry*         _entry;
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 #endif // INGEN_GUI_URI_ENTRY_HPP

@@ -23,8 +23,7 @@
 #include "lv2/atom/atom.h"
 #include "lv2/atom/util.h"
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 static inline bool
 is_end(const Buffer* buf, const LV2_Atom_Event* ev)
@@ -111,5 +110,4 @@ mix(const RunContext&   ctx,
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

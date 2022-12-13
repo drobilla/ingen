@@ -33,9 +33,7 @@ class Atom;
 namespace client {
 class PortModel;
 } // namespace client
-} // namespace ingen
 
-namespace ingen {
 namespace gui {
 
 class App;

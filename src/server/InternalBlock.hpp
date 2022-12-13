@@ -24,8 +24,7 @@ namespace raul {
 class Symbol;
 } // namespace raul
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 class GraphImpl;
@@ -52,7 +51,6 @@ public:
 	void pre_process(RunContext& ctx) override;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_BLOCKIMPL_HPP

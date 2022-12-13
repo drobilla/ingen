@@ -26,8 +26,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 struct ResizeFeature : public ingen::LV2Features::Feature {
 	static LV2_Resize_Port_Status resize_port(
@@ -62,7 +61,6 @@ struct ResizeFeature : public ingen::LV2Features::Feature {
 	}
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_LV2RESIZEFEATURE_HPP

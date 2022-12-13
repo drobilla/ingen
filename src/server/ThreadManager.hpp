@@ -21,8 +21,7 @@
 
 #include <cassert>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 enum ThreadFlag {
 	THREAD_IS_REAL_TIME = 1,
@@ -61,7 +60,6 @@ public:
 	static thread_local unsigned flags;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_THREADMANAGER_HPP

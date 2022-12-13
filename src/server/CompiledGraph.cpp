@@ -40,8 +40,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** Graph contains ambiguous feedback with no delay nodes. */
 class FeedbackException : public std::exception
@@ -287,5 +286,4 @@ CompiledGraph::dump(const std::string& name) const
 	sink(")\n");
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

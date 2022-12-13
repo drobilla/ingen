@@ -33,8 +33,7 @@
 #include <cstring>
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 static bool
 pa_error(const char* msg, PaError err)
@@ -282,5 +281,4 @@ PortAudioDriver::process_cb(const void*                     inputs,
 	return 0;
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

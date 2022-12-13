@@ -19,7 +19,6 @@ Checks: >
   -llvm-header-guard,
   -llvmlibc-*,
   -misc-unused-parameters,
-  -modernize-concat-nested-namespaces,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -readability-identifier-length,

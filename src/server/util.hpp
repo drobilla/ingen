@@ -29,8 +29,7 @@
 #    define REALTIME
 #endif
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** Set flags to disable denormal processing.
  */
@@ -43,7 +42,6 @@ set_denormal_flags(ingen::Log& log)
 #endif
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_UTIL_HPP

@@ -26,8 +26,7 @@
 
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class BlockImpl;
 class BufferFactory;
@@ -66,7 +65,6 @@ private:
 	const std::string _name;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_GRAPHPLUGIN_HPP

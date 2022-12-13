@@ -39,8 +39,8 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
+
 using std::string;
 
 MessagesWindow::MessagesWindow(BaseObjectType*                   cobject,
@@ -156,5 +156,4 @@ MessagesWindow::clear_clicked()
 	_clear_button->set_sensitive(false);
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

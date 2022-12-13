@@ -42,9 +42,7 @@
 #include <set>
 #include <utility>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 Connect::Connect(Engine&                           engine,
                  const std::shared_ptr<Interface>& client,
@@ -195,6 +193,4 @@ Connect::undo(Interface& target)
 	target.disconnect(_msg.tail, _msg.head);
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

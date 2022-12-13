@@ -43,8 +43,7 @@ namespace raul {
 class Symbol;
 } // namespace raul
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class BufferFactory;
 class Engine;
@@ -216,7 +215,6 @@ protected:
 	bool                     _enabled{true};
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_BLOCKIMPL_HPP

@@ -38,8 +38,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class GraphImpl;
 
@@ -87,5 +86,4 @@ TimeNode::run(RunContext& ctx)
 }
 
 } // namespace internals
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

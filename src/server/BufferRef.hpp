@@ -21,8 +21,7 @@
 
 #include <boost/smart_ptr/intrusive_ptr.hpp> // IWYU pragma: export
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Buffer;
 
@@ -32,7 +31,6 @@ using BufferRef = boost::intrusive_ptr<Buffer>;
 INGEN_SERVER_API void intrusive_ptr_add_ref(Buffer* b);
 INGEN_SERVER_API void intrusive_ptr_release(Buffer* b);
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_BUFFER_REF_HPP

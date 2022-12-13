@@ -74,8 +74,7 @@
 #include <thread>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 thread_local unsigned ThreadManager::flags(0);
 bool                  ThreadManager::single_threaded(true);
@@ -531,5 +530,4 @@ Engine::unregister_client(const std::shared_ptr<Interface>& client)
 	return _broadcaster->unregister_client(client);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

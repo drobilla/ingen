@@ -39,8 +39,7 @@
 #include <cstdint>
 #include <memory>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
                        const Glib::RefPtr<Gtk::Builder>& xml)
@@ -146,5 +145,4 @@ ObjectMenu::on_menu_properties()
 	_app->window_factory()->present_properties(_object);
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

@@ -29,8 +29,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 ObjectModel::ObjectModel(URIs& uris, const raul::Path& path)
 	: Node(uris, path)
@@ -113,5 +112,4 @@ ObjectModel::set_parent(const std::shared_ptr<ObjectModel>& p)
 	_parent = p;
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

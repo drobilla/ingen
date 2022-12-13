@@ -63,8 +63,7 @@
 #include <utility>
 #include <variant>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 ConnectWindow::ConnectWindow(BaseObjectType*            cobject,
                              Glib::RefPtr<Gtk::Builder> xml)
@@ -571,5 +570,4 @@ ConnectWindow::quit()
 	Gtk::Main::quit();
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

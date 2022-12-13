@@ -39,8 +39,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 static const uint32_t monitor_rate = 25.0; // Hz
 
@@ -577,5 +576,4 @@ PortImpl::post_process(RunContext& ctx)
 	monitor(ctx);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

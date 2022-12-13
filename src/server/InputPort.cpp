@@ -37,8 +37,7 @@
 #include <cstdlib>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 InputPort::InputPort(BufferFactory&      bufs,
                      BlockImpl*          parent,
@@ -261,5 +260,4 @@ InputPort::direct_connect() const
 		&& buffer(0)->type() != _bufs.uris().atom_Sequence;
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

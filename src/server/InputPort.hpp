@@ -34,13 +34,11 @@ namespace raul {
 class Symbol;
 } // namespace raul
 
-namespace boost {
-namespace intrusive {
+namespace boost::intrusive {
 
 template <bool Enabled> struct constant_time_size;
 
-} // namespace intrusive
-} // namespace boost
+} // namespace boost::intrusive
 
 namespace ingen {
 

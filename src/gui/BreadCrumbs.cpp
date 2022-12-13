@@ -29,8 +29,7 @@
 #include <string>
 #include <variant>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 using std::string;
 
@@ -227,5 +226,4 @@ BreadCrumbs::object_moved(const raul::Path& old_path, const raul::Path& new_path
 	}
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

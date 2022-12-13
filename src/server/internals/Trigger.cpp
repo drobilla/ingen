@@ -41,8 +41,7 @@
 #include <cmath>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class GraphImpl;
 
@@ -198,5 +197,4 @@ TriggerNode::note_off(RunContext& ctx, uint8_t note_num, FrameTime time)
 }
 
 } // namespace internals
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

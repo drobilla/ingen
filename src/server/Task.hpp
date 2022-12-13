@@ -26,8 +26,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class BlockImpl;
 class RunContext;
@@ -116,7 +115,6 @@ private:
 	std::atomic<bool>     _done{false}; ///< Completion phase
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_TASK_HPP

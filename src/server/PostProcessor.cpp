@@ -21,8 +21,7 @@
 
 #include <cassert>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class PreProcessContext;
 
@@ -112,5 +111,4 @@ PostProcessor::process()
 	_engine.emit_notifications(end_time);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

@@ -40,8 +40,7 @@
 #include <string>
 #include <thread>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 static constexpr const char* const unix_scheme = "unix://";
 
@@ -196,5 +195,4 @@ ingen_listen(Engine* engine, raul::Socket* unix_sock, raul::Socket* net_sock)
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

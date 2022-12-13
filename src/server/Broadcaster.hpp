@@ -29,8 +29,7 @@
 #include <mutex>
 #include <set>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** Broadcaster for all clients.
  *
@@ -121,7 +120,6 @@ private:
 	std::shared_ptr<Interface>           _ignore_client;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_BROADCASTER_HPP

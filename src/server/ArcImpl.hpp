@@ -32,8 +32,7 @@ namespace raul {
 class Path; // IWYU pragma: keep
 } // namespace raul
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class InputPort;
 class PortImpl;
@@ -83,7 +82,6 @@ protected:
 	PortImpl* const _head;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_ARC_IMPL_HPP

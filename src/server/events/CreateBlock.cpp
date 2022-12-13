@@ -48,8 +48,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class RunContext;
 
@@ -201,5 +200,4 @@ CreateBlock::undo(Interface& target)
 }
 
 } // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

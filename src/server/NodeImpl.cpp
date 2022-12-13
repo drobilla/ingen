@@ -27,8 +27,7 @@
 #include <map>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 NodeImpl::NodeImpl(const ingen::URIs&  uris,
                    NodeImpl*           parent,
@@ -54,5 +53,4 @@ NodeImpl::parent_graph() const
 	return dynamic_cast<GraphImpl*>(reinterpret_cast<BlockImpl*>(_parent));
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

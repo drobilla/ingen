@@ -33,8 +33,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class RunContext;
 
@@ -92,5 +91,4 @@ BlockDelayNode::run(RunContext& ctx)
 }
 
 } // namespace internals
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

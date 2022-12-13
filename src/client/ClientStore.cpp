@@ -42,8 +42,7 @@
 #include <utility>
 #include <variant>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 ClientStore::ClientStore(URIs&                                      uris,
                          Log&                                       log,
@@ -501,5 +500,4 @@ ClientStore::operator()(const DisconnectAll& msg)
 	}
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

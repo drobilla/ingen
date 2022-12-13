@@ -32,8 +32,7 @@
 #include <initializer_list>
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 BlockImpl::BlockImpl(PluginImpl*         plugin,
                      const raul::Symbol& symbol,
@@ -297,5 +296,4 @@ BlockImpl::set_port_buffer(uint32_t, uint32_t, const BufferRef&, SampleCount)
 	  << " buffer " << buf << " offset " << offset << std::endl;*/
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

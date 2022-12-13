@@ -74,8 +74,7 @@
 #include <utility>
 #include <variant>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 Gtk::Main* App::_main = nullptr;
 
@@ -502,5 +501,4 @@ App::sample_rate() const
 	return _sample_rate;
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

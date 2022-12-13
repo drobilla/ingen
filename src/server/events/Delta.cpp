@@ -57,8 +57,7 @@
 #include <utility>
 #include <vector>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class PreProcessContext;
 
@@ -675,5 +674,4 @@ Delta::get_execution() const
 }
 
 } // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

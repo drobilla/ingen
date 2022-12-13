@@ -28,8 +28,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 	: _free_audio(nullptr)
@@ -199,5 +198,4 @@ BufferFactory::recycle(Buffer* buf)
 	} while (!head_ptr.compare_exchange_weak(try_head, buf));
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

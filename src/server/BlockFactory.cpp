@@ -40,8 +40,7 @@
 #include <utility>
 #include <vector>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 BlockFactory::BlockFactory(ingen::World& world)
 	: _world(world)
@@ -221,5 +220,4 @@ BlockFactory::load_lv2_plugins()
 	_world.log().info("Loaded %1% plugins\n", _plugins.size());
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

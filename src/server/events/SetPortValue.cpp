@@ -33,9 +33,7 @@
 #include <cassert>
 #include <memory>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 /** Internal */
 SetPortValue::SetPortValue(Engine&                           engine,
@@ -138,6 +136,4 @@ SetPortValue::post_process()
 	}
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

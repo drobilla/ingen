@@ -26,8 +26,7 @@
 #include <memory>
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Driver;
 
@@ -53,8 +52,7 @@ struct JackModule : public Module {
 	}
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 extern "C" {
 

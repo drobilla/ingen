@@ -26,8 +26,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 
@@ -80,7 +79,6 @@ private:
 	SampleCount now() const;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_EVENTWRITER_HPP

@@ -34,8 +34,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 BlockModel::BlockModel(URIs&                               uris,
                        const std::shared_ptr<PluginModel>& plugin,
@@ -292,5 +291,4 @@ BlockModel::set(const std::shared_ptr<ObjectModel>& model)
 	ObjectModel::set(model);
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

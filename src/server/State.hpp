@@ -21,8 +21,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 struct StateDeleter {
 	void operator()(LilvState* state) { lilv_state_free(state); }
@@ -30,7 +29,6 @@ struct StateDeleter {
 
 using StatePtr = std::unique_ptr<LilvState, StateDeleter>;
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_STATE_HPP

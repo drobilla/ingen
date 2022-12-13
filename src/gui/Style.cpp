@@ -23,8 +23,7 @@
 
 #include <string>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 Style::Style(App& app)
     : _app(app)
@@ -97,5 +96,4 @@ Style::get_port_color(const client::PortModel* p)
 	return 0x555555FF;
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

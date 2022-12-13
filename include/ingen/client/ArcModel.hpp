@@ -27,8 +27,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 /** Class to represent a port->port connections in the engine.
  *
@@ -61,7 +60,6 @@ private:
 	const std::shared_ptr<PortModel> _head;
 };
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client
 
 #endif // INGEN_CLIENT_ARCMODEL_HPP

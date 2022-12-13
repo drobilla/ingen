@@ -19,8 +19,7 @@
 #include <memory>
 #include <thread>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 
@@ -37,5 +36,4 @@ private:
 	std::unique_ptr<std::thread> thread;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

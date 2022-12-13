@@ -47,8 +47,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class RunContext;
 
@@ -233,5 +232,4 @@ Disconnect::undo(Interface& target)
 }
 
 } // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

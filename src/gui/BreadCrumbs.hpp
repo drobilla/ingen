@@ -35,8 +35,7 @@
 #include <memory>
 #include <string>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 class App;
 
@@ -122,7 +121,6 @@ private:
 	std::list<BreadCrumb*> _breadcrumbs;
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 #endif // INGEN_GUI_BREADCRUMBS_HPP

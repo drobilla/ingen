@@ -37,8 +37,7 @@
 #include <pthread.h>
 #include <sched.h>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 struct Notification {
 	explicit Notification(PortImpl* p = nullptr,
@@ -194,5 +193,4 @@ RunContext::run()
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

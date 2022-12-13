@@ -50,8 +50,7 @@
 #include <string>
 #include <string_view>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class RunContext;
 
@@ -233,5 +232,4 @@ Delete::undo(Interface& target)
 }
 
 } // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

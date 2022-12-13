@@ -30,8 +30,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 void
 GraphModel::add_child(const std::shared_ptr<ObjectModel>& c)
@@ -181,5 +180,4 @@ GraphModel::polyphonic() const
 	return poly.is_valid() && poly.get<int32_t>();
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

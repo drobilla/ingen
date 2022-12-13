@@ -49,8 +49,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace test {
+namespace ingen::test {
 namespace {
 
 std::unique_ptr<World> world;
@@ -240,8 +239,7 @@ run(int argc, char** argv)
 }
 
 } // namespace
-} // namespace test
-} // namespace ingen
+} // namespace ingen::test
 
 int
 main(int argc, char** argv)

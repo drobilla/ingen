@@ -21,8 +21,7 @@
 #include <cstdint>
 #include <limits>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 struct Load {
 	void update(uint64_t time, uint64_t available) {
@@ -56,7 +55,6 @@ struct Load {
 	bool     changed = false;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_LOAD_HPP

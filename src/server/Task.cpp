@@ -24,8 +24,7 @@
 #include <cstddef>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 void
 Task::run(RunContext& ctx)
@@ -163,5 +162,4 @@ Task::dump(const std::function<void(const std::string&)>& sink,
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

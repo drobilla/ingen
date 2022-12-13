@@ -33,9 +33,7 @@ namespace client {
 class ObjectModel;
 } // namespace client
 
-namespace gui {
-
-namespace rdfs {
+namespace gui::rdfs {
 
 /** Set of URIs. */
 using URISet = std::set<URI>;
@@ -79,8 +77,7 @@ URISet range(World& world, const LilvNode* prop, bool recursive);
 /** Return true iff `inst` is-a `klass`. */
 bool is_a(World& world, const LilvNode* inst, const LilvNode* klass);
 
-} // namespace rdfs
-} // namespace gui
+} // namespace gui::rdfs
 } // namespace ingen
 
 #endif // INGEN_GUI_RDF_HPP

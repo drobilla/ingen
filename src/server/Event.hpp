@@ -36,8 +36,7 @@ namespace raul {
 class Path;
 } // namespace raul
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 class RunContext;
@@ -169,7 +168,6 @@ protected:
 	Mode                       _mode;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_EVENT_HPP

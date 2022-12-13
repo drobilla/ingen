@@ -27,8 +27,7 @@
 #include <set>
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class BlockImpl;
 class GraphImpl;
@@ -79,7 +78,6 @@ compile(raul::Maid& maid, GraphImpl& graph)
 	return CompiledGraph::compile(maid, graph);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_COMPILEDGRAPH_HPP

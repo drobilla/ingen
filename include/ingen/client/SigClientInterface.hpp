@@ -23,8 +23,7 @@
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 /** A LibSigC++ signal emitting interface for clients to use.
  *
@@ -55,7 +54,6 @@ protected:
 	}
 };
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client
 
 #endif

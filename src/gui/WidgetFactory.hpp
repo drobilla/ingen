@@ -23,8 +23,7 @@
 
 #include <string>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 /** Loads widgets from an XML description.
  * Purely static.
@@ -54,7 +53,6 @@ private:
 	static Glib::ustring ui_filename;
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 #endif // INGEN_GUI_WIDGETFACTORY_HPP

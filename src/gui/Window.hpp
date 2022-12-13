@@ -22,9 +22,7 @@
 #include <gtkmm/dialog.h>
 #include <gtkmm/window.h>
 
-namespace ingen {
-
-namespace gui {
+namespace ingen::gui {
 
 class App;
 
@@ -80,7 +78,6 @@ public:
 	App* _app = nullptr;
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 #endif // INGEN_GUI_WINDOW_HPP

@@ -26,8 +26,7 @@
 
 #include <cstdint>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** A "system" port (e.g. a Jack port, an external port on Ingen).
  *
@@ -59,7 +58,6 @@ protected:
 	uint32_t    _driver_index{0};
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_ENGINE_PORT_HPP

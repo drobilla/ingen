@@ -29,8 +29,7 @@
 #include <memory>
 #include <mutex>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class EnginePort;
 
@@ -92,5 +91,4 @@ Move::undo(Interface& target)
 }
 
 } // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

@@ -62,8 +62,7 @@
 #include <utility>
 #include <vector>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 NodeMenu::NodeMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
@@ -277,5 +276,4 @@ NodeMenu::has_control_inputs()
 	return false;
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

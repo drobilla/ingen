@@ -27,8 +27,7 @@
 #include <mutex>
 #include <thread>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 class PostProcessor;
@@ -84,7 +83,6 @@ private:
 	std::thread             _thread;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_PREPROCESSOR_HPP

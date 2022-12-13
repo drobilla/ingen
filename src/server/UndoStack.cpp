@@ -33,8 +33,7 @@
 
 #define USTR(s) reinterpret_cast<const uint8_t*>(s)
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 int
 UndoStack::start_entry()
@@ -264,5 +263,4 @@ UndoStack::save(FILE* stream, const char* name)
 	serd_writer_free(writer);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

@@ -38,16 +38,11 @@ namespace raul {
 class Symbol;
 } // namespace raul
 
-namespace boost {
-namespace intrusive {
-
+namespace boost::intrusive {
 template <bool Enabled> struct constant_time_size;
+} // namespace boost::intrusive
 
-} // namespace intrusive
-} // namespace boost
-
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class ArcImpl;
 class BufferFactory;
@@ -216,7 +211,6 @@ private:
 	bool             _process{false}; ///< True iff graph is enabled
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_GRAPHIMPL_HPP

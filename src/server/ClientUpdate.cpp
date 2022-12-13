@@ -38,8 +38,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 void
 ClientUpdate::put(const URI&        uri,
@@ -166,5 +165,4 @@ ClientUpdate::send(Interface& dest)
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

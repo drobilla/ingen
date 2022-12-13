@@ -41,8 +41,7 @@
 #include <initializer_list>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class GraphImpl;
 
@@ -184,5 +183,4 @@ ControllerNode::control(RunContext& ctx, uint8_t control_num, uint8_t val, Frame
 }
 
 } // namespace internals
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

@@ -25,8 +25,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 Broadcaster::~Broadcaster()
 {
@@ -92,5 +91,4 @@ Broadcaster::send_plugins_to(Interface*                   client,
 	client->bundle_end();
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

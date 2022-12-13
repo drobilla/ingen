@@ -45,9 +45,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 CreatePort::CreatePort(Engine&                           engine,
                        const std::shared_ptr<Interface>& client,
@@ -224,6 +222,4 @@ CreatePort::undo(Interface& target)
 	target.del(_graph_port->uri());
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

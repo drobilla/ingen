@@ -37,8 +37,7 @@
 #include <cstdio>
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** The server side of an Ingen socket connection. */
 class SocketServer
@@ -86,7 +85,6 @@ private:
 	std::shared_ptr<SocketWriter> _writer;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_SERVER_SOCKET_SERVER_HPP

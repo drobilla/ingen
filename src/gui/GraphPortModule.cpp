@@ -42,9 +42,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-
-namespace gui {
+namespace ingen::gui {
 
 GraphPortModule::GraphPortModule(
     GraphCanvas&                                    canvas,
@@ -169,5 +167,4 @@ GraphPortModule::set_selected(gboolean b)
 	}
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

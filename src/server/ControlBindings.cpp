@@ -42,8 +42,7 @@
 #include <cstring>
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
@@ -481,5 +480,4 @@ ControlBindings::post_process(RunContext&, Buffer* buffer)
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

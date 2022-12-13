@@ -36,8 +36,7 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 SuilHost* PluginUI::ui_host = nullptr;
 
@@ -344,5 +343,4 @@ PluginUI::is_resizable() const
 	return !fs_matches && !nrs_matches;
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

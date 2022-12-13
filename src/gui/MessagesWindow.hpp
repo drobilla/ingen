@@ -37,8 +37,7 @@ class Button;
 class TextView;
 } // namespace Gtk
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 class App;
 
@@ -75,7 +74,6 @@ private:
 	std::map< LV2_URID, Glib::RefPtr<Gtk::TextTag> > _tags;
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 #endif // INGEN_GUI_MESSAGESWINDOW_HPP

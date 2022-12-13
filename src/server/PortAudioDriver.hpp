@@ -36,14 +36,12 @@ namespace raul {
 class Path;
 } // namespace raul
 
-namespace boost {
-namespace intrusive {
+namespace boost::intrusive {
 
 template <bool Enabled>
 struct cache_last;
 
-} // namespace intrusive
-} // namespace boost
+} // namespace boost::intrusive
 
 namespace ingen {
 

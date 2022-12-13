@@ -26,8 +26,7 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/layout.h>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 GraphWindow::GraphWindow(BaseObjectType*                   cobject,
                          const Glib::RefPtr<Gtk::Builder>& xml)
@@ -80,5 +79,4 @@ GraphWindow::on_key_press_event(GdkEventKey* event)
 	return Gtk::Window::on_key_press_event(event);
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

@@ -24,8 +24,7 @@
 
 #include <unordered_set>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** Event pre-processing context.
  *
@@ -83,7 +82,6 @@ private:
 	bool        _in_bundle = false;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_PREPROCESSCONTEXT_HPP

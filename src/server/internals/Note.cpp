@@ -44,8 +44,7 @@
 
 // #define NOTE_DEBUG 1
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class GraphImpl;
 
@@ -436,5 +435,4 @@ NoteNode::channel_pressure(RunContext& ctx, FrameTime time, float amount)
 }
 
 } // namespace internals
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

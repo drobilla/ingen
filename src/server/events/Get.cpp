@@ -37,9 +37,7 @@
 #include <memory>
 #include <mutex>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 Get::Get(Engine&                           engine,
          const std::shared_ptr<Interface>& client,
@@ -122,6 +120,4 @@ Get::post_process()
 	}
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

@@ -28,8 +28,7 @@
 
 using std::string;
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 LilvWorld*         PluginModel::_lilv_world   = nullptr;
 const LilvPlugins* PluginModel::_lilv_plugins = nullptr;
@@ -359,5 +358,4 @@ PluginModel::set_lilv_world(LilvWorld* world)
 	_lilv_plugins = lilv_world_get_all_plugins(_lilv_world);
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

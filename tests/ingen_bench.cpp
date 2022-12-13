@@ -32,8 +32,7 @@
 #include <memory>
 #include <string>
 
-namespace ingen {
-namespace bench {
+namespace ingen::bench {
 namespace {
 
 std::unique_ptr<ingen::World> world;
@@ -145,8 +144,7 @@ run(int argc, char** argv)
 }
 
 } // namespace
-} // namespace bench
-} // namespace ingen
+} // namespace ingen::bench
 
 int
 main(int argc, char** argv)

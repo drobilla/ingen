@@ -24,8 +24,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 Glib::ustring WidgetFactory::ui_filename = "";
 
@@ -77,5 +76,4 @@ WidgetFactory::create(const std::string& toplevel_widget)
 	return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

@@ -26,8 +26,7 @@
 #include <memory>
 #include <thread>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 class PortImpl;
@@ -157,7 +156,6 @@ protected:
 	bool        _realtime{true}; ///< True iff context is hard realtime
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_RUNCONTEXT_HPP

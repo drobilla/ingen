@@ -57,8 +57,7 @@
 
 using jack_sample_t = jack_default_audio_sample_t;
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 JackDriver::JackDriver(Engine& engine)
     : _engine(engine)
@@ -533,5 +532,4 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 	return 0;
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

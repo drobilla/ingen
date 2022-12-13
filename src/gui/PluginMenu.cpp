@@ -32,8 +32,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 PluginMenu::PluginMenu(ingen::World& world)
 	: _world(world)
@@ -183,5 +182,4 @@ PluginMenu::load_plugin(const std::weak_ptr<client::PluginModel>& weak_plugin)
 	signal_load_plugin.emit(weak_plugin);
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

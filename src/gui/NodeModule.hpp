@@ -42,8 +42,7 @@ class PortModel;
 } // namespace client
 } // namespace ingen
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 class App;
 class GraphCanvas;
@@ -113,7 +112,6 @@ protected:
 	bool                                      _initialised{false};
 };
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui
 
 #endif // INGEN_GUI_NODEMODULE_HPP

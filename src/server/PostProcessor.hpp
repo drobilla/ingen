@@ -22,8 +22,7 @@
 
 #include <atomic>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Engine;
 class Event;
@@ -67,7 +66,6 @@ private:
 	std::atomic<FrameTime> _max_time;
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_POSTPROCESSOR_HPP

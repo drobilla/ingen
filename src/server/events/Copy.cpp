@@ -42,9 +42,7 @@
 #include <string_view>
 #include <utility>
 
-namespace ingen {
-namespace server {
-namespace events {
+namespace ingen::server::events {
 
 Copy::Copy(Engine&                           engine,
            const std::shared_ptr<Interface>& client,
@@ -230,6 +228,4 @@ Copy::undo(Interface& target)
 	}
 }
 
-} // namespace events
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server::events

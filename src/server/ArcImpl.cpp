@@ -29,8 +29,7 @@
 #include <cassert>
 #include <string>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 /** Constructor for an arc from a block's output port.
  *
@@ -113,5 +112,4 @@ ArcImpl::can_connect(const PortImpl* src, const InputPort* dst)
 		|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::ID::AUDIO)));
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

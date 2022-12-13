@@ -26,9 +26,7 @@
 
 #include <utility>
 
-namespace ingen {
-namespace gui {
-namespace rdfs {
+namespace ingen::gui::rdfs {
 
 std::string
 label(World& world, const LilvNode* node)
@@ -257,6 +255,4 @@ is_a(World& world, const LilvNode* inst, const LilvNode* klass)
 	return is_instance;
 }
 
-} // namespace rdfs
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui::rdfs

@@ -27,8 +27,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace client {
+namespace ingen::client {
 
 void
 PortModel::on_property(const URI& uri, const Atom& value)
@@ -84,5 +83,4 @@ PortModel::set(const std::shared_ptr<ObjectModel>& model)
 	}
 }
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client

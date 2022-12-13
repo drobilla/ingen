@@ -35,8 +35,7 @@
 #include <map>
 #include <utility>
 
-namespace ingen {
-namespace gui {
+namespace ingen::gui {
 
 URIEntry::URIEntry(App* app, std::set<URI> types, const std::string& value)
     : Gtk::HBox(false, 4)
@@ -203,5 +202,4 @@ URIEntry::menu_button_event(GdkEvent* ev)
 	return true;
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

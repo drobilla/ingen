@@ -44,8 +44,7 @@
 #include <type_traits>
 #include <unordered_map>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 GraphImpl::GraphImpl(Engine&             engine,
                      const raul::Symbol& symbol,
@@ -390,5 +389,4 @@ GraphImpl::build_ports_array(raul::Maid& maid)
 	return result;
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

@@ -38,8 +38,7 @@
 #include <memory>
 #include <utility>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 DuplexPort::DuplexPort(BufferFactory&      bufs,
                        GraphImpl*          parent,
@@ -257,5 +256,4 @@ DuplexPort::next_value_offset(SampleCount offset, SampleCount end) const
 	return PortImpl::next_value_offset(offset, end);
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

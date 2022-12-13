@@ -25,8 +25,7 @@
 
 #include <memory>
 
-namespace ingen {
-namespace server {
+namespace ingen::server {
 
 class Driver;
 
@@ -46,8 +45,7 @@ struct PortAudioModule : public Module {
 	}
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 extern "C" {
 
