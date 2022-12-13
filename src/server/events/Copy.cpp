@@ -34,11 +34,10 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
-#include <boost/optional/optional.hpp>
-
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -190,10 +189,10 @@ Copy::filesystem_to_engine(PreProcessContext&)
 	std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
 
 	// Old URI is a filesystem path and new URI is a path within the engine
-	const std::string             src_path(_msg.old_uri.path());
-	const raul::Path              dst_path = uri_to_path(_msg.new_uri);
-	boost::optional<raul::Path>   dst_parent;
-	boost::optional<raul::Symbol> dst_symbol;
+	const std::string           src_path(_msg.old_uri.path());
+	const raul::Path            dst_path = uri_to_path(_msg.new_uri);
+	std::optional<raul::Path>   dst_parent;
+	std::optional<raul::Symbol> dst_symbol;
 	if (!dst_path.is_root()) {
 		dst_parent = dst_path.parent();
 		dst_symbol = raul::Symbol(dst_path.symbol());

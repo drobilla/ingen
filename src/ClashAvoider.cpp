@@ -21,12 +21,11 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
-#include <boost/optional/optional.hpp>
-
 #include <cassert>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -143,7 +142,7 @@ ClashAvoider::exists(const raul::Path& path) const
 	return _store.find(path) != _store.end();
 }
 
-static boost::optional<size_t>
+static std::optional<size_t>
 numeric_suffix_start(const std::string& str)
 {
 	if (!isdigit(str[str.length() - 1])) {

@@ -31,10 +31,9 @@
 #include "lv2/atom/util.h"
 #include "raul/Path.hpp"
 
-#include <boost/optional/optional.hpp>
-
 #include <cstdint>
 #include <cstring>
+#include <optional>
 #include <string>
 
 namespace ingen {
@@ -79,7 +78,7 @@ AtomReader::get_props(const LV2_Atom_Object* obj,
 	}
 }
 
-boost::optional<URI>
+std::optional<URI>
 AtomReader::atom_to_uri(const LV2_Atom* atom)
 {
 	if (!atom) {
@@ -115,10 +114,10 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 	return {};
 }
 
-boost::optional<raul::Path>
+std::optional<raul::Path>
 AtomReader::atom_to_path(const LV2_Atom* atom)
 {
-	boost::optional<URI> uri = atom_to_uri(atom);
+	std::optional<URI> uri = atom_to_uri(atom);
 	if (uri && uri_is_path(*uri)) {
 		return uri_to_path(*uri);
 	}
@@ -130,7 +129,7 @@ AtomReader::atom_to_context(const LV2_Atom* atom)
 {
 	Resource::Graph ctx = Resource::Graph::DEFAULT;
 	if (atom) {
-		boost::optional<URI> maybe_uri = atom_to_uri(atom);
+		std::optional<URI> maybe_uri = atom_to_uri(atom);
 		if (maybe_uri) {
 			ctx = Resource::uri_to_graph(*maybe_uri);
 		} else {
@@ -174,7 +173,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	                    _uris.patch_sequenceNumber.urid(), &number,
 	                    nullptr);
 
-	const boost::optional<URI> subject_uri = atom_to_uri(subject);
+	const std::optional<URI> subject_uri = atom_to_uri(subject);
 
 	const int32_t seq = ((number && number->type == _uris.atom_Int)
 	                     ? reinterpret_cast<const LV2_Atom_Int*>(number)->body
@@ -213,10 +212,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			                    _uris.ingen_incidentTo.urid(), &incidentTo,
 			                    nullptr);
 
-			boost::optional<raul::Path> subject_path(atom_to_path(subject));
-			boost::optional<raul::Path> tail_path(atom_to_path(tail));
-			boost::optional<raul::Path> head_path(atom_to_path(head));
-			boost::optional<raul::Path> other_path(atom_to_path(incidentTo));
+			std::optional<raul::Path> subject_path(atom_to_path(subject));
+			std::optional<raul::Path> tail_path(atom_to_path(tail));
+			std::optional<raul::Path> head_path(atom_to_path(head));
+			std::optional<raul::Path> other_path(atom_to_path(incidentTo));
 			if (tail_path && head_path) {
 				_iface(Disconnect{seq, *tail_path, *head_path});
 			} else if (subject_path && other_path) {
@@ -255,8 +254,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 				return false;
 			}
 
-			boost::optional<raul::Path> tail_path(atom_to_path(tail));
-			boost::optional<raul::Path> head_path(atom_to_path(head));
+			std::optional<raul::Path> tail_path(atom_to_path(tail));
+			std::optional<raul::Path> head_path(atom_to_path(head));
 			if (tail_path && head_path) {
 				_iface(Connect{seq, *tail_path, *head_path});
 			} else {
@@ -350,7 +349,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		}
 
 
-		boost::optional<URI> dest_uri(atom_to_uri(dest));
+		std::optional<URI> dest_uri(atom_to_uri(dest));
 		if (!dest_uri) {
 			_log.warn("Copy message has non-URI destination\n");
 			return false;
@@ -370,13 +369,13 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		boost::optional<raul::Path> subject_path(atom_to_path(subject));
+		std::optional<raul::Path> subject_path(atom_to_path(subject));
 		if (!subject_path) {
 			_log.warn("Move message has non-path subject\n");
 			return false;
 		}
 
-		boost::optional<raul::Path> dest_path(atom_to_path(dest));
+		std::optional<raul::Path> dest_path(atom_to_path(dest));
 		if (!dest_path) {
 			_log.warn("Move message has non-path destination\n");
 			return false;

@@ -31,7 +31,6 @@
 #include "ingen/runtime_paths.hpp"
 #include "raul/Path.hpp"
 
-#include <boost/optional/optional.hpp>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/propertyproxy.h>
@@ -52,6 +51,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -187,8 +187,8 @@ LoadGraphWindow::ok_clicked()
 
 	if (_import) {
 		// If unset load_graph will load value
-		boost::optional<raul::Path>   parent;
-		boost::optional<raul::Symbol> symbol;
+		std::optional<raul::Path>   parent;
+		std::optional<raul::Symbol> symbol;
 		if (!_graph->path().is_root()) {
 			parent = _graph->path().parent();
 			symbol = _graph->symbol();

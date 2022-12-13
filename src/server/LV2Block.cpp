@@ -705,7 +705,7 @@ get_port_value(const char* port_symbol,
 	return nullptr;
 }
 
-boost::optional<Resource>
+std::optional<Resource>
 LV2Block::save_preset(const URI&        uri,
                       const Properties& props)
 {

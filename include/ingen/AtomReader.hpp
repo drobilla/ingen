@@ -22,9 +22,8 @@
 #include "ingen/ingen.h"
 #include "lv2/atom/atom.h"
 
-#include <boost/optional/optional.hpp>
-
 #include <cstdint>
+#include <optional>
 
 namespace raul {
 class Path;
@@ -58,9 +57,9 @@ public:
 private:
 	void get_atom(const LV2_Atom* in, Atom& out);
 
-	boost::optional<URI>        atom_to_uri(const LV2_Atom* atom);
-	boost::optional<raul::Path> atom_to_path(const LV2_Atom* atom);
-	Resource::Graph             atom_to_context(const LV2_Atom* atom);
+	std::optional<URI>        atom_to_uri(const LV2_Atom* atom);
+	std::optional<raul::Path> atom_to_path(const LV2_Atom* atom);
+	Resource::Graph           atom_to_context(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object* obj,
 	               ingen::Properties&     props);

@@ -25,11 +25,8 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <thread>
-
-namespace boost {
-template <class T> class optional;
-} // namespace boost
 
 namespace raul {
 class Path;
@@ -70,11 +67,11 @@ public:
 
 	~ThreadedLoader();
 
-	void load_graph(bool                                 merge,
-	                const FilePath&                      file_path,
-	                const boost::optional<raul::Path>&   engine_parent,
-	                const boost::optional<raul::Symbol>& engine_symbol,
-	                const boost::optional<Properties>&   engine_data);
+	void load_graph(bool                               merge,
+	                const FilePath&                    file_path,
+	                const std::optional<raul::Path>&   engine_parent,
+	                const std::optional<raul::Symbol>& engine_symbol,
+	                const std::optional<Properties>&   engine_data);
 
 	void save_graph(const std::shared_ptr<const client::GraphModel>& model,
 	                const URI&                                       uri);
@@ -82,10 +79,10 @@ public:
 	std::shared_ptr<Parser> parser();
 
 private:
-	void load_graph_event(const FilePath&                      file_path,
-	                      const boost::optional<raul::Path>&   engine_parent,
-	                      const boost::optional<raul::Symbol>& engine_symbol,
-	                      const boost::optional<Properties>&   engine_data);
+	void load_graph_event(const FilePath&                    file_path,
+	                      const std::optional<raul::Path>&   engine_parent,
+	                      const std::optional<raul::Symbol>& engine_symbol,
+	                      const std::optional<Properties>&   engine_data);
 
 	void
 	save_graph_event(const std::shared_ptr<const client::GraphModel>& model,

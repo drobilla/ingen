@@ -33,7 +33,6 @@
 
 #include <boost/intrusive/slist.hpp>
 #include <boost/intrusive/slist_hook.hpp>
-#include <boost/optional/optional.hpp>
 
 #include <cstdint>
 #include <cstdlib>
@@ -41,6 +40,7 @@
 #include <filesystem>
 #include <memory>
 #include <mutex>
+#include <optional>
 
 namespace raul {
 class Symbol;
@@ -113,8 +113,8 @@ public:
 	void apply_state(const std::unique_ptr<Worker>& worker,
 	                 const LilvState*               state) override;
 
-	boost::optional<Resource> save_preset(const URI&        uri,
-	                                      const Properties& props) override;
+	std::optional<Resource> save_preset(const URI&        uri,
+	                                    const Properties& props) override;
 
 	void set_port_buffer(uint32_t         voice,
 	                     uint32_t         port_num,

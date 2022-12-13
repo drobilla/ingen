@@ -20,8 +20,6 @@
 #include "ingen/client/PluginUI.hpp"
 #include "lv2/core/lv2.h"
 
-#include <boost/optional/optional.hpp>
-
 #include <cctype>
 #include <cstring>
 #include <memory>
@@ -115,32 +113,32 @@ PluginModel::get_property(const URI& key) const
 	}
 
 	if (_lilv_plugin) {
-		boost::optional<const Atom&> ret;
-		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.c_str());
-		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
+		const Atom* ret      = nullptr;
+		LilvNode*   lv2_pred = lilv_new_uri(_lilv_world, key.c_str());
+		LilvNodes*  values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
 		lilv_node_free(lv2_pred);
 		LILV_FOREACH (nodes, i, values) {
 			const LilvNode* value = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(value)) {
-				ret = set_property(
+				ret = &set_property(
 					key, _uris.forge.make_urid(URI(lilv_node_as_uri(value))));
 				break;
 			}
 
 			if (lilv_node_is_string(value)) {
-				ret = set_property(
+				ret = &set_property(
 					key, _uris.forge.alloc(lilv_node_as_string(value)));
 				break;
 			}
 
 			if (lilv_node_is_float(value)) {
-				ret = set_property(
+				ret = &set_property(
 					key, _uris.forge.make(lilv_node_as_float(value)));
 				break;
 			}
 
 			if (lilv_node_is_int(value)) {
-				ret = set_property(
+				ret = &set_property(
 					key, _uris.forge.make(lilv_node_as_int(value)));
 				break;
 			}

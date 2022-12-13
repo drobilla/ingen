@@ -35,8 +35,6 @@
 #include "ingen/client/SocketClient.hpp"
 #endif
 
-#include <boost/optional/optional.hpp>
-
 #include <chrono>
 #include <csignal>
 #include <cstdint>
@@ -45,6 +43,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <thread>
 
@@ -180,8 +179,8 @@ run(int argc, char** argv)
 
 	// Load a graph
 	if (conf.option("load").is_valid()) {
-		boost::optional<raul::Path>   parent;
-		boost::optional<raul::Symbol> symbol;
+		std::optional<raul::Path>   parent;
+		std::optional<raul::Symbol> symbol;
 
 		const Atom& path_option = conf.option("path");
 		if (path_option.is_valid()) {

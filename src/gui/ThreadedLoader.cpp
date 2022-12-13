@@ -26,7 +26,6 @@
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
 
-#include <boost/optional/optional.hpp>
 #include <glibmm/ustring.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/adaptors/retype_return.h>
@@ -35,11 +34,10 @@
 #include <cassert>
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
-
-using boost::optional;
 
 namespace ingen {
 
@@ -85,20 +83,20 @@ ThreadedLoader::run()
 }
 
 void
-ThreadedLoader::load_graph(bool                          merge,
-                           const FilePath&               file_path,
-                           const optional<raul::Path>&   engine_parent,
-                           const optional<raul::Symbol>& engine_symbol,
-                           const optional<Properties>&   engine_data)
+ThreadedLoader::load_graph(bool                               merge,
+                           const FilePath&                    file_path,
+                           const std::optional<raul::Path>&   engine_parent,
+                           const std::optional<raul::Symbol>& engine_symbol,
+                           const std::optional<Properties>&   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
 		if (merge) {
-			engine_base = engine_parent.get();
+			engine_base = *engine_parent;
 		} else {
-			engine_base = engine_parent.get().base();
+			engine_base = engine_parent->base();
 		}
 	}
 
@@ -113,10 +111,11 @@ ThreadedLoader::load_graph(bool                          merge,
 }
 
 void
-ThreadedLoader::load_graph_event(const FilePath&               file_path,
-                                 const optional<raul::Path>&   engine_parent,
-                                 const optional<raul::Symbol>& engine_symbol,
-                                 const optional<Properties>&   engine_data)
+ThreadedLoader::load_graph_event(
+    const FilePath&                    file_path,
+    const std::optional<raul::Path>&   engine_parent,
+    const std::optional<raul::Symbol>& engine_symbol,
+    const std::optional<Properties>&   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
 

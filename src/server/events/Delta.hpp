@@ -29,10 +29,9 @@
 #include "ingen/URI.hpp"
 #include "raul/Maid.hpp"
 
-#include <boost/optional/optional.hpp>
-
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
 // IWYU pragma: no_include <algorithm>
@@ -129,7 +128,7 @@ private:
 
 	std::vector<ControlBindings::Binding*> _removed_bindings;
 
-	boost::optional<Resource> _preset;
+	std::optional<Resource> _preset;
 
 	bool _block{false};
 };

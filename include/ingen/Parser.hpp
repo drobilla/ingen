@@ -24,8 +24,7 @@
 #include "raul/Path.hpp" // IWYU pragma: keep
 #include "raul/Symbol.hpp" // IWYU pragma: keep
 
-#include <boost/optional/optional.hpp>
-
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
@@ -80,21 +79,21 @@ public:
 	 * @return whether or not load was successful.
 	 */
 	virtual bool parse_file(
-		World&                               world,
-		Interface&                           target,
-		const FilePath&                      path,
-		const boost::optional<raul::Path>&   parent = boost::optional<raul::Path>(),
-		const boost::optional<raul::Symbol>& symbol = boost::optional<raul::Symbol>(),
-		const boost::optional<Properties>&   data   = boost::optional<Properties>());
+		World&                             world,
+		Interface&                         target,
+		const FilePath&                    path,
+		const std::optional<raul::Path>&   parent = std::optional<raul::Path>(),
+		const std::optional<raul::Symbol>& symbol = std::optional<raul::Symbol>(),
+		const std::optional<Properties>&   data   = std::optional<Properties>());
 
-	virtual boost::optional<URI> parse_string(
-		World&                               world,
-		Interface&                           target,
-		const std::string&                   str,
-		const URI&                           base_uri,
-		const boost::optional<raul::Path>&   parent = boost::optional<raul::Path>(),
-		const boost::optional<raul::Symbol>& symbol = boost::optional<raul::Symbol>(),
-		const boost::optional<Properties>&   data   = boost::optional<Properties>());
+	virtual std::optional<URI> parse_string(
+		World&                             world,
+		Interface&                         target,
+		const std::string&                 str,
+		const URI&                         base_uri,
+		const std::optional<raul::Path>&   parent = std::optional<raul::Path>(),
+		const std::optional<raul::Symbol>& symbol = std::optional<raul::Symbol>(),
+		const std::optional<Properties>&   data   = std::optional<Properties>());
 };
 
 } // namespace ingen

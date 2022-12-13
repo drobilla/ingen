@@ -33,10 +33,10 @@
 #include "raul/Maid.hpp"
 
 #include <boost/intrusive/slist_hook.hpp>
-#include <boost/optional/optional.hpp>
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <set>
 
 namespace raul {
@@ -115,9 +115,11 @@ public:
 	{}
 
 	/** Save current state as preset. */
-	virtual boost::optional<Resource>
-	save_preset(const URI&        bundle,
-	            const Properties& props) { return {}; }
+	virtual std::optional<Resource>
+	save_preset(const URI& bundle, const Properties& props)
+	{
+		return std::nullopt;
+	}
 
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}

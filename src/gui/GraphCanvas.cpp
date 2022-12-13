@@ -61,7 +61,6 @@
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
-#include <boost/optional/optional.hpp>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms-compat.h>
 #include <gdkmm/window.h>
@@ -94,6 +93,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <set>
 #include <sstream>
 #include <string>
@@ -727,7 +727,7 @@ GraphCanvas::paste()
 	              {{uris.rdf_type, Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
-	boost::optional<URI> base_uri = parser->parse_string(
+	std::optional<URI> base_uri = parser->parse_string(
 		_app.world(), clipboard, str, main_uri());
 
 	// Figure out the copy graph base path

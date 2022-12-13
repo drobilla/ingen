@@ -27,10 +27,9 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
-#include <boost/optional/optional.hpp>
-
 #include <cstdint>
 #include <memory>
+#include <optional>
 
 namespace ingen {
 
@@ -81,7 +80,7 @@ private:
 	EnginePort*                         _engine_port{nullptr}; ///< Driver port if on the root
 	Properties                          _properties;
 	Properties                          _update;
-	boost::optional<Flow>               _flow;
+	std::optional<Flow>                 _flow;
 };
 
 } // namespace events
