@@ -1,4 +1,5 @@
 Checks: >
+  -*-narrowing-conversions,
   -android-cloexec-*,
   -bugprone-branch-clone,
   -bugprone-exception-escape,

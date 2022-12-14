@@ -1,5 +1,6 @@
 Checks: >
   -*-avoid-c-arrays,
+  -*-narrowing-conversions,
   -*-non-private-member-variables-in-classes,
   -*-uppercase-literal-suffix,
   -*-vararg,
