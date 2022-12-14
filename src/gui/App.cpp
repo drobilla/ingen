@@ -98,11 +98,10 @@ App::App(ingen::World& world)
 	client::PluginModel::set_rdf_world(*world.rdf_world());
 	client::PluginModel::set_lilv_world(world.lilv_world());
 
-	world.log().set_sink(std::bind(&MessagesWindow::log,
-	                               _messages_window,
-	                               std::placeholders::_1,
-	                               std::placeholders::_2,
-	                               std::placeholders::_3));
+	world.log().set_sink(
+	    [this](const LV2_URID type, const char* fmt, va_list args) {
+		    return _messages_window->log(type, fmt, args);
+	    });
 }
 
 App::~App()
