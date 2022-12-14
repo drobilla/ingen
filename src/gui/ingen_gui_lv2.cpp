@@ -49,7 +49,8 @@
 namespace ingen {
 
 /** A sink that writes atoms to a port via the UI extension. */
-struct IngenLV2AtomSink : public AtomSink {
+class IngenLV2AtomSink : public AtomSink {
+public:
 	IngenLV2AtomSink(URIs&                uris,
 	                 LV2UI_Write_Function ui_write,
 	                 LV2UI_Controller     ui_controller)
@@ -67,14 +68,13 @@ struct IngenLV2AtomSink : public AtomSink {
 		return true;
 	}
 
+private:
 	URIs&                _uris;
 	LV2UI_Write_Function _ui_write;
 	LV2UI_Controller     _ui_controller;
 };
 
 struct IngenLV2UI {
-	IngenLV2UI() = default;
-
 	int                                         argc{0};
 	char**                                      argv{nullptr};
 	Forge*                                      forge{nullptr};
