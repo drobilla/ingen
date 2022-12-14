@@ -202,8 +202,9 @@ BlockModel::default_port_value_range(
 	}
 
 	if (port->port_property(_uris.lv2_sampleRate)) {
-		min *= srate;
-		max *= srate;
+		const auto frate = static_cast<float>(srate);
+		min *= frate;
+		max *= frate;
 	}
 }
 
@@ -232,8 +233,9 @@ BlockModel::port_value_range(const std::shared_ptr<const PortModel>& port,
 	}
 
 	if (port->port_property(_uris.lv2_sampleRate)) {
-		min *= srate;
-		max *= srate;
+		const auto frate = static_cast<float>(srate);
+		min *= frate;
+		max *= frate;
 	}
 }
 

@@ -134,7 +134,7 @@ Configuration::print_usage(const std::string& program, std::ostream& os)
 		} else {
 			os << "    ";
 		}
-		os.width(_max_name_length + 11);
+		os.width(static_cast<std::streamsize>(_max_name_length + 11));
 		os << std::left;
 		os << (std::string("--") + o.first + variable_string(option.type));
 		os << option.desc << std::endl;

@@ -134,7 +134,7 @@ run(int argc, char** argv)
 	}
 	fprintf(log.get(), "%u\t%f\t%f\n",
 	        world->conf().option("threads").get<int32_t>(),
-	        (t_end - t_start) / 1000000.0,
+	        static_cast<double>(t_end - t_start) / 1000000.0,
 	        (n_test_frames / 48000.0));
 
 	// Shut down
