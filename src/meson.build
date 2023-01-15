@@ -42,7 +42,7 @@ ingen_deps = [
 ingen_include_dirs = include_directories('../include', 'include')
 
 libingen = shared_library(
-  'ingen' + library_suffix,
+  versioned_name,
   sources,
   cpp_args: cpp_suppressions + platform_defines,
   dependencies: ingen_deps,
@@ -50,6 +50,7 @@ libingen = shared_library(
   implicit_include_directories: false,
   include_directories: ingen_include_dirs,
   install: true,
+  soversion: soversion,
   version: meson.project_version(),
 )
 

@@ -58,6 +58,16 @@ endif
 ingen_data_dir = get_option('prefix') / get_option('datadir') / 'ingen' # / versioned_name
 ingen_module_dir = get_option('prefix') / get_option('libdir') # / versioned_name
 
+# Use versioned name everywhere to support parallel major version installations
+if host_machine.system() == 'windows'
+  if get_option('default_library') == 'both'
+    error('default_library=both is not supported on Windows')
+  endif
+  soversion = ''
+else
+  soversion = meson.project_version().split('.')[0]
+endif
+
 platform_defines = [
   '-DINGEN_DATA_DIR="@0@"'.format(ingen_data_dir),
   '-DINGEN_MODULE_DIR="@0@"'.format(ingen_module_dir),
@@ -153,7 +163,6 @@ platform_defines += '-DHAVE_JACK_PORT_RENAME=@0@'.format(
 #############
 
 # Set appropriate arguments for building against the library type
-subdir('meson/library')
 if get_option('default_library') == 'static'
   add_project_arguments(['-DINGEN_STATIC'], language: ['cpp'])
 endif
