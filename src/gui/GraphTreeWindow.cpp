@@ -159,7 +159,7 @@ GraphTreeWindow::find_graph(Gtk::TreeModel::Children                    root,
                             const std::shared_ptr<client::ObjectModel>& graph)
 {
 	for (auto c = root.begin(); c != root.end(); ++c) {
-		std::shared_ptr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
+		const std::shared_ptr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
 		if (graph == pm) {
 			return c;
 		}
@@ -198,7 +198,7 @@ GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
 	const auto active = _graph_treestore->get_iter(path);
 	auto       row    = *active;
 
-	std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+	const std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 
 	_app->window_factory()->present_graph(pm);
 }
@@ -206,11 +206,11 @@ GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
 void
 GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 {
-	Gtk::TreeModel::Path path(path_str);
-	auto                 active = _graph_treestore->get_iter(path);
-	auto                 row    = *active;
+	const Gtk::TreeModel::Path path{path_str};
+	auto                       active = _graph_treestore->get_iter(path);
+	auto                       row    = *active;
 
-	std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+	const std::shared_ptr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 	assert(pm);
 
 	if (_enable_signal) {

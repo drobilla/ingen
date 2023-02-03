@@ -512,7 +512,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	                           nullptr,
 	                           true);
 
-	Lib::Graphs graphs = find_graphs(URI(reinterpret_cast<const char*>(manifest_node.buf)));
+	const Lib::Graphs graphs = find_graphs(URI(reinterpret_cast<const char*>(manifest_node.buf)));
 	serd_node_free(&manifest_node);
 
 	const LV2Graph* graph = nullptr;
@@ -533,11 +533,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world = std::make_unique<ingen::World>(map, unmap, log);
 	plugin->world->load_configuration(plugin->argc, plugin->argv);
 
-	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
-	LV2_URID bufsz_seq    = map->map(map->handle, LV2_BUF_SIZE__sequenceSize);
-	LV2_URID atom_Int     = map->map(map->handle, LV2_ATOM__Int);
-	int32_t  block_length = 0;
-	int32_t  seq_size     = 0;
+	const LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
+	const LV2_URID bufsz_seq    = map->map(map->handle, LV2_BUF_SIZE__sequenceSize);
+	const LV2_URID atom_Int     = map->map(map->handle, LV2_ATOM__Int);
+	int32_t        block_length = 0;
+	int32_t        seq_size     = 0;
 	if (options) {
 		for (const LV2_Options_Option* o = options; o->key; ++o) {
 			if (o->key == bufsz_max && o->type == atom_Int) {
@@ -567,7 +567,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
-	std::shared_ptr<Interface> interface = engine->interface();
+	const std::shared_ptr<Interface> interface = engine->interface();
 
 	plugin->world->set_interface(interface);
 
@@ -580,7 +580,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->activate();
 	ThreadManager::single_threaded = true;
 
-	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
+	const std::lock_guard<std::mutex> lock{plugin->world->rdf_mutex()};
 
 	// Locate to time 0 to process initialization events
 	engine->locate(0, block_length);
@@ -602,7 +602,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	/* Register client after loading graph so the to-ui ring does not overflow.
 	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
-	std::shared_ptr<Interface> client(&driver->writer(), NullDeleter<Interface>);
+	const  std::shared_ptr<Interface> client{&driver->writer(), NullDeleter<Interface>};
 	interface->set_respondee(client);
 	engine->register_client(client);
 
@@ -703,9 +703,9 @@ ingen_save(LV2_Handle                instance,
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
-	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
-	LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
-	                                      LV2_ATOM__Path);
+	const LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
+	const LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
+	                                            LV2_ATOM__Path);
 
 	char* real_path  = make_path->path(make_path->handle, "main.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
@@ -713,7 +713,7 @@ ingen_save(LV2_Handle                instance,
 	auto root = plugin->world->store()->find(raul::Path("/"));
 
 	{
-		std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
+		const std::lock_guard<std::mutex> lock{plugin->world->rdf_mutex()};
 
 		plugin->world->serialiser()->start_to_file(
 			root->second->path(), FilePath{real_path});
@@ -749,10 +749,10 @@ ingen_restore(LV2_Handle                  instance,
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
-	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
-	size_t   size       = 0;
-	uint32_t type       = 0;
-	uint32_t valflags   = 0;
+	const LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
+	size_t         size       = 0;
+	uint32_t       type       = 0;
+	uint32_t       valflags   = 0;
 
 	// Get abstract path to graph file
 	const char* path = static_cast<const char*>(
@@ -784,7 +784,7 @@ ingen_restore(LV2_Handle                  instance,
 #endif
 
 	// Load new graph
-	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
+	const std::lock_guard<std::mutex> lock{plugin->world->rdf_mutex()};
 	plugin->world->parser()->parse_file(
 		*plugin->world, *plugin->world->interface(), real_path);
 

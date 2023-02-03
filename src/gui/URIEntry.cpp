@@ -66,7 +66,7 @@ URIEntry::build_value_menu()
 	LilvNode* rdfs_Datatype   = lilv_new_uri(lworld, LILV_NS_RDFS "Datatype");
 	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
 
-	rdfs::Objects values = rdfs::instances(world, _types);
+	const rdfs::Objects values = rdfs::instances(world, _types);
 
 	for (const auto& v : values) {
 		const LilvNode* inst  = lilv_new_uri(lworld, v.second.c_str());

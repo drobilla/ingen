@@ -104,7 +104,7 @@ Delete::pre_process(PreProcessContext& ctx)
 	}
 
 	// Take a writer lock while we modify the store
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	_engine.store()->remove(iter, _removed_objects);
 
@@ -189,7 +189,7 @@ Delete::execute(RunContext& ctx)
 void
 Delete::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS && (_block || _port)) {
 		if (_block) {
 			_block->deactivate();

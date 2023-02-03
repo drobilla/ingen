@@ -46,7 +46,7 @@ Move::Move(Engine&                           engine,
 bool
 Move::pre_process(PreProcessContext&)
 {
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	if (!_msg.old_path.parent().is_parent_of(_msg.new_path)) {
 		return Event::pre_process_done(Status::PARENT_DIFFERS, _msg.new_path);
@@ -78,7 +78,7 @@ Move::execute(RunContext&)
 void
 Move::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->message(_msg);
 	}

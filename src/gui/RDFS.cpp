@@ -77,7 +77,7 @@ closure(World& world, const LilvNode* pred, URISet& types, bool super)
 			LILV_FOREACH (nodes, m, matches) {
 				const LilvNode* klass_node = lilv_nodes_get(matches, m);
 				if (lilv_node_is_uri(klass_node)) {
-					URI klass(lilv_node_as_uri(klass_node));
+					const URI klass{lilv_node_as_uri(klass_node)};
 					if (!types.count(klass)) {
 						++added;
 						klasses.insert(klass);
@@ -144,8 +144,8 @@ URISet
 properties(World&                                            world,
            const std::shared_ptr<const client::ObjectModel>& model)
 {
-	URISet properties;
-	URISet types = rdfs::types(world, model);
+	URISet       properties;
+	const URISet types = rdfs::types(world, model);
 
 	LilvNode* rdf_type = lilv_new_uri(world.lilv_world(),
 	                                  LILV_NS_RDF "type");

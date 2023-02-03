@@ -84,7 +84,7 @@ MessagesWindow::init_window(App& app)
 void
 MessagesWindow::post_error(const string& msg)
 {
-	Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
+	const Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
 	text_buf->insert_with_tag(text_buf->end(), msg, _error_tag);
 	text_buf->insert(text_buf->end(), "\n");
 
@@ -101,7 +101,7 @@ MessagesWindow::post_error(const string& msg)
 int
 MessagesWindow::log(LV2_URID type, const char* fmt, va_list args)
 {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock{_mutex};
 
 #if USE_VASPRINTF
 	char*     buf = nullptr;
@@ -125,7 +125,7 @@ MessagesWindow::flush()
 		std::string line;
 
 		{
-			std::lock_guard<std::mutex> lock(_mutex);
+			const std::lock_guard<std::mutex> lock{_mutex};
 			if (!_stream.rdbuf()->in_avail()) {
 				return;
 			}
@@ -133,7 +133,7 @@ MessagesWindow::flush()
 			std::getline(_stream, line, '\0');
 		}
 
-		Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
+		const Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
 
 		auto t = _tags.find(type);
 		if (t != _tags.end()) {
@@ -151,7 +151,7 @@ MessagesWindow::flush()
 void
 MessagesWindow::clear_clicked()
 {
-	Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
+	const Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
 	text_buf->erase(text_buf->begin(), text_buf->end());
 	_clear_button->set_sensitive(false);
 }

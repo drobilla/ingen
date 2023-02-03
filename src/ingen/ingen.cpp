@@ -203,7 +203,7 @@ run(int argc, char** argv)
 		engine_interface->get(URI("ingen:/plugins"));
 		engine_interface->get(main_uri());
 
-		std::lock_guard<std::mutex> lock(world->rdf_mutex());
+		const std::lock_guard<std::mutex> lock{world->rdf_mutex()};
 		world->parser()->parse_file(
 			*world, *engine_interface, graph, parent, symbol);
 	} else if (conf.option("server-load").is_valid()) {

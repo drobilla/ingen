@@ -57,7 +57,7 @@ Copy::~Copy() = default;
 bool
 Copy::pre_process(PreProcessContext& ctx)
 {
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	if (uri_is_path(_msg.old_uri)) {
 		// Old URI is a path within the engine
@@ -163,7 +163,7 @@ Copy::engine_to_filesystem(PreProcessContext&)
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
 	}
 
-	std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
+	const std::lock_guard<std::mutex> lock{_engine.world().rdf_mutex()};
 
 	if (ends_with(_msg.new_uri, ".ingen") || ends_with(_msg.new_uri, ".ingen/")) {
 		_engine.world().serialiser()->write_bundle(graph, URI(_msg.new_uri));
@@ -184,7 +184,7 @@ Copy::filesystem_to_engine(PreProcessContext&)
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
 	}
 
-	std::lock_guard<std::mutex> lock(_engine.world().rdf_mutex());
+	const std::lock_guard<std::mutex> lock{_engine.world().rdf_mutex()};
 
 	// Old URI is a filesystem path and new URI is a path within the engine
 	const std::string           src_path(_msg.old_uri.path());
@@ -214,7 +214,7 @@ Copy::execute(RunContext&)
 void
 Copy::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->message(_msg);
 	}

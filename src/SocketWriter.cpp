@@ -52,7 +52,7 @@ SocketWriter::message(const Message& message)
 size_t
 SocketWriter::text_sink(const void* buf, size_t len)
 {
-	ssize_t ret = send(_socket->fd(), buf, len, MSG_NOSIGNAL);
+	const ssize_t ret = send(_socket->fd(), buf, len, MSG_NOSIGNAL);
 	if (ret < 0) {
 		return 0;
 	}

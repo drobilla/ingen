@@ -5,6 +5,7 @@ Checks: >
   -*-non-private-member-variables-in-classes,
   -abseil-*,
   -altera-*,
+  -bugprone-assignment-in-if-condition,
   -cppcoreguidelines-macro-usage,
   -fuchsia-default-arguments-calls,
   -fuchsia-default-arguments-declarations,

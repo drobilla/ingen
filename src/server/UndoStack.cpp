@@ -41,7 +41,7 @@ UndoStack::start_entry()
 	if (_depth == 0) {
 		time_t now = {};
 		time(&now);
-		_stack.emplace_back(Entry(now));
+		_stack.emplace_back(now);
 	}
 	return ++_depth;
 }
@@ -188,8 +188,8 @@ UndoStack::write_entry(Sratom*                 sratom,
 	strftime(time_str, sizeof(time_str), "%FT%T", gmtime(&entry.time));
 
 	// entry rdf:type ingen:UndoEntry
-	SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "time"));
-	SerdNode o = serd_node_from_string(SERD_LITERAL, USTR(time_str));
+	SerdNode       p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "time"));
+	const SerdNode o = serd_node_from_string(SERD_LITERAL, USTR(time_str));
 	serd_writer_write_statement(writer, SERD_ANON_CONT, nullptr, subject, &p, &o, nullptr, nullptr);
 
 	p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "events"));
@@ -245,8 +245,8 @@ UndoStack::save(FILE* stream, const char* name)
 	                reinterpret_cast<SerdEndSink>(serd_writer_end_anon),
 	                writer);
 
-	SerdNode s = serd_node_from_string(SERD_BLANK, USTR(name));
-	SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "entries"));
+	const SerdNode s = serd_node_from_string(SERD_BLANK, USTR(name));
+	const SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "entries"));
 
 	BlankIDs    ids('u');
 	ListContext ctx(ids, 0, &s, &p);

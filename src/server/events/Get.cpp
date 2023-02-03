@@ -50,7 +50,7 @@ Get::Get(Engine&                           engine,
 bool
 Get::pre_process(PreProcessContext&)
 {
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	const auto& uri = _msg.subject;
 	if (uri == "ingen:/plugins") {
@@ -96,7 +96,7 @@ Get::execute(RunContext&)
 void
 Get::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS && _request_client) {
 		if (_msg.subject == "ingen:/plugins") {
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);

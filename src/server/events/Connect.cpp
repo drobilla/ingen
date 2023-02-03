@@ -57,7 +57,7 @@ Connect::~Connect() = default;
 bool
 Connect::pre_process(PreProcessContext& ctx)
 {
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	Node* tail = _engine.store()->get(_msg.tail);
 	if (!tail) {
@@ -173,7 +173,7 @@ Connect::execute(RunContext& ctx)
 void
 Connect::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->message(_msg);
 		if (!_tail_remove.empty() || !_tail_add.empty()) {

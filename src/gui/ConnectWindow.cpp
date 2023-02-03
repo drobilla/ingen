@@ -195,7 +195,7 @@ ConnectWindow::connect_remote(const URI& uri)
 	auto sci = std::make_shared<client::SigClientInterface>();
 	auto qi  = std::make_shared<QueuedInterface>(sci);
 
-	std::shared_ptr<ingen::Interface> iface(world.new_interface(uri, qi));
+	const std::shared_ptr<ingen::Interface> iface{world.new_interface(uri, qi)};
 	if (iface) {
 		world.set_interface(iface);
 		_app->attach(qi);

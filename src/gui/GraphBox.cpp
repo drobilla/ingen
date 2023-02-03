@@ -228,7 +228,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	_menu_view_graph_properties->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_show_properties));
 
-	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
+	const Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->signal_owner_change().connect(
 		sigc::mem_fun(this, &GraphBox::event_clipboard_changed));
 
@@ -250,7 +250,7 @@ std::shared_ptr<GraphBox>
 GraphBox::create(App& app, const std::shared_ptr<const GraphModel>& graph)
 {
 	GraphBox* result = nullptr;
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
+	const Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
 	xml->get_widget_derived("graph_win_vbox", result);
 	result->init_box(app);
 	result->set_graph(graph, nullptr);
@@ -535,7 +535,7 @@ GraphBox::event_show_engine()
 void
 GraphBox::event_clipboard_changed(GdkEventOwnerChange* ev)
 {
-	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
+	const Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	_menu_paste->set_sensitive(clipboard->wait_is_text_available());
 }
 

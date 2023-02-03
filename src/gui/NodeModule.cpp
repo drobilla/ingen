@@ -207,7 +207,7 @@ NodeModule::show_human_names(bool b)
 			if (name_property.type() == uris.forge.String) {
 				label = name_property.ptr<char>();
 			} else {
-				Glib::ustring hn = block()->plugin_model()->port_human_name(
+				const Glib::ustring hn = block()->plugin_model()->port_human_name(
 					port->model()->index());
 				if (!hn.empty()) {
 					label = hn;
@@ -532,9 +532,10 @@ NodeModule::on_selected(gboolean selected)
 
 	if (selected && win->documentation_is_visible()) {
 		std::string doc;
-		bool html = false;
 #if USE_WEBKIT
-		html = true;
+		const bool html = true;
+#else
+		const bool html = false;
 #endif
 		if (block()->plugin_model()) {
 			doc = block()->plugin_model()->documentation(html);

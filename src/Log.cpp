@@ -96,16 +96,16 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 	if (_log) {
 		ret = _log->vprintf(_log->handle, type, fmt, args);
 	} else if (type == _uris.log_Error) {
-		ColorContext ctx(stderr, ColorContext::Color::RED);
+		const ColorContext ctx{stderr, ColorContext::Color::RED};
 		ret = vfprintf(stderr, fmt, args);
 	} else if (type == _uris.log_Warning) {
-		ColorContext ctx(stderr, ColorContext::Color::YELLOW);
+		const ColorContext ctx{stderr, ColorContext::Color::YELLOW};
 		ret = vfprintf(stderr, fmt, args);
 	} else if (type == _uris.log_Note) {
-		ColorContext ctx(stderr, ColorContext::Color::GREEN);
+		const ColorContext ctx{stderr, ColorContext::Color::GREEN};
 		ret = vfprintf(stdout, fmt, args);
 	} else if (_trace && type == _uris.log_Trace) {
-		ColorContext ctx(stderr, ColorContext::Color::GREEN);
+		const ColorContext ctx{stderr, ColorContext::Color::GREEN};
 		ret = vfprintf(stderr, fmt, args);
 	} else {
 		fprintf(stderr, "Unknown log type %u\n", type);

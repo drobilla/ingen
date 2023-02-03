@@ -71,7 +71,7 @@ LV2Features::lv2_features(World& world, Node* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (const auto& f : _features) {
-		std::shared_ptr<LV2_Feature> fptr = f->feature(world, node);
+		const std::shared_ptr<LV2_Feature> fptr = f->feature(world, node);
 		if (fptr) {
 			vec.push_back(fptr);
 		}

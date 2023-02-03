@@ -204,7 +204,7 @@ Serialiser::Impl::write_bundle(const std::shared_ptr<const Node>& graph,
 
 	start_to_file(graph->path(), main_file);
 
-	std::set<const Resource*> plugins =
+	const std::set<const Resource*> plugins =
 	    serialise_graph(graph,
 	                    Sord::URI(_model->world(), main_file, _base_uri));
 
@@ -260,7 +260,7 @@ Serialiser::Impl::finish()
 {
 	std::string ret;
 	if (_mode == Mode::TO_FILE) {
-		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
+		const SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {
 			_world.log().error("Error writing file %1% (%2%)\n",
 			                   _base_uri,
@@ -356,7 +356,7 @@ Serialiser::Impl::serialise_graph(const std::shared_ptr<const Node>& graph,
 		}
 
 		if (n->second->graph_type() == Node::GraphType::GRAPH) {
-			std::shared_ptr<Node> subgraph = n->second;
+			const std::shared_ptr<Node> subgraph = n->second;
 
 			SerdURI base_uri;
 			serd_uri_parse(reinterpret_cast<const uint8_t*>(_base_uri.c_str()),
@@ -377,7 +377,7 @@ Serialiser::Impl::serialise_graph(const std::shared_ptr<const Node>& graph,
 			                                subgraph_node.buf));
 
 			// Save our state
-			URI          my_base_uri = _base_uri;
+			const URI    my_base_uri = _base_uri;
 			Sord::Model* my_model    = _model;
 
 			// Write child bundle within this bundle
@@ -396,7 +396,7 @@ Serialiser::Impl::serialise_graph(const std::shared_ptr<const Node>& graph,
 
 			serd_node_free(&subgraph_node);
 		} else if (n->second->graph_type() == Node::GraphType::BLOCK) {
-			std::shared_ptr<const Node> block = n->second;
+			const std::shared_ptr<const Node> block = n->second;
 
 			const Sord::URI  class_id(world, block->plugin()->uri());
 			const Sord::Node block_id(path_rdf_node(n->second->path()));
@@ -480,7 +480,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
                                  Resource::Graph   context,
                                  const Sord::Node& port_id)
 {
-	URIs&        uris  = _world.uris();
+	const URIs&  uris  = _world.uris();
 	Sord::World& world = _model->world();
 	Properties   props = port->properties(context);
 
@@ -558,9 +558,8 @@ void
 Serialiser::Impl::serialise_properties(Sord::Node id, const Properties& props)
 {
 	LV2_URID_Unmap* unmap = &_world.uri_map().urid_unmap();
-	SerdNode        base  = serd_node_from_string(SERD_URI,
-                                          reinterpret_cast<const uint8_t*>(
-                                              _base_uri.c_str()));
+	const SerdNode  base  = serd_node_from_string(
+        SERD_URI, reinterpret_cast<const uint8_t*>(_base_uri.c_str()));
 
 	SerdEnv*      env      = serd_env_new(&base);
 	SordInserter* inserter = sord_inserter_new(_model->c_obj(), env);

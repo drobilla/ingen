@@ -351,7 +351,7 @@ LoadPluginWindow::plugin_activated(const Gtk::TreeModel::Path& path,
 void
 LoadPluginWindow::plugin_selection_changed()
 {
-	size_t n_selected = _selection->get_selected_rows().size();
+	const size_t n_selected = _selection->get_selected_rows().size();
 	if (n_selected == 0) {
 		_name_offset = 0;
 		_name_entry->set_text("");
@@ -405,7 +405,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	const URIs& uris       = _app->uris();
 	auto        row        = *iter;
 	auto        plugin     = row.get_value(_plugins_columns._col_plugin);
-	bool        polyphonic = _polyphonic_checkbutton->get_active();
+	const bool  polyphonic = _polyphonic_checkbutton->get_active();
 	string      name       = _name_entry->get_text();
 
 	if (name.empty()) {
@@ -420,8 +420,8 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		dialog.run();
 	} else {
-		raul::Path path  = _graph->path().child(raul::Symbol::symbolify(name));
-		Properties props = _initial_data;
+		const raul::Path path  = _graph->path().child(raul::Symbol::symbolify(name));
+		Properties       props = _initial_data;
 		props.emplace(uris.rdf_type, Property(uris.ingen_Block));
 		props.emplace(uris.lv2_prototype, _app->forge().make_urid(plugin->uri()));
 		props.emplace(uris.ingen_polyphonic, _app->forge().make(polyphonic));
@@ -457,7 +457,7 @@ LoadPluginWindow::filter_changed()
 
 	// Get selected criteria
 	const auto row = *(_filter_combo->get_active());
-	CriteriaColumns::Criteria criteria = row[_criteria_columns._col_criteria];
+	const CriteriaColumns::Criteria criteria = row[_criteria_columns._col_criteria];
 
 	string field;
 

@@ -200,7 +200,7 @@ BlockImpl::bypass(RunContext& ctx)
 	}
 
 	// Dumb bypass
-	for (PortType t : { PortType::AUDIO, PortType::CV, PortType::ATOM }) {
+	for (const PortType t : { PortType::AUDIO, PortType::CV, PortType::ATOM }) {
 		for (uint32_t i = 0;; ++i) {
 			PortImpl* in  = nth_port_by_type(i, true, t);
 			PortImpl* out = nth_port_by_type(i, false, t);

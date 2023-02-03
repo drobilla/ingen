@@ -55,7 +55,7 @@ PreProcessor::event(Event* const ev, Event::Mode mode)
 {
 	// TODO: Probably possible to make this lock-free with CAS
 	ThreadManager::assert_not_thread(THREAD_IS_REAL_TIME);
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock{_mutex};
 
 	assert(!ev->is_prepared());
 	assert(!ev->next());
@@ -140,7 +140,7 @@ PreProcessor::process(RunContext& ctx, PostProcessor& dest, size_t limit)
 
 	if (n_processed > 0) {
 #ifndef NDEBUG
-		Engine& engine = ctx.engine();
+		const Engine& engine = ctx.engine();
 		if (engine.world().conf().option("trace").get<int32_t>()) {
 			const uint64_t start = engine.cycle_start_time(ctx);
 			const uint64_t end   = engine.current_time();

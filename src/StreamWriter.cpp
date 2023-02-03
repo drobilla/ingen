@@ -34,7 +34,7 @@ StreamWriter::StreamWriter(URIMap&             map,
 size_t
 StreamWriter::text_sink(const void* buf, size_t len)
 {
-	ColorContext ctx(_stream, _color);
+	const ColorContext ctx{_stream, _color};
 	return fwrite(buf, 1, len, _stream);
 }
 

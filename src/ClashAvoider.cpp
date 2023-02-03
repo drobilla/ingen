@@ -118,8 +118,8 @@ ClashAvoider::map_path(const raul::Path& in)
 				name = "_";
 			}
 
-			raul::Symbol sym(name);
-			std::string  str = ss.str();
+			const raul::Symbol sym{name};
+			const std::string  str{ss.str()};
 
 			auto i = _symbol_map.emplace(in, raul::Path(str));
 

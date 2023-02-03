@@ -235,7 +235,7 @@ CreateGraph::execute(RunContext& ctx)
 void
 CreateGraph::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_update.send(*_engine.broadcaster());
 	}

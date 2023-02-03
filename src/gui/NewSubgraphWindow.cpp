@@ -93,7 +93,7 @@ NewSubgraphWindow::set_graph(std::shared_ptr<const client::GraphModel> graph)
 void
 NewSubgraphWindow::name_changed()
 {
-	std::string name = _name_entry->get_text();
+	const std::string name = _name_entry->get_text();
 	if (!raul::Symbol::is_valid(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;

@@ -284,8 +284,8 @@ parse_block(ingen::World&                    world,
 		serd_uri_parse(reinterpret_cast<const uint8_t*>(base_uri.c_str()),
 		               &base_uri_parts);
 
-		SerdURI  ignored;
-		SerdNode sub_uri =
+		SerdURI        ignored;
+		const SerdNode sub_uri =
 		    serd_node_new_uri_from_string(type_uri, &base_uri_parts, &ignored);
 
 		const std::string sub_uri_str =
@@ -300,7 +300,7 @@ parse_block(ingen::World&                    world,
 		sub_model.load_file(env, SERD_TURTLE, sub_file);
 		serd_env_free(env);
 
-		Sord::URI sub_node(*world.rdf_world(), sub_file);
+		const Sord::URI sub_node{*world.rdf_world(), sub_file};
 		parse_graph(world,
 		            target,
 		            sub_model,
@@ -358,7 +358,7 @@ parse_graph(ingen::World&                      world,
 	}
 
 	// Create graph
-	Properties props = get_properties(world, model, subject, ctx, data);
+	const Properties props = get_properties(world, model, subject, ctx, data);
 	target.put(path_to_uri(graph_path), props, ctx);
 
 	// For each port on this graph
@@ -397,8 +397,8 @@ parse_graph(ingen::World&                      world,
 
 	// For each block in this graph
 	for (auto n = model.find(subject, ingen_block, nil); !n.end(); ++n) {
-		Sord::Node node     = n.get_object();
-		URI        node_uri = node;
+		const Sord::Node node     = n.get_object();
+		const URI        node_uri = node;
 		assert(!node_uri.path().empty() && node_uri.path() != "/");
 		const raul::Path block_path = graph_path.child(
 		    raul::Symbol(FilePath(node_uri.path()).stem().string()));
@@ -583,19 +583,19 @@ parse(ingen::World&                      world,
 			                  symbol,
 			                  data);
 		} else if (types.find(block_class) != types.end()) {
-			const raul::Path rel_path(*get_path(base_uri, s));
+			const raul::Path rel_path{*get_path(base_uri, s)};
 			const raul::Path path = parent ? parent->child(rel_path) : rel_path;
 			ret = parse_block(world, target, model, base_uri, s, path, data);
 		} else if (types.find(in_port_class) != types.end() ||
 		           types.find(out_port_class) != types.end()) {
-			const raul::Path rel_path(*get_path(base_uri, s));
+			const raul::Path rel_path{*get_path(base_uri, s)};
 			const raul::Path path = parent ? parent->child(rel_path) : rel_path;
 			const Properties properties =
 			    get_properties(world, model, s, Resource::Graph::DEFAULT, data);
 			target.put(path_to_uri(path), properties);
 			ret = path;
 		} else if (types.find(arc_class) != types.end()) {
-			raul::Path parent_path(parent ? parent.value() : raul::Path("/"));
+			const raul::Path parent_path{parent ? parent.value() : raul::Path("/")};
 			parse_arc(world, target, model, base_uri, s, parent_path);
 		} else {
 			world.log().error("Subject has no known types\n");
@@ -624,7 +624,7 @@ Parser::parse_file(ingen::World&                      world,
 	const FilePath manifest_path =
 	    (is_bundle ? file_path / "manifest.ttl" : file_path);
 
-	URI manifest_uri(manifest_path);
+	const URI manifest_uri{manifest_path};
 
 	// Find graphs in manifest
 	const std::set<ResourceRecord> resources =
@@ -659,10 +659,10 @@ Parser::parse_file(ingen::World&                      world,
 	}
 
 	// Initialise parsing environment
-	const URI   file_uri  = URI(file_path);
-	const auto* uri_c_str = reinterpret_cast<const uint8_t*>(uri.c_str());
-	SerdNode    base_node = serd_node_from_string(SERD_URI, uri_c_str);
-	SerdEnv*    env       = serd_env_new(&base_node);
+	const URI      file_uri  = URI(file_path);
+	const auto*    uri_c_str = reinterpret_cast<const uint8_t*>(uri.c_str());
+	const SerdNode base_node = serd_node_from_string(SERD_URI, uri_c_str);
+	SerdEnv*       env       = serd_env_new(&base_node);
 
 	// Load graph into model
 	Sord::Model model(*world.rdf_world(),

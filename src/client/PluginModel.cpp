@@ -106,7 +106,7 @@ PluginModel::get_property(const URI& key) const
 		}
 		str = str.substr(last_delim + 1);
 
-		std::string symbol = raul::Symbol::symbolify(str);
+		const std::string symbol = raul::Symbol::symbolify(str);
 		set_property(_uris.lv2_symbol, _uris.forge.alloc(symbol));
 		return get_property(key);
 	}

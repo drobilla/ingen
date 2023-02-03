@@ -131,7 +131,7 @@ GraphCanvas::GraphCanvas(App&                              app,
     , _app(app)
     , _graph(std::move(graph))
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
+	const Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);
 
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);
@@ -302,7 +302,7 @@ GraphCanvas::build()
 static void
 show_module_human_names(GanvNode* node, void* data)
 {
-	bool b = *static_cast<bool*>(data);
+	const bool b = *static_cast<bool*>(data);
 	if (GANV_IS_MODULE(node)) {
 		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
 		auto* nmod = dynamic_cast<NodeModule*>(module);
@@ -688,7 +688,7 @@ serialise_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::copy_selection()
 {
-	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
+	const std::lock_guard<std::mutex> lock{_app.world().rdf_mutex()};
 
 	Serialiser serialiser(_app.world());
 	serialiser.start_to_string(_graph->path(), _graph->base_uri());
@@ -696,7 +696,7 @@ GraphCanvas::copy_selection()
 	for_each_selected_node(serialise_node, &serialiser);
 	for_each_selected_edge(serialise_arc, &serialiser);
 
-	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
+	const Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(serialiser.finish());
 	_paste_count = 0;
 }
@@ -704,7 +704,7 @@ GraphCanvas::copy_selection()
 void
 GraphCanvas::paste()
 {
-	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
+	const std::lock_guard<std::mutex> lock{_app.world().rdf_mutex()};
 
 	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
 	auto                parser = _app.loader()->parser();
@@ -888,8 +888,8 @@ GraphCanvas::load_plugin(const std::weak_ptr<PluginModel>& weak_plugin)
 		return;
 	}
 
-	raul::Symbol symbol = plugin->default_block_symbol();
-	unsigned offset = _app.store()->child_name_offset(_graph->path(), symbol);
+	raul::Symbol   symbol = plugin->default_block_symbol();
+	const unsigned offset = _app.store()->child_name_offset(_graph->path(), symbol);
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << symbol << "_" << offset;

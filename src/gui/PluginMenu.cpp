@@ -126,7 +126,7 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 			return 0;
 		}
 
-		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
+		const Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
 			std::string("_") + sub_label_str);
 		menu->items().push_back(menu_elem);
 		Gtk::MenuItem* menu_item = &(menu->items().back());
@@ -134,7 +134,7 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
 		menu_item->set_submenu(*submenu);
 
-		size_t num_child_items = build_plugin_class_menu(
+		const size_t num_child_items = build_plugin_class_menu(
 			submenu, c, classes, children, ancestors);
 
 		_class_menus.emplace(sub_uri_str, MenuRecord(menu_item, submenu));
@@ -158,10 +158,10 @@ PluginMenu::add_plugin_to_menu(MenuRecord&                                 menu,
 	LilvNode*   ingen_Graph = lilv_new_uri(lworld, uris.ingen_Graph.c_str());
 	LilvNode*   rdf_type    = lilv_new_uri(lworld, uris.rdf_type.c_str());
 
-	bool is_graph = lilv_world_ask(lworld,
-	                               lilv_plugin_get_uri(p->lilv_plugin()),
-	                               rdf_type,
-	                               ingen_Graph);
+	const bool is_graph = lilv_world_ask(lworld,
+	                                     lilv_plugin_get_uri(p->lilv_plugin()),
+	                                     rdf_type,
+	                                     ingen_Graph);
 
 	menu.menu->items().push_back(
 		Gtk::Menu_Helpers::MenuElem(

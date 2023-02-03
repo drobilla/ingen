@@ -67,8 +67,8 @@ ingen_try(bool cond, const char* msg)
 FilePath
 real_file_path(const char* path)
 {
-	std::unique_ptr<char, FreeDeleter<char>> real_path{realpath(path, nullptr),
-	                                                   FreeDeleter<char>{}};
+	const std::unique_ptr<char, FreeDeleter<char>> real_path{realpath(path, nullptr),
+	                                                         FreeDeleter<char>{}};
 
 	return FilePath{real_path.get()};
 }
@@ -146,7 +146,7 @@ run(int argc, char** argv)
 	                       *world->interface());
 
 	// AtomWriter to serialise responses from the engine
-	std::shared_ptr<Interface> client(new TestClient(world->log()));
+	const std::shared_ptr<Interface> client{new TestClient(world->log())};
 
 	world->interface()->set_respondee(client);
 	world->engine()->register_client(client);
@@ -162,10 +162,10 @@ run(int argc, char** argv)
 
 	SerdEnv* env = serd_env_new(&cmds_file_uri);
 	cmds->load_file(env, SERD_TURTLE, run_path);
-	Sord::Node nil;
-	int n_events = 0;
+	const Sord::Node nil;
+	int              n_events = 0;
 	for (;; ++n_events) {
-		std::string subject_str = fmt("msg%1%", n_events);
+		const std::string subject_str = fmt("msg%1%", n_events);
 
 		Sord::URI subject(*world->rdf_world(),
 		                  subject_str,

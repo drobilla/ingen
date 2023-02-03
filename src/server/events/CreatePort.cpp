@@ -210,7 +210,7 @@ CreatePort::execute(RunContext& ctx)
 void
 CreatePort::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->put(path_to_uri(_path), _update);
 	}

@@ -74,7 +74,7 @@ void
 ThreadedLoader::run()
 {
 	while (_sem.wait() && !_exit_flag) {
-		std::lock_guard<std::mutex> lock(_mutex);
+		const std::lock_guard<std::mutex> lock{_mutex};
 		while (!_events.empty()) {
 			_events.front()();
 			_events.pop_front();
@@ -89,7 +89,7 @@ ThreadedLoader::load_graph(bool                               merge,
                            const std::optional<raul::Symbol>& engine_symbol,
                            const std::optional<Properties>&   engine_data)
 {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock{_mutex};
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
@@ -117,7 +117,7 @@ ThreadedLoader::load_graph_event(
     const std::optional<raul::Symbol>& engine_symbol,
     const std::optional<Properties>&   engine_data)
 {
-	std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
+	const std::lock_guard<std::mutex> lock{_app.world().rdf_mutex()};
 
 	_app.world().parser()->parse_file(_app.world(),
 	                                  *_app.world().interface(),
@@ -132,7 +132,7 @@ ThreadedLoader::save_graph(
     const std::shared_ptr<const client::GraphModel>& model,
     const URI&                                       uri)
 {
-	std::lock_guard<std::mutex> lock(_mutex);
+	const std::lock_guard<std::mutex> lock{_mutex};
 
 	_events.emplace_back(sigc::hide_return(
 	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
@@ -149,7 +149,7 @@ ThreadedLoader::save_graph_event(
 {
 	assert(uri.scheme() == "file");
 	if (_app.serialiser()) {
-		std::lock_guard<std::mutex> lock(_app.world().rdf_mutex());
+		const std::lock_guard<std::mutex> lock{_app.world().rdf_mutex()};
 
 		if (uri.string().find(".ingen") != std::string::npos) {
 			_app.serialiser()->write_bundle(model, uri);

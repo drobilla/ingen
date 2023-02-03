@@ -160,9 +160,9 @@ void
 RunContext::set_priority(int priority)
 {
 	if (_thread) {
-		pthread_t   pthread = _thread->native_handle();
-		const int   policy  = (priority > 0) ? SCHED_FIFO : SCHED_OTHER;
-		sched_param sp{};
+		const pthread_t pthread = _thread->native_handle();
+		const int       policy  = (priority > 0) ? SCHED_FIFO : SCHED_OTHER;
+		sched_param     sp{};
 		sp.sched_priority = (priority > 0) ? priority : 0;
 		if (pthread_setschedparam(pthread, policy, &sp)) {
 			_engine.log().error(

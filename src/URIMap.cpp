@@ -50,9 +50,9 @@ LV2_URID
 URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle h,
                                     const char*         c_uri)
 {
-	auto* const                 map(static_cast<URIMap*>(h));
-	std::string                 uri(c_uri);
-	std::lock_guard<std::mutex> lock(map->_mutex);
+	auto* const                       map{static_cast<URIMap*>(h)};
+	std::string                       uri{c_uri};
+	const std::lock_guard<std::mutex> lock{map->_mutex};
 
 	auto       record = map->_map.emplace(uri, map->_map.size() + 1);
 	const auto id     = record.first->second;
@@ -92,8 +92,8 @@ const char*
 URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle h,
                                         LV2_URID              urid)
 {
-	auto* const                 map(static_cast<URIMap*>(h));
-	std::lock_guard<std::mutex> lock(map->_mutex);
+	auto* const                       map{static_cast<URIMap*>(h)};
+	const std::lock_guard<std::mutex> lock{map->_mutex};
 
 	return (urid > 0 && urid <= map->_unmap.size()
 	        ? map->_unmap[urid - 1].c_str()

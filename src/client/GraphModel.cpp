@@ -134,7 +134,7 @@ GraphModel::add_arc(const std::shared_ptr<ArcModel>& arc)
 	assert(arc->head()->parent().get() == this
 	       || arc->head()->parent()->parent().get() == this);
 
-	std::shared_ptr<ArcModel> existing = get_arc(
+	const std::shared_ptr<ArcModel> existing = get_arc(
 		arc->tail().get(), arc->head().get());
 
 	if (existing) {

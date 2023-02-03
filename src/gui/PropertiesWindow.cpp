@@ -382,9 +382,9 @@ PropertiesWindow::create_value_widget(const URI&  key,
 		                   ? world.uri_map().unmap_uri(value.get<int32_t>())
 		                   : "");
 
-		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
-		URISet      ranges = rdfs::range(world, pred, true);
-		URIEntry*   widget = manage(new URIEntry(_app, ranges, str ? str : ""));
+		LilvNode*    pred   = lilv_new_uri(lworld, key.c_str());
+		const URISet ranges = rdfs::range(world, pred, true);
+		URIEntry*    widget = manage(new URIEntry(_app, ranges, str ? str : ""));
 		widget->signal_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		lilv_node_free(pred);
@@ -400,10 +400,10 @@ PropertiesWindow::create_value_widget(const URI&  key,
 	if (type == _app->uris().atom_URI ||
 	    type == _app->uris().rdfs_Class ||
 	    is_class) {
-		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
-		URISet      ranges = rdfs::range(world, pred, true);
-		const char* str    = value.is_valid() ? value.ptr<const char>() : "";
-		URIEntry*   widget = manage(new URIEntry(_app, ranges, str));
+		LilvNode*    pred   = lilv_new_uri(lworld, key.c_str());
+		const URISet ranges = rdfs::range(world, pred, true);
+		const char*  str    = value.is_valid() ? value.ptr<const char>() : "";
+		URIEntry*    widget = manage(new URIEntry(_app, ranges, str));
 		widget->signal_changed().connect(
 			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		lilv_node_free(pred);
@@ -482,7 +482,7 @@ PropertiesWindow::remove_property(const URI& key, const Atom& value)
 Atom
 PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 {
-	Forge& forge = _app->forge();
+	const Forge& forge = _app->forge();
 
 	if (type == forge.Int) {
 		auto* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
@@ -542,7 +542,7 @@ PropertiesWindow::active_key() const
 		return "";
 	}
 
-	Glib::ustring prop_uri = (*iter)[_combo_columns.uri_col];
+	const Glib::ustring prop_uri = (*iter)[_combo_columns.uri_col];
 	return prop_uri;
 }
 

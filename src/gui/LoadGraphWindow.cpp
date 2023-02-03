@@ -198,7 +198,7 @@ LoadGraphWindow::ok_clicked()
 			true, FilePath(get_filename()), parent, symbol, _initial_data);
 
 	} else {
-		std::list<Glib::ustring> uri_list = get_filenames();
+		const std::list<Glib::ustring> uri_list = get_filenames();
 		for (const auto& u : uri_list) {
 			// Cascade
 			Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
@@ -244,7 +244,7 @@ LoadGraphWindow::symbol_from_filename(const Glib::ustring& filename)
 raul::Symbol
 LoadGraphWindow::avoid_symbol_clash(const raul::Symbol& symbol)
 {
-	unsigned offset = _app->store()->child_name_offset(
+	const unsigned offset = _app->store()->child_name_offset(
 		_graph->path(), symbol);
 
 	if (offset != 0) {

@@ -115,10 +115,10 @@ run(int argc, char** argv)
 
 	// Run benchmark
 	// TODO: Set up real-time scheduling for this and worker threads
-	ingen::Clock   clock;
-	const uint32_t n_test_frames = 1 << 20;
-	const uint32_t block_length  = 4096;
-	const uint64_t t_start       = clock.now_microseconds();
+	const ingen::Clock clock;
+	const uint32_t     n_test_frames = 1 << 20;
+	const uint32_t     block_length  = 4096;
+	const uint64_t     t_start       = clock.now_microseconds();
 	for (uint32_t i = 0; i < n_test_frames; i += block_length) {
 		world->engine()->advance(block_length);
 		world->engine()->run(block_length);
@@ -127,8 +127,8 @@ run(int argc, char** argv)
 	const uint64_t t_end = clock.now_microseconds();
 
 	// Write log output
-	std::unique_ptr<FILE, decltype(&fclose)> log{fopen(out_file.c_str(), "a"),
-	                                             &fclose};
+	const std::unique_ptr<FILE, decltype(&fclose)> log{fopen(out_file.c_str(), "a"),
+	                                                   &fclose};
 	if (ftell(log.get()) == 0) {
 		fprintf(log.get(), "# n_threads\trun_time\treal_time\n");
 	}

@@ -64,7 +64,7 @@ void
 BreadCrumbs::build(const raul::Path&                 path,
                    const std::shared_ptr<GraphView>& view)
 {
-	bool old_enable_signal = _enable_signal;
+	const bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
 
 	if (!_breadcrumbs.empty() && (path.is_parent_of(_full_path) || path == _full_path)) {

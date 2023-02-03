@@ -75,7 +75,7 @@ ClientStore::add_object(const std::shared_ptr<ObjectModel>& object)
 		std::dynamic_pointer_cast<ObjectModel>(existing->second)->set(object);
 	} else {
 		if (!object->path().is_root()) {
-			std::shared_ptr<ObjectModel> parent = _object(object->path().parent());
+			const std::shared_ptr<ObjectModel> parent = _object(object->path().parent());
 			if (parent) {
 				assert(object->path().is_child_of(parent->path()));
 				object->set_parent(parent);
@@ -200,7 +200,7 @@ ClientStore::resource(const URI& uri) const
 void
 ClientStore::add_plugin(const std::shared_ptr<PluginModel>& pm)
 {
-	std::shared_ptr<PluginModel> existing = _plugin(pm->uri());
+	const std::shared_ptr<PluginModel> existing = _plugin(pm->uri());
 	if (existing) {
 		existing->set(pm);
 	} else {
@@ -285,7 +285,7 @@ ClientStore::operator()(const Put& msg)
 		if (_uris.ingen_Graph == type) {
 			is_graph = true;
 		} else if (_uris.ingen_Internal == type || _uris.lv2_Plugin == type) {
-			std::shared_ptr<PluginModel> p(new PluginModel(uris(), uri, type, properties));
+			const std::shared_ptr<PluginModel> p{new PluginModel(uris(), uri, type, properties)};
 			add_plugin(p);
 			return;
 		}
@@ -309,7 +309,7 @@ ClientStore::operator()(const Put& msg)
 	}
 
 	if (is_graph) {
-		std::shared_ptr<GraphModel> model(new GraphModel(uris(), path));
+		const std::shared_ptr<GraphModel> model{new GraphModel(uris(), path)};
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_block) {
@@ -330,14 +330,14 @@ ClientStore::operator()(const Put& msg)
 				add_plugin(plug);
 			}
 
-			std::shared_ptr<BlockModel> bm(new BlockModel(uris(), plug, path));
+			const std::shared_ptr<BlockModel> bm{new BlockModel(uris(), plug, path)};
 			bm->set_properties(properties);
 			add_object(bm);
 		} else {
 			_log.warn("Block %1% has no prototype\n", path.c_str());
 		}
 	} else if (is_port) {
-		PortModel::Direction pdir = (is_output)
+		const PortModel::Direction pdir = (is_output)
 			? PortModel::Direction::OUTPUT
 			: PortModel::Direction::INPUT;
 		uint32_t   index = 0;
@@ -346,7 +346,7 @@ ClientStore::operator()(const Put& msg)
 			index = i->second.get<int32_t>();
 		}
 
-		std::shared_ptr<PortModel> p(new PortModel(uris(), path, index, pdir));
+		const std::shared_ptr<PortModel> p{new PortModel(uris(), path, index, pdir)};
 		p->set_properties(properties);
 		add_object(p);
 	} else {
@@ -370,7 +370,7 @@ ClientStore::operator()(const Delta& msg)
 
 	const raul::Path path(uri_to_path(uri));
 
-	std::shared_ptr<ObjectModel> obj = _object(path);
+	const std::shared_ptr<ObjectModel> obj = _object(path);
 	if (obj) {
 		obj->remove_properties(msg.remove);
 		obj->add_properties(msg.add);
@@ -391,7 +391,7 @@ ClientStore::operator()(const SetProperty& msg)
 		          predicate.c_str(), _uris.forge.str(value, false));
 		return;
 	}
-	std::shared_ptr<Resource> subject = _resource(subject_uri);
+	const std::shared_ptr<Resource> subject = _resource(subject_uri);
 	if (subject) {
 		if (predicate == _uris.ingen_activity) {
 			/* Activity is transient, trigger any live actions (like GUI
@@ -401,7 +401,7 @@ ClientStore::operator()(const SetProperty& msg)
 			subject->set_property(predicate, value, msg.ctx);
 		}
 	} else {
-		std::shared_ptr<PluginModel> plugin = _plugin(subject_uri);
+		const std::shared_ptr<PluginModel> plugin = _plugin(subject_uri);
 		if (plugin) {
 			plugin->set_property(predicate, value);
 		} else if (predicate != _uris.ingen_activity) {
@@ -449,8 +449,8 @@ ClientStore::attempt_connection(const raul::Path& tail_path,
 	auto head = std::dynamic_pointer_cast<PortModel>(_object(head_path));
 
 	if (tail && head) {
-		std::shared_ptr<GraphModel> graph = connection_graph(tail_path, head_path);
-		std::shared_ptr<ArcModel>   arc(new ArcModel(tail, head));
+		const std::shared_ptr<GraphModel> graph = connection_graph(tail_path, head_path);
+		const std::shared_ptr<ArcModel>   arc(new ArcModel(tail, head));
 		graph->add_arc(arc);
 		return true;
 	}

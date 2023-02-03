@@ -213,7 +213,7 @@ Delta::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::FAILURE);
 	}
 
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	_object = is_graph_object
 		? static_cast<ingen::Resource*>(_engine.store()->get(uri_to_path(_subject)))
@@ -225,7 +225,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	}
 
 	if (is_graph_object && !_object) {
-		raul::Path path(uri_to_path(_subject));
+		const raul::Path path{uri_to_path(_subject)};
 
 		bool is_graph  = false;
 		bool is_block  = false;
@@ -594,7 +594,7 @@ Delta::post_process()
 		_state.reset();
 	}
 
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 
 	if (_create_event) {
 		_create_event->post_process();

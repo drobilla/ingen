@@ -29,7 +29,7 @@ namespace ingen::server {
 
 Broadcaster::~Broadcaster()
 {
-	std::lock_guard<std::mutex> lock(_clients_mutex);
+	const std::lock_guard<std::mutex> lock{_clients_mutex};
 	_clients.clear();
 	_broadcastees.clear();
 }
@@ -39,7 +39,7 @@ Broadcaster::~Broadcaster()
 void
 Broadcaster::register_client(const std::shared_ptr<Interface>& client)
 {
-	std::lock_guard<std::mutex> lock(_clients_mutex);
+	const std::lock_guard<std::mutex> lock{_clients_mutex};
 	_clients.insert(client);
 }
 
@@ -50,7 +50,7 @@ Broadcaster::register_client(const std::shared_ptr<Interface>& client)
 bool
 Broadcaster::unregister_client(const std::shared_ptr<Interface>& client)
 {
-	std::lock_guard<std::mutex> lock(_clients_mutex);
+	const std::lock_guard<std::mutex> lock{_clients_mutex};
 	const size_t erased = _clients.erase(client);
 	_broadcastees.erase(client);
 	return (erased > 0);
@@ -71,7 +71,7 @@ Broadcaster::set_broadcast(const std::shared_ptr<Interface>& client,
 void
 Broadcaster::send_plugins(const BlockFactory::Plugins& plugins)
 {
-	std::lock_guard<std::mutex> lock(_clients_mutex);
+	const std::lock_guard<std::mutex> lock{_clients_mutex};
 	for (const auto& c : _clients) {
 		send_plugins_to(c.get(), plugins);
 	}

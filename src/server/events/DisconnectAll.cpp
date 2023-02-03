@@ -156,7 +156,7 @@ DisconnectAll::execute(RunContext& ctx)
 void
 DisconnectAll::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->message(_msg);
 	}

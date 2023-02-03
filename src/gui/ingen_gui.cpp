@@ -35,7 +35,7 @@ struct GUIModule : public Module {
 	using SigClientInterface = client::SigClientInterface;
 
 	void load(World& world) override {
-		URI uri(world.conf().option("connect").ptr<char>());
+		const URI uri{world.conf().option("connect").ptr<char>()};
 		if (!world.interface()) {
 			world.set_interface(
 				world.new_interface(URI(uri), make_client(world)));

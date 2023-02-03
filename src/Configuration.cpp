@@ -146,8 +146,8 @@ Configuration::set_value_from_string(Configuration::Option& option,
                                      const std::string&     value)
 {
 	if (option.type == _forge.Int) {
-		char* endptr = nullptr;
-		int   intval = static_cast<int>(strtol(value.c_str(), &endptr, 10));
+		char*     endptr = nullptr;
+		const int intval = static_cast<int>(strtol(value.c_str(), &endptr, 10));
 		if (endptr && *endptr == '\0') {
 			option.value = _forge.make(intval);
 		} else {
@@ -247,8 +247,11 @@ Configuration::load(const FilePath& path)
 	SerdEnv*    env = serd_env_new(&node);
 	model.load_file(env, SERD_TURTLE, uri, uri);
 
-	Sord::Node nodemm(world, Sord::Node::URI, reinterpret_cast<const char*>(node.buf));
-	Sord::Node nil;
+	const Sord::Node nodemm{world,
+	                        Sord::Node::URI,
+	                        reinterpret_cast<const char*>(node.buf)};
+
+	const Sord::Node nil;
 	for (auto i = model.find(nodemm, nil, nil); !i.end(); ++i) {
 		const auto& pred = i.get_predicate();
 		const auto& obj  = i.get_object();
@@ -287,8 +290,8 @@ Configuration::save(URIMap&            uri_map,
 	}
 
 	// Attempt to open file for writing
-	std::unique_ptr<FILE, decltype(&fclose)> file{fopen(path.c_str(), "w"),
-	                                              &fclose};
+	const std::unique_ptr<FILE, decltype(&fclose)> file{fopen(path.c_str(), "w"),
+	                                                    &fclose};
 	if (!file) {
 		throw FileError(fmt("Failed to open file %1% (%2%)",
 		                    path, strerror(errno)));
@@ -343,7 +346,7 @@ Configuration::save(URIMap&            uri_map,
 		}
 
 		const std::string key(std::string("ingen:") + o.second.key);
-		SerdNode pred = serd_node_from_string(
+		const SerdNode pred = serd_node_from_string(
 			SERD_CURIE, reinterpret_cast<const uint8_t*>(key.c_str()));
 		sratom_write(sratom, &uri_map.urid_unmap(), 0,
 		             &base, &pred, value.type(), value.size(), value.get_body());

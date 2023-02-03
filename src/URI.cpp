@@ -24,10 +24,7 @@
 
 namespace ingen {
 
-URI::URI()
-	: _uri(SERD_URI_NULL)
-	, _node(SERD_NODE_NULL)
-{}
+URI::URI() : _uri(SERD_URI_NULL), _node(SERD_NODE_NULL) {}
 
 URI::URI(const std::string& str)
     : _uri(SERD_URI_NULL)
@@ -35,14 +32,16 @@ URI::URI(const std::string& str)
                                               str.c_str()),
                                           nullptr,
                                           &_uri))
-{}
+{
+}
 
 URI::URI(const char* str)
     : _uri(SERD_URI_NULL)
     , _node(serd_node_new_uri_from_string(reinterpret_cast<const uint8_t*>(str),
                                           nullptr,
                                           &_uri))
-{}
+{
+}
 
 URI::URI(const std::string& str, const URI& base)
     : _uri(SERD_URI_NULL)
@@ -50,25 +49,22 @@ URI::URI(const std::string& str, const URI& base)
                                               str.c_str()),
                                           &base._uri,
                                           &_uri))
-{}
+{
+}
 
 URI::URI(SerdNode node)
-	: _uri(SERD_URI_NULL)
-	, _node(serd_node_new_uri_from_node(&node, nullptr, &_uri))
+    : _uri(SERD_URI_NULL)
+    , _node(serd_node_new_uri_from_node(&node, nullptr, &_uri))
 {
 	assert(node.type == SERD_URI);
 }
 
-URI::URI(SerdNode node, SerdURI uri)
-	: _uri(uri)
-	, _node(node)
+URI::URI(SerdNode node, SerdURI uri) : _uri(uri), _node(node)
 {
 	assert(node.type == SERD_URI);
 }
 
-URI::URI(const Sord::Node& node)
-	: URI(*node.to_serd_node())
-{}
+URI::URI(const Sord::Node& node) : URI(*node.to_serd_node()) {}
 
 URI::URI(const FilePath& path)
     : _uri(SERD_URI_NULL)
@@ -77,12 +73,13 @@ URI::URI(const FilePath& path)
                                  nullptr,
                                  &_uri,
                                  true))
-{}
+{
+}
 
 URI::URI(const URI& uri)
-	: _uri(SERD_URI_NULL)
-	, _node(serd_node_new_uri(&uri._uri, nullptr, &_uri))
-{}
+    : _uri(SERD_URI_NULL), _node(serd_node_new_uri(&uri._uri, nullptr, &_uri))
+{
+}
 
 URI&
 URI::operator=(const URI& uri)
@@ -95,9 +92,7 @@ URI::operator=(const URI& uri)
 	return *this;
 }
 
-URI::URI(URI&& uri) noexcept
-	: _uri(uri._uri)
-	, _node(uri._node)
+URI::URI(URI&& uri) noexcept : _uri(uri._uri), _node(uri._node)
 {
 	uri._node = SERD_NODE_NULL;
 	uri._uri  = SERD_URI_NULL;
@@ -123,8 +118,10 @@ URI::~URI()
 URI
 URI::make_relative(const URI& base) const
 {
-	SerdURI  uri;
-	SerdNode node = serd_node_new_relative_uri(&_uri, &base._uri, nullptr, &uri);
+	SerdURI        uri;
+	const SerdNode node =
+	    serd_node_new_relative_uri(&_uri, &base._uri, nullptr, &uri);
+
 	return {node, uri};
 }
 

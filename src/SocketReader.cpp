@@ -123,7 +123,7 @@ SocketReader::run()
 	AtomForge  forge(map);
 	{
 		// Lock RDF world
-		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
+		const std::lock_guard<std::mutex> lock{_world.rdf_mutex()};
 
 		// Use <ingen:/> as base URI, so relative URIs are like bundle paths
 		base_uri = sord_new_uri(world->c_obj(),
@@ -174,10 +174,10 @@ SocketReader::run()
 		}
 
 		// Lock RDF world
-		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
+		const std::lock_guard<std::mutex> lock{_world.rdf_mutex()};
 
 		// Read until the next '.'
-		SerdStatus st = serd_reader_read_chunk(reader);
+		const SerdStatus st = serd_reader_read_chunk(reader);
 		if (st == SERD_FAILURE || !_msg_node) {
 			continue; // Read nothing, e.g. just whitespace
 		}
@@ -200,7 +200,7 @@ SocketReader::run()
 	}
 
 	// Lock RDF world
-	std::lock_guard<std::mutex> lock(_world.rdf_mutex());
+	const std::lock_guard<std::mutex> lock{_world.rdf_mutex()};
 
 	// Destroy everything
 	sord_inserter_free(_inserter);

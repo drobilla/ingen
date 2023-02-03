@@ -41,8 +41,8 @@ Arc::Arc(Ganv::Canvas&                                  canvas,
          Ganv::Node*                                    dst)
     : Ganv::Edge(canvas, src, dst), _arc_model(model)
 {
-	std::shared_ptr<const client::ObjectModel> tparent = model->tail()->parent();
-	std::shared_ptr<const client::BlockModel>  tparent_block;
+	const std::shared_ptr<const client::ObjectModel> tparent = model->tail()->parent();
+	std::shared_ptr<const client::BlockModel>        tparent_block;
 	if ((tparent_block = std::dynamic_pointer_cast<const client::BlockModel>(tparent))) {
 		if (tparent_block->plugin_uri() == NS_INTERNALS "BlockDelay") {
 			g_object_set(_gobj, "dash-length", 4.0, nullptr);

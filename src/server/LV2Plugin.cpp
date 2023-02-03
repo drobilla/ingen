@@ -73,7 +73,7 @@ LV2Plugin::symbol() const
 	}
 
 	while (working.length() > 0) {
-		size_t last_slash = working.find_last_of('/');
+		const size_t last_slash = working.find_last_of('/');
 		const std::string symbol = working.substr(last_slash+1);
 		if ( (symbol[0] >= 'a' && symbol[0] <= 'z')
 		     || (symbol[0] >= 'A' && symbol[0] <= 'Z') ) {

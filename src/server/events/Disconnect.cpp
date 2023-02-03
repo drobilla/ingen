@@ -117,7 +117,7 @@ Disconnect::Impl::Impl(Engine&     e,
 bool
 Disconnect::pre_process(PreProcessContext& ctx)
 {
-	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
+	const std::lock_guard<Store::Mutex> lock{_engine.store()->mutex()};
 
 	if (_msg.tail.parent().parent() != _msg.head.parent().parent()
 	    && _msg.tail.parent() != _msg.head.parent().parent()
@@ -219,7 +219,7 @@ Disconnect::execute(RunContext& ctx)
 void
 Disconnect::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->message(_msg);
 	}

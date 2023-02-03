@@ -289,9 +289,9 @@ PortImpl::set_voice_value(const RunContext& ctx,
 void
 PortImpl::update_set_state(const RunContext& ctx, uint32_t v)
 {
-	Voice&    voice = _voices->at(v);
-	SetState& state = voice.set_state;
-	BufferRef buf   = voice.buffer;
+	Voice&          voice = _voices->at(v);
+	SetState&       state = voice.set_state;
+	const BufferRef buf   = voice.buffer;
 	switch (state.state) {
 	case SetState::State::SET:
 		break;
@@ -458,10 +458,10 @@ PortImpl::monitor(RunContext& ctx, bool send_now)
 		return;
 	}
 
-	Forge&   forge = ctx.engine().world().forge();
-	URIs&    uris  = ctx.engine().world().uris();
-	LV2_URID key   = 0;
-	float    val   = 0.0f;
+	const Forge& forge = ctx.engine().world().forge();
+	const URIs&  uris  = ctx.engine().world().uris();
+	LV2_URID     key   = 0;
+	float        val   = 0.0f;
 	switch (_type.id()) {
 	case PortType::UNKNOWN:
 		break;

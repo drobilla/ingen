@@ -349,7 +349,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 			LILV_FOREACH (nodes, i, sizes) {
 				const LilvNode* d = lilv_nodes_get(sizes, i);
 				if (lilv_node_is_int(d)) {
-					uint32_t size_val = lilv_node_as_int(d);
+					const uint32_t size_val = lilv_node_as_int(d);
 					port_buffer_size = std::max(port_buffer_size, size_val);
 				}
 			}
@@ -481,7 +481,7 @@ LV2Block::save_state(const FilePath& dir) const
 	World&     world  = _lv2_plugin->world();
 	LilvWorld* lworld = world.lilv_world();
 
-	StatePtr state{
+	const StatePtr state{
 	    lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
 	                                 const_cast<LV2Block*>(this)->instance(0),
 	                                 &world.uri_map().urid_map(),
@@ -521,7 +521,7 @@ LV2Block::duplicate(Engine&             engine,
 	const SampleRate rate = engine.sample_rate();
 
 	// Get current state
-	StatePtr state{
+	const StatePtr state{
 	    lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
 	                                 instance(0),
 	                                 &engine.world().uri_map().urid_map(),
@@ -589,10 +589,10 @@ LV2_Worker_Status
 LV2Block::work(uint32_t size, const void* data)
 {
 	if (_worker_iface) {
-		std::lock_guard<std::mutex> lock(_work_mutex);
+		const std::lock_guard<std::mutex> lock{_work_mutex};
 
-		LV2_Handle        inst = lilv_instance_get_handle(instance(0));
-		LV2_Worker_Status st   = _worker_iface->work(inst, work_respond, this, size, data);
+		LV2_Handle              inst = lilv_instance_get_handle(instance(0));
+		const LV2_Worker_Status st   = _worker_iface->work(inst, work_respond, this, size, data);
 		if (st) {
 			parent_graph()->engine().log().error(
 				"Error calling %1% work method\n", _path);
@@ -717,17 +717,17 @@ LV2Block::save_preset(const URI&        uri,
 	const FilePath dirname  = path.parent_path();
 	const FilePath basename = path.stem();
 
-	StatePtr state{lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
-	                                            instance(0),
-	                                            lmap,
-	                                            nullptr,
-	                                            nullptr,
-	                                            nullptr,
-	                                            path.c_str(),
-	                                            get_port_value,
-	                                            this,
-	                                            LV2_STATE_IS_NATIVE,
-	                                            nullptr)};
+	const StatePtr state{lilv_state_new_from_instance(_lv2_plugin->lilv_plugin(),
+	                                                  instance(0),
+	                                                  lmap,
+	                                                  nullptr,
+	                                                  nullptr,
+	                                                  nullptr,
+	                                                  path.c_str(),
+	                                                  get_port_value,
+	                                                  this,
+	                                                  LV2_STATE_IS_NATIVE,
+	                                                  nullptr)};
 
 	if (state) {
 		const auto l = props.find(_uris.rdfs_label);

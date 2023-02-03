@@ -198,8 +198,9 @@ ControlBindings::port_value_changed(RunContext& ctx,
 {
 	const ingen::URIs& uris = ctx.engine().world().uris();
 	if (!!key) {
-		int16_t  value = port_value_to_control(
-			ctx, port, key.type, value_atom);
+		const int16_t value =
+		    port_value_to_control(ctx, port, key.type, value_atom);
+
 		uint16_t size  = 0;
 		uint8_t  buf[4];
 		switch (key.type) {
@@ -390,7 +391,7 @@ ControlBindings::set_port_value(RunContext& ctx,
 	// TODO: Set port value property so it is saved
 	port->set_control_value(ctx, ctx.start(), val);
 
-	URIs& uris = ctx.engine().world().uris();
+	const URIs& uris = ctx.engine().world().uris();
 	ctx.notify(uris.ingen_value, ctx.start(), port,
 	           sizeof(float), _forge.Float, &val);
 }

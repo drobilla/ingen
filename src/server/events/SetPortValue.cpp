@@ -54,7 +54,7 @@ SetPortValue::SetPortValue(Engine&                           engine,
 bool
 SetPortValue::pre_process(PreProcessContext&)
 {
-	ingen::URIs& uris = _engine.world().uris();
+	const ingen::URIs& uris = _engine.world().uris();
 	if (_port->is_output()) {
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
@@ -92,8 +92,8 @@ SetPortValue::apply(RunContext& ctx)
 		return;
 	}
 
-	ingen::URIs&  uris = _engine.world().uris();
-	Buffer*       buf  = _port->buffer(0).get();
+	const ingen::URIs&  uris = _engine.world().uris();
+	Buffer*             buf  = _port->buffer(0).get();
 
 	if (_buffer) {
 		if (_port->user_buffer(ctx)) {
@@ -127,7 +127,7 @@ SetPortValue::apply(RunContext& ctx)
 void
 SetPortValue::post_process()
 {
-	Broadcaster::Transfer t(*_engine.broadcaster());
+	const Broadcaster::Transfer t{*_engine.broadcaster()};
 	if (respond() == Status::SUCCESS && !_activity) {
 		_engine.broadcaster()->set_property(
 			_port->uri(),

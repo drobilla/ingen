@@ -46,8 +46,8 @@ schedule(LV2_Worker_Schedule_Handle handle,
          uint32_t                   size,
          const void*                data)
 {
-	auto*   block  = static_cast<LV2Block*>(handle);
-	Engine& engine = block->parent_graph()->engine();
+	auto*         block  = static_cast<LV2Block*>(handle);
+	const Engine& engine = block->parent_graph()->engine();
 
 	return engine.worker()->request(block, size, data);
 }
@@ -57,8 +57,8 @@ schedule_sync(LV2_Worker_Schedule_Handle handle,
               uint32_t                   size,
               const void*                data)
 {
-	auto*   block  = static_cast<LV2Block*>(handle);
-	Engine& engine = block->parent_graph()->engine();
+	auto*         block  = static_cast<LV2Block*>(handle);
+	const Engine& engine = block->parent_graph()->engine();
 
 	return engine.sync_worker()->request(block, size, data);
 }
@@ -72,7 +72,7 @@ Worker::request(LV2Block*   block,
 		return block->work(size, data);
 	}
 
-	Engine& engine = block->parent_graph()->engine();
+	const Engine& engine = block->parent_graph()->engine();
 	if (_requests.write_space() < sizeof(MessageHeader) + size) {
 		engine.log().error("Work request ring overflow\n");
 		return LV2_WORKER_ERR_NO_SPACE;

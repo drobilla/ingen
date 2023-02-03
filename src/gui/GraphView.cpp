@@ -120,8 +120,9 @@ GraphView::set_graph(const std::shared_ptr<const GraphModel>& graph)
 std::shared_ptr<GraphView>
 GraphView::create(App& app, const std::shared_ptr<const GraphModel>& graph)
 {
-	GraphView*                 result = nullptr;
-	Glib::RefPtr<Gtk::Builder> xml    = WidgetFactory::create("warehouse_win");
+	GraphView*                       result = nullptr;
+	const Glib::RefPtr<Gtk::Builder> xml =
+	    WidgetFactory::create("warehouse_win");
 
 	xml->get_widget_derived("graph_view_box", result);
 	if (!result) {

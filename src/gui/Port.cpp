@@ -265,7 +265,7 @@ Port::build_enum_menu()
 	auto       block = std::dynamic_pointer_cast<BlockModel>(model()->parent());
 	Gtk::Menu* menu  = Gtk::manage(new Gtk::Menu());
 
-	PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
+	const PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
 		model()->index());
 	for (const auto& p : points) {
 		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p.second));
@@ -316,7 +316,7 @@ Port::build_uri_menu()
 	rdfs::classes(world, ranges, false);
 
 	// Get all objects in range
-	rdfs::Objects values = rdfs::instances(world, ranges);
+	const rdfs::Objects values = rdfs::instances(world, ranges);
 
 	// Add a menu item for each such class
 	for (const auto& v : values) {
@@ -553,9 +553,10 @@ Port::on_selected(gboolean b)
 
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && win->documentation_is_visible() && block->plugin_model()) {
-				bool html = false;
 #if USE_WEBKIT
-				html = true;
+				const bool html = true;
+#else
+				const bool html = false;
 #endif
 				const std::string& doc = block->plugin_model()->port_documentation(
 					pm->index(), html);

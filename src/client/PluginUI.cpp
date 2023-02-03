@@ -88,9 +88,9 @@ lv2_ui_write(SuilController controller,
 
 	} else if (format == uris.atom_eventTransfer.urid()) {
 		const auto* atom = static_cast<const LV2_Atom*>(buffer);
-		Atom        val  = Forge::alloc(atom->size,
-		                                atom->type,
-		                                LV2_ATOM_BODY_CONST(atom));
+		const Atom  val =
+		    Forge::alloc(atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
+
 		ui->signal_property_changed()(port->uri(),
 		                              uris.ingen_activity,
 		                              val,
@@ -122,8 +122,8 @@ lv2_ui_subscribe(SuilController            controller,
                  uint32_t                  protocol,
                  const LV2_Feature* const* features)
 {
-	auto* const           ui   = static_cast<PluginUI*>(controller);
-	std::shared_ptr<const PortModel> port = get_port(ui, port_index);
+	auto* const ui = static_cast<PluginUI*>(controller);
+	const std::shared_ptr<const PortModel> port = get_port(ui, port_index);
 	if (!port) {
 		return 1;
 	}
@@ -173,7 +173,7 @@ PluginUI::PluginUI(ingen::World&                     world,
 
 PluginUI::~PluginUI()
 {
-	for (uint32_t i : _subscribed_ports) {
+	for (const uint32_t i : _subscribed_ports) {
 		lv2_ui_unsubscribe(this, i, 0, nullptr);
 	}
 	suil_instance_free(_instance);
@@ -259,7 +259,7 @@ PluginUI::instantiate()
 			                   plugin_uri, lilv_node_as_string(_ui_node));
 		} else if (!strcmp(lilv_node_as_uri(plug), plugin_uri.c_str())) {
 			// Notification is valid and for this plugin
-			uint32_t index = lv2_ui_port_index(this, lilv_node_as_string(sym));
+			const uint32_t index = lv2_ui_port_index(this, lilv_node_as_string(sym));
 			if (index != LV2UI_INVALID_PORT_INDEX) {
 				lv2_ui_subscribe(this, index, 0, nullptr);
 				_subscribed_ports.insert(index);
@@ -293,7 +293,7 @@ PluginUI::instantiate()
 	if (!_instance) {
 		_world.log().error("Failed to instantiate LV2 UI\n");
 		// Cancel any subscriptions
-		for (uint32_t i : _subscribed_ports) {
+		for (const uint32_t i : _subscribed_ports) {
 			lv2_ui_unsubscribe(this, i, 0, nullptr);
 		}
 		return false;
