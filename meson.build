@@ -106,34 +106,49 @@ platform_defines += ['-DHAVE_SOCKET=@0@'.format(have_socket.to_int())]
 boost_dep = dependency('boost')
 thread_dep = dependency('threads')
 
-serd_dep = dependency('serd-0',
-                      version: '>= 0.30.4',
-                      fallback: ['serd', 'serd_dep'])
+serd_dep = dependency(
+  'serd-0',
+  fallback: ['serd', 'serd_dep'],
+  version: '>= 0.30.4',
+)
 
-sord_dep = dependency('sord-0',
-                      version: '>= 0.16.0',
-                      include_type: 'system',
-                      fallback: ['sord', 'sord_dep'])
+sord_dep = dependency(
+  'sord-0',
+  fallback: ['sord', 'sord_dep'],
+  include_type: 'system',
+  version: '>= 0.16.0',
+)
 
-sratom_dep = dependency('sratom-0',
-                        version: '>= 0.6.0',
-                        fallback: ['sratom', 'sratom_dep'])
+sratom_dep = dependency(
+  'sratom-0',
+  fallback: ['sratom', 'sratom_dep'],
+  version: '>= 0.6.0',
+)
 
-suil_dep = dependency('suil-0',
-                      version: '>= 0.10.0',
-                      fallback: ['suil', 'suil_dep'])
+suil_dep = dependency(
+  'suil-0',
+  version: '>= 0.10.0',
+  fallback: ['suil', 'suil_dep'],
+)
 
-lv2_dep = dependency('lv2',
-                     version: '>= 1.18.0',
-                     fallback: ['lv2', 'lv2_dep'])
+lv2_dep = dependency(
+  'lv2',
+  fallback: ['lv2', 'lv2_dep'],
+  include_type: 'system',
+  version: '>= 1.18.0',
+)
 
-lilv_dep = dependency('lilv-0',
-                      version: '>= 0.24.0',
-                      fallback: ['lilv', 'lilv_dep'])
+lilv_dep = dependency(
+  'lilv-0',
+  fallback: ['lilv', 'lilv_dep'],
+  version: '>= 0.24.0',
+)
 
-raul_dep = dependency('raul-2',
-                      version: '>= 2.0.0',
-                      fallback: ['raul', 'raul_dep'])
+raul_dep = dependency(
+  'raul-2',
+  fallback: ['raul', 'raul_dep'],
+  version: '>= 2.0.0',
+)
 
 #######################
 # Driver Dependencies #
