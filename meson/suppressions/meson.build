@@ -1,11 +1,9 @@
-# Copyright 2020-2022 David Robillard <d@drobilla.net>
+# Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
-# Project-specific warning suppressions.
-#
-# This should be used in conjunction with the generic "warnings" sibling that
-# enables all reasonable warnings for the compiler.  It lives here just to keep
-# the top-level meson.build more readable.
+# Project-specific warning suppressions
+
+warning_level = get_option('warning_level')
 
 #######
 # C++ #
@@ -14,10 +12,12 @@
 if is_variable('cpp')
   cpp_suppressions = []
 
-  if get_option('strict')
-    if cpp.get_id() == 'clang'
+  if cpp.get_id() == 'clang'
+    if warning_level == 'everything'
       cpp_suppressions = [
         '-Wno-c++17-extensions',
+        '-Wno-c++98-compat',
+        '-Wno-c++98-compat-pedantic',
         '-Wno-cast-align',
         '-Wno-cast-qual',
         '-Wno-documentation-unknown-command',
@@ -27,18 +27,21 @@ if is_variable('cpp')
         '-Wno-format-nonliteral',
         '-Wno-global-constructors',
         '-Wno-implicit-float-conversion',
-        '-Wno-nullability-extension',
         '-Wno-padded',
         '-Wno-reserved-id-macro',
         '-Wno-shorten-64-to-32',
         '-Wno-sign-conversion',
         '-Wno-switch-enum',
         '-Wno-unreachable-code',
-        '-Wno-unused-parameter',
         '-Wno-vla',
-        '-Wno-vla-extension',
         '-Wno-weak-vtables',
       ]
+
+      if not meson.is_cross_build()
+        cpp_suppressions += [
+          '-Wno-poison-system-directories',
+        ]
+      endif
 
       if host_machine.system() in ['darwin', 'freebsd']
         cpp_suppressions += [
@@ -56,8 +59,18 @@ if is_variable('cpp')
           '-Wno-zero-as-null-pointer-constant', # boost
         ]
       endif
+    endif
 
-    elif cpp.get_id() == 'gcc'
+    if warning_level in ['everything', '3']
+      cpp_suppressions += [
+        '-Wno-unused-parameter',
+        '-Wno-vla-extension',
+        '-Wno-nullability-extension',
+      ]
+    endif
+
+  elif cpp.get_id() == 'gcc'
+    if warning_level == 'everything'
       cpp_suppressions = [
         '-Wno-abi-tag',
         '-Wno-alloc-zero',
@@ -90,8 +103,13 @@ if is_variable('cpp')
         '-Wno-switch-enum',
         '-Wno-unreachable-code',
         '-Wno-unused-const-variable',
-        '-Wno-unused-parameter',
         '-Wno-useless-cast',
+      ]
+    endif
+
+    if warning_level in ['everything', '3']
+      cpp_suppressions += [
+        '-Wno-unused-parameter',
         '-Wno-vla',
       ]
     endif

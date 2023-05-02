@@ -1,4 +1,4 @@
-# Copyright 2020-2022 David Robillard <d@drobilla.net>
+# Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
 project('ingen', 'cpp',
@@ -22,11 +22,6 @@ versioned_name = '@0@-@1@'.format(meson.project_name(), major_version)
 
 # Required tools
 cpp = meson.get_compiler('cpp')
-
-# Set global warning flags
-if get_option('strict') and not meson.is_subproject()
-  subdir('meson/warnings')
-endif
 
 # Set global warning suppressions
 subdir('meson/suppressions')
@@ -103,7 +98,7 @@ platform_defines += ['-DHAVE_SOCKET=@0@'.format(have_socket.to_int())]
 # Common Dependencies #
 #######################
 
-boost_dep = dependency('boost')
+boost_dep = dependency('boost', include_type: 'system')
 thread_dep = dependency('threads')
 
 serd_dep = dependency(
