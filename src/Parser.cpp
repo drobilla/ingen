@@ -91,7 +91,7 @@ Parser::find_resources(Sord::World& world,
 static std::optional<raul::Path>
 get_path(const URI& base, const URI& uri)
 {
-	const URI         relative = uri.make_relative(base);
+	const URI         relative = uri.make_relative(base, base);
 	const std::string uri_str  = "/" + relative.string();
 	return raul::Path::is_valid(uri_str) ? raul::Path(uri_str)
 	                                     : std::optional<raul::Path>();

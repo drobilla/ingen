@@ -52,6 +52,7 @@ public:
 	~URI();
 
 	URI make_relative(const URI& base) const;
+	URI make_relative(const URI& base, const URI& root) const;
 
 	bool empty() const { return !_node.buf; }
 

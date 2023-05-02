@@ -125,4 +125,14 @@ URI::make_relative(const URI& base) const
 	return {node, uri};
 }
 
+URI
+URI::make_relative(const URI& base, const URI& root) const
+{
+	SerdURI        uri;
+	const SerdNode node =
+	    serd_node_new_relative_uri(&_uri, &base._uri, &root._uri, &uri);
+
+	return {node, uri};
+}
+
 } // namespace ingen
