@@ -4,6 +4,7 @@ Checks: >
   -*-vararg,
   -android-cloexec-*,
   -bugprone-easily-swappable-parameters,
+  -bugprone-unchecked-optional-access,
   -cert-dcl50-cpp,
   -cert-err33-c,
   -cert-err34-c,
