@@ -48,8 +48,8 @@ private:
 	uint64_t now_microseconds() const {
 		struct timespec time{};
 		clock_gettime(_clock, &time);
-		return static_cast<uint64_t>(time.tv_sec) * 1e6 +
-		       static_cast<uint64_t>(time.tv_nsec) / 1e3;
+		return static_cast<uint64_t>(time.tv_sec) * 1000000U +
+		       static_cast<uint64_t>(time.tv_nsec) / 100U;
 	}
 
 private:

@@ -76,7 +76,7 @@ private:
 	/// Append some data and return a reference to its start
 	intptr_t append(const void* data, uint32_t len) {
 		// Record offset of the start of this write (+1 to avoid null)
-		const intptr_t ref = _size + 1;
+		const auto ref = static_cast<intptr_t>(_size + 1U);
 
 		// Update size and reallocate if necessary
 		if (lv2_atom_pad_size(_size + len) > _capacity) {
