@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_CLIENT_SOCKET_CLIENT_HPP
-#define INGEN_CLIENT_SOCKET_CLIENT_HPP
+#ifndef INGEN_CLIENT_SOCKETCLIENT_HPP
+#define INGEN_CLIENT_SOCKETCLIENT_HPP
 
 #include "ingen/Log.hpp"
 #include "ingen/SocketReader.hpp"
@@ -89,4 +89,4 @@ private:
 } // namespace client
 } // namespace ingen
 
-#endif // INGEN_CLIENT_SOCKET_CLIENT_HPP
+#endif // INGEN_CLIENT_SOCKETCLIENT_HPP
