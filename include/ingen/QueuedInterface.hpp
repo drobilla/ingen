@@ -42,14 +42,14 @@ public:
 	URI uri() const override { return URI("ingen:/QueuedInterface"); }
 
 	void message(const Message& message) override {
-		std::lock_guard<std::mutex> lock(_mutex);
+		const std::lock_guard<std::mutex> lock{_mutex};
 		_messages.emplace_back(message);
 	}
 
 	void emit() {
 		std::vector<Message> messages;
 		{
-			std::lock_guard<std::mutex> lock(_mutex);
+			const std::lock_guard<std::mutex> lock{_mutex};
 			_messages.swap(messages);
 		}
 

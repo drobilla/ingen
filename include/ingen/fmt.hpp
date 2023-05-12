@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2023 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -27,8 +27,10 @@ template <typename... Args>
 std::string
 fmt(const char* fmt, Args&&... args)
 {
-	boost::format               f(fmt);
-	std::initializer_list<char> l{(static_cast<void>(f % args), char{})...};
+	boost::format                     f{fmt}; // NOLINT(misc-const-correctness)
+	const std::initializer_list<char> l{
+	    (static_cast<void>(f % args), char{})...};
+
 	(void)l;
 	return boost::str(f);
 }

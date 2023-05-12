@@ -66,7 +66,7 @@ public:
 		                                 ? raul::Socket::Type::UNIX
 		                                 : raul::Socket::Type::TCP);
 
-		std::shared_ptr<raul::Socket> sock(new raul::Socket(type));
+		const std::shared_ptr<raul::Socket> sock{new raul::Socket(type)};
 		if (!sock->connect(uri)) {
 			world.log().error("Failed to connect <%1%> (%2%)\n",
 			                  sock->uri(), strerror(errno));

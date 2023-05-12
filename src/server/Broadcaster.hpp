@@ -97,7 +97,7 @@ public:
 	send_plugins_to(Interface*, const BlockFactory::Plugins& plugins);
 
 	void message(const Message& msg) override {
-		std::lock_guard<std::mutex> lock(_clients_mutex);
+		const std::lock_guard<std::mutex> lock{_clients_mutex};
 		for (const auto& c : _clients) {
 			if (c != _ignore_client) {
 				c->message(msg);

@@ -46,7 +46,7 @@ public:
 	}
 
 	void message(const Message& message) override {
-		std::lock_guard<std::mutex> lock(_sinks_mutex);
+		const std::lock_guard<std::mutex> lock{_sinks_mutex};
 		for (const auto& s : _sinks) {
 			s->message(message);
 		}

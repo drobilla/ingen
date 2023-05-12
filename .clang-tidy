@@ -17,7 +17,6 @@ Checks: >
   -hicpp-explicit-conversions,
   -hicpp-signed-bitwise,
   -llvmlibc-*,
-  -misc-const-correctness,
   -misc-unused-parameters,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
