@@ -45,6 +45,7 @@
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
+#include "lv2/urid/urid.h"
 #include "suil/suil.h"
 
 #include <glib.h>
@@ -66,7 +67,6 @@
 #include <cassert>
 #include <cstdio>
 #include <exception>
-#include <functional>
 #include <iostream>
 #include <map>
 #include <memory>
