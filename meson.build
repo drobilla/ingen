@@ -111,7 +111,7 @@ sord_dep = dependency(
   'sord-0',
   fallback: ['sord', 'sord_dep'],
   include_type: 'system',
-  version: '>= 0.16.0',
+  version: '>= 0.16.15',
 )
 
 sratom_dep = dependency(
@@ -136,7 +136,7 @@ lv2_dep = dependency(
 lilv_dep = dependency(
   'lilv-0',
   fallback: ['lilv', 'lilv_dep'],
-  version: '>= 0.24.0',
+  version: '>= 0.24.21',
 )
 
 raul_dep = dependency(
