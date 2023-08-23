@@ -127,8 +127,8 @@ run(int argc, char** argv)
 	const uint64_t t_end = clock.now_microseconds();
 
 	// Write log output
-	const std::unique_ptr<FILE, decltype(&fclose)> log{fopen(out_file.c_str(), "a"),
-	                                                   &fclose};
+	const std::unique_ptr<FILE, int (*)(FILE*)> log{fopen(out_file.c_str(), "a"),
+	                                                &fclose};
 	if (ftell(log.get()) == 0) {
 		fprintf(log.get(), "# n_threads\trun_time\treal_time\n");
 	}

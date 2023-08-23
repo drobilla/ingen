@@ -290,8 +290,8 @@ Configuration::save(URIMap&            uri_map,
 	}
 
 	// Attempt to open file for writing
-	const std::unique_ptr<FILE, decltype(&fclose)> file{fopen(path.c_str(), "w"),
-	                                                    &fclose};
+	const std::unique_ptr<FILE, int (*)(FILE*)> file{
+	    fopen(path.c_str(), "w"), &fclose};
 	if (!file) {
 		throw FileError(fmt("Failed to open file %1% (%2%)",
 		                    path, strerror(errno)));
