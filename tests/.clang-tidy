@@ -12,5 +12,6 @@ Checks: >
   -fuchsia-statically-constructed-objects,
   -google-readability-casting,
   -google-readability-todo,
+  -llvm-header-guard,
   -readability-function-cognitive-complexity,
 InheritParentConfig: true

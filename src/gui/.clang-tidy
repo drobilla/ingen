@@ -25,5 +25,6 @@ Checks: >
   -google-runtime-references,
   -hicpp-multiway-paths-covered,
   -hicpp-vararg,
+  -llvm-header-guard,
   -readability-convert-member-functions-to-static,
 InheritParentConfig: true
