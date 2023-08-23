@@ -38,13 +38,13 @@ public:
 
 	template<typename T>
 	static void get_widget(const Glib::ustring& name, T*& widget) {
-		Glib::RefPtr<Gtk::Builder> xml = create(name);
+		const Glib::RefPtr<Gtk::Builder> xml = create(name);
 		xml->get_widget(name, widget);
 	}
 
 	template<typename T>
 	static void get_widget_derived(const Glib::ustring& name, T*& widget) {
-		Glib::RefPtr<Gtk::Builder> xml = create(name);
+		const Glib::RefPtr<Gtk::Builder> xml = create(name);
 		xml->get_widget_derived(name, widget);
 	}
 

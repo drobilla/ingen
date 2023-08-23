@@ -97,7 +97,7 @@ public:
 	bool signal() const { return _enable_signal; }
 	void enable_signals(bool b) { _enable_signal = b; }
 	bool disable_signals() {
-		bool old = _enable_signal;
+		const bool old = _enable_signal;
 		_enable_signal = false;
 		return old;
 	}
