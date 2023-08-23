@@ -44,7 +44,7 @@ public:
 		: _block(block)
 		, _mode(mode)
 	{
-		assert(!(mode == Mode::SINGLE && !block));
+		assert(mode != Mode::SINGLE || block);
 	}
 
 	Task(const Task&) = delete;
