@@ -19,6 +19,7 @@ if is_variable('cpp')
         '-Wno-c++98-compat',
         '-Wno-c++98-compat-pedantic',
         '-Wno-cast-align',
+        '-Wno-cast-function-type-strict',
         '-Wno-cast-qual',
         '-Wno-documentation-unknown-command',
         '-Wno-exit-time-destructors',
@@ -33,6 +34,7 @@ if is_variable('cpp')
         '-Wno-sign-conversion',
         '-Wno-switch-enum',
         '-Wno-unreachable-code',
+        '-Wno-unsafe-buffer-usage',
         '-Wno-vla',
         '-Wno-weak-vtables',
       ]
