@@ -252,6 +252,10 @@ GraphBox::create(App& app, const std::shared_ptr<const GraphModel>& graph)
 	GraphBox* result = nullptr;
 	const Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
 	xml->get_widget_derived("graph_win_vbox", result);
+	if (!result) {
+		return {};
+	}
+
 	result->init_box(app);
 	result->set_graph(graph, nullptr);
 

@@ -501,10 +501,13 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 		}
 	} else if (type == forge.URI || type == forge.URID) {
 		auto* uri_entry = dynamic_cast<URIEntry*>(value_widget);
-		if (uri_entry && URI::is_valid(uri_entry->get_text())) {
-			return _app->forge().make_urid(URI(uri_entry->get_text()));
+		if (uri_entry) {
+			if (URI::is_valid(uri_entry->get_text())) {
+				return _app->forge().make_urid(URI(uri_entry->get_text()));
+			}
+
+			_app->log().error("Invalid URI <%1%>\n", uri_entry->get_text());
 		}
-		_app->log().error("Invalid URI <%1%>\n", uri_entry->get_text());
 	} else if (type == forge.String) {
 		auto* entry = dynamic_cast<Gtk::Entry*>(value_widget);
 		if (entry) {
