@@ -27,7 +27,6 @@
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
-#include "raul/Maid.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -117,7 +116,7 @@ private:
 	ClientUpdate                     _update;
 	ingen::Resource*                 _object{nullptr};
 	GraphImpl*                       _graph{nullptr};
-	raul::managed_ptr<CompiledGraph> _compiled_graph;
+	std::unique_ptr<CompiledGraph>   _compiled_graph;
 	ControlBindings::Binding*        _binding{nullptr};
 	StatePtr                         _state;
 	Resource::Graph                  _context;

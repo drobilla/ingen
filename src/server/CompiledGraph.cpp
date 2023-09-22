@@ -26,7 +26,6 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <boost/intrusive/slist.hpp>
@@ -76,11 +75,11 @@ CompiledGraph::CompiledGraph(GraphImpl* graph)
 	compile_graph(graph);
 }
 
-raul::managed_ptr<CompiledGraph>
-CompiledGraph::compile(raul::Maid& maid, GraphImpl& graph)
+std::unique_ptr<CompiledGraph>
+CompiledGraph::compile(GraphImpl& graph)
 {
 	try {
-		return maid.make_managed<CompiledGraph>(&graph);
+		return std::unique_ptr<CompiledGraph>(new CompiledGraph(&graph));
 	} catch (const FeedbackException& e) {
 		Log& log = graph.engine().log();
 		if (e.node && e.root) {

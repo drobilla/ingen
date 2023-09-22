@@ -20,8 +20,7 @@
 #include "CompiledGraph.hpp"
 #include "GraphImpl.hpp"
 
-#include "raul/Maid.hpp"
-
+#include <memory>
 #include <unordered_set>
 
 namespace ingen::server {
@@ -64,13 +63,9 @@ public:
 	 * This may return null when an atomic bundle is deferring compilation, in
 	 * which case the graph is flagged as dirty for later compilation.
 	 */
-	raul::Maid::managed_ptr<CompiledGraph>
-	maybe_compile(raul::Maid& maid, GraphImpl& graph)
+	[[nodiscard]] std::unique_ptr<CompiledGraph> maybe_compile(GraphImpl& graph)
 	{
-		if (must_compile(graph)) {
-			return compile(maid, graph);
-		}
-		return nullptr;
+		return must_compile(graph) ? compile(graph) : nullptr;
 	}
 
 	/** Return all graphs that require compilation after an atomic bundle. */

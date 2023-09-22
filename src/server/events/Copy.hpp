@@ -21,7 +21,6 @@
 #include "types.hpp"
 
 #include "ingen/Message.hpp"
-#include "raul/Maid.hpp"
 
 #include <memory>
 
@@ -67,7 +66,7 @@ private:
 	std::shared_ptr<BlockImpl>       _old_block{nullptr};
 	GraphImpl*                       _parent{nullptr};
 	BlockImpl*                       _block{nullptr};
-	raul::managed_ptr<CompiledGraph> _compiled_graph;
+	std::unique_ptr<CompiledGraph>   _compiled_graph;
 };
 
 } // namespace events

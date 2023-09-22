@@ -171,7 +171,7 @@ Disconnect::pre_process(PreProcessContext& ctx)
 	                               dynamic_cast<PortImpl*>(tail),
 	                               dynamic_cast<InputPort*>(head));
 
-	_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_graph);
+	_compiled_graph = ctx.maybe_compile(*_graph);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -208,7 +208,8 @@ Disconnect::execute(RunContext& ctx)
 	if (_status == Status::SUCCESS) {
 		if (_impl->execute(ctx, true)) {
 			if (_compiled_graph) {
-				_graph->set_compiled_graph(std::move(_compiled_graph));
+				_compiled_graph =
+				    _graph->swap_compiled_graph(std::move(_compiled_graph));
 			}
 		} else {
 			_status = Status::NOT_FOUND;

@@ -132,7 +132,7 @@ Connect::pre_process(PreProcessContext& ctx)
 		head_block->providers().insert(tail_block);
 
 		if (ctx.must_compile(*_graph)) {
-			if (!(_compiled_graph = compile(*_engine.maid(), *_graph))) {
+			if (!(_compiled_graph = compile(*_graph))) {
 				head_block->providers().erase(tail_block);
 				tail_block->dependants().erase(head_block);
 				return Event::pre_process_done(Status::COMPILATION_FAILED);
@@ -165,7 +165,7 @@ Connect::execute(RunContext& ctx)
 		}
 		_head->connect_buffers();
 		if (_compiled_graph) {
-			_graph->set_compiled_graph(std::move(_compiled_graph));
+			_compiled_graph = _graph->swap_compiled_graph(std::move(_compiled_graph));
 		}
 	}
 }

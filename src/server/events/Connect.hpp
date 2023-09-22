@@ -66,7 +66,7 @@ private:
 	const ingen::Connect                _msg;
 	GraphImpl*                          _graph{nullptr};
 	InputPort*                          _head{nullptr};
-	raul::managed_ptr<CompiledGraph>    _compiled_graph;
+	std::unique_ptr<CompiledGraph>      _compiled_graph;
 	std::shared_ptr<ArcImpl>            _arc;
 	raul::managed_ptr<PortImpl::Voices> _voices;
 	Properties                          _tail_remove;

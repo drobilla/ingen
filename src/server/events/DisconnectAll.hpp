@@ -22,7 +22,6 @@
 #include "types.hpp"
 
 #include "ingen/Message.hpp"
-#include "raul/Maid.hpp"
 
 #include <list>
 #include <memory>
@@ -79,7 +78,7 @@ private:
 	BlockImpl*                       _block;
 	PortImpl*                        _port;
 	Impls                            _impls;
-	raul::managed_ptr<CompiledGraph> _compiled_graph;
+	std::unique_ptr<CompiledGraph>   _compiled_graph;
 	bool                             _deleting;
 };
 

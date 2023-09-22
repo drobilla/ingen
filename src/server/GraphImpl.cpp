@@ -309,13 +309,15 @@ GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 	return (i != _graph_arcs.end());
 }
 
-void
-GraphImpl::set_compiled_graph(raul::managed_ptr<CompiledGraph>&& cg)
+std::unique_ptr<CompiledGraph>
+GraphImpl::swap_compiled_graph(std::unique_ptr<CompiledGraph> cg)
 {
 	if (_compiled_graph && _compiled_graph != cg) {
 		_engine.reset_load();
 	}
-	_compiled_graph = std::move(cg);
+
+	_compiled_graph.swap(cg);
+	return cg;
 }
 
 uint32_t

@@ -113,14 +113,14 @@ Delete::pre_process(PreProcessContext& ctx)
 		_disconnect_event =
 			std::make_unique<DisconnectAll>(_engine, parent, _block.get());
 		_disconnect_event->pre_process(ctx);
-		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *parent);
+		_compiled_graph = ctx.maybe_compile(*parent);
 	} else if (_port) {
 		parent->remove_port(*_port);
 		_disconnect_event =
 			std::make_unique<DisconnectAll>(_engine, parent, _port.get());
 		_disconnect_event->pre_process(ctx);
 
-		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *parent);
+		_compiled_graph = ctx.maybe_compile(*parent);
 		if (parent->enabled()) {
 			_ports_array = parent->build_ports_array(*_engine.maid());
 			assert(_ports_array->size() == parent->num_ports_non_rt());
@@ -182,7 +182,7 @@ Delete::execute(RunContext& ctx)
 	}
 
 	if (parent && _compiled_graph) {
-		parent->set_compiled_graph(std::move(_compiled_graph));
+		_compiled_graph = parent->swap_compiled_graph(std::move(_compiled_graph));
 	}
 }
 

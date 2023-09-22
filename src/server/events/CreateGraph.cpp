@@ -35,7 +35,6 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/paths.hpp"
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
@@ -192,7 +191,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		if (_parent->enabled()) {
 			_graph->enable();
 		}
-		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_parent);
+		_compiled_graph = ctx.maybe_compile(*_parent);
 	}
 
 	_graph->activate(*_engine.buffer_factory());
@@ -219,7 +218,8 @@ CreateGraph::execute(RunContext& ctx)
 	if (_graph) {
 		if (_parent) {
 			if (_compiled_graph) {
-				_parent->set_compiled_graph(std::move(_compiled_graph));
+				_compiled_graph =
+				    _parent->swap_compiled_graph(std::move(_compiled_graph));
 			}
 		} else {
 			_engine.set_root_graph(_graph);

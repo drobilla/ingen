@@ -45,7 +45,6 @@
 #include "ingen/World.hpp"
 #include "ingen/paths.hpp"
 #include "lilv/lilv.h"
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <algorithm>
@@ -397,7 +396,7 @@ Delta::pre_process(PreProcessContext& ctx)
 						op = SpecialType::ENABLE;
 						// FIXME: defer until all other data has been processed
 						if (value.get<int32_t>() && !_graph->enabled()) {
-							if (!(_compiled_graph = compile(*_engine.maid(), *_graph))) {
+							if (!(_compiled_graph = compile(*_graph))) {
 								_status = Status::COMPILATION_FAILED;
 							}
 						}
@@ -516,7 +515,7 @@ Delta::execute(RunContext& ctx)
 			if (_graph) {
 				if (value.get<int32_t>()) {
 					if (_compiled_graph) {
-						_graph->set_compiled_graph(std::move(_compiled_graph));
+						_compiled_graph = _graph->swap_compiled_graph(std::move(_compiled_graph));
 					}
 					_graph->enable();
 				} else {

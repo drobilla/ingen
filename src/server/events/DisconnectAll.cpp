@@ -32,7 +32,6 @@
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
-#include "raul/Maid.hpp"
 
 #include <memory>
 #include <mutex>
@@ -130,7 +129,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 	}
 
 	if (!_deleting && ctx.must_compile(*_parent)) {
-		if (!(_compiled_graph = compile(*_engine.maid(), *_parent))) {
+		if (!(_compiled_graph = compile(*_parent))) {
 			return Event::pre_process_done(Status::COMPILATION_FAILED);
 		}
 	}
@@ -149,7 +148,7 @@ DisconnectAll::execute(RunContext& ctx)
 	}
 
 	if (_compiled_graph) {
-		_parent->set_compiled_graph(std::move(_compiled_graph));
+		_compiled_graph = _parent->swap_compiled_graph(std::move(_compiled_graph));
 	}
 }
 

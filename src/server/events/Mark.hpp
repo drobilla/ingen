@@ -20,10 +20,6 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-// IWYU pragma: no_include "CompiledGraph.hpp"
-
-#include "raul/Maid.hpp"
-
 #include <map>
 #include <memory>
 
@@ -35,7 +31,7 @@ struct BundleEnd;
 
 namespace server {
 
-class CompiledGraph; // IWYU pragma: keep
+class CompiledGraph;
 class Engine;
 class GraphImpl;
 class PreProcessContext;
@@ -75,8 +71,7 @@ public:
 private:
 	enum class Type { BUNDLE_BEGIN, BUNDLE_END };
 
-	using CompiledGraphs =
-	    std::map<GraphImpl*, raul::managed_ptr<CompiledGraph>>;
+	using CompiledGraphs = std::map<GraphImpl*, std::unique_ptr<CompiledGraph>>;
 
 	CompiledGraphs _compiled_graphs;
 	Type           _type;

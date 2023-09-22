@@ -21,7 +21,6 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <cstdint>
@@ -70,7 +69,7 @@ private:
 	ClientUpdate                     _update;
 	GraphImpl*                       _graph{nullptr};
 	BlockImpl*                       _block{nullptr};
-	raul::managed_ptr<CompiledGraph> _compiled_graph;
+	std::unique_ptr<CompiledGraph>   _compiled_graph;
 };
 
 } // namespace events

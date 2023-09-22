@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2023 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -180,7 +180,8 @@ public:
 	bool has_arc(const PortImpl* tail, const PortImpl* dst_port) const;
 
 	/** Set a new compiled graph to run, and return the old one. */
-	void set_compiled_graph(raul::managed_ptr<CompiledGraph>&& cg);
+	[[nodiscard]] std::unique_ptr<CompiledGraph>
+	swap_compiled_graph(std::unique_ptr<CompiledGraph> cg);
 
 	const raul::managed_ptr<Ports>& external_ports() { return _ports; }
 
@@ -199,7 +200,7 @@ public:
 	Engine& engine() { return _engine; }
 
 private:
-	using CompiledGraphPtr = raul::managed_ptr<CompiledGraph>;
+	using CompiledGraphPtr = std::unique_ptr<CompiledGraph>;
 
 	Engine&          _engine;
 	uint32_t         _poly_pre;       ///< Pre-process thread only

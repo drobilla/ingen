@@ -22,7 +22,6 @@
 #include "types.hpp"
 
 #include "ingen/Properties.hpp"
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <cstdint>
@@ -74,7 +73,7 @@ private:
 	ClientUpdate                      _update;
 	GraphImpl*                        _graph{nullptr};
 	GraphImpl*                        _parent{nullptr};
-	raul::managed_ptr<CompiledGraph>  _compiled_graph;
+	std::unique_ptr<CompiledGraph>    _compiled_graph;
 	std::list<std::unique_ptr<Event>> _child_events;
 };
 
