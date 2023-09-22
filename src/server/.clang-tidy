@@ -7,6 +7,7 @@ Checks: >
   -bugprone-branch-clone,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
+  -bugprone-suspicious-realloc-usage,
   -bugprone-suspicious-string-compare,
   -cert-dcl37-c,
   -cert-dcl51-cpp,
