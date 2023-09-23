@@ -1,26 +1,6 @@
 # Copyright 2019-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
-##############
-# Unit Tests #
-##############
-
-unit_tests = [
-]
-
-foreach test : unit_tests
-  test(
-    test,
-    executable(
-      test,
-      files('tst_@0@.cpp'.format(test)),
-      cpp_args: cpp_suppressions + platform_defines,
-      dependencies: [ingen_dep],
-    ),
-    suite: 'unit',
-  )
-endforeach
-
 #####################
 # Integration Tests #
 #####################
@@ -93,10 +73,11 @@ test_env = environment(
           default_value: lv2dir,
           internal: 'plugindir',
           pkgconfig: 'plugindir',
-        )
+        ),
       ],
     ),
-  })
+  },
+)
 
 foreach test : integration_tests
   test(
@@ -104,8 +85,8 @@ foreach test : integration_tests
     ingen_test,
     env: test_env,
     args: [
-      '--load', empty_manifest,
-      '--execute', files(test + '.ttl'),
+      ['--load', empty_manifest],
+      ['--execute', files(test + '.ttl')],
     ],
   )
 endforeach

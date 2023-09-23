@@ -21,7 +21,7 @@ sources = files(
   'URIMap.cpp',
   'URIs.cpp',
   'World.cpp',
-  'runtime_paths.cpp'
+  'runtime_paths.cpp',
 )
 
 if have_socket

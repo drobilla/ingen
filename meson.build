@@ -1,15 +1,18 @@
 # Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
-project('ingen', 'cpp',
-        version: '0.5.1',
-        license: 'GPLv3+',
-        meson_version: '>= 0.56.0',
-        default_options: [
-          'b_ndebug=if-release',
-          'buildtype=release',
-          'cpp_std=c++17',
-        ])
+project(
+  'ingen',
+  'cpp',
+  default_options: [
+    'b_ndebug=if-release',
+    'buildtype=release',
+    'cpp_std=c++17',
+  ],
+  license: 'GPLv3+',
+  meson_version: '>= 0.56.0',
+  version: '0.5.1',
+)
 
 ingen_src_root = meson.current_source_dir()
 ingen_build_root = meson.current_build_dir()
@@ -32,8 +35,8 @@ add_project_arguments(cpp_suppressions, language: ['cpp'])
 ##########################
 
 lv2dir = get_option('lv2dir')
+prefix = get_option('prefix')
 if lv2dir == ''
-  prefix = get_option('prefix')
   if target_machine.system() == 'darwin' and prefix == '/'
     lv2dir = '/Library/Audio/Plug-Ins/LV2'
   elif target_machine.system() == 'haiku' and prefix == '/'
@@ -50,8 +53,12 @@ endif
 ##########################
 
 # TODO: Distinguish modules from libraries and move modules to a subdirectory
-ingen_data_dir = get_option('prefix') / get_option('datadir') / 'ingen' # / versioned_name
-ingen_module_dir = get_option('prefix') / get_option('libdir') # / versioned_name
+ingen_data_dir = (
+  prefix / get_option('datadir') / 'ingen' # / versioned_name
+)
+ingen_module_dir = (
+  prefix / get_option('libdir') # / versioned_name
+)
 
 # Use versioned name everywhere to support parallel major version installations
 if host_machine.system() == 'windows'
@@ -88,9 +95,7 @@ endif
 socket_code = '''#include <sys/socket.h>
 int main(void) { return socket(AF_UNIX, SOCK_STREAM, 0); }'''
 
-have_socket = cpp.compiles(socket_code,
-                           args: platform_defines,
-                           name: 'socket')
+have_socket = cpp.compiles(socket_code, args: platform_defines, name: 'socket')
 
 platform_defines += ['-DHAVE_SOCKET=@0@'.format(have_socket.to_int())]
 
@@ -122,8 +127,8 @@ sratom_dep = dependency(
 
 suil_dep = dependency(
   'suil-0',
-  version: '>= 0.10.0',
   fallback: ['suil', 'suil_dep'],
+  version: '>= 0.10.0',
 )
 
 lv2_dep = dependency(
@@ -149,24 +154,31 @@ raul_dep = dependency(
 # Driver Dependencies #
 #######################
 
-portaudio_dep = dependency('portaudio-2.0',
-                           version: '>= 2.0.0',
-                           include_type: 'system',
-                           required: get_option('portaudio'))
+portaudio_dep = dependency(
+  'portaudio-2.0',
+  include_type: 'system',
+  required: get_option('portaudio'),
+  version: '>= 2.0.0',
+)
 
-jack_dep = dependency('jack',
-                      version: '>= 0.120.0',
-                      include_type: 'system',
-                      required: get_option('jack'))
+jack_dep = dependency(
+  'jack',
+  include_type: 'system',
+  required: get_option('jack'),
+  version: '>= 0.120.0',
+)
 
 jack_port_rename_code = '''#include <jack/jack.h>
 int main(void) { return !!&jack_port_rename; }'''
 
 platform_defines += '-DHAVE_JACK_PORT_RENAME=@0@'.format(
-  cpp.compiles(jack_port_rename_code,
-               args: platform_defines,
-               dependencies: [jack_dep],
-               name: 'jack_port_rename').to_int())
+  cpp.compiles(
+    jack_port_rename_code,
+    args: platform_defines,
+    dependencies: [jack_dep],
+    name: 'jack_port_rename',
+  ).to_int(),
+)
 
 #############
 # Libraries #

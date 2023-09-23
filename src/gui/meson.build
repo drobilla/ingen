@@ -7,35 +7,47 @@
 
 gui_defines = platform_defines
 
-glibmm_dep = dependency('glibmm-2.4',
-                        version: '>= 2.14.0',
-                        include_type: 'system',
-                        required: get_option('gui'))
+glibmm_dep = dependency(
+  'glibmm-2.4',
+  include_type: 'system',
+  required: get_option('gui'),
+  version: '>= 2.14.0',
+)
 
-gthread_dep = dependency('gthread-2.0',
-                         version: '>= 2.14.0',
-                         include_type: 'system',
-                         required: get_option('gui'))
+gthread_dep = dependency(
+  'gthread-2.0',
+  include_type: 'system',
+  required: get_option('gui'),
+  version: '>= 2.14.0',
+)
 
-gtkmm_dep = dependency('gtkmm-2.4',
-                       version: '>= 2.14.0',
-                       include_type: 'system',
-                       required: get_option('gui'))
+gtkmm_dep = dependency(
+  'gtkmm-2.4',
+  include_type: 'system',
+  required: get_option('gui'),
+  version: '>= 2.14.0',
+)
 
-ganv_dep = dependency('ganv-1',
-                      version: '>= 1.5.2',
-                      fallback: ['ganv', 'ganv_dep'],
-                      required: get_option('gui'))
+ganv_dep = dependency(
+  'ganv-1',
+  fallback: ['ganv', 'ganv_dep'],
+  required: get_option('gui'),
+  version: '>= 1.5.2',
+)
 
-webkit_dep = dependency('webkit-1.0',
-                        version: '>= 1.4.0',
-                        include_type: 'system',
-                        required: false)
+webkit_dep = dependency(
+  'webkit-1.0',
+  include_type: 'system',
+  required: false,
+  version: '>= 1.4.0',
+)
 
-build_gui = (glibmm_dep.found() and
-             gthread_dep.found() and
-             gtkmm_dep.found() and
-             ganv_dep.found())
+build_gui = (
+  glibmm_dep.found()
+  and gthread_dep.found()
+  and gtkmm_dep.found()
+  and ganv_dep.found()
+)
 
 if webkit_dep.found()
   gui_defines += ['-DHAVE_WEBKIT=1']
@@ -149,15 +161,19 @@ if build_gui
   config = configuration_data()
   config.set('INGEN_VERSION', meson.project_version())
 
-  configure_file(configuration: config,
-                 input: files('ingen_gui.ui.in'),
-                 output: 'ingen_gui.ui',
-                 install: true,
-                 install_dir: ingen_data_dir)
+  configure_file(
+    configuration: config,
+    input: files('ingen_gui.ui.in'),
+    install: true,
+    install_dir: ingen_data_dir,
+    output: 'ingen_gui.ui',
+  )
 
-  configure_file(copy: true,
-                 input: files('ingen_style.rc'),
-                 output: '@PLAINNAME@',
-                 install: true,
-                 install_dir: ingen_data_dir)
+  configure_file(
+    copy: true,
+    input: files('ingen_style.rc'),
+    install: true,
+    install_dir: ingen_data_dir,
+    output: '@PLAINNAME@',
+  )
 endif
