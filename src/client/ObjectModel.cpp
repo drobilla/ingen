@@ -22,6 +22,8 @@
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/paths.hpp"
+#include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 #include <cassert>
 #include <cstdint>

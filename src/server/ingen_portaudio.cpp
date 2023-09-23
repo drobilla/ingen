@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// IWYU pragma: no_include "ingen/FilePath.hpp"
-
 #include "Engine.hpp"
 #include "PortAudioDriver.hpp"
 
@@ -24,6 +22,8 @@
 #include "ingen/World.hpp"
 
 #include <memory>
+
+// IWYU pragma: no_include "ingen/FilePath.hpp"
 
 namespace ingen::server {
 

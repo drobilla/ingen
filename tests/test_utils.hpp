@@ -14,12 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// IWYU pragma: no_include "ingen/FilePath.hpp"
-
 #include "ingen/fmt.hpp"
 
 #include <iostream>
 #include <string>
+
+// IWYU pragma: no_include "ingen/FilePath.hpp"
 
 #define EXPECT_TRUE(value) \
 	do { \

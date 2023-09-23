@@ -21,7 +21,6 @@
 
 #include "ingen/URI.hpp"
 
-#include <gtkmm/menu.h>
 #include <sigc++/connection.h>
 #include <sigc++/signal.h>
 
@@ -35,6 +34,7 @@ template <class T> class RefPtr;
 namespace Gtk {
 class Builder;
 class CheckMenuItem;
+class Menu;
 class MenuItem;
 } // namespace Gtk
 
@@ -66,9 +66,7 @@ public:
 	sigc::signal<void, bool> signal_embed_gui;
 
 protected:
-	std::shared_ptr<const client::BlockModel> block() const {
-		return std::dynamic_pointer_cast<const client::BlockModel>(_object);
-	}
+	std::shared_ptr<const client::BlockModel> block() const;
 
 	void add_preset(const URI& uri, const std::string& label);
 

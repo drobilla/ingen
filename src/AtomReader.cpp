@@ -22,7 +22,6 @@
 #include "ingen/Message.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
-#include "ingen/Status.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
@@ -37,6 +36,8 @@
 #include <string>
 
 namespace ingen {
+
+enum class Status;
 
 AtomReader::AtomReader(URIMap& map, URIs& uris, Log& log, Interface& iface)
 	: _map(map)

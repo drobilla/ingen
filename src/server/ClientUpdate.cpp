@@ -26,7 +26,6 @@
 #include "ingen/Arc.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 
 #include <boost/intrusive/slist.hpp>

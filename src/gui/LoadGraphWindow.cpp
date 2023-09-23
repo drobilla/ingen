@@ -30,6 +30,7 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "raul/Path.hpp"
+#include "raul/Symbol.hpp"
 
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>

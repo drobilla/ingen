@@ -17,7 +17,6 @@
 #ifndef INGEN_EVENTS_DELETE_HPP
 #define INGEN_EVENTS_DELETE_HPP
 
-#include "BlockImpl.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "GraphImpl.hpp"
@@ -41,6 +40,7 @@ class Interface;
 
 namespace server {
 
+class BlockImpl;
 class CompiledGraph;
 class DuplexPort;
 class Engine;

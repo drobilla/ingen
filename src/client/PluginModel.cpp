@@ -18,7 +18,9 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/client/PluginUI.hpp"
+#include "lilv/lilv.h"
 #include "lv2/core/lv2.h"
+#include "raul/Symbol.hpp"
 
 #include <cctype>
 #include <cstring>

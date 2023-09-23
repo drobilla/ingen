@@ -23,6 +23,8 @@
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "lilv/lilv.h"
+#include "raul/Symbol.hpp"
 
 #include <cstdlib>
 #include <string>

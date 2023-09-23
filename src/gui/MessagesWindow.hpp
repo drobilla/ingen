@@ -23,7 +23,6 @@
 
 #include <glibmm/refptr.h>
 #include <gtkmm/texttag.h>
-#include <gtkmm/window.h>
 
 #include <cstdarg>
 #include <map>

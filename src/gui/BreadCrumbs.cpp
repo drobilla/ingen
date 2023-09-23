@@ -20,6 +20,7 @@
 #include "GraphView.hpp"
 
 #include "ingen/client/SigClientInterface.hpp"
+#include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
 #include <glibmm/signalproxy.h>

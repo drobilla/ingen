@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_ARC_IMPL_HPP
 #define INGEN_ENGINE_ARC_IMPL_HPP
 
-// IWYU pragma: no_include "raul/Path.hpp"
-
 #include "BufferRef.hpp"
 
 #include "ingen/Arc.hpp"
@@ -27,6 +25,8 @@
 #include <boost/intrusive/slist_hook.hpp>
 
 #include <cstdint>
+
+// IWYU pragma: no_include "raul/Path.hpp"
 
 namespace raul {
 class Path; // IWYU pragma: keep

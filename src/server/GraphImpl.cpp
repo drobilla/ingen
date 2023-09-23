@@ -30,6 +30,7 @@
 
 #include "ingen/Forge.hpp"
 #include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "lv2/urid/urid.h"
@@ -41,7 +42,6 @@
 #include <cstddef>
 #include <map>
 #include <memory>
-#include <type_traits>
 #include <unordered_map>
 
 namespace ingen::server {

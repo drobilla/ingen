@@ -19,6 +19,7 @@
 #include "ingen/URI.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
 #include <glib-object.h>
@@ -27,13 +28,7 @@
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
-namespace ingen {
-
-namespace client {
-class ObjectModel;
-} // namespace client
-
-namespace gui {
+namespace ingen::gui {
 
 Arc::Arc(Ganv::Canvas&                                  canvas,
          const std::shared_ptr<const client::ArcModel>& model,
@@ -51,5 +46,4 @@ Arc::Arc(Ganv::Canvas&                                  canvas,
 	}
 }
 
-} // namespace gui
-} // namespace ingen
+} // namespace ingen::gui

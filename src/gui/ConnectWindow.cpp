@@ -27,6 +27,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/QueuedInterface.hpp"
+#include "ingen/Status.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
@@ -43,6 +44,7 @@
 #include <glibmm/ustring.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
+#include <gtkmm/dialog.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/enums.h>
 #include <gtkmm/image.h>

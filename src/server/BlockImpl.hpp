@@ -23,7 +23,6 @@
 #include "State.hpp"
 #include "types.hpp"
 
-#include "ingen/Node.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URI.hpp"
@@ -43,7 +42,10 @@ namespace raul {
 class Symbol;
 } // namespace raul
 
-namespace ingen::server {
+namespace ingen {
+class Node;
+
+namespace server {
 
 class BufferFactory;
 class Engine;
@@ -215,6 +217,7 @@ protected:
 	bool                     _enabled{true};
 };
 
-} // namespace ingen::server
+} // namespace server
+} // namespace ingen
 
 #endif // INGEN_ENGINE_BLOCKIMPL_HPP

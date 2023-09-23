@@ -46,9 +46,9 @@
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/image.h>
 #include <gtkmm/label.h>
+#include <gtkmm/menu.h>
 #include <gtkmm/menu_elems.h>
 #include <gtkmm/menuitem.h>
-#include <gtkmm/menushell.h>
 #include <gtkmm/object.h>
 #include <gtkmm/separatormenuitem.h>
 #include <gtkmm/stock.h>
@@ -158,6 +158,12 @@ NodeMenu::init(App& app, const std::shared_ptr<const client::BlockModel>& block)
 	}
 
 	_enable_signal = true;
+}
+
+std::shared_ptr<const client::BlockModel>
+NodeMenu::block() const
+{
+	return std::dynamic_pointer_cast<const client::BlockModel>(_object);
 }
 
 void

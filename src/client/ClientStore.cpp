@@ -19,7 +19,6 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/Node.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"

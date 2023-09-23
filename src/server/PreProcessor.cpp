@@ -28,6 +28,7 @@
 #include "ingen/AtomWriter.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/World.hpp"
+#include "raul/Semaphore.hpp"
 
 #include <cassert>
 #include <cstdint>

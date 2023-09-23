@@ -21,7 +21,6 @@
 #include "Window.hpp"
 
 #include <gdk/gdk.h>
-#include <gtkmm/window.h>
 
 #include <memory>
 #include <string>

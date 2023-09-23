@@ -19,6 +19,7 @@
 #include "ingen/URIMap.hpp"
 #include "lv2/atom/atom.h"
 #include "serd/serd.h"
+#include "sratom/sratom.h"
 
 #include <utility>
 

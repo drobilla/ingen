@@ -16,7 +16,6 @@
 
 #include "ingen/SocketWriter.hpp"
 
-#include "ingen/URI.hpp"
 #include "raul/Socket.hpp"
 
 #include <memory>

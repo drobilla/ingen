@@ -19,8 +19,6 @@
 
 #include "ObjectMenu.hpp"
 
-#include <gtkmm/menu.h>
-
 #include <memory>
 
 namespace Glib {
@@ -29,6 +27,7 @@ template <class T> class RefPtr;
 
 namespace Gtk {
 class Builder;
+class Menu;
 class MenuItem;
 } // namespace Gtk
 

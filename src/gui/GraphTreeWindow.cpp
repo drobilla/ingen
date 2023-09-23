@@ -27,6 +27,7 @@
 #include "ingen/URIs.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 

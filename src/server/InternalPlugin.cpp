@@ -25,6 +25,8 @@
 #include "types.hpp"
 
 #include "ingen/URIs.hpp"
+#include "lilv/lilv.h"
+#include "raul/Symbol.hpp"
 
 #include <utility>
 

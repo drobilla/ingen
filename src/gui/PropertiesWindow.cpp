@@ -54,6 +54,7 @@
 #include <gtkmm/table.h>
 #include <gtkmm/treeiter.h>
 #include <gtkmm/widget.h>
+#include <gtkmm/window.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 #include <sigc++/signal.h>

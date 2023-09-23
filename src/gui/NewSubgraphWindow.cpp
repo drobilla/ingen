@@ -40,6 +40,7 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
+#include <gtkmm/window.h>
 #include <sigc++/functors/mem_fun.h>
 
 #include <cstdint>

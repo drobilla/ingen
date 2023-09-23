@@ -26,7 +26,6 @@
 #include "types.hpp"
 
 #include "ingen/Atom.hpp"
-#include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 #include "lv2/urid/urid.h"
 #include "raul/Array.hpp"

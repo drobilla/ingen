@@ -23,7 +23,6 @@
 #include "server.h"
 #include "types.hpp"
 
-#include "ingen/Node.hpp"
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 
@@ -33,6 +32,8 @@
 #include <cstdint>
 #include <memory>
 #include <utility>
+
+// IWYU pragma: no_include "CompiledGraph.hpp"
 
 namespace raul {
 class Symbol;
@@ -46,7 +47,7 @@ namespace ingen::server {
 
 class ArcImpl;
 class BufferFactory;
-class CompiledGraph;
+class CompiledGraph; // IWYU pragma: keep
 class Engine;
 class PortImpl;
 class RunContext;

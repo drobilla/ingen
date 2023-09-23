@@ -27,7 +27,6 @@
 #include <gtkmm/liststore.h>
 #include <gtkmm/treemodel.h>
 #include <gtkmm/treemodelcolumn.h>
-#include <gtkmm/window.h>
 #include <sigc++/connection.h>
 
 #include <map>

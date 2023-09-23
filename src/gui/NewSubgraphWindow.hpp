@@ -21,8 +21,6 @@
 
 #include "ingen/Properties.hpp"
 
-#include <gtkmm/window.h>
-
 #include <memory>
 
 namespace Glib {

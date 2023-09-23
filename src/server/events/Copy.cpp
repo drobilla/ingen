@@ -24,6 +24,7 @@
 #include "PreProcessContext.hpp"
 
 #include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Status.hpp"

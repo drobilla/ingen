@@ -17,7 +17,6 @@
 #include "ingen/StreamWriter.hpp"
 
 #include "ingen/ColorContext.hpp"
-#include "ingen/URI.hpp"
 
 namespace ingen {
 

@@ -25,6 +25,7 @@
 #include "ingen/World.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
+#include "raul/Semaphore.hpp"
 
 #include <glibmm/ustring.h>
 #include <sigc++/adaptors/bind.h>

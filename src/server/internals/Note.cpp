@@ -19,7 +19,6 @@
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "BufferRef.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"

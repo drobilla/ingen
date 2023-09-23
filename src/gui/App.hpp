@@ -20,7 +20,6 @@
 #include "ingen/Message.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
-#include "ingen/Status.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
@@ -41,6 +40,8 @@ class Window;
 } // namespace Gtk
 
 namespace ingen {
+
+enum class Status;
 
 class Atom;
 class Forge;

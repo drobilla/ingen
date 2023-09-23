@@ -37,6 +37,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "lilv/lilv.h"
 #include "lv2/core/lv2.h"
 #include "lv2/options/options.h"
 #include "lv2/state/state.h"

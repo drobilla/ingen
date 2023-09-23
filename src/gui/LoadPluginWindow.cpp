@@ -45,6 +45,7 @@
 #include <gtkmm/treeiter.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treeviewcolumn.h>
+#include <gtkmm/window.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 #include <sigc++/signal.h>

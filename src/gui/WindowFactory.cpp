@@ -30,6 +30,7 @@
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/ObjectModel.hpp"
+#include "raul/Path.hpp"
 
 #include <gdkmm/window.h>
 #include <glibmm/signalproxy.h>

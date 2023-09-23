@@ -30,7 +30,6 @@
 #include <gtkmm/treemodel.h>
 #include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/treeselection.h>
-#include <gtkmm/window.h>
 
 #include <map>
 #include <memory>

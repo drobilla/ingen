@@ -20,14 +20,13 @@
 #include "RDFS.hpp"
 
 #include "ingen/World.hpp"
+#include "lilv/lilv.h"
 
 #include <gdk/gdk.h>
-#include <glibmm/helperlist.h>
 #include <gtkmm/button.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menu_elems.h>
 #include <gtkmm/menuitem.h>
-#include <gtkmm/menushell.h>
 #include <gtkmm/object.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>

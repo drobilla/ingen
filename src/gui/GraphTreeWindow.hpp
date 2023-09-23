@@ -29,7 +29,6 @@
 #include <gtkmm/treeselection.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeview.h>
-#include <gtkmm/window.h>
 
 #include <memory>
 

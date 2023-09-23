@@ -19,8 +19,6 @@
 
 #include "Window.hpp"
 
-#include <gtkmm/window.h>
-
 #include <memory>
 
 namespace Glib {

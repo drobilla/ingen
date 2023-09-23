@@ -17,7 +17,6 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
-#include "ingen/FilePath.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/Parser.hpp"

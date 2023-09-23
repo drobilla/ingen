@@ -42,10 +42,8 @@
 #include <filesystem>
 #include <map>
 #include <set>
-#include <sstream>
 #include <string>
 #include <string_view>
-#include <type_traits>
 #include <utility>
 
 #define NS_RDF "http://www.w3.org/1999/02/22-rdf-syntax-ns#"

@@ -33,6 +33,7 @@
 #include <optional>
 #include <vector>
 
+// IWYU pragma: no_include "CompiledGraph.hpp"
 // IWYU pragma: no_include <algorithm>
 
 namespace ingen {
@@ -44,7 +45,7 @@ struct SetProperty;
 
 namespace server {
 
-class CompiledGraph;
+class CompiledGraph; // IWYU pragma: keep
 class Engine;
 class GraphImpl;
 class PreProcessContext;

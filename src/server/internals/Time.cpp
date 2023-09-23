@@ -16,7 +16,6 @@
 
 #include "internals/Time.hpp"
 
-#include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "BufferRef.hpp"

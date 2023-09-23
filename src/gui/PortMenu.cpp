@@ -24,6 +24,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
@@ -37,6 +38,7 @@
 #include <glibmm/signalproxy.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>
+#include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
 #include <gtkmm/separatormenuitem.h>
 #include <sigc++/functors/mem_fun.h>

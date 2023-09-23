@@ -24,6 +24,8 @@
 #include "ingen/Node.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/worker/worker.h"
+#include "raul/RingBuffer.hpp"
+#include "raul/Semaphore.hpp"
 
 #include <cstdlib>
 #include <memory>

@@ -58,6 +58,7 @@
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/paths.hpp"
+#include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
@@ -77,7 +78,6 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/menu_elems.h>
 #include <gtkmm/menuitem.h>
-#include <gtkmm/menushell.h>
 #include <gtkmm/object.h>
 #include <gtkmm/stock.h>
 #include <sigc++/adaptors/bind.h>

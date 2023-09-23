@@ -24,6 +24,7 @@
 #include "ThreadManager.hpp"
 
 #include "ingen/Forge.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "lv2/atom/atom.h"

@@ -25,6 +25,7 @@
 #include <glibmm/refptr.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/layout.h>
+#include <gtkmm/window.h>
 
 namespace ingen::gui {
 
