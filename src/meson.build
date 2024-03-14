@@ -45,6 +45,7 @@ libingen = shared_library(
   versioned_name,
   sources,
   cpp_args: cpp_suppressions + platform_defines,
+  darwin_versions: [major_version + '.0.0', meson.project_version()],
   dependencies: ingen_deps,
   gnu_symbol_visibility: 'hidden',
   implicit_include_directories: false,
