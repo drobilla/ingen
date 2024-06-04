@@ -73,6 +73,8 @@
 #include <utility>
 #include <vector>
 
+// #define CLEAR_GRAPH_ON_RESTORE 1
+
 namespace ingen {
 
 class Atom;
@@ -766,7 +768,7 @@ ingen_restore(LV2_Handle                  instance,
 		return LV2_STATE_ERR_UNKNOWN;
 	}
 
-#if 0
+#ifdef CLEAR_GRAPH_ON_RESTORE
 	// Remove existing root graph contents
 	std::shared_ptr<Engine> engine = plugin->engine;
 	for (const auto& b : engine->root_graph()->blocks()) {

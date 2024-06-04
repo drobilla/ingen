@@ -48,6 +48,8 @@
 #include <string>
 #include <utility>
 
+// #define DUMP_EVENTS 1
+
 namespace ingen::test {
 namespace {
 
@@ -171,7 +173,7 @@ run(int argc, char** argv)
 		forge.clear();
 		forge.read(*world->rdf_world(), cmds->c_obj(), subject.c_obj());
 
-#if 0
+#ifdef DUMP_EVENTS
 		const LV2_Atom* atom = forge.atom();
 		cerr << "READ " << atom->size << " BYTES\n";
 		cerr << sratom_to_turtle(
