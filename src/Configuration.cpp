@@ -121,10 +121,10 @@ Configuration::variable_string(LV2_URID type) const
 void
 Configuration::print_usage(const std::string& program, std::ostream& os)
 {
-	os << "Usage: " << program << " [OPTION]... [GRAPH]" << std::endl;
-	os << _shortdesc << std::endl << std::endl;
-	os << _desc << std::endl << std::endl;
-	os << "Options:" << std::endl;
+	os << "Usage: " << program << " [OPTION]... [GRAPH]\n";
+	os << _shortdesc << "\n\n";
+	os << _desc << "\n\n";
+	os << "Options:\n";
 	for (const auto& o : _options) {
 		const Option& option = o.second;
 		os << "  ";
@@ -136,7 +136,7 @@ Configuration::print_usage(const std::string& program, std::ostream& os)
 		os.width(static_cast<std::streamsize>(_max_name_length + 11));
 		os << std::left;
 		os << (std::string("--") + o.first + variable_string(option.type));
-		os << option.desc << std::endl;
+		os << option.desc << "\n";
 	}
 }
 

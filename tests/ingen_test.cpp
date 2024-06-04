@@ -57,7 +57,7 @@ void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
-		std::cerr << "ingen: Error: " << msg << std::endl;
+		std::cerr << "ingen: Error: " << msg << "\n";
 		world.reset();
 		exit(EXIT_FAILURE);
 	}
@@ -80,7 +80,7 @@ run(int argc, char** argv)
 		world = std::make_unique<World>(nullptr, nullptr, nullptr);
 		world->load_configuration(argc, argv);
 	} catch (const std::exception& e) {
-		std::cerr << "ingen: " << e.what() << std::endl;
+		std::cerr << "ingen: " << e.what() << "\n";
 		return EXIT_FAILURE;
 	}
 
@@ -89,8 +89,7 @@ run(int argc, char** argv)
 	const Atom& execute = world->conf().option("execute");
 	if (!load.is_valid() || !execute.is_valid()) {
 		std::cerr
-		    << "Usage: ingen_test --load START_GRAPH --execute COMMANDS_FILE"
-		    << std::endl;
+		    << "Usage: ingen_test --load START_GRAPH --execute COMMANDS_FILE\n";
 
 		return EXIT_FAILURE;
 	}
@@ -100,16 +99,12 @@ run(int argc, char** argv)
 	const FilePath run_path  = real_file_path(static_cast<const char*>(execute.get_body()));
 
 	if (load_path.empty()) {
-		std::cerr << "error: initial graph '" << load_path << "' does not exist"
-		          << std::endl;
-
+		std::cerr << "error: initial graph '" << load_path << "' does not exist\n";
 		return EXIT_FAILURE;
 	}
 
 	if (run_path.empty()) {
-		std::cerr << "error: command file '" << run_path << "' does not exist"
-		          << std::endl;
-
+		std::cerr << "error: command file '" << run_path << "' does not exist\n";
 		return EXIT_FAILURE;
 	}
 
@@ -125,9 +120,7 @@ run(int argc, char** argv)
 
 	// Load graph
 	if (!world->parser()->parse_file(*world, *world->interface(), load_path)) {
-		std::cerr << "error: failed to load initial graph " << load_path
-		          << std::endl;
-
+		std::cerr << "error: failed to load initial graph " << load_path << "\n";
 		return EXIT_FAILURE;
 	}
 	world->engine()->flush_events(std::chrono::milliseconds(20));
@@ -180,7 +173,7 @@ run(int argc, char** argv)
 
 #if 0
 		const LV2_Atom* atom = forge.atom();
-		cerr << "READ " << atom->size << " BYTES" << endl;
+		cerr << "READ " << atom->size << " BYTES\n";
 		cerr << sratom_to_turtle(
 			sratom,
 			&world->uri_map().urid_unmap_feature()->urid_unmap,
@@ -249,7 +242,7 @@ main(int argc, char** argv)
 
 		return ingen::test::run(argc, argv);
 	} catch (const std::exception& e) {
-		std::cerr << "ingen: " << e.what() << std::endl;
+		std::cerr << "ingen: " << e.what() << "\n";
 		return EXIT_FAILURE;
 	}
 }

@@ -41,7 +41,7 @@ void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
-		std::cerr << "ingen: Error: " << msg << std::endl;
+		std::cerr << "ingen: Error: " << msg << "\n";
 		world.reset();
 		exit(EXIT_FAILURE);
 	}
@@ -68,7 +68,7 @@ run(int argc, char** argv)
 			ingen::Configuration::SESSION, world->forge().String, Atom());
 		world->load_configuration(argc, argv);
 	} catch (std::exception& e) {
-		std::cout << "ingen: " << e.what() << std::endl;
+		std::cout << "ingen: " << e.what() << "\n";
 		return EXIT_FAILURE;
 	}
 
@@ -76,9 +76,7 @@ run(int argc, char** argv)
 	const Atom& load = world->conf().option("load");
 	const Atom& out  = world->conf().option("output");
 	if (!load.is_valid() || !out.is_valid()) {
-		std::cerr << "Usage: ingen_bench --load START_GRAPH --output OUT_FILE"
-		          << std::endl;
-
+		std::cerr << "Usage: ingen_bench --load START_GRAPH --output OUT_FILE\n";
 		return EXIT_FAILURE;
 	}
 
@@ -90,7 +88,7 @@ run(int argc, char** argv)
 	if (start_graph.empty()) {
 		std::cerr << "error: initial graph '"
 		          << static_cast<const char*>(load.get_body())
-		          << "' does not exist" << std::endl;
+		          << "' does not exist\n";
 		return EXIT_FAILURE;
 	}
 
@@ -107,7 +105,7 @@ run(int argc, char** argv)
 	// Load graph
 	if (!world->parser()->parse_file(*world, *world->interface(), start_graph)) {
 		std::cerr << "error: failed to load initial graph " << start_graph
-		          << std::endl;
+		          << "\n";
 
 		return EXIT_FAILURE;
 	}
