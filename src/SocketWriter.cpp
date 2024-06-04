@@ -20,6 +20,7 @@
 
 #include <memory>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <utility>
 #include <variant>
 

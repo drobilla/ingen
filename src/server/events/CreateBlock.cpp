@@ -40,6 +40,7 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/paths.hpp"
+#include "lilv/lilv.h"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 

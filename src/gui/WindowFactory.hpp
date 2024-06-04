@@ -25,7 +25,6 @@
 #include <cstddef>
 #include <map>
 #include <memory>
-#include <string>
 
 namespace ingen {
 
