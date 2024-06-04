@@ -29,7 +29,7 @@ fmt(const char* fmt, Args&&... args)
 {
 	boost::format                     f{fmt}; // NOLINT(misc-const-correctness)
 	const std::initializer_list<char> l{
-	    (static_cast<void>(f % args), char{})...};
+	    (static_cast<void>(f % std::forward<Args>(args)), char{})...};
 
 	(void)l;
 	return boost::str(f);
