@@ -184,6 +184,7 @@ run(int argc, char** argv)
 #endif
 
 		if (!atom_reader.write(forge.atom(), n_events + 1)) {
+			delete cmds;
 			return EXIT_FAILURE;
 		}
 
