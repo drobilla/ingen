@@ -43,6 +43,7 @@
 #include <gtkmm/enums.h>
 #include <gtkmm/messagedialog.h>
 #include <gtkmm/treeiter.h>
+#include <gtkmm/treepath.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treeviewcolumn.h>
 #include <gtkmm/window.h>

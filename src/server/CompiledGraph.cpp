@@ -35,6 +35,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <exception>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <utility>

@@ -24,6 +24,7 @@
 #include "ingen/URI.hpp"
 #include "raul/Semaphore.hpp"
 
+#include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
 #include <portaudio.h>
 
@@ -35,13 +36,6 @@
 namespace raul {
 class Path;
 } // namespace raul
-
-namespace boost::intrusive {
-
-template <bool Enabled>
-struct cache_last;
-
-} // namespace boost::intrusive
 
 namespace ingen {
 

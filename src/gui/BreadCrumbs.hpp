@@ -24,6 +24,7 @@
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
 
+#include <glibmm/ustring.h>
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/object.h>

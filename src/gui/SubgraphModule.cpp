@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <memory>
+#include <utility>
 
 namespace ingen {
 

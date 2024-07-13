@@ -26,6 +26,7 @@
 #include "lv2/atom/forge.h"
 #include "raul/Semaphore.hpp"
 
+#include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
 #include <jack/jack.h>
 #include <jack/thread.h>
@@ -41,10 +42,6 @@
 namespace raul {
 class Path;
 } // namespace raul
-
-namespace boost::intrusive {
-template <bool Enabled> struct cache_last;
-} // namespace boost::intrusive
 
 namespace ingen {
 

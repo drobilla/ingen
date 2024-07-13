@@ -52,6 +52,7 @@
 #include <gtkmm/object.h>
 #include <gtkmm/separatormenuitem.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/stockid.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 

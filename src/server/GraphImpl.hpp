@@ -26,6 +26,7 @@
 #include "lv2/urid/urid.h"
 #include "raul/Maid.hpp"
 
+#include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
 
 #include <cassert>
@@ -38,10 +39,6 @@
 namespace raul {
 class Symbol;
 } // namespace raul
-
-namespace boost::intrusive {
-template <bool Enabled> struct constant_time_size;
-} // namespace boost::intrusive
 
 namespace ingen::server {
 

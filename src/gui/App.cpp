@@ -52,6 +52,7 @@
 #include <glibmm/main.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/propertyproxy.h>
+#include <glibmm/ustring.h>
 #include <gtk/gtk.h>
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/dialog.h>
@@ -62,6 +63,7 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/widget.h>
 #include <sigc++/functors/mem_fun.h>
+#include <sigc++/functors/slot.h>
 
 #include <algorithm>
 #include <cassert>

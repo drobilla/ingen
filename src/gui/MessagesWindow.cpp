@@ -26,6 +26,7 @@
 #include <gdkmm/color.h>
 #include <glibmm/propertyproxy.h>
 #include <glibmm/signalproxy.h>
+#include <glibmm/ustring.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/enums.h>

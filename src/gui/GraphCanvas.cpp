@@ -80,6 +80,7 @@
 #include <gtkmm/menuitem.h>
 #include <gtkmm/object.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/stockid.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 #include <sigc++/signal.h>

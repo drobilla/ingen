@@ -31,6 +31,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 
+#include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
 #include <boost/intrusive/slist_hook.hpp>
 
@@ -45,16 +46,6 @@
 namespace raul {
 class Symbol;
 } // namespace raul
-
-namespace boost::intrusive {
-
-template <bool Enabled>
-struct cache_last;
-
-template <bool Enabled>
-struct constant_time_size;
-
-} // namespace boost::intrusive
 
 namespace ingen {
 
