@@ -92,7 +92,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 		// Moving to a child of the full path, append crumbs (preserve cache)
 
 		string suffix = path.substr(_full_path.length());
-		while (suffix.length() > 0) {
+		while (!suffix.empty()) {
 			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
 			}
@@ -135,7 +135,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 
 		raul::Path working_path("/");
 		string suffix = path.substr(1);
-		while (suffix.length() > 0) {
+		while (!suffix.empty()) {
 			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
 			}

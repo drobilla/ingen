@@ -21,6 +21,5 @@ Checks: >
   -llvm-header-guard,
   -misc-redundant-expression,
   -portability-simd-intrinsics,
-  -readability-container-size-empty,
   -readability-redundant-inline-specifier,
 InheritParentConfig: true
