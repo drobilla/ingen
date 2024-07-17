@@ -94,12 +94,12 @@ private:
 	const double b;
 	const double c;
 
-	uint64_t nper        = 0u;
+	uint64_t nper        = 0U;
 	double   e2          = 0.0;
 	double   t0          = 0.0;
 	double   t1          = 0.0;
-	uint64_t n0          = 0u;
-	uint64_t n1          = 0u;
+	uint64_t n0          = 0U;
+	uint64_t n1          = 0U;
 	bool     initialized = false;
 };
 

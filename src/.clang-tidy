@@ -1,6 +1,5 @@
 Checks: >
   -*-avoid-c-arrays,
-  -*-uppercase-literal-suffix,
   -*-vararg,
   -android-cloexec-*,
   -bugprone-easily-swappable-parameters,

@@ -104,8 +104,8 @@ public:
 inline size_t
 ui_ring_size(SampleCount block_length)
 {
-	return std::max(static_cast<size_t>(8192u),
-	                static_cast<size_t>(block_length) * 16u);
+	return std::max(static_cast<size_t>(8192U),
+	                static_cast<size_t>(block_length) * 16U);
 }
 
 class LV2Driver : public Driver, public ingen::AtomSink

@@ -179,7 +179,7 @@ CreatePort::pre_process(PreProcessContext&)
 	_update = _graph_port->properties();
 
 	assert(_graph_port->index() == static_cast<uint32_t>(index_i->second.get<int32_t>()));
-	assert(_graph->num_ports_non_rt() == static_cast<uint32_t>(old_n_ports) + 1u);
+	assert(_graph->num_ports_non_rt() == static_cast<uint32_t>(old_n_ports) + 1U);
 	assert(_ports_array->size() == _graph->num_ports_non_rt());
 	assert(_graph_port->index() < _ports_array->size());
 	return Event::pre_process_done(Status::SUCCESS);

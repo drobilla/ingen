@@ -29,10 +29,14 @@ Checks: >
   -readability-identifier-length,
   -readability-implicit-bool-conversion,
 CheckOptions:
-  - key:   modernize-use-override.AllowOverrideAndFinal
-    value: 'true'
   - key:   cppcoreguidelines-explicit-virtual-functions.AllowOverrideAndFinal
     value: 'true'
+  - key:   hicpp-uppercase-literal-suffix.NewSuffixes
+    value: 'L;U;UL;ULL'
+  - key:   modernize-use-override.AllowOverrideAndFinal
+    value: 'true'
+  - key:   readability-uppercase-literal-suffix.NewSuffixes
+    value: 'L;U;UL;ULL'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file
