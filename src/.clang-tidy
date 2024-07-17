@@ -6,7 +6,6 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-multi-level-implicit-pointer-conversion,
   -bugprone-unchecked-optional-access,
-  -bugprone-unused-local-non-trivial-variable,
   -cert-dcl50-cpp,
   -cert-err33-c,
   -cert-err34-c,

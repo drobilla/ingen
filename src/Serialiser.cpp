@@ -118,7 +118,6 @@ Serialiser::Impl::write_manifest(const FilePath& bundle_path,
                                  const std::shared_ptr<const Node>&)
 {
 	const FilePath manifest_path(bundle_path / "manifest.ttl");
-	const FilePath binary_path(ingen_module_path("lv2"));
 
 	start_to_file(raul::Path("/"), manifest_path);
 
