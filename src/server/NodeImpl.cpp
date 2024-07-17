@@ -29,7 +29,7 @@
 
 namespace raul {
 class Symbol;
-}
+} // namespace raul
 
 namespace ingen::server {
 
