@@ -34,7 +34,6 @@
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/refptr.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>

@@ -40,7 +40,6 @@
 #include "ingen/World.hpp"
 #include "ingen/paths.hpp"
 #include "raul/Array.hpp"
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include <cassert>

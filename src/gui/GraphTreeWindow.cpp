@@ -32,7 +32,6 @@
 #include "raul/Symbol.hpp"
 
 #include <glibmm/propertyproxy.h>
-#include <glibmm/signalproxy.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/cellrenderer.h>
 #include <gtkmm/cellrenderertoggle.h>

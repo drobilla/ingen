@@ -32,7 +32,6 @@
 
 #include <glibmm/propertyproxy.h>
 #include <glibmm/refptr.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/adjustment.h>
 #include <gtkmm/builder.h>

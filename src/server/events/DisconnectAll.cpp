@@ -32,6 +32,7 @@
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/Store.hpp"
+#include "raul/Path.hpp"
 
 #include <memory>
 #include <mutex>

@@ -40,7 +40,6 @@
 
 #include <glib.h>
 #include <glibmm/main.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>

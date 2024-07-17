@@ -36,7 +36,6 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/propertyproxy.h>
 #include <glibmm/refptr.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/slisthandle.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>

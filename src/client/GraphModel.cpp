@@ -17,6 +17,7 @@
 #include "ingen/client/GraphModel.hpp"
 
 #include "ingen/Atom.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
@@ -31,6 +32,11 @@
 #include <utility>
 
 namespace ingen::client {
+
+GraphModel::GraphModel(URIs& uris, const raul::Path& graph_path)
+    : BlockModel{uris, static_cast<const URI&>(uris.ingen_Graph), graph_path}
+{
+}
 
 void
 GraphModel::add_child(const std::shared_ptr<ObjectModel>& c)

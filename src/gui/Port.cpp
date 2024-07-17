@@ -46,7 +46,6 @@
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menu_elems.h>

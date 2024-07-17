@@ -23,7 +23,6 @@
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
-#include <glibmm/signalproxy.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 

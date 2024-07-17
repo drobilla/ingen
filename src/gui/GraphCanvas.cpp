@@ -67,7 +67,6 @@
 #include <gdkmm/window.h>
 #include <glib.h>
 #include <glibmm/refptr.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>

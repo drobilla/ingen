@@ -47,7 +47,6 @@
 #include "raul/Symbol.hpp"
 
 #include <glibmm/main.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/container.h>
 #include <gtkmm/eventbox.h>

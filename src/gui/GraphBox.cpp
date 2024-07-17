@@ -56,7 +56,6 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/propertyproxy.h>
 #include <glibmm/refptr.h>
-#include <glibmm/signalproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/alignment.h>
 #include <gtkmm/box.h>

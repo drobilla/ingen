@@ -36,6 +36,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <utility>
 
 namespace ingen::server::events {
 

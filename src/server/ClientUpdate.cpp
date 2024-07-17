@@ -27,6 +27,7 @@
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/URIs.hpp"
+#include "raul/Path.hpp"
 
 #include <boost/intrusive/slist.hpp>
 

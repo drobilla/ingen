@@ -27,6 +27,10 @@
 #include <map>
 #include <utility>
 
+namespace raul {
+class Symbol;
+}
+
 namespace ingen::server {
 
 NodeImpl::NodeImpl(const ingen::URIs&  uris,

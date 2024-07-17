@@ -24,7 +24,6 @@
 #include "server.h"
 #include "sratom/sratom.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>

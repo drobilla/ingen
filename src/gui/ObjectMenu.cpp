@@ -27,7 +27,6 @@
 #include "ingen/client/ObjectModel.hpp"
 
 #include <glibmm/refptr.h>
-#include <glibmm/signalproxy.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menuitem.h>

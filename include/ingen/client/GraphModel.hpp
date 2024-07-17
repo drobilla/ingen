@@ -18,7 +18,6 @@
 #define INGEN_CLIENT_GRAPHMODEL_HPP
 
 #include "ingen/Node.hpp"
-#include "ingen/URIs.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/ingen.h"
@@ -32,7 +31,7 @@ class Path;
 
 namespace ingen {
 
-class URI;
+class URIs;
 
 namespace client {
 
@@ -67,11 +66,7 @@ public:
 private:
 	friend class ClientStore;
 
-	GraphModel(URIs& uris, const raul::Path& graph_path)
-	    : BlockModel(uris,
-	                 static_cast<const URI&>(uris.ingen_Graph),
-	                 graph_path)
-	{}
+	GraphModel(URIs& uris, const raul::Path& graph_path);
 
 	void clear() override;
 	void add_child(const std::shared_ptr<ObjectModel>& c) override;

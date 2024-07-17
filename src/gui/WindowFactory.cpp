@@ -33,7 +33,6 @@
 #include "raul/Path.hpp"
 
 #include <gdkmm/window.h>
-#include <glibmm/signalproxy.h>
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 

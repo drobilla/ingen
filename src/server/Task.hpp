@@ -17,7 +17,6 @@
 #ifndef INGEN_ENGINE_TASK_HPP
 #define INGEN_ENGINE_TASK_HPP
 
-#include <algorithm>
 #include <atomic>
 #include <cassert>
 #include <deque>

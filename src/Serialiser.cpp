@@ -28,7 +28,6 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/runtime_paths.hpp"
 #include "lv2/core/lv2.h"
 #include "lv2/state/state.h"
 #include "lv2/ui/ui.h"

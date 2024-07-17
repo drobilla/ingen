@@ -47,7 +47,6 @@
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
 
-#include <algorithm>
 #include <memory>
 #include <mutex>
 #include <set>
