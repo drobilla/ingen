@@ -32,6 +32,7 @@ if is_variable('cpp')
         '-Wno-reserved-id-macro',
         '-Wno-shorten-64-to-32',
         '-Wno-sign-conversion',
+        '-Wno-switch-default',
         '-Wno-switch-enum',
         '-Wno-unreachable-code',
         '-Wno-unsafe-buffer-usage',

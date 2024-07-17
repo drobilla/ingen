@@ -26,5 +26,6 @@ Checks: >
   -hicpp-multiway-paths-covered,
   -hicpp-vararg,
   -llvm-header-guard,
+  -readability-container-size-empty,
   -readability-convert-member-functions-to-static,
 InheritParentConfig: true

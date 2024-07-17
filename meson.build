@@ -147,6 +147,7 @@ lilv_dep = dependency(
 raul_dep = dependency(
   'raul-2',
   fallback: ['raul', 'raul_dep'],
+  include_type: 'system',
   version: '>= 2.0.0',
 )
 
