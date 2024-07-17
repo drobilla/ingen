@@ -27,7 +27,6 @@ Checks: >
   -hicpp-no-malloc,
   -misc-no-recursion,
   -misc-unused-parameters,
-  -readability-avoid-return-with-void-value,
   -readability-function-cognitive-complexity,
   -readability-redundant-casting,
   -readability-use-anyofallof,

@@ -514,7 +514,7 @@ void
 Serialiser::serialise_arc(const Sord::Node&                 parent,
                           const std::shared_ptr<const Arc>& arc)
 {
-	return me->serialise_arc(parent, arc);
+	me->serialise_arc(parent, arc);
 }
 
 void

@@ -118,7 +118,7 @@ private:
 	// Static JACK callbacks which call the non-static callbacks (methods)
 
 	static void shutdown_cb(void* const jack_driver) {
-		return static_cast<JackDriver*>(jack_driver)->_shutdown_cb();
+		static_cast<JackDriver*>(jack_driver)->_shutdown_cb();
 	}
 
 	static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
