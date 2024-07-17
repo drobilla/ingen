@@ -390,7 +390,7 @@ GraphBox::set_graph(const std::shared_ptr<const GraphModel>& graph,
 		}
 	}
 
-	_menu_parent->property_sensitive() = bool(graph->parent());
+	_menu_parent->property_sensitive() = !!graph->parent();
 
 	new_port_connection = graph->signal_new_port().connect(
 		sigc::mem_fun(this, &GraphBox::graph_port_added));

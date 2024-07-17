@@ -29,7 +29,6 @@
 #include <portaudio.h>
 
 #include <atomic>
-#include <cstddef>
 #include <cstdint>
 #include <memory>
 
@@ -77,7 +76,7 @@ public:
 	int real_time_priority() override { return 80; }
 
 	SampleCount    block_length() const override { return _block_length; }
-	size_t         seq_size()     const override { return _seq_size; }
+	uint32_t       seq_size()     const override { return _seq_size; }
 	SampleCount    sample_rate()  const override { return _sample_rate; }
 
 private:
@@ -118,14 +117,14 @@ protected:
 	Ports                       _ports;
 	PaStreamParameters          _inputParameters;
 	PaStreamParameters          _outputParameters;
-	raul::Semaphore             _sem{0};
+	raul::Semaphore             _sem{0U};
 	std::unique_ptr<FrameTimer> _timer;
 	PaStream*                   _stream{nullptr};
-	size_t                      _seq_size{4096};
+	uint32_t                    _seq_size{4096U};
 	uint32_t                    _block_length;
-	uint32_t                    _sample_rate{48000};
-	uint32_t                    _n_inputs{0};
-	uint32_t                    _n_outputs{0};
+	uint32_t                    _sample_rate{48000U};
+	uint32_t                    _n_inputs{0U};
+	uint32_t                    _n_outputs{0U};
 	std::atomic<bool>           _flag{false};
 	bool                        _is_activated{false};
 };

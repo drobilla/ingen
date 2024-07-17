@@ -52,6 +52,7 @@
 
 #include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
@@ -109,7 +110,8 @@ JackDriver::attach(const std::string& server_name,
 
 	_sample_rate  = jack_get_sample_rate(_client);
 	_block_length = jack_get_buffer_size(_client);
-	_seq_size     = jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE);
+	_seq_size     = static_cast<uint32_t>(
+		jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE));
 
 	_fallback_buffer = AudioBufPtr(
 		static_cast<float*>(
@@ -522,7 +524,8 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
 	if (_engine.root_graph()) {
 		_block_length = nframes;
-		_seq_size = jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE);
+		_seq_size = static_cast<uint32_t>(
+			jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE));
 		_engine.root_graph()->set_buffer_size(
 			_engine.run_context(), *_engine.buffer_factory(), PortType::AUDIO,
 			_engine.buffer_factory()->audio_buffer_size(nframes));

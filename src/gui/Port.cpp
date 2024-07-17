@@ -230,7 +230,7 @@ Port::on_value_changed(double value)
 		return; // No change
 	}
 
-	const Atom atom = _app.forge().make(float(value));
+	const Atom atom = _app.forge().make(static_cast<float>(value));
 	_app.set_property(model()->uri(),
 	                  _app.world().uris().ingen_value,
 	                  atom);

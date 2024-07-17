@@ -55,6 +55,8 @@ Configuration::Configuration(Forge& forge)
 		"  ingen -eg            # Run engine and GUI in one process\n"
 		"  ingen -eg foo.ingen  # Run engine and GUI and load a graph")
 {
+	static const auto default_n_threads = static_cast<int32_t>(std::max(std::thread::hardware_concurrency(), 1U));
+
 	add("atomicBundles",  "atomic-bundles", 'a', "Execute bundles atomically", GLOBAL, forge.Bool, forge.make(false));
 	add("bufferSize",     "buffer-size",    'b', "Buffer size in samples", GLOBAL, forge.Int, forge.make(1024));
 	add("clientPort",     "client-port",    'C', "Client port", GLOBAL, forge.Int, Atom());
@@ -77,7 +79,7 @@ Configuration::Configuration(Forge& forge)
 	add("flushLog",       "flush-log",      'f', "Flush logs after every entry", GLOBAL, forge.Bool, forge.make(false));
 	add("dump",           "dump",           'd', "Print debug output", SESSION, forge.Bool, forge.make(false));
 	add("trace",          "trace",          't', "Show LV2 plugin trace messages", SESSION, forge.Bool, forge.make(false));
-	add("threads",        "threads",        'p', "Number of processing threads", GLOBAL, forge.Int, forge.make(int32_t(std::max(std::thread::hardware_concurrency(), 1U))));
+	add("threads",        "threads",        'p', "Number of processing threads", GLOBAL, forge.Int, forge.make(default_n_threads));
 	add("humanNames",     "human-names",     0,  "Show human names in GUI", GUI, forge.Bool, forge.make(true));
 	add("portLabels",     "port-labels",     0,  "Show port labels in GUI", GUI, forge.Bool, forge.make(true));
 	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", GUI, forge.String, Atom());

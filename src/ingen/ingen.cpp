@@ -131,7 +131,7 @@ run(int argc, char** argv)
 
 		ingen_try(world->load_module("server"), "Failed to load server module");
 
-		ingen_try(bool(world->engine()), "Unable to create engine");
+		ingen_try(!!world->engine(), "Unable to create engine");
 		world->engine()->listen();
 	}
 
@@ -195,7 +195,7 @@ run(int argc, char** argv)
 			}
 		}
 
-		ingen_try(bool(world->parser()), "Failed to create parser");
+		ingen_try(!!world->parser(), "Failed to create parser");
 
 		const std::string graph = conf.option("load").ptr<char>();
 

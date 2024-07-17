@@ -113,7 +113,7 @@ class LV2Driver : public Driver, public ingen::AtomSink
 public:
 	LV2Driver(Engine&     engine,
 	          SampleCount block_length,
-	          size_t      seq_size,
+	          uint32_t    seq_size,
 	          SampleCount sample_rate)
 		: _engine(engine)
 		, _main_sem(0)
@@ -388,7 +388,7 @@ public:
 	}
 
 	SampleCount block_length() const override { return _block_length; }
-	size_t      seq_size()     const override { return _seq_size; }
+	uint32_t    seq_size()     const override { return _seq_size; }
 	SampleCount sample_rate()  const override { return _sample_rate; }
 	SampleCount frame_time()   const override { return _frame_time; }
 
@@ -412,7 +412,7 @@ private:
 	GraphImpl*       _root_graph{nullptr};
 	uint32_t         _notify_capacity{0};
 	SampleCount      _block_length;
-	size_t           _seq_size;
+	uint32_t         _seq_size;
 	SampleCount      _sample_rate;
 	SampleCount      _frame_time{0};
 	raul::Semaphore  _to_ui_overflow_sem{0};
@@ -552,7 +552,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		block_length = 4096;
 		plugin->world->log().warn("No maximum block length given\n");
 	}
-	if (seq_size == 0) {
+	if (seq_size < 1) {
 		seq_size = 16384;
 		plugin->world->log().warn("No maximum sequence size given\n");
 	}
@@ -575,7 +575,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 	ThreadManager::single_threaded = true;
 
-	auto* driver = new LV2Driver(*engine, block_length, seq_size, rate);
+	auto* driver = new LV2Driver(
+		*engine, block_length, static_cast<uint32_t>(seq_size), rate);
 	engine->set_driver(std::shared_ptr<Driver>(driver));
 
 	engine->activate();

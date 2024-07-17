@@ -111,7 +111,7 @@ private:
 	std::mutex  _mutex;
 	Engine&     _engine;
 	URIs&       _uris;
-	uint32_t    _seq_size{0};
+	uint32_t    _seq_size{0U};
 
 	BufferRef _silent_buffer;
 };

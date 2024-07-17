@@ -10,7 +10,6 @@ Checks: >
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -cppcoreguidelines-pro-type-union-access,
   -fuchsia-statically-constructed-objects,
-  -google-readability-casting,
   -google-readability-todo,
   -llvm-header-guard,
   -readability-function-cognitive-complexity,

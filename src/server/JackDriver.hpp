@@ -33,7 +33,6 @@
 #include <jack/types.h>
 
 #include <atomic>
-#include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <memory>
@@ -100,7 +99,7 @@ public:
 
 	jack_client_t* jack_client()  const          { return _client; }
 	SampleCount    block_length() const override { return _block_length; }
-	size_t         seq_size()     const override { return _seq_size; }
+	uint32_t       seq_size()     const override { return _seq_size; }
 	SampleCount    sample_rate()  const override { return _sample_rate; }
 
 	SampleCount frame_time() const override {
@@ -157,7 +156,7 @@ protected:
 	std::atomic<bool>      _flag{false};
 	jack_client_t*         _client{nullptr};
 	jack_nframes_t         _block_length{0};
-	size_t                 _seq_size{0};
+	uint32_t               _seq_size{0};
 	jack_nframes_t         _sample_rate{0};
 	uint32_t               _midi_event_type;
 	bool                   _is_activated{false};

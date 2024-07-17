@@ -105,11 +105,11 @@ Get::post_process()
 			URIs&      uris  = _engine.world().uris();
 			Properties props = {
 				{ uris.param_sampleRate,
-				  uris.forge.make(int32_t(_engine.sample_rate())) },
+				  uris.forge.make(static_cast<int32_t>(_engine.sample_rate())) },
 				{ uris.bufsz_maxBlockLength,
-				  uris.forge.make(int32_t(_engine.block_length())) },
+				  uris.forge.make(static_cast<int32_t>(_engine.block_length())) },
 				{ uris.ingen_numThreads,
-				  uris.forge.make(int32_t(_engine.n_threads())) } };
+				  uris.forge.make(static_cast<int32_t>(_engine.n_threads())) } };
 
 			const Properties load_props = _engine.load_properties();
 			props.insert(load_props.begin(), load_props.end());

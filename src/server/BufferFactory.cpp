@@ -109,7 +109,7 @@ BufferFactory::default_size(LV2_URID type) const
 	}
 
 	if (type == _uris.atom_Sequence) {
-		if (_seq_size == 0) {
+		if (_seq_size == 0U) {
 			return _engine.sequence_size();
 		}
 

@@ -104,11 +104,14 @@ Engine::Engine(ingen::World& world)
 	}
 
 	for (int i = 0; i < world.conf().option("threads").get<int32_t>(); ++i) {
+		const bool is_threaded = (i > 0);
 		_notifications.emplace_back(
-			std::make_unique<raul::RingBuffer>(uint32_t(24 * event_queue_size())));
+		    std::make_unique<raul::RingBuffer>(24U * event_queue_size()));
 		_run_contexts.emplace_back(
-			std::make_unique<RunContext>(
-				*this, _notifications.back().get(), unsigned(i), i > 0));
+		    std::make_unique<RunContext>(*this,
+		                                 _notifications.back().get(),
+		                                 static_cast<unsigned>(i),
+		                                 is_threaded));
 	}
 
 	_world.lv2_features().add_feature(_worker->schedule_feature());
@@ -295,16 +298,17 @@ Engine::block_length() const
 	return _driver->block_length();
 }
 
-size_t
+uint32_t
 Engine::sequence_size() const
 {
 	return _driver->seq_size();
 }
 
-size_t
+uint32_t
 Engine::event_queue_size() const
 {
-	return _world.conf().option("queue-size").get<int32_t>();
+	return static_cast<uint32_t>(
+	    std::max(0, _world.conf().option("queue-size").get<int32_t>()));
 }
 
 void
@@ -378,7 +382,7 @@ Engine::reset_load()
 }
 
 void
-Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
+Engine::init(double sample_rate, uint32_t block_length, uint32_t seq_size)
 {
 	set_driver(std::make_shared<DirectDriver>(
 	    *this, sample_rate, block_length, seq_size));

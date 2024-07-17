@@ -88,7 +88,7 @@ public:
 	Engine& operator=(const Engine&) = delete;
 
 	// EngineBase methods
-	void init(double sample_rate, uint32_t block_length, size_t seq_size) override;
+	void init(double sample_rate, uint32_t block_length, uint32_t seq_size) override;
 	bool supports_dynamic_ports() const override;
 	bool activate() override;
 	void deactivate() override;
@@ -173,8 +173,8 @@ public:
 
 	SampleRate  sample_rate() const;
 	SampleCount block_length() const;
-	size_t      sequence_size() const;
-	size_t      event_queue_size() const;
+	uint32_t    sequence_size() const;
+	uint32_t    event_queue_size() const;
 
 	size_t n_threads()      const { return _run_contexts.size(); }
 	bool   atomic_bundles() const { return _atomic_bundles; }

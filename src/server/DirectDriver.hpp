@@ -29,6 +29,7 @@
 #include <boost/intrusive/slist.hpp>
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 
 namespace boost::intrusive {
@@ -53,7 +54,7 @@ public:
 	DirectDriver(Engine&     engine,
 	             double      sample_rate,
 	             SampleCount block_length,
-	             size_t      seq_size)
+	             uint32_t    seq_size)
 		: _engine(engine)
 		, _sample_rate(sample_rate)
 		, _block_length(block_length)
@@ -100,7 +101,7 @@ public:
 
 	SampleCount block_length() const override { return _block_length; }
 
-	size_t seq_size() const override { return _seq_size; }
+	uint32_t seq_size() const override { return _seq_size; }
 
 	SampleCount sample_rate() const override { return _sample_rate; }
 
@@ -120,7 +121,7 @@ private:
 	Ports       _ports;
 	SampleCount _sample_rate;
 	SampleCount _block_length;
-	size_t      _seq_size;
+	uint32_t    _seq_size;
 };
 
 } // namespace server

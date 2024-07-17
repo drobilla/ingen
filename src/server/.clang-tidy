@@ -12,7 +12,6 @@ Checks: >
   -cert-dcl37-c,
   -cert-dcl51-cpp,
   -cppcoreguidelines-pro-bounds-constant-array-index,
-  -cppcoreguidelines-pro-type-cstyle-cast,
   -cppcoreguidelines-pro-type-static-cast-downcast,
   -google-readability-todo,
   -google-runtime-int,

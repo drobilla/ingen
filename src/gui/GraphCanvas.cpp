@@ -876,7 +876,7 @@ GraphCanvas::menu_add_port(const string& sym_base,
 		uris.rdf_type,
 		Property(is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
 	props.emplace(uris.lv2_index,
-	              _app.forge().make(int32_t(_graph->num_ports())));
+	              _app.forge().make(static_cast<int32_t>(_graph->num_ports())));
 	props.emplace(uris.lv2_name, _app.forge().alloc(name.c_str()));
 	_app.interface()->put(path_to_uri(path), props);
 }

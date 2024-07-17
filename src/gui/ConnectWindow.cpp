@@ -111,7 +111,7 @@ ConnectWindow::start(App& app, ingen::World& world)
 	}
 
 	set_connected_to(world.interface());
-	connect(bool(world.interface()));
+	connect(!!world.interface());
 }
 
 void

@@ -46,7 +46,7 @@ public:
 	*/
 	virtual void init(double   sample_rate,
 	                  uint32_t block_length,
-	                  size_t   seq_size) = 0;
+	                  uint32_t seq_size) = 0;
 
 	/**
 	   Return true iff the engine and driver supports dynamic ports.

@@ -225,7 +225,7 @@ Delete::undo(Interface& target)
 			if (c.first != _msg.uri.path()) {
 				target.set_property(path_to_uri(c.first),
 				                    uris.lv2_index,
-				                    forge.make(int32_t(c.second.first)));
+				                    forge.make(static_cast<int32_t>(c.second.first)));
 			}
 		}
 	}

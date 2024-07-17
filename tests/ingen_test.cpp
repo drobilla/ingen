@@ -115,7 +115,7 @@ run(int argc, char** argv)
 	          "Unable to load server module");
 
 	// Initialise engine
-	ingen_try(bool(world->engine()),
+	ingen_try(!!world->engine(),
 	          "Unable to create engine");
 	world->engine()->init(48000.0, 4096, 4096);
 	world->engine()->activate();

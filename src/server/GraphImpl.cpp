@@ -331,7 +331,7 @@ bool
 GraphImpl::has_port_with_index(uint32_t index) const
 {
 	BufferFactory& bufs       = *_engine.buffer_factory();
-	const auto     index_atom = bufs.forge().make(int32_t(index));
+	const auto     index_atom = bufs.forge().make(static_cast<int32_t>(index));
 
 	for (const auto& p : _inputs) {
 		if (p.has_property(bufs.uris().lv2_index, index_atom)) {
