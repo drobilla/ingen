@@ -124,7 +124,7 @@ protected:
 	std::shared_ptr<Instance>
 	make_instance(URIs& uris, SampleRate rate, uint32_t voice, bool preparing);
 
-	inline LilvInstance* instance(uint32_t voice) {
+	LilvInstance* instance(uint32_t voice) {
 		return static_cast<LilvInstance*>((*_instances)[voice]->instance);
 	}
 

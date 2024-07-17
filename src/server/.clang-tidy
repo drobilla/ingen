@@ -20,5 +20,4 @@ Checks: >
   -llvm-header-guard,
   -misc-redundant-expression,
   -portability-simd-intrinsics,
-  -readability-redundant-inline-specifier,
 InheritParentConfig: true
