@@ -931,8 +931,7 @@ GraphBox::event_animate_signals_toggled()
 	_app->interface()->set_property(
 		URI("ingen:/clients/this"),
 		_app->uris().ingen_broadcast,
-		_app->forge().make(
-			static_cast<bool>(_menu_animate_signals->get_active())));
+		_app->forge().make(_menu_animate_signals->get_active()));
 }
 
 void

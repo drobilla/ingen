@@ -112,7 +112,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 		_impls.push_back(
 			new Disconnect::Impl(_engine,
 			                     _parent,
-			                     dynamic_cast<PortImpl*>(a->tail()),
+			                     a->tail(),
 			                     dynamic_cast<InputPort*>(a->head())));
 	}
 
@@ -123,7 +123,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 			_impls.push_back(
 				new Disconnect::Impl(_engine,
 				                     parent_parent,
-				                     dynamic_cast<PortImpl*>(a->tail()),
+				                     a->tail(),
 				                     dynamic_cast<InputPort*>(a->head())));
 		}
 	}

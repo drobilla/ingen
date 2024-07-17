@@ -217,7 +217,7 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 	if (_enable_signal) {
 		_app->set_property(pm->uri(),
 		                   _app->uris().ingen_enabled,
-		                   _app->forge().make(static_cast<bool>(!pm->enabled())));
+		                   _app->forge().make(!pm->enabled()));
 	}
 }
 

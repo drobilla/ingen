@@ -143,8 +143,7 @@ GraphView::process_toggled()
 
 	_app->set_property(_graph->uri(),
 	                   _app->uris().ingen_enabled,
-	                   _app->forge().make(
-	                       static_cast<bool>(_process_but->get_active())));
+	                   _app->forge().make(_process_but->get_active()));
 }
 
 void

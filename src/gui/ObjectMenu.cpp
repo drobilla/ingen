@@ -118,7 +118,7 @@ ObjectMenu::on_menu_polyphonic()
 		_app->set_property(
 			_object->uri(),
 			_app->uris().ingen_polyphonic,
-			_app->forge().make(bool(_polyphonic_menuitem->get_active())));
+			_app->forge().make(_polyphonic_menuitem->get_active()));
 	}
 }
 

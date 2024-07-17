@@ -150,7 +150,7 @@ PreProcessor::process(RunContext& ctx, PostProcessor& dest, size_t limit)
 		}
 #endif
 
-		auto* next = static_cast<Event*>(last->next());
+		auto* next = last->next();
 		last->next(nullptr);
 		dest.append(ctx, head, last);
 
@@ -242,7 +242,7 @@ PreProcessor::run()
 			wait_for_block_state(BlockState::UNBLOCKED);
 		}
 
-		back = static_cast<Event*>(ev->next());
+		back = ev->next();
 	}
 }
 

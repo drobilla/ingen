@@ -190,7 +190,7 @@ NodeMenu::on_menu_enabled()
 {
 	_app->set_property(_object->uri(),
 	                   _app->uris().ingen_enabled,
-	                   _app->forge().make(bool(_enabled_menuitem->get_active())));
+	                   _app->forge().make(_enabled_menuitem->get_active()));
 }
 
 void

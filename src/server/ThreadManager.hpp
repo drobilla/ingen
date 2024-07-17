@@ -35,13 +35,13 @@ class INGEN_SERVER_API ThreadManager
 public:
 	static void set_flag(ThreadFlag f) {
 #ifndef NDEBUG
-		flags = (static_cast<unsigned>(flags) | f);
+		flags |= static_cast<unsigned>(f);
 #endif
 	}
 
 	static void unset_flag(ThreadFlag f) {
 #ifndef NDEBUG
-		flags = (static_cast<unsigned>(flags) & (~f));
+		flags &= ~static_cast<unsigned>(f);
 #endif
 	}
 

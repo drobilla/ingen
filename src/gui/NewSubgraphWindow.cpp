@@ -119,7 +119,7 @@ NewSubgraphWindow::ok_clicked()
 	Properties props;
 	props.emplace(_app->uris().rdf_type,        Property(_app->uris().ingen_Graph));
 	props.emplace(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly)));
-	props.emplace(_app->uris().ingen_enabled,   _app->forge().make(bool(true)));
+	props.emplace(_app->uris().ingen_enabled,   _app->forge().make(true));
 	_app->interface()->put(
 		path_to_uri(path), props, Resource::Graph::INTERNAL);
 

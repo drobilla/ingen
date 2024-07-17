@@ -168,7 +168,7 @@ Disconnect::pre_process(PreProcessContext& ctx)
 
 	_impl = std::make_unique<Impl>(_engine,
 	                               _graph,
-	                               dynamic_cast<PortImpl*>(tail),
+	                               tail,
 	                               dynamic_cast<InputPort*>(head));
 
 	_compiled_graph = ctx.maybe_compile(*_graph);

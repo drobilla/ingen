@@ -157,7 +157,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		option.value = _forge.alloc(value.c_str());
 		assert(option.value.type() == _forge.String);
 	} else if (option.type == _forge.Bool) {
-		option.value = _forge.make(bool(!strcmp(value.c_str(), "true")));
+		option.value = _forge.make(!strcmp(value.c_str(), "true"));
 		assert(option.value.type() == _forge.Bool);
 	} else {
 		throw OptionError(fmt("Bad option type `%1%'", option.name));

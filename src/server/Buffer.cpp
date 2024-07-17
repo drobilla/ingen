@@ -207,8 +207,7 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 const void*
 Buffer::port_data(PortType port_type, SampleCount offset) const
 {
-	return const_cast<void*>(
-		const_cast<Buffer*>(this)->port_data(port_type, offset));
+	return const_cast<Buffer*>(this)->port_data(port_type, offset);
 }
 
 #ifdef __SSE__
@@ -435,7 +434,7 @@ void* Buffer::aligned_alloc(size_t size)
 {
 #if USE_POSIX_MEMALIGN
 	void* buf = nullptr;
-	if (!posix_memalign(static_cast<void**>(&buf), 16, size)) {
+	if (!posix_memalign(&buf, 16, size)) {
 		memset(buf, 0, size);
 		return buf;
 	}

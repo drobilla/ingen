@@ -125,8 +125,7 @@ Copy::engine_to_engine(PreProcessContext& ctx)
 	}
 
 	// Create new block
-	if (!(_block = dynamic_cast<BlockImpl*>(
-		      _old_block->duplicate(_engine, raul::Symbol(new_path.symbol()), _parent)))) {
+	if (!(_block = _old_block->duplicate(_engine, raul::Symbol(new_path.symbol()), _parent))) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
 	}
 

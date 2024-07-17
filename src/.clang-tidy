@@ -28,6 +28,5 @@ Checks: >
   -misc-no-recursion,
   -misc-unused-parameters,
   -readability-function-cognitive-complexity,
-  -readability-redundant-casting,
   -readability-use-anyofallof,
 InheritParentConfig: true
