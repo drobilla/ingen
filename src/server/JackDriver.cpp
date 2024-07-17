@@ -21,6 +21,7 @@
 #include "BufferRef.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
+#include "FrameTimer.hpp"
 #include "GraphImpl.hpp"
 #include "PortType.hpp"
 #include "RunContext.hpp"
@@ -42,6 +43,7 @@
 #include "raul/Path.hpp"
 #include "raul/Semaphore.hpp"
 
+#include <jack/jack.h>
 #include <jack/midiport.h>
 #include <jack/transport.h>
 
@@ -125,6 +127,8 @@ JackDriver::attach(const std::string& server_name,
 	for (auto& p : _ports) {
 		register_port(p);
 	}
+
+	_timer = std::make_unique<FrameTimer>(_block_length, _sample_rate);
 
 	return true;
 }
@@ -459,6 +463,12 @@ JackDriver::append_time_events(RunContext& ctx, Buffer& buffer)
 	                    static_cast<const uint8_t*>(LV2_ATOM_BODY_CONST(lpos)));
 }
 
+SampleCount
+JackDriver::frame_time() const
+{
+	return _timer->frame_time(_engine.current_time()) + _engine.block_length();
+}
+
 /**** Jack Callbacks ****/
 
 /** Jack process callback, drives entire audio thread.
@@ -481,6 +491,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	_transport_state = jack_transport_query(_client, &_position);
 
+	_timer->update(_engine.current_time(), start_of_current_cycle - _engine.block_length());
 	_engine.locate(start_of_current_cycle, nframes);
 
 	// Read input

@@ -28,9 +28,9 @@
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
-#include <jack/jack.h>
-#include <jack/thread.h>
 #include <jack/types.h>
+
+#include <jack/thread.h>
 
 #include <atomic>
 #include <cstdint>
@@ -51,6 +51,7 @@ namespace server {
 class Buffer;
 class DuplexPort;
 class Engine;
+class FrameTimer;
 class RunContext;
 
 /** The Jack Driver.
@@ -102,9 +103,7 @@ public:
 	uint32_t       seq_size()     const override { return _seq_size; }
 	SampleCount    sample_rate()  const override { return _sample_rate; }
 
-	SampleCount frame_time() const override {
-		return _client ? jack_frame_time(_client) : 0;
-	}
+	SampleCount frame_time() const override;
 
 	class PortRegistrationFailedException : public std::exception
 	{};
@@ -148,23 +147,24 @@ protected:
 
 	using AudioBufPtr = std::unique_ptr<float, FreeDeleter<float>>;
 
-	Engine&                _engine;
-	Ports                  _ports;
-	AudioBufPtr            _fallback_buffer;
-	LV2_Atom_Forge         _forge;
-	raul::Semaphore        _sem{0};
-	std::atomic<bool>      _flag{false};
-	jack_client_t*         _client{nullptr};
-	jack_nframes_t         _block_length{0};
-	uint32_t               _seq_size{0};
-	jack_nframes_t         _sample_rate{0};
-	uint32_t               _midi_event_type;
-	bool                   _is_activated{false};
-	jack_position_t        _position{};
-	jack_transport_state_t _transport_state{};
-	double                 _old_bpm{120.0};
-	jack_nframes_t         _old_frame{0};
-	bool                   _old_rolling{false};
+	Engine&                     _engine;
+	Ports                       _ports;
+	AudioBufPtr                 _fallback_buffer;
+	LV2_Atom_Forge              _forge;
+	raul::Semaphore             _sem{0};
+	std::unique_ptr<FrameTimer> _timer;
+	std::atomic<bool>           _flag{false};
+	jack_client_t*              _client{nullptr};
+	jack_nframes_t              _block_length{0};
+	uint32_t                    _seq_size{0};
+	jack_nframes_t              _sample_rate{0};
+	uint32_t                    _midi_event_type;
+	bool                        _is_activated{false};
+	jack_position_t             _position{};
+	jack_transport_state_t      _transport_state{};
+	double                      _old_bpm{120.0};
+	jack_nframes_t              _old_frame{0};
+	bool                        _old_rolling{false};
 };
 
 } // namespace server
