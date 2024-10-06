@@ -237,7 +237,7 @@ raul::Symbol
 LoadGraphWindow::symbol_from_filename(const Glib::ustring& filename)
 {
 	std::string symbol_str = Glib::path_get_basename(get_filename());
-	symbol_str = symbol_str.substr(0, symbol_str.find('.'));
+	symbol_str.resize(symbol_str.find('.'));
 	return raul::Symbol::symbolify(symbol_str);
 }
 

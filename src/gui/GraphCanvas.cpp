@@ -735,7 +735,7 @@ GraphCanvas::paste()
 	if (base_uri) {
 		std::string base = *base_uri;
 		if (base[base.size() - 1] == '/') {
-			base = base.substr(0, base.size() - 1);
+			base.resize(base.size() - 1);
 		}
 		copy_root = uri_to_path(URI(base));
 	}

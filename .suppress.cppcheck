@@ -17,7 +17,6 @@ rethrowNoCurrentException
 shadowFunction
 unsafeClassCanLeak
 useStlAlgorithm
-uselessCallsSubstr
 uselessOverride
 va_list_usedBeforeStarted
 variableScope

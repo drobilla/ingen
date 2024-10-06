@@ -103,7 +103,7 @@ PluginModel::get_property(const URI& key) const
 		size_t last_delim = last_uri_delim(str);
 		while (last_delim != string::npos &&
 		       !contains_alpha_after(str, last_delim)) {
-			str = str.substr(0, last_delim);
+			str.resize(last_delim);
 			last_delim = last_uri_delim(str);
 		}
 		str = str.substr(last_delim + 1);

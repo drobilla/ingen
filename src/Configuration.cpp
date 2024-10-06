@@ -185,7 +185,7 @@ Configuration::parse(int argc, char** argv)
 			std::string name   = std::string(argv[i]).substr(2);
 			const char* equals = strchr(argv[i], '=');
 			if (equals) {
-				name = name.substr(0, name.find('='));
+				name.resize(name.find('='));
 			}
 
 			const auto o = _options.find(name);

@@ -71,7 +71,7 @@ LV2Plugin::symbol() const
 {
 	std::string working = uri();
 	if (working.back() == '/') {
-		working = working.substr(0, working.length() - 1);
+		working.resize(working.length() - 1);
 	}
 
 	while (!working.empty()) {
@@ -82,7 +82,7 @@ LV2Plugin::symbol() const
 			return raul::Symbol::symbolify(symbol);
 		}
 
-		working = working.substr(0, last_slash);
+		working.resize(last_slash);
 	}
 
 	return raul::Symbol("lv2_symbol");
