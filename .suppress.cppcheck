@@ -15,9 +15,7 @@ nullPointerArithmetic
 passedByValue
 rethrowNoCurrentException
 shadowFunction
-unreadVariable
 unsafeClassCanLeak
-unusedPrivateFunction
 useStlAlgorithm
 uselessCallsSubstr
 uselessOverride

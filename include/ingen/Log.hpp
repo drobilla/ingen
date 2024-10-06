@@ -25,7 +25,6 @@
 #include "lv2/urid/urid.h"
 
 #include <cstdarg>
-#include <cstdio>
 #include <functional>
 #include <memory>
 #include <string>
@@ -95,8 +94,6 @@ public:
 	void set_sink(Sink s)  { _sink = std::move(s); }
 
 private:
-	void print(FILE* stream, const std::string& msg) const;
-
 	LV2_Log_Log* _log;
 	URIs&        _uris;
 	Sink         _sink;

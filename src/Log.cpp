@@ -72,15 +72,6 @@ Log::trace(const std::string& msg)
 	vtprintf(_uris.log_Trace, msg.c_str(), args);
 }
 
-void
-Log::print(FILE* stream, const std::string& msg) const
-{
-	fprintf(stream, "%s", msg.c_str());
-	if (_flush) {
-		fflush(stdout);
-	}
-}
-
 int
 Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 {
