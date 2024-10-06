@@ -72,7 +72,7 @@ private:
 	};
 
 	raul::Path                          _path;
-	PortType                            _port_type;
+	PortType                            _port_type{PortType::UNKNOWN};
 	LV2_URID                            _buf_type{0};
 	GraphImpl*                          _graph{nullptr};
 	DuplexPort*                         _graph_port{nullptr};

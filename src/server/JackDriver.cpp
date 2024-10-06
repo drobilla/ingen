@@ -533,15 +533,19 @@ JackDriver::_shutdown_cb()
 int
 JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
+	const URIs& uris = _engine.world().uris();
+
 	if (_engine.root_graph()) {
 		_block_length = nframes;
 		_seq_size = static_cast<uint32_t>(
 			jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE));
 		_engine.root_graph()->set_buffer_size(
-			_engine.run_context(), *_engine.buffer_factory(), PortType::AUDIO,
+			_engine.run_context(), *_engine.buffer_factory(),
+			uris.atom_Sound,
 			_engine.buffer_factory()->audio_buffer_size(nframes));
 		_engine.root_graph()->set_buffer_size(
-			_engine.run_context(), *_engine.buffer_factory(), PortType::ATOM,
+			_engine.run_context(), *_engine.buffer_factory(),
+			uris.atom_Sequence,
 			_seq_size);
 	}
 	return 0;

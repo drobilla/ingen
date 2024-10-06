@@ -19,7 +19,6 @@
 
 #include "ArcImpl.hpp" // IWYU pragma: keep
 #include "PortImpl.hpp"
-#include "PortType.hpp"
 #include "types.hpp"
 
 #include "lv2/urid/urid.h"
@@ -36,6 +35,8 @@ class Symbol;
 } // namespace raul
 
 namespace ingen {
+
+enum class PortType;
 
 class Atom;
 

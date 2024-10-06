@@ -23,6 +23,7 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "NodeImpl.hpp"
+#include "PortType.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"

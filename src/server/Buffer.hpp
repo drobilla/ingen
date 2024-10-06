@@ -19,7 +19,6 @@
 
 #include "BufferFactory.hpp"
 #include "BufferRef.hpp"
-#include "PortType.hpp"
 #include "server.h"
 #include "types.hpp"
 
@@ -33,6 +32,8 @@
 #include <cstdint>
 
 namespace ingen {
+
+enum class PortType;
 
 class Atom;
 

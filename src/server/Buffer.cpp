@@ -18,6 +18,7 @@
 
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
+#include "PortType.hpp"
 #include "RunContext.hpp"
 #include "ingen_config.h"
 
@@ -182,18 +183,18 @@ Buffer::resize(uint32_t capacity)
 void*
 Buffer::port_data(PortType port_type, SampleCount offset)
 {
-	switch (port_type.id()) {
-	case PortType::ID::CONTROL:
+	switch (port_type) {
+	case PortType::CONTROL:
 		return &_value_buffer->get<LV2_Atom_Float>()->body;
-	case PortType::ID::CV:
-	case PortType::ID::AUDIO:
+	case PortType::CV:
+	case PortType::AUDIO:
 		if (_type == _factory.uris().atom_Float) {
 			return &get<LV2_Atom_Float>()->body;
 		} else if (_type == _factory.uris().atom_Sound) {
 			return static_cast<Sample*>(_buf) + offset;
 		}
 		break;
-	case PortType::ID::ATOM:
+	case PortType::ATOM:
 		if (_type != _factory.uris().atom_Sound) {
 			return _buf;
 		}

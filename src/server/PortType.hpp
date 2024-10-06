@@ -14,81 +14,61 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_PORTTYPE_HPP
-#define INGEN_INTERFACE_PORTTYPE_HPP
+#ifndef INGEN_ENGINE_PORTTYPE_HPP
+#define INGEN_ENGINE_PORTTYPE_HPP
 
 #include "ingen/URI.hpp"
 
 #include "lv2/atom/atom.h"
 #include "lv2/core/lv2.h"
 
-#include <cassert>
-
 namespace ingen {
 
-/** The type of a port.
- *
- * This type refers to the type of the port itself (not necessarily the type
- * of its contents).  Ports with different types can contain the same type of
- * data, but may e.g. have different access semantics.
- */
-class PortType
-{
-public:
-	enum ID {
-		UNKNOWN = 0,
-		AUDIO   = 1,
-		CONTROL = 2,
-		CV      = 3,
-		ATOM    = 4
-	};
-
-	explicit PortType(const URI& uri)
-		: _id(UNKNOWN)
-	{
-		if (uri == type_uri(AUDIO)) {
-			_id = AUDIO;
-		} else if (uri == type_uri(CONTROL)) {
-			_id = CONTROL;
-		} else if (uri == type_uri(CV)) {
-			_id = CV;
-		} else if (uri == type_uri(ATOM)) {
-			_id = ATOM;
-		}
-	}
-
-	PortType(ID id) noexcept : _id(id) {}
-
-	const URI& uri() const { return type_uri(_id); }
-	ID         id() const { return _id; }
-
-	bool operator==(const ID& id) const { return (_id == id); }
-	bool operator!=(const ID& id) const { return (_id != id); }
-	bool operator==(const PortType& type) const { return (_id == type._id); }
-	bool operator!=(const PortType& type) const { return (_id != type._id); }
-	bool operator<(const PortType& type)  const { return (_id < type._id); }
-
-	bool is_audio()   { return _id == AUDIO; }
-	bool is_control() { return _id == CONTROL; }
-	bool is_cv()      { return _id == CV; }
-	bool is_atom()    { return _id == ATOM; }
-
-private:
-	static const URI& type_uri(unsigned id_num) {
-		assert(id_num <= ATOM);
-		static const URI uris[] = {
-			URI("http://www.w3.org/2002/07/owl#Nothing"),
-			URI(LV2_CORE__AudioPort),
-			URI(LV2_CORE__ControlPort),
-			URI(LV2_CORE__CVPort),
-			URI(LV2_ATOM__AtomPort)
-		};
-		return uris[id_num];
-	}
-
-	ID _id;
+/// The type of a port
+enum class PortType {
+	UNKNOWN,
+	AUDIO,
+	CONTROL,
+	CV,
+	ATOM,
 };
+
+/// Return the URI for `port_type`
+inline URI
+port_type_uri(const PortType port_type)
+{
+	switch (port_type) {
+	case PortType::UNKNOWN:
+		break;
+	case PortType::AUDIO:
+		return URI{LV2_CORE__AudioPort};
+	case PortType::CONTROL:
+		return URI{LV2_CORE__ControlPort};
+	case PortType::CV:
+		return URI{LV2_CORE__CVPort};
+	case PortType::ATOM:
+		return URI{LV2_ATOM__AtomPort};
+	}
+
+	return URI{"http://www.w3.org/2002/07/owl#Nothing"};
+}
+
+/// Return the type with the given `uri`, or #PortType::UNKNOWN
+inline PortType
+port_type_from_uri(const URI& uri)
+{
+	static const URI lv2_AudioPort   = URI{LV2_CORE__AudioPort};
+	static const URI lv2_ControlPort = URI{LV2_CORE__ControlPort};
+	static const URI lv2_CVPort      = URI{LV2_CORE__CVPort};
+	static const URI atom_AtomPort   = URI{LV2_ATOM__AtomPort};
+
+	return (uri == lv2_AudioPort)     ? PortType::AUDIO
+	       : (uri == lv2_ControlPort) ? PortType::CONTROL
+	       : (uri == lv2_CVPort)      ? PortType::CV
+	       : (uri == atom_AtomPort)   ? PortType::ATOM
+	                                  : PortType::UNKNOWN;
+}
 
 } // namespace ingen
 
-#endif // INGEN_INTERFACE_PORTTYPE_HPP
+#endif // INGEN_ENGINE_PORTTYPE_HPP

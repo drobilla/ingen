@@ -19,7 +19,6 @@
 
 #include "InputPort.hpp"
 #include "PortImpl.hpp"
-#include "PortType.hpp"
 #include "server.h"
 #include "types.hpp"
 
@@ -37,6 +36,8 @@ class Symbol;
 } // namespace raul
 
 namespace ingen {
+
+enum class PortType;
 
 class Atom;
 class Properties;

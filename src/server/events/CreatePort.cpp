@@ -23,6 +23,7 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
 
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
@@ -55,7 +56,6 @@ CreatePort::CreatePort(Engine&                           engine,
                        const Properties&                 properties)
     : Event(engine, client, id, timestamp)
     , _path(std::move(path))
-    , _port_type(PortType::UNKNOWN)
     , _properties(properties)
 {
 	const ingen::URIs& uris = _engine.world().uris();

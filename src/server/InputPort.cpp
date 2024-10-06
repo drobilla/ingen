@@ -23,6 +23,7 @@
 #include "BufferRef.hpp"
 #include "GraphImpl.hpp"
 #include "NodeImpl.hpp"
+#include "PortType.hpp"
 #include "RunContext.hpp"
 #include "mix.hpp"
 

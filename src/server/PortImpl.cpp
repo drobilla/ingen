@@ -136,13 +136,13 @@ PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 	remove_property(uris.rdf_type, uris.lv2_CVPort);
 	remove_property(uris.rdf_type, uris.lv2_ControlPort);
 	remove_property(uris.rdf_type, uris.atom_AtomPort);
-	add_property(uris.rdf_type, world.forge().make_urid(port_type.uri()));
+	add_property(uris.rdf_type, world.forge().make_urid(port_type_uri(port_type)));
 
 	// Update audio thread types
 	_type        = port_type;
 	_buffer_type = buffer_type;
 	if (!_buffer_type) {
-		switch (_type.id()) {
+		switch (_type) {
 		case PortType::CONTROL:
 			_buffer_type = uris.atom_Float;
 			break;
@@ -238,7 +238,7 @@ PortImpl::set_voice_value(const RunContext& ctx,
                           FrameTime         time,
                           Sample            value)
 {
-	switch (_type.id()) {
+	switch (_type) {
 	case PortType::CONTROL:
 		if (buffer(voice)->value()) {
 			const_cast<LV2_Atom_Float*>(
@@ -420,7 +420,7 @@ PortImpl::set_is_driver_port(BufferFactory&)
 void
 PortImpl::clear_buffers(const RunContext& ctx)
 {
-	switch (_type.id()) {
+	switch (_type) {
 	case PortType::AUDIO:
 	default:
 		for (uint32_t v = 0; v < _poly; ++v) {
@@ -453,7 +453,7 @@ PortImpl::monitor(RunContext& ctx, bool send_now)
 	_frames_since_monitor += ctx.nframes();
 
 	const bool time_to_send = send_now || _frames_since_monitor >= period;
-	const bool is_sequence  = (_type.id() == PortType::ATOM &&
+	const bool is_sequence  = (_type == PortType::ATOM &&
 	                           _buffer_type == _bufs.uris().atom_Sequence);
 	if (!time_to_send && !(is_sequence && _monitored) && (!is_sequence && buffer(0)->value())) {
 		return;
@@ -463,7 +463,7 @@ PortImpl::monitor(RunContext& ctx, bool send_now)
 	const URIs&  uris  = ctx.engine().world().uris();
 	LV2_URID     key   = 0;
 	float        val   = 0.0f;
-	switch (_type.id()) {
+	switch (_type) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:

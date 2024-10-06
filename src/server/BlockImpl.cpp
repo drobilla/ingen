@@ -20,6 +20,7 @@
 #include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 

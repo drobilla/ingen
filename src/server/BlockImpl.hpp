@@ -19,7 +19,6 @@
 
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
-#include "PortType.hpp"
 #include "State.hpp"
 #include "types.hpp"
 
@@ -43,6 +42,9 @@ class Symbol;
 } // namespace raul
 
 namespace ingen {
+
+enum class PortType;
+
 class Node;
 
 namespace server {

@@ -148,8 +148,10 @@ BlockFactory::load_lv2_plugins()
 	// Build an array of port type nodes for checking compatibility
 	using Types = std::vector<std::shared_ptr<LilvNode>>;
 	Types types;
-	for (unsigned t = PortType::ID::AUDIO; t <= PortType::ID::ATOM; ++t) {
-		const URI uri{PortType(static_cast<PortType::ID>(t)).uri()};
+	for (auto t = static_cast<unsigned>(PortType::AUDIO);
+	     t <= static_cast<unsigned>(PortType::ATOM);
+	     ++t) {
+		const URI uri = port_type_uri(static_cast<PortType>(t));
 		types.push_back(std::shared_ptr<LilvNode>(
 		    lilv_new_uri(_world.lilv_world(), uri.c_str()), lilv_node_free));
 	}
