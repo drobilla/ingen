@@ -672,6 +672,7 @@ ingen_cleanup(LV2_Handle instance)
 
 	auto world = std::move(me->world);
 	delete me;
+	world.reset();
 }
 
 static void
