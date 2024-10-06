@@ -64,7 +64,7 @@ PreProcessor::event(Event* const ev, Event::Mode mode)
 
 	/* Note that tail is only used here, not in process().  The head must be
 	   checked first here, since if it is null the tail pointer is junk. */
-	Event* const head = _head.load();
+	const Event* const head = _head.load();
 	if (!head) {
 		_head = ev;
 		_tail = ev;

@@ -615,8 +615,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	auto*      me     = static_cast<IngenPlugin*>(instance);
-	Engine*    engine = static_cast<Engine*>(me->world->engine().get());
+	auto*         me     = static_cast<IngenPlugin*>(instance);
+	const Engine* engine = static_cast<Engine*>(me->world->engine().get());
 	const auto driver = std::static_pointer_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);

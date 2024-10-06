@@ -110,7 +110,7 @@ LV2Block::make_instance(URIs&      uris,
 	}
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
-		PortImpl* const port   = _ports->at(p);
+		const PortImpl* const port   = _ports->at(p);
 		Buffer* const   buffer = (preparing)
 			? port->prepared_buffer(voice).get()
 			: port->buffer(voice).get();
@@ -693,8 +693,8 @@ get_port_value(const char* port_symbol,
                uint32_t*   size,
                uint32_t*   type)
 {
-	auto* const block = static_cast<LV2Block*>(user_data);
-	auto* const port  = block->port_by_symbol(port_symbol);
+	auto* const       block = static_cast<LV2Block*>(user_data);
+	const auto* const port  = block->port_by_symbol(port_symbol);
 
 	if (port && port->is_input() && port->value().is_valid()) {
 		*size = port->value().size();

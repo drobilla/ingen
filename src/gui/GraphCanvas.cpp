@@ -611,14 +611,14 @@ destroy_node(GanvNode* node, void* data)
 		return;
 	}
 
-	App*          app         = static_cast<App*>(data);
+	const App*    app         = static_cast<App*>(data);
 	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
-	auto*         node_module = dynamic_cast<NodeModule*>(module);
+	const auto*   node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
 		app->interface()->del(node_module->block()->uri());
 	} else {
-		auto* port_module = dynamic_cast<GraphPortModule*>(module);
+		const auto* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module &&
 		    strcmp(port_module->port()->path().symbol(), "control") &&
 		    strcmp(port_module->port()->path().symbol(), "notify")) {
@@ -630,11 +630,11 @@ destroy_node(GanvNode* node, void* data)
 static void
 destroy_arc(GanvEdge* arc, void* data)
 {
-	App*        app   = static_cast<App*>(data);
+	const App*  app   = static_cast<App*>(data);
 	Ganv::Edge* arcmm = Glib::wrap(arc);
 
-	Port* tail = dynamic_cast<Port*>(arcmm->get_tail());
-	Port* head = dynamic_cast<Port*>(arcmm->get_head());
+	const Port* tail = dynamic_cast<Port*>(arcmm->get_tail());
+	const Port* head = dynamic_cast<Port*>(arcmm->get_head());
 	app->interface()->disconnect(tail->model()->path(), head->model()->path());
 }
 
@@ -659,12 +659,12 @@ serialise_node(GanvNode* node, void* data)
 	}
 
 	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
-	auto*         node_module = dynamic_cast<NodeModule*>(module);
+	const auto*   node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
 		serialiser->serialise(node_module->block());
 	} else {
-		auto* port_module = dynamic_cast<GraphPortModule*>(module);
+		const auto* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module) {
 			serialiser->serialise(port_module->port());
 		}
@@ -679,7 +679,7 @@ serialise_arc(GanvEdge* arc, void* data)
 		return;
 	}
 
-	auto* garc = dynamic_cast<gui::Arc*>(Glib::wrap(GANV_EDGE(arc)));
+	const auto* garc = dynamic_cast<gui::Arc*>(Glib::wrap(GANV_EDGE(arc)));
 	if (garc) {
 		serialiser->serialise_arc(Sord::Node(), garc->model());
 	}

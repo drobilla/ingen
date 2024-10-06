@@ -203,8 +203,8 @@ BlockImpl::bypass(RunContext& ctx)
 	// Dumb bypass
 	for (const PortType t : { PortType::AUDIO, PortType::CV, PortType::ATOM }) {
 		for (uint32_t i = 0;; ++i) {
-			PortImpl* in  = nth_port_by_type(i, true, t);
-			PortImpl* out = nth_port_by_type(i, false, t);
+			const PortImpl* in  = nth_port_by_type(i, true, t);
+			const PortImpl* out = nth_port_by_type(i, false, t);
 			if (!out) {
 				break; // Finished writing all outputs
 			}
@@ -241,7 +241,7 @@ BlockImpl::process(RunContext& ctx)
 		// Find earliest offset of a value change
 		SampleCount chunk_end = ctx.nframes();
 		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
-			PortImpl* const port = _ports->at(i);
+			const PortImpl* const port = _ports->at(i);
 			if (port->type() == PortType::CONTROL && port->is_input()) {
 				const SampleCount o = port->next_value_offset(
 					offset, ctx.nframes());
@@ -265,7 +265,7 @@ BlockImpl::process(RunContext& ctx)
 
 		// Emit control port outputs as events
 		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
-			PortImpl* const port = _ports->at(i);
+			const PortImpl* const port = _ports->at(i);
 			if (port->type() == PortType::CONTROL && port->is_output()) {
 				// TODO: Only emit events when value has actually changed?
 				for (uint32_t v = 0; v < _polyphony; ++v) {
