@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
 sources = files(
+  'AtomForge.cpp',
   'AtomReader.cpp',
   'AtomWriter.cpp',
   'ClashAvoider.cpp',
