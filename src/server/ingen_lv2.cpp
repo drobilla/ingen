@@ -318,7 +318,13 @@ public:
 				break;
 			}
 
-			buf = realloc(buf, sizeof(LV2_Atom) + atom.size);
+			void* const new_buf = realloc(buf, sizeof(LV2_Atom) + atom.size);
+			if (!new_buf) {
+				_engine.log().rt_error("Failed to allocate for from-UI ring\n");
+				break;
+			}
+
+			buf = new_buf;
 			memcpy(buf, &atom, sizeof(LV2_Atom));
 
 			if (!_from_ui.read(atom.size,

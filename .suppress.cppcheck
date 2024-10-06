@@ -7,11 +7,9 @@ cstyleCast
 duplInheritedMember
 duplicateExpression
 knownConditionTrueFalse
-memleakOnRealloc
 missingReturn
 noExplicitConstructor
 normalCheckLevelMaxBranches
-nullPointerArithmetic
 shadowFunction
 unsafeClassCanLeak
 useStlAlgorithm

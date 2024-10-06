@@ -25,6 +25,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <utility>
 
 namespace ingen {
 
@@ -73,11 +74,21 @@ AtomForge::append(const void* const data, const uint32_t len)
 
 	// Update size and reallocate if necessary
 	if (lv2_atom_pad_size(_size + len) > _capacity) {
-		_capacity = lv2_atom_pad_size(_size + len);
+		const size_t new_size = lv2_atom_pad_size(_size + len);
 
-		_buf =
-		    AtomPtr{static_cast<LV2_Atom*>(realloc(_buf.release(), _capacity)),
-		            FreeDeleter<LV2_Atom>{}};
+		// Release buffer and try to realloc it
+		auto* const old     = _buf.release();
+		auto* const new_buf = static_cast<LV2_Atom*>(realloc(old, new_size));
+		if (!new_buf) {
+			// Failure, reclaim old buffer and signal error to caller
+			_buf = AtomPtr{old, FreeDeleter<LV2_Atom>{}};
+			return 0;
+		}
+
+		// Adopt new buffer and update capacity to make room for the new data
+		std::unique_ptr<LV2_Atom, FreeDeleter<LV2_Atom>> ptr{new_buf};
+		_capacity = new_size;
+		_buf      = std::move(ptr);
 	}
 
 	// Append new data

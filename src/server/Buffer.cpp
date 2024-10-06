@@ -172,7 +172,12 @@ void
 Buffer::resize(uint32_t capacity)
 {
 	if (!_external) {
-		_buf      = realloc(_buf, capacity);
+		void* const new_buf = realloc(_buf, capacity);
+		if (!new_buf) {
+			throw std::bad_alloc{};
+		}
+
+		_buf      = new_buf;
 		_capacity = capacity;
 		clear();
 	} else {
