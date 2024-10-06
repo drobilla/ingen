@@ -270,7 +270,7 @@ JackDriver::rename_port(const raul::Path& old_path,
 		                 static_cast<jack_port_t*>(eport->handle()),
 		                 new_path.substr(1).c_str());
 #else
-		jack_port_set_name((jack_port_t*)eport->handle(),
+		jack_port_set_name(static_cast<jack_port_t*>(eport->handle()),
 		                   new_path.substr(1).c_str());
 #endif
 	}
