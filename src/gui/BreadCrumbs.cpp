@@ -85,7 +85,6 @@ BreadCrumbs::build(const raul::Path&                 path,
 		}
 
 		_active_path = path;
-		_enable_signal = old_enable_signal;
 
 	} else if (!_breadcrumbs.empty() && path.is_child_of(_full_path)) {
 		// Moving to a child of the full path, append crumbs (preserve cache)
