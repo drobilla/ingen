@@ -94,13 +94,11 @@ CompiledGraph::compile(GraphImpl& graph)
 static size_t
 num_unvisited_dependants(const BlockImpl* block)
 {
-	size_t count = 0;
-	for (const BlockImpl* b : block->dependants()) {
-		if (b->get_mark() == BlockImpl::Mark::UNVISITED) {
-			++count;
-		}
-	}
-	return count;
+	return std::count_if(block->dependants().begin(),
+	                     block->dependants().end(),
+	                     [](const auto* b) {
+		                     return b->get_mark() == BlockImpl::Mark::UNVISITED;
+	                     });
 }
 
 static size_t

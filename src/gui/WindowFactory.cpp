@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -36,6 +36,7 @@
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 
+#include <algorithm>
 #include <cassert>
 #include <memory>
 #include <stdexcept>
@@ -93,14 +94,9 @@ WindowFactory::clear()
 size_t
 WindowFactory::num_open_graph_windows()
 {
-	size_t ret = 0;
-	for (const auto& w : _graph_windows) {
-		if (w.second->is_visible()) {
-			++ret;
-		}
-	}
-
-	return ret;
+	return std::count_if(_graph_windows.begin(),
+	                     _graph_windows.end(),
+	                     [](const auto& w) { return w.second->is_visible(); });
 }
 
 GraphBox*
