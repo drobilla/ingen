@@ -79,7 +79,7 @@ ClientStore::add_object(const std::shared_ptr<ObjectModel>& object)
 				assert(object->path().is_child_of(parent->path()));
 				object->set_parent(parent);
 				parent->add_child(object);
-				assert(parent && (object->parent() == parent));
+				assert(object->parent() == parent);
 
 				(*this)[object->path()] = object;
 				_signal_new_object.emit(object);
