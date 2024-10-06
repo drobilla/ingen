@@ -42,7 +42,8 @@ class INGEN_SERVER_API UndoStack : public AtomSink
 {
 public:
 	struct Entry {
-		Entry(time_t t = 0) noexcept : time(t) {}
+		explicit Entry(time_t t) noexcept : time{t} {}
+		Entry() noexcept : Entry{0} {}
 
 		Entry(const Entry& copy)
 			: time(copy.time)

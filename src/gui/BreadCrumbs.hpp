@@ -71,7 +71,7 @@ private:
 	{
 	public:
 		BreadCrumb(const raul::Path&                 path,
-		           const std::shared_ptr<GraphView>& view = nullptr)
+		           const std::shared_ptr<GraphView>& view)
 		    : _path(path), _view(view)
 		{
 			assert(!view || view->graph()->path() == path);
@@ -80,6 +80,10 @@ private:
 			set_can_focus(false);
 			show_all();
 		}
+
+		explicit BreadCrumb(const raul::Path& path)
+			: BreadCrumb{path, nullptr}
+		{}
 
 		void set_view(const std::shared_ptr<GraphView>& view) {
 			assert(!view || view->graph()->path() == _path);

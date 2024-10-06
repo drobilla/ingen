@@ -26,7 +26,7 @@ namespace ingen {
 class INGEN_API Library
 {
 public:
-	Library(const FilePath& path);
+	explicit Library(const FilePath& path);
 	~Library();
 
 	Library(const Library&)            = delete;
@@ -40,7 +40,7 @@ public:
 
 	static const char* get_last_error();
 
-	operator bool() const { return _lib; }
+	explicit operator bool() const { return _lib; }
 
 private:
 	void* _lib;

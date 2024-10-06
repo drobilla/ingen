@@ -39,12 +39,14 @@ public:
 		PARALLEL    ///< Elements may be run in any order in parallel
 	};
 
-	Task(Mode mode, BlockImpl* block = nullptr)
+	Task(Mode mode, BlockImpl* block)
 		: _block(block)
 		, _mode(mode)
 	{
 		assert(mode != Mode::SINGLE || block);
 	}
+
+	explicit Task(Mode mode) : Task{mode, nullptr} {}
 
 	Task(const Task&) = delete;
 	Task& operator=(const Task&) = delete;

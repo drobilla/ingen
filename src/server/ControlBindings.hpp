@@ -60,9 +60,8 @@ public:
 	};
 
 	struct Key {
-		Key(Type t = Type::NULL_CONTROL, int16_t n = 0) noexcept
-		    : type(t), num(n)
-		{}
+		Key(Type t, int16_t n) noexcept : type{t}, num{n} {}
+		Key() noexcept : Key{Type::NULL_CONTROL, 0U} {}
 
 		bool operator<(const Key& other) const {
 			return ((type < other.type) ||
@@ -82,7 +81,8 @@ public:
 	/** One binding of a controller to a port. */
 	struct Binding : public boost::intrusive::set_base_hook<>,
 	                 public raul::Maid::Disposable {
-		Binding(Key k=Key(), PortImpl* p=nullptr) : key(k), port(p) {}
+		Binding(Key k, PortImpl* p) noexcept : key{k}, port{p} {}
+		Binding() noexcept : Binding{Key{}, nullptr} {}
 
 		bool operator<(const Binding& rhs) const { return key < rhs.key; }
 

@@ -249,7 +249,7 @@ ControlBindings::start_learn(PortImpl* port)
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Binding* b = _learn_binding.load();
 	if (!b) {
-		_learn_binding = new Binding(Type::NULL_CONTROL, port);
+		_learn_binding = new Binding();
 	} else {
 		b->port = port;
 	}

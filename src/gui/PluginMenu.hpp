@@ -50,7 +50,7 @@ namespace gui {
 class PluginMenu : public Gtk::Menu
 {
 public:
-	PluginMenu(ingen::World& world);
+	explicit PluginMenu(ingen::World& world);
 
 	void clear();
 	void add_plugin(const std::shared_ptr<client::PluginModel>& p);

@@ -27,7 +27,7 @@ class Engine;
 class SocketListener
 {
 public:
-	SocketListener(Engine& engine);
+	explicit SocketListener(Engine& engine);
 	~SocketListener();
 
 private:

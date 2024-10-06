@@ -46,7 +46,7 @@ public:
 	void run(RunContext& ctx);
 
 private:
-	CompiledGraph(GraphImpl* graph);
+	explicit CompiledGraph(GraphImpl* graph);
 
 	using BlockSet = std::set<BlockImpl*>;
 
