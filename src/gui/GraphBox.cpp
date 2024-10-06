@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2017 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -91,6 +91,7 @@
 #	include <webkit/webkit.h>
 #endif
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
@@ -100,7 +101,6 @@
 #include <sstream>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace ingen {
 
@@ -382,12 +382,12 @@ GraphBox::set_graph(const std::shared_ptr<const GraphModel>& graph,
 
 	_menu_view_control_window->property_sensitive() = false;
 
-	for (const auto& p : graph->ports()) {
-		if (_app->can_control(p.get())) {
-			_menu_view_control_window->property_sensitive() = true;
-			break;
-		}
-	}
+	_menu_view_control_window->property_sensitive() =
+	    std::any_of(graph->ports().begin(),
+	                graph->ports().end(),
+	                [this](const auto& p) {
+		                return _app->can_control(p.get());
+	                });
 
 	_menu_parent->property_sensitive() = !!graph->parent();
 
@@ -425,14 +425,12 @@ GraphBox::graph_port_removed(const std::shared_ptr<const PortModel>& port)
 		return;
 	}
 
-	for (const auto& p : _graph->ports()) {
-		if (p->is_input() && _app->can_control(p.get())) {
-			_menu_view_control_window->property_sensitive() = true;
-			return;
-		}
-	}
-
-	_menu_view_control_window->property_sensitive() = false;
+	_menu_view_control_window->property_sensitive() =
+	    std::any_of(_graph->ports().begin(),
+	                _graph->ports().end(),
+	                [this](const auto& p) {
+		                return p->is_input() && _app->can_control(p.get());
+	                });
 }
 
 void

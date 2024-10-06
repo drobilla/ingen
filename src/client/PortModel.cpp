@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -22,11 +22,11 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "lv2/urid/urid.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <exception>
 #include <map>
 #include <memory>
-#include <utility>
 
 namespace ingen::client {
 
@@ -61,14 +61,12 @@ PortModel::port_property(const URIs::Quark& uri) const
 bool
 PortModel::is_uri() const
 {
-	// FIXME: Resource::has_property doesn't work, URI != URID
-	for (const auto& p : properties()) {
-		if (p.second.type() == _uris.atom_URID &&
-		    static_cast<LV2_URID>(p.second.get<int32_t>()) == _uris.atom_URID) {
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(
+	    properties().begin(), properties().end(), [this](const auto& p) {
+		    return (p.second.type() == _uris.atom_URID &&
+		            static_cast<LV2_URID>(p.second.template get<int32_t>()) ==
+		                _uris.atom_URID);
+	    });
 }
 
 void

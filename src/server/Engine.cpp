@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2017 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -239,12 +239,11 @@ Engine::emit_notifications(FrameTime end)
 bool
 Engine::pending_notifications()
 {
-	for (const auto& ctx : _run_contexts) {
-		if (ctx->pending_notifications()) {
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(_run_contexts.begin(),
+	                   _run_contexts.end(),
+	                   [](const auto& ctx) {
+		                   return ctx->pending_notifications();
+	                   });
 }
 
 bool

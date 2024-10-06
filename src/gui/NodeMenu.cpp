@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -55,6 +55,7 @@
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <map>
 #include <memory>
@@ -273,13 +274,11 @@ NodeMenu::on_preset_activated(const std::string& uri)
 bool
 NodeMenu::has_control_inputs()
 {
-	for (const auto& p : block()->ports()) {
-		if (p->is_input() && p->is_numeric()) {
-			return true;
-		}
-	}
-
-	return false;
+	return std::any_of(block()->ports().begin(),
+	                   block()->ports().end(),
+	                   [](const auto& p) {
+		                   return p->is_input() && p->is_numeric();
+	                   });
 }
 
 } // namespace ingen::gui

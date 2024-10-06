@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -188,13 +188,13 @@ BlockFactory::load_lv2_plugins()
 		const uint32_t n_ports = lilv_plugin_get_num_ports(lv2_plug);
 		for (uint32_t p = 0; p < n_ports; ++p) {
 			const LilvPort* port = lilv_plugin_get_port_by_index(lv2_plug, p);
-			supported = false;
-			for (const auto& t : types) {
-				if (lilv_port_is_a(lv2_plug, port, t.get())) {
-					supported = true;
-					break;
-				}
-			}
+			supported =
+			    std::any_of(types.begin(),
+			                types.end(),
+			                [&lv2_plug, &port](const auto& t) {
+				                return lilv_port_is_a(lv2_plug, port, t.get());
+			                });
+
 			if (!supported &&
 			    !lilv_port_has_property(lv2_plug,
 			                            port,

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2015-2017 David Robillard <http://drobilla.net/>
+  Copyright 2015-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -61,13 +61,11 @@ public:
 static bool
 has_provider_with_many_dependants(const BlockImpl* n)
 {
-	for (const auto* p : n->providers()) {
-		if (p->dependants().size() > 1) {
-			return true;
-		}
-	}
-
-	return false;
+	return std::any_of(n->providers().begin(),
+	                   n->providers().end(),
+	                   [](const auto* p) {
+		                   return p->dependants().size() > 1;
+	                   });
 }
 
 CompiledGraph::CompiledGraph(GraphImpl* graph)

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -18,6 +18,7 @@
 
 #include "lv2/core/lv2.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <memory>
 
@@ -58,12 +59,9 @@ LV2Features::is_supported(const std::string& uri) const
 		return true;
 	}
 
-	for (const auto& f : _features) {
-		if (f->uri() == uri) {
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(_features.begin(),
+	                   _features.end(),
+	                   [&uri](const auto& f) { return f->uri() == uri; });
 }
 
 std::shared_ptr<LV2Features::FeatureArray>
