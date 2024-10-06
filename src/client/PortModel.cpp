@@ -23,6 +23,7 @@
 #include "lv2/urid/urid.h"
 
 #include <cstdint>
+#include <exception>
 #include <map>
 #include <memory>
 #include <utility>
@@ -68,6 +69,18 @@ PortModel::is_uri() const
 		}
 	}
 	return false;
+}
+
+void
+PortModel::add_child(const std::shared_ptr<ObjectModel>&)
+{
+	std::terminate();
+}
+
+bool
+PortModel::remove_child(const std::shared_ptr<ObjectModel>&)
+{
+	std::terminate();
 }
 
 void

@@ -86,8 +86,8 @@ private:
 		, _direction(dir)
 	{}
 
-	void add_child(const std::shared_ptr<ObjectModel>& c) override { throw; }
-	bool remove_child(const std::shared_ptr<ObjectModel>& c) override { throw; }
+	void add_child(const std::shared_ptr<ObjectModel>& c) override;
+	bool remove_child(const std::shared_ptr<ObjectModel>& c) override;
 
 	void set(const std::shared_ptr<ObjectModel>& model) override;
 

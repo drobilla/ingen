@@ -98,6 +98,7 @@ if is_variable('cpp')
         '-Wno-strict-overflow',
         '-Wno-suggest-attribute=const',
         '-Wno-suggest-attribute=format',
+        '-Wno-suggest-attribute=noreturn',
         '-Wno-suggest-attribute=pure',
         '-Wno-suggest-final-methods',
         '-Wno-suggest-final-types',

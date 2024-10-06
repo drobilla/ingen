@@ -13,7 +13,6 @@ noExplicitConstructor
 normalCheckLevelMaxBranches
 nullPointerArithmetic
 passedByValue
-rethrowNoCurrentException
 shadowFunction
 unsafeClassCanLeak
 useStlAlgorithm
