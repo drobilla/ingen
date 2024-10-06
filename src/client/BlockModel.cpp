@@ -75,23 +75,26 @@ BlockModel::~BlockModel()
 void
 BlockModel::remove_port(const std::shared_ptr<PortModel>& port)
 {
-	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
-		if ((*i) == port) {
-			_ports.erase(i);
-			break;
-		}
+	const auto i = std::find_if(_ports.begin(),
+	                            _ports.end(),
+	                            [&port](const auto& p) { return p == port; });
+
+	if (i != _ports.end()) {
+		_ports.erase(i);
+		_signal_removed_port.emit(port);
 	}
-	_signal_removed_port.emit(port);
 }
 
 void
 BlockModel::remove_port(const raul::Path& port_path)
 {
-	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
-		if ((*i)->path() == port_path) {
-			_ports.erase(i);
-			break;
-		}
+	const auto i =
+	    std::find_if(_ports.begin(), _ports.end(), [&port_path](const auto& p) {
+		    return p->path() == port_path;
+	    });
+
+	if (i != _ports.end()) {
+		_ports.erase(i);
 	}
 }
 

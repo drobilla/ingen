@@ -26,6 +26,7 @@
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>
 
+#include <algorithm>
 #include <string>
 #include <variant>
 
@@ -46,13 +47,13 @@ BreadCrumbs::BreadCrumbs(App& app)
 std::shared_ptr<GraphView>
 BreadCrumbs::view(const raul::Path& path)
 {
-	for (const auto& b : _breadcrumbs) {
-		if (b->path() == path) {
-			return b->view();
-		}
-	}
+	const auto b = std::find_if(_breadcrumbs.begin(),
+	                            _breadcrumbs.end(),
+	                            [&path](const auto* crumb) {
+		                            return crumb->path() == path;
+	                            });
 
-	return nullptr;
+	return b == _breadcrumbs.end() ? nullptr : (*b)->view();
 }
 
 /** Sets up the crumbs to display `path`.
@@ -202,15 +203,19 @@ BreadCrumbs::message(const Message& msg)
 void
 BreadCrumbs::object_destroyed(const URI& uri)
 {
-	for (auto i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
-		if ((*i)->path() == uri.c_str()) {
-			// Remove all crumbs after the removed one (inclusive)
-			for (auto j = i; j != _breadcrumbs.end(); ) {
-				BreadCrumb* bc = *j;
-				j = _breadcrumbs.erase(j);
-				remove(*bc);
-			}
-			break;
+	const auto i = std::find_if(_breadcrumbs.begin(),
+	                            _breadcrumbs.end(),
+	                            [&uri](const auto& b) {
+		                            return b->path() == uri.c_str();
+	                            });
+
+	if (i != _breadcrumbs.end()) {
+		// Remove all crumbs after the removed one (inclusive)
+		for (auto j = i; j != _breadcrumbs.end();) {
+			BreadCrumb* const bc = *j;
+
+			j = _breadcrumbs.erase(j);
+			remove(*bc);
 		}
 	}
 }

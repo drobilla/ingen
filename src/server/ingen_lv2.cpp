@@ -216,13 +216,12 @@ public:
 	virtual GraphImpl* root_graph()                     { return _root_graph; }
 
 	EnginePort* get_port(const raul::Path& path) override {
-		for (auto& p : _ports) {
-			if (p->graph_port()->path() == path) {
-				return p;
-			}
-		}
+		const auto i =
+		    std::find_if(_ports.begin(), _ports.end(), [&path](const auto& p) {
+			    return p->graph_port()->path() == path;
+		    });
 
-		return nullptr;
+		return i == _ports.end() ? nullptr : *i;
 	}
 
 	/** Add a port.  Called only during init or restore. */
@@ -522,13 +521,13 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	const Lib::Graphs graphs = find_graphs(URI(reinterpret_cast<const char*>(manifest_node.buf)));
 	serd_node_free(&manifest_node);
 
-	const LV2Graph* graph = nullptr;
-	for (const auto& g : graphs) {
-		if (g->uri == descriptor->URI) {
-			graph = g.get();
-			break;
-		}
-	}
+	const auto g = std::find_if(graphs.begin(),
+	                            graphs.end(),
+	                            [&descriptor](const auto& graph) {
+		                            return graph->uri == descriptor->URI;
+	                            });
+
+	const LV2Graph* const graph = g == graphs.end() ? nullptr : g->get();
 
 	if (!graph) {
 		lv2_log_error(&logger, "could not find graph <%s>\n", descriptor->URI);

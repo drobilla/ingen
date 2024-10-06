@@ -36,6 +36,7 @@
 #include "sord/sord.h"
 #include "sord/sordmm.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <cstring>
@@ -633,19 +634,18 @@ Parser::parse_file(ingen::World&                      world,
 		return false;
 	}
 
-	/* Choose the graph to load.  If this is a manifest, then there should only
-	   be one, but if this is a graph file, subgraphs will be returned as well.
-	   In this case, choose the one with the file URI. */
-	URI uri;
-	for (const ResourceRecord& r : resources) {
-		if (r.uri == URI(manifest_path)) {
-			uri       = r.uri;
-			file_path = r.filename;
-			break;
-		}
-	}
+	// Try to find the graph with the manifest path for a URI
+	const auto m = std::find_if(resources.begin(),
+	                            resources.end(),
+	                            [manifest_path](const auto& r) {
+		                            return r.uri == URI(manifest_path);
+	                            });
 
-	if (uri.empty()) {
+	URI uri;
+	if (m != resources.end()) {
+		uri       = m->uri;
+		file_path = m->filename;
+	} else {
 		// Didn't find a graph with the same URI as the file, use the first
 		uri       = (*resources.begin()).uri;
 		file_path = (*resources.begin()).filename;
