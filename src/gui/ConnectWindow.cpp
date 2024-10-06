@@ -440,18 +440,17 @@ ConnectWindow::internal_toggled()
 void
 ConnectWindow::next_stage()
 {
-	static const char* labels[] = {
-		"Connecting...",
-		"Pinging engine...",
-		"Attaching to engine...",
-		"Requesting root graph...",
-		"Waiting for root graph...",
-		"Connected"
-	};
-
-
 	++_connect_stage;
 	if (_widgets_loaded) {
+		static const char* labels[] = {
+			"Connecting...",
+			"Pinging engine...",
+			"Attaching to engine...",
+			"Requesting root graph...",
+			"Waiting for root graph...",
+			"Connected"
+		};
+
 		_progress_label->set_text(labels[_connect_stage]);
 	}
 }

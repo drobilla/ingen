@@ -44,7 +44,8 @@ static const char* const library_suffix        = ".so";
 #endif
 
 static std::vector<FilePath>
-parse_search_path(const char* search_path, std::vector<FilePath> defaults)
+parse_search_path(const char*                  search_path,
+                  const std::vector<FilePath>& defaults)
 {
 	if (!search_path) {
 		return defaults;

@@ -885,10 +885,10 @@ GraphBox::event_refresh_activated()
 void
 GraphBox::event_fullscreen_toggled()
 {
-	// FIXME: ugh, use GTK signals to track state and know for sure
-	static bool is_fullscreen = false;
-
 	if (_window) {
+		// FIXME: ugh, use GTK signals to track state and know for sure
+		static bool is_fullscreen = false;
+
 		if (!is_fullscreen) {
 			_window->fullscreen();
 			is_fullscreen = true;

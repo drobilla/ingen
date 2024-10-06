@@ -316,8 +316,8 @@ Delta::pre_process(PreProcessContext& ctx)
 		const Property& value = p.second;
 		SpecialType     op    = SpecialType::NONE;
 		if (obj) {
-			Resource& resource = *obj;
 			if (value != uris.patch_wildcard) {
+				Resource& resource = *obj;
 				if (resource.add_property(key, value, value.context())) {
 					_added.emplace(key, value);
 				}
