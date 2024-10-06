@@ -54,7 +54,6 @@ public:
 	get_arc(const ingen::Node* tail, const ingen::Node* head);
 
 	bool     enabled()       const;
-	bool     polyphonic()    const;
 	uint32_t internal_poly() const;
 
 	// Signals

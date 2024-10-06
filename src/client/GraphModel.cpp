@@ -179,11 +179,4 @@ GraphModel::internal_poly() const
 	return poly.is_valid() ? poly.get<int32_t>() : 1;
 }
 
-bool
-GraphModel::polyphonic() const
-{
-	const Atom& poly = get_property(_uris.ingen_polyphonic);
-	return poly.is_valid() && poly.get<int32_t>();
-}
-
 } // namespace ingen::client
