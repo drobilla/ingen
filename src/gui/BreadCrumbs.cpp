@@ -69,7 +69,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 
 	if (!_breadcrumbs.empty() && (path.is_parent_of(_full_path) || path == _full_path)) {
 		// Moving to a path we already contain, just switch the active button
-		for (const auto& b : _breadcrumbs) {
+		for (auto* b : _breadcrumbs) {
 			if (b->path() == path) {
 				b->set_active(true);
 				if (!b->view()) {
@@ -107,7 +107,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 			suffix = suffix.substr(suffix.find('/') + 1);
 		}
 
-		for (const auto& b : _breadcrumbs) {
+		for (auto* b : _breadcrumbs) {
 			b->set_active(false);
 		}
 		_breadcrumbs.back()->set_active(true);
@@ -120,7 +120,7 @@ BreadCrumbs::build(const raul::Path&                 path,
 		_active_path = path;
 
 		// Empty existing breadcrumbs
-		for (const auto& b : _breadcrumbs) {
+		for (auto* b : _breadcrumbs) {
 			remove(*b);
 		}
 		_breadcrumbs.clear();
@@ -218,7 +218,7 @@ BreadCrumbs::object_destroyed(const URI& uri)
 void
 BreadCrumbs::object_moved(const raul::Path& old_path, const raul::Path& new_path)
 {
-	for (const auto& b : _breadcrumbs) {
+	for (auto* b : _breadcrumbs) {
 		if (b->path() == old_path) {
 			b->set_path(new_path);
 		}
