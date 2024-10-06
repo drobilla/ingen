@@ -40,7 +40,7 @@ public:
 	explicit URI(const char* str);
 	URI(const std::string& str, const URI& base);
 	URI(const Sord::Node& node);
-	URI(SerdNode node);
+	URI(const SerdNode& node);
 	explicit URI(const FilePath& path);
 
 	URI(const URI& uri);
@@ -98,7 +98,7 @@ public:
 	}
 
 private:
-	URI(SerdNode node, SerdURI uri);
+	URI(const SerdNode& node, const SerdURI& uri);
 
 	static Chunk make_chunk(const SerdChunk& chunk) {
 		return {reinterpret_cast<const char*>(chunk.buf), chunk.len};

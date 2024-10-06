@@ -152,9 +152,9 @@ numeric_suffix_start(const std::string& str)
 }
 
 std::string
-ClashAvoider::adjust_name(const raul::Path& old_path,
-                          const raul::Path& new_path,
-                          std::string       name)
+ClashAvoider::adjust_name(const raul::Path&  old_path,
+                          const raul::Path&  new_path,
+                          const std::string& name)
 {
 	const auto name_suffix_start = numeric_suffix_start(name);
 	if (!name_suffix_start) {

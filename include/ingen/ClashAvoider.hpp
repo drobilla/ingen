@@ -48,9 +48,9 @@ public:
 	 * @param new_path The new path that `old_path` was mapped to
 	 * @param name The old name.
 	 */
-	static std::string adjust_name(const raul::Path& old_path,
-	                               const raul::Path& new_path,
-	                               std::string       name);
+	static std::string adjust_name(const raul::Path&  old_path,
+	                               const raul::Path&  new_path,
+	                               const std::string& name);
 
 private:
 	using Offsets   = std::map<raul::Path, unsigned>;

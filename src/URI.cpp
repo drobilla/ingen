@@ -52,14 +52,14 @@ URI::URI(const std::string& str, const URI& base)
 {
 }
 
-URI::URI(SerdNode node)
+URI::URI(const SerdNode& node)
     : _uri(SERD_URI_NULL)
     , _node(serd_node_new_uri_from_node(&node, nullptr, &_uri))
 {
 	assert(node.type == SERD_URI);
 }
 
-URI::URI(SerdNode node, SerdURI uri) : _uri(uri), _node(node)
+URI::URI(const SerdNode& node, const SerdURI& uri) : _uri(uri), _node(node)
 {
 	assert(node.type == SERD_URI);
 }
