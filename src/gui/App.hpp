@@ -77,6 +77,11 @@ class INGEN_API App
 public:
 	~App();
 
+	App(const App&)            = delete;
+	App& operator=(const App&) = delete;
+	App(App&&)                 = delete;
+	App& operator=(App&&)      = delete;
+
 	void error_message(const std::string& str);
 
 	void attach(const std::shared_ptr<ingen::Interface>& client);
