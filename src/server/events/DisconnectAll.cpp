@@ -34,6 +34,8 @@
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
 #include <mutex>
 #include <set>
@@ -109,24 +111,31 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 	}
 
 	// Create disconnect events to erase adjacent arcs in parent
-	for (const auto& a : adjacent_arcs(_parent)) {
-		_impls.push_back(
-			new Disconnect::Impl(_engine,
-			                     _parent,
-			                     a->tail(),
-			                     dynamic_cast<InputPort*>(a->head())));
-	}
+	const auto& arcs = adjacent_arcs(_parent);
+	std::transform(arcs.begin(),
+	               arcs.end(),
+	               std::back_inserter(_impls),
+	               [this](const auto& a) {
+		               return new Disconnect::Impl(_engine,
+		                                           _parent,
+		                                           a->tail(),
+		                                           dynamic_cast<InputPort*>(a->head()));
+	               });
 
 	// Create disconnect events to erase adjacent arcs in parent's parent
 	if (_port && _parent->parent()) {
-		auto* const parent_parent = dynamic_cast<GraphImpl*>(_parent->parent());
-		for (const auto& a : adjacent_arcs(parent_parent)) {
-			_impls.push_back(
-				new Disconnect::Impl(_engine,
-				                     parent_parent,
-				                     a->tail(),
-				                     dynamic_cast<InputPort*>(a->head())));
-		}
+		auto* const grandparent = dynamic_cast<GraphImpl*>(_parent->parent());
+		const auto& parent_arcs = adjacent_arcs(grandparent);
+
+		std::transform(parent_arcs.begin(),
+		               parent_arcs.end(),
+		               std::back_inserter(_impls),
+		               [this, grandparent](const auto& a) {
+			               return new Disconnect::Impl(_engine,
+			                                           grandparent,
+			                                           a->tail(),
+			                                           dynamic_cast<InputPort*>(a->head()));
+		               });
 	}
 
 	if (!_deleting && ctx.must_compile(*_parent)) {

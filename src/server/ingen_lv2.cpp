@@ -65,6 +65,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <iterator>
 #include <memory>
 #include <mutex>
 #include <set>
@@ -466,9 +467,10 @@ find_graphs(const URI& manifest_uri)
 		URI(INGEN__Graph));
 
 	Lib::Graphs graphs;
-	for (const auto& r : resources) {
-		graphs.push_back(std::make_shared<LV2Graph>(r));
-	}
+	std::transform(resources.begin(),
+	               resources.end(),
+	               std::back_inserter(graphs),
+	               [](const auto& r) { return std::make_shared<LV2Graph>(r); });
 
 	return graphs;
 }
