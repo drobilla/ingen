@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -39,37 +39,44 @@ void
 Log::rt_error(const char* msg)
 {
 #ifndef NDEBUG
-	va_list args;
-	vtprintf(_uris.log_Error, msg, args);
+	tprintf(_uris.log_Error, msg);
 #endif
 }
 
 void
 Log::error(const std::string& msg)
 {
-	va_list args;
-	vtprintf(_uris.log_Error, msg.c_str(), args);
+	tprintf(_uris.log_Error, msg.c_str());
 }
 
 void
 Log::warn(const std::string& msg)
 {
-	va_list args;
-	vtprintf(_uris.log_Warning, msg.c_str(), args);
+	tprintf(_uris.log_Warning, msg.c_str());
 }
 
 void
 Log::info(const std::string& msg)
 {
-	va_list args;
-	vtprintf(_uris.log_Note, msg.c_str(), args);
+	tprintf(_uris.log_Note, msg.c_str());
 }
 
 void
 Log::trace(const std::string& msg)
 {
+	tprintf(_uris.log_Trace, msg.c_str());
+}
+
+int
+Log::tprintf(LV2_URID type, const char* fmt, ...)
+{
 	va_list args;
-	vtprintf(_uris.log_Trace, msg.c_str(), args);
+	va_start(args, fmt);
+
+	const int ret = vtprintf(type, fmt, args);
+
+	va_end(args);
+	return ret;
 }
 
 int
@@ -111,11 +118,10 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 static int
 log_vprintf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, va_list args)
 {
-	auto*   f      = static_cast<Log::Feature::Handle*>(handle);
-	va_list noargs = {};
+	auto* const f = static_cast<Log::Feature::Handle*>(handle);
 
-	int ret  = f->log->vtprintf(type, f->node->path().c_str(), noargs);
-	ret     += f->log->vtprintf(type, ": ", noargs);
+	int ret  = f->log->tprintf(type, f->node->path().c_str());
+	ret     += f->log->tprintf(type, ": ");
 	ret     += f->log->vtprintf(type, fmt, args);
 
 	return ret;

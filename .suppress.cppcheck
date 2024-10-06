@@ -18,6 +18,5 @@ shadowFunction
 unsafeClassCanLeak
 useStlAlgorithm
 uselessOverride
-va_list_usedBeforeStarted
 variableScope
 virtualCallInConstructor

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2024 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -88,6 +88,7 @@ public:
 	}
 
 	int vtprintf(LV2_URID type, const char* fmt, va_list args);
+	int tprintf(LV2_URID type, const char* fmt, ...);
 
 	void set_flush(bool f) { _flush = f; }
 	void set_trace(bool f) { _trace = f; }
