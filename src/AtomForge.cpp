@@ -103,11 +103,12 @@ AtomForge::deref(const intptr_t ref)
 	/* Make some assumptions and do unnecessary math to appease
 	   -Wcast-align.  This is questionable at best, though the forge should
 	   only dereference references to aligned atoms. */
+	LV2_Atom* const ptr = _buf.get();
 	assert((ref - 1) % sizeof(LV2_Atom) == 0);
-	return static_cast<LV2_Atom*>(_buf.get() + (ref - 1) / sizeof(LV2_Atom));
+	return static_cast<LV2_Atom*>(ptr + (ref - 1) / sizeof(LV2_Atom));
 
 	// Alternatively:
-	// return (LV2_Atom*)((uint8_t*)_buf + ref - 1);
+	// return (LV2_Atom*)((uint8_t*)_buf.get() + ref - 1);
 }
 
 LV2_Atom_Forge_Ref
