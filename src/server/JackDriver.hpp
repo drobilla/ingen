@@ -28,6 +28,7 @@
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>
+#include <jack/transport.h> // IWYU pragma: keep
 #include <jack/types.h>
 
 #include <jack/thread.h>
