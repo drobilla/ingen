@@ -284,8 +284,10 @@ Configuration::save(URIMap&            uri_map,
 	}
 
 	// Create parent directories if necessary
-	const FilePath dir = path.parent_path();
-	if (!std::filesystem::create_directories(dir)) {
+	const FilePath  dir = path.parent_path();
+	std::error_code ec;
+	std::filesystem::create_directories(dir, ec);
+	if (ec) {
 		throw FileError(fmt("Error creating directory %1% (%2%)",
 		                    dir, strerror(errno)));
 	}
