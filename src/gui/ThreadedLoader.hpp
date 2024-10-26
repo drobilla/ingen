@@ -88,7 +88,7 @@ private:
 	save_graph_event(const std::shared_ptr<const client::GraphModel>& model,
 	                 const URI&                                       uri);
 
-	/** Returns nothing and takes no parameters (because they have all been bound) */
+	/// Returns nothing and takes no parameters (because they're all bound)
 	using Closure = sigc::slot<void>;
 
 	void run();

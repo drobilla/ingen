@@ -293,8 +293,8 @@ AtomWriter::operator()(const Delta& message)
  * Send a [Copy](http://lv2plug.in/ns/ext/copy#Copy) to copy an object from
  * its current location (subject) to another (destination).
  *
- * If both the subject and destination are inside Ingen, like block paths, then the old object
- * is copied by, for example, creating a new plugin instance.
+ * If both the subject and destination are inside Ingen, like block paths, then
+ * the old object is copied by, for example, creating a new plugin instance.
  *
  * If the subject is a filename (file URI or atom:Path) and the destination is
  * inside Ingen, then the subject must be an Ingen graph file or bundle, which
@@ -434,7 +434,8 @@ AtomWriter::operator()(const Undo& message)
 /** @page protocol
  * @subsection Undo
  *
- * Use [ingen:Redo](http://drobilla.net/ns/ingen#Redo) to redo the last undone change.
+ * Use [ingen:Redo](http://drobilla.net/ns/ingen#Redo) to redo the last undone
+ * change.
  *
  * @code{.ttl}
  * [] a ingen:Redo .

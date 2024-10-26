@@ -48,7 +48,7 @@ namespace gui {
 class App;
 class GraphCanvas;
 
-/** The graph specific contents of a GraphWindow (ie the canvas and whatever else).
+/** The graph specific contents of a GraphWindow (the canvas and whatever else).
  *
  * \ingroup GUI
  */

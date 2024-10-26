@@ -45,7 +45,7 @@ public:
 
 	INGEN_SIGNAL(message, void, Message)
 
-	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
+	/** Fire pending signals (for derived classes that may queue). */
 	virtual bool emit_signals() { return false; }
 
 protected:

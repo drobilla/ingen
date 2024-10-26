@@ -99,9 +99,14 @@ public:
 	 * Audio thread.
 	 *
 	 * \param ctx  Process context
+	 *
 	 * \param bufs New set of buffers
-	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
-	 * \param maid Any objects no longer needed will be pushed to this
+	 *
+	 * \param poly Must be < the most recent value passed to
+	 * prepare_internal_poly.
+	 *
+	 * \param maid Any objects no longer needed will be
+	 * pushed to this
 	 */
 	bool apply_internal_poly(RunContext&    ctx,
 	                         BufferFactory& bufs,

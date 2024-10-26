@@ -46,8 +46,8 @@ public:
 
 	/** Library implementing this module.
 	 *
-	 * This is managed by the World and not this class, since closing the library
-	 * in this destructor could possibly reference code from the library
+	 * This is managed by the World and not this class, since closing the
+	 * library in this destructor could possibly reference code from the library
 	 * afterwards and cause a segfault on exit.
 	 */
 	std::unique_ptr<Library> library;

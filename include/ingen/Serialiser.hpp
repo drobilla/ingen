@@ -56,8 +56,8 @@ public:
 	 *
 	 * This must be called before any serializing methods.
 	 *
-	 * The results of the serialization will be returned by the finish() method after
-	 * the desired objects have been serialised.
+	 * The results of the serialization will be returned by the finish() method
+	 * after the desired objects have been serialised.
 	 *
 	 * All serialized paths will have the root path chopped from their prefix
 	 * (therefore all serialized paths must be descendants of the root)

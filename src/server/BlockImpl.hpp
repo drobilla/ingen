@@ -127,7 +127,7 @@ public:
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
 
-	/** Do whatever needs doing in the process thread before process() is called */
+	/** Do any necessary preparation in the process thread before process(). */
 	virtual void pre_process(RunContext& ctx);
 
 	/** Run block for an entire process cycle (calls run()). */
