@@ -17,8 +17,8 @@
 #ifndef INGEN_CLASHAVOIDER_HPP
 #define INGEN_CLASHAVOIDER_HPP
 
-#include "ingen/ingen.h"
-#include "raul/Path.hpp"
+#include <ingen/ingen.h>
+#include <raul/Path.hpp>
 
 #include <map>
 #include <string>

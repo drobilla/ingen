@@ -14,26 +14,34 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Configuration.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/fmt.hpp"
-#include "ingen/ingen.h"
-#include "ingen/runtime_paths.hpp"
-#include "lv2/urid/urid.h"
-#include "serd/serd.h"
-#include "sord/sord.h"
-#include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/FilePath.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/fmt.hpp>
+#include <ingen/ingen.h>
+#include <ingen/runtime_paths.hpp>
+#include <lv2/urid/urid.h>
+#include <serd/serd.h>
+#include <sord/sord.h>
+#include <sord/sordmm.hpp>
+#include <sratom/sratom.h>
 
 #include <algorithm>
 #include <cassert>
 #include <cerrno>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <list>
+#include <map>
 #include <memory>
+#include <ostream>
+#include <string>
+#include <system_error>
 #include <thread>
 #include <utility>
 #include <vector>

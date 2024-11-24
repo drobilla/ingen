@@ -21,8 +21,8 @@
 #include "EnginePort.hpp" // IWYU pragma: keep
 #include "types.hpp"
 
-#include "ingen/URI.hpp"
-#include "raul/Semaphore.hpp"
+#include <ingen/URI.hpp>
+#include <raul/Semaphore.hpp>
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>

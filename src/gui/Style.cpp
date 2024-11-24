@@ -18,8 +18,8 @@
 
 #include "App.hpp"
 
-#include "ingen/URIs.hpp"
-#include "ingen/client/PortModel.hpp"
+#include <ingen/URIs.hpp>
+#include <ingen/client/PortModel.hpp>
 
 #include <string>
 

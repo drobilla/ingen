@@ -16,14 +16,14 @@
 
 #include "UndoStack.hpp"
 
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/ingen.h"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "lv2/patch/patch.h"
-#include "serd/serd.h"
-#include "sratom/sratom.h"
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/ingen.h>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <lv2/patch/patch.h>
+#include <serd/serd.h>
+#include <sratom/sratom.h>
 
 #include <ctime>
 #include <iterator>

@@ -17,13 +17,13 @@
 #ifndef INGEN_DATAACCESS_HPP
 #define INGEN_DATAACCESS_HPP
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/World.hpp"
-#include "lilv/lilv.h"
-#include "lv2/core/lv2.h"
-#include "lv2/data-access/data-access.h"
+#include <ingen/LV2Features.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/World.hpp>
+#include <lilv/lilv.h>
+#include <lv2/core/lv2.h>
+#include <lv2/data-access/data-access.h>
 
 #include <cstdlib>
 #include <memory>

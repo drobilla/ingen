@@ -22,9 +22,9 @@
 #include "server.h"
 #include "types.hpp"
 
-#include "ingen/URIs.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/urid/urid.h"
+#include <ingen/URIs.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/urid/urid.h>
 
 #include <atomic>
 #include <cassert>

@@ -25,14 +25,15 @@
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URIs.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <lv2/urid/urid.h>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
 
 #include <algorithm>
 #include <map>

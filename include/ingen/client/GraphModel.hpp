@@ -17,10 +17,10 @@
 #ifndef INGEN_CLIENT_GRAPHMODEL_HPP
 #define INGEN_CLIENT_GRAPHMODEL_HPP
 
-#include "ingen/Node.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/signal.hpp"
-#include "ingen/ingen.h"
+#include <ingen/Node.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/signal.hpp>
+#include <ingen/ingen.h>
 
 #include <cstdint>
 #include <memory>

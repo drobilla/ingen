@@ -17,10 +17,10 @@
 #ifndef INGEN_ENGINE_LV2OPTIONS_HPP
 #define INGEN_ENGINE_LV2OPTIONS_HPP
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/URIs.hpp"
-#include "lv2/core/lv2.h"
-#include "lv2/options/options.h"
+#include <ingen/LV2Features.hpp>
+#include <ingen/URIs.hpp>
+#include <lv2/core/lv2.h>
+#include <lv2/options/options.h>
 
 #include <cstdint>
 #include <cstdlib>

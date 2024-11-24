@@ -17,12 +17,12 @@
 #ifndef INGEN_GUI_GRAPHCANVAS_HPP
 #define INGEN_GUI_GRAPHCANVAS_HPP
 
-#include "ganv/Canvas.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
-#include "raul/Path.hpp"
+#include <ganv/Canvas.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
+#include <raul/Path.hpp>
 
 #include <gdk/gdk.h>
 

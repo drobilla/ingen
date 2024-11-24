@@ -14,16 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "events/Move.hpp"
+#include "Move.hpp"
 
 #include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/Store.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/Store.hpp>
+#include <raul/Path.hpp>
 
 #include <map>
 #include <memory>

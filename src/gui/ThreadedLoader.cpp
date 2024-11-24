@@ -18,16 +18,17 @@
 
 #include "App.hpp"
 
-#include "ingen/Log.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Serialiser.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/GraphModel.hpp"
-#include "raul/Path.hpp"
-#include "raul/Semaphore.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/FilePath.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Parser.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Serialiser.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/GraphModel.hpp>
+#include <raul/Path.hpp>
+#include <raul/Semaphore.hpp>
+#include <raul/Symbol.hpp>
 
 #include <glibmm/ustring.h>
 #include <sigc++/adaptors/bind.h>

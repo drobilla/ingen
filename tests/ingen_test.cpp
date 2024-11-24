@@ -16,26 +16,26 @@
 
 #include "TestClient.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/AtomForge.hpp"
-#include "ingen/AtomReader.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/FilePath.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/Serialiser.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/World.hpp"
-#include "ingen/fmt.hpp"
-#include "ingen/memory.hpp"
-#include "ingen/runtime_paths.hpp"
-#include "raul/Path.hpp"
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
-#include "sratom/sratom.h"
+#include <ingen/Atom.hpp>
+#include <ingen/AtomForge.hpp>
+#include <ingen/AtomReader.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/EngineBase.hpp>
+#include <ingen/FilePath.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Parser.hpp>
+#include <ingen/Serialiser.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/World.hpp>
+#include <ingen/fmt.hpp>
+#include <ingen/memory.hpp>
+#include <ingen/runtime_paths.hpp>
+#include <raul/Path.hpp>
+#include <serd/serd.h>
+#include <sord/sordmm.hpp>
+#include <sratom/sratom.h>
 
 #include <chrono>
 #include <cstdint>

@@ -17,9 +17,9 @@
 #ifndef INGEN_SOCKETREADER_HPP
 #define INGEN_SOCKETREADER_HPP
 
-#include "ingen/ingen.h"
-#include "serd/serd.h"
-#include "sord/sord.h"
+#include <ingen/ingen.h>
+#include <serd/serd.h>
+#include <sord/sord.h>
 
 #include <cstddef>
 #include <memory>

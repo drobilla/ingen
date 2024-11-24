@@ -19,11 +19,11 @@
 
 #include "signal.hpp"
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/ingen.h"
-#include "lilv/lilv.h"
-#include "suil/suil.h"
+#include <ingen/LV2Features.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/ingen.h>
+#include <lilv/lilv.h>
+#include <suil/suil.h>
 
 #include <cstdint>
 #include <memory>

@@ -27,24 +27,26 @@
 #include "WindowFactory.hpp"
 #include "ingen_config.h"
 
-#include "ganv/Port.hpp"
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
-#include "ingen/client/PluginModel.hpp"
-#include "ingen/client/PluginUI.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "lv2/atom/util.h"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ganv/Module.hpp>
+#include <ganv/Port.hpp>
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/PluginModel.hpp>
+#include <ingen/client/PluginUI.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <lv2/atom/util.h>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <glibmm/main.h>
 #include <glibmm/ustring.h>

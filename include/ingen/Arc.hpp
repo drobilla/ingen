@@ -17,8 +17,8 @@
 #ifndef INGEN_ARC_HPP
 #define INGEN_ARC_HPP
 
-#include "ingen/ingen.h"
-#include "raul/Deletable.hpp"
+#include <ingen/ingen.h>
+#include <raul/Deletable.hpp>
 
 namespace raul {
 class Path;

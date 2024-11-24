@@ -17,19 +17,19 @@
 #ifndef INGEN_ENGINE_EVENTS_HPP
 #define INGEN_ENGINE_EVENTS_HPP
 
-#include "events/Connect.hpp"
-#include "events/Copy.hpp"
-#include "events/CreateBlock.hpp"
-#include "events/CreateGraph.hpp"
-#include "events/CreatePort.hpp"
-#include "events/Delete.hpp"
-#include "events/Delta.hpp"
-#include "events/Disconnect.hpp"
-#include "events/DisconnectAll.hpp"
-#include "events/Get.hpp"
-#include "events/Mark.hpp"
-#include "events/Move.hpp"
-#include "events/SetPortValue.hpp"
-#include "events/Undo.hpp"
+#include <events/Connect.hpp>
+#include <events/Copy.hpp>
+#include <events/CreateBlock.hpp>
+#include <events/CreateGraph.hpp>
+#include <events/CreatePort.hpp>
+#include <events/Delete.hpp>
+#include <events/Delta.hpp>
+#include <events/Disconnect.hpp>
+#include <events/DisconnectAll.hpp>
+#include <events/Get.hpp>
+#include <events/Mark.hpp>
+#include <events/Move.hpp>
+#include <events/SetPortValue.hpp>
+#include <events/Undo.hpp>
 
 #endif // INGEN_ENGINE_EVENTS_HPP

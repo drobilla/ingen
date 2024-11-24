@@ -17,11 +17,11 @@
 #ifndef INGEN_TESTCLIENT_HPP
 #define INGEN_TESTCLIENT_HPP
 
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/URI.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/URI.hpp>
 
 #include <variant>
 

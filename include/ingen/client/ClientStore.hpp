@@ -17,12 +17,12 @@
 #ifndef INGEN_CLIENT_CLIENTSTORE_HPP
 #define INGEN_CLIENT_CLIENTSTORE_HPP
 
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/client/signal.hpp"
-#include "ingen/ingen.h"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/client/signal.hpp>
+#include <ingen/ingen.h>
 
 #include <map>
 #include <memory>

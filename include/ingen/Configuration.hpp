@@ -17,11 +17,11 @@
 #ifndef INGEN_CONFIGURATION_HPP
 #define INGEN_CONFIGURATION_HPP
 
-#include "ingen/Atom.hpp"
-#include "ingen/FilePath.hpp"
-#include "ingen/ingen.h"
-#include "lv2/urid/urid.h"
-#include "raul/Exception.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/FilePath.hpp>
+#include <ingen/ingen.h>
+#include <lv2/urid/urid.h>
+#include <raul/Exception.hpp>
 
 #include <cstdio>
 #include <list>

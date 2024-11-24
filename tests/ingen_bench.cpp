@@ -14,14 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Atom.hpp"
-#include "ingen/Clock.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/World.hpp"
-#include "ingen/runtime_paths.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Clock.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/EngineBase.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Parser.hpp>
+#include <ingen/World.hpp>
+#include <ingen/runtime_paths.hpp>
 
 #include <chrono>
 #include <cstdint>

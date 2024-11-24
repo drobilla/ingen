@@ -19,8 +19,8 @@
 
 #include "DuplexPort.hpp"
 
-#include "raul/Deletable.hpp"
-#include "raul/Noncopyable.hpp"
+#include <raul/Deletable.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <boost/intrusive/slist_hook.hpp>
 

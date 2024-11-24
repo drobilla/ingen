@@ -17,10 +17,10 @@
 #ifndef INGEN_WORLD_HPP
 #define INGEN_WORLD_HPP
 
-#include "ingen/ingen.h"
-#include "lv2/log/log.h"
-#include "lv2/urid/urid.h"
-#include "raul/Noncopyable.hpp"
+#include <ingen/ingen.h>
+#include <lv2/log/log.h>
+#include <lv2/urid/urid.h>
+#include <raul/Noncopyable.hpp>
 
 #include <memory>
 #include <mutex>

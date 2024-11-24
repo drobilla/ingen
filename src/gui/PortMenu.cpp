@@ -19,20 +19,20 @@
 #include "App.hpp"
 #include "ObjectMenu.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <glibmm/refptr.h>
 #include <gtkmm/builder.h>

@@ -19,8 +19,8 @@
 
 #include "types.hpp"
 
-#include "ingen/URI.hpp"
-#include "raul/Noncopyable.hpp"
+#include <ingen/URI.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <cstddef>
 

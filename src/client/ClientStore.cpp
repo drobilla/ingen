@@ -14,23 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/ClientStore.hpp"
+#include <ingen/client/ClientStore.hpp>
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/ArcModel.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PluginModel.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "ingen/client/SigClientInterface.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/ArcModel.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/GraphModel.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/PluginModel.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <ingen/client/SigClientInterface.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <sigc++/signal.h>
 
 #include <sigc++/functors/mem_fun.h>
 

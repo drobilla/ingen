@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINEBASE_HPP
 #define INGEN_ENGINEBASE_HPP
 
-#include "ingen/ingen.h"
+#include <ingen/ingen.h>
 
 #include <chrono>
 #include <cstddef>

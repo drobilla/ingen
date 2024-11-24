@@ -14,22 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/GraphModel.hpp"
+#include <ingen/client/GraphModel.hpp>
 
-#include "ingen/Atom.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/ArcModel.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/ArcModel.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <raul/Path.hpp>
+#include <sigc++/signal.h>
 
 #include <cassert>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
+
+namespace ingen {
+class Node;
+} // namespace ingen
 
 namespace ingen::client {
 

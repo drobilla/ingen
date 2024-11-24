@@ -22,7 +22,7 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-#include "ingen/Atom.hpp"
+#include <ingen/Atom.hpp>
 
 #include <cstdint>
 #include <memory>

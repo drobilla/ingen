@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Module.hpp"
+#include <ingen/Module.hpp>
 
 namespace ingen {
 

@@ -17,11 +17,11 @@
 #ifndef INGEN_ENGINE_WORKER_HPP
 #define INGEN_ENGINE_WORKER_HPP
 
-#include "ingen/LV2Features.hpp"
-#include "lv2/core/lv2.h"
-#include "lv2/worker/worker.h"
-#include "raul/RingBuffer.hpp"
-#include "raul/Semaphore.hpp"
+#include <ingen/LV2Features.hpp>
+#include <lv2/core/lv2.h>
+#include <lv2/worker/worker.h>
+#include <raul/RingBuffer.hpp>
+#include <raul/Semaphore.hpp>
 
 #include <cstdint>
 #include <memory>

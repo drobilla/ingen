@@ -14,13 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Forge.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "lv2/atom/forge.h"
-#include "lv2/urid/urid.h"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <lv2/atom/forge.h>
+#include <lv2/urid/urid.h>
 
+#include <cstdint>
 #include <sstream>
+#include <string>
 
 namespace ingen {
 

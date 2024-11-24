@@ -14,9 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/LV2Features.hpp"
+#include <ingen/LV2Features.hpp>
 
-#include "lv2/core/lv2.h"
+#include <lv2/core/lv2.h>
 
 #include <algorithm>
 #include <cstdlib>

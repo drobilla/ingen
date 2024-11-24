@@ -20,12 +20,12 @@
 #include "GraphCanvas.hpp"
 #include "WidgetFactory.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/GraphModel.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/GraphModel.hpp>
 
 #include <glibmm/propertyproxy.h>
 #include <glibmm/refptr.h>

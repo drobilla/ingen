@@ -14,14 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/AtomForge.hpp"
+#include <ingen/AtomForge.hpp>
+#include <ingen/memory.hpp>
 
-#include "lv2/atom/atom.h"
-#include "lv2/atom/forge.h"
-#include "lv2/atom/util.h"
-#include "lv2/urid/urid.h"
-#include "sord/sord.h"
-#include "sord/sordmm.hpp"
+#include <lv2/atom/atom.h>
+#include <lv2/atom/forge.h>
+#include <lv2/atom/util.h>
+#include <lv2/urid/urid.h>
+#include <sord/sord.h>
+#include <sord/sordmm.hpp>
+#include <sratom/sratom.h>
 
 #include <cassert>
 #include <cstring>

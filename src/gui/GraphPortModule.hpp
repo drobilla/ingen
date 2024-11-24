@@ -17,8 +17,8 @@
 #ifndef INGEN_GUI_GRAPHPORTMODULE_HPP
 #define INGEN_GUI_GRAPHPORTMODULE_HPP
 
-#include "ganv/Module.hpp"
-#include "ingen/URI.hpp"
+#include <ganv/Module.hpp>
+#include <ingen/URI.hpp>
 
 #include <gdk/gdk.h>
 #include <glib.h>

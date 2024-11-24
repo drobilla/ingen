@@ -19,15 +19,15 @@
 #include "App.hpp"
 #include "Window.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/ClientStore.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <glibmm/propertyproxy.h>
 #include <glibmm/refptr.h>

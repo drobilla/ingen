@@ -20,8 +20,8 @@
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
 
 #include <cstdint>
 

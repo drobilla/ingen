@@ -26,11 +26,11 @@
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"
 
-#include "ingen/Log.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Log.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/GraphModel.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <raul/Path.hpp>
 
 #include <gdkmm/window.h>
 #include <sigc++/adaptors/bind.h>
@@ -44,6 +44,8 @@
 #include <utility>
 
 namespace ingen {
+
+class Properties;
 
 using client::BlockModel;
 using client::GraphModel;

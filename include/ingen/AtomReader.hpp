@@ -17,10 +17,10 @@
 #ifndef INGEN_ATOMREADER_HPP
 #define INGEN_ATOMREADER_HPP
 
-#include "ingen/AtomSink.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/ingen.h"
-#include "lv2/atom/atom.h"
+#include <ingen/AtomSink.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/ingen.h>
+#include <lv2/atom/atom.h>
 
 #include <cstdint>
 #include <optional>

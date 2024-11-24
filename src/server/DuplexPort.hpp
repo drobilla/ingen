@@ -22,9 +22,9 @@
 #include "server.h"
 #include "types.hpp"
 
-#include "ingen/URI.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/Maid.hpp"
+#include <ingen/URI.hpp>
+#include <lv2/urid/urid.h>
+#include <raul/Maid.hpp>
 
 #include <boost/intrusive/slist_hook.hpp>
 

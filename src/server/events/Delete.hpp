@@ -22,10 +22,10 @@
 #include "GraphImpl.hpp"
 #include "types.hpp"
 
-#include "ingen/Message.hpp"
-#include "ingen/Store.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Message.hpp>
+#include <ingen/Store.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <map>

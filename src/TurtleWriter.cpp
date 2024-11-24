@@ -14,12 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/TurtleWriter.hpp"
+#include <ingen/TurtleWriter.hpp>
 
-#include "ingen/URIMap.hpp"
-#include "lv2/atom/atom.h"
-#include "serd/serd.h"
-#include "sratom/sratom.h"
+#include <ingen/AtomWriter.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/ingen.h>
+#include <lv2/atom/atom.h>
+#include <serd/serd.h>
+#include <sratom/sratom.h>
 
 #include <utility>
 

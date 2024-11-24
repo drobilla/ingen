@@ -24,9 +24,9 @@
 #include "State.hpp"
 #include "types.hpp"
 
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
 
 #include <cstdint>
 #include <memory>

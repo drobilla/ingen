@@ -14,13 +14,19 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/PluginModel.hpp"
+#include <ingen/client/PluginModel.hpp>
 
-#include "ingen/Atom.hpp"
-#include "ingen/client/PluginUI.hpp"
-#include "lilv/lilv.h"
-#include "lv2/core/lv2.h"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/PluginUI.hpp>
+#include <lilv/lilv.h>
+#include <lv2/core/lv2.h>
+#include <raul/Symbol.hpp>
+#include <sigc++/signal.h>
 
 #include <cctype>
 #include <cstring>

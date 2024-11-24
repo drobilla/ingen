@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "internals/BlockDelay.hpp"
+#include "BlockDelay.hpp"
 
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
@@ -24,12 +24,12 @@
 #include "OutputPort.hpp"
 #include "PortType.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Forge.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Symbol.hpp>
 
 #include <memory>
 

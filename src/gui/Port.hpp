@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_PORT_HPP
 #define INGEN_GUI_PORT_HPP
 
-#include "ganv/Port.hpp"
+#include <ganv/Port.hpp>
 
 #include <gdk/gdk.h>
 #include <glib.h>

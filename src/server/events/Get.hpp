@@ -17,7 +17,7 @@
 #ifndef INGEN_EVENTS_GET_HPP
 #define INGEN_EVENTS_GET_HPP
 
-#include "ingen/Message.hpp"
+#include <ingen/Message.hpp>
 
 #include "BlockFactory.hpp"
 #include "ClientUpdate.hpp"

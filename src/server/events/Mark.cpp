@@ -14,16 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "events/Mark.hpp"
-
-#include "ingen/Message.hpp"
-#include "ingen/Status.hpp"
+#include "Mark.hpp"
 
 #include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "UndoStack.hpp"
+
+#include <ingen/Message.hpp>
+#include <ingen/Status.hpp>
 
 #include <cassert>
 #include <memory>

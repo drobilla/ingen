@@ -17,8 +17,8 @@
 #ifndef INGEN_MODULE_HPP
 #define INGEN_MODULE_HPP
 
-#include "ingen/Library.hpp"
-#include "ingen/ingen.h"
+#include <ingen/Library.hpp>
+#include <ingen/ingen.h>
 
 #include <memory>
 

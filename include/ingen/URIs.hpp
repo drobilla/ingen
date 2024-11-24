@@ -17,12 +17,12 @@
 #ifndef INGEN_URIS_HPP
 #define INGEN_URIS_HPP
 
-#include "ingen/Atom.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/ingen.h"
-#include "lilv/lilv.h"
-#include "lv2/urid/urid.h"
-#include "raul/Noncopyable.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/ingen.h>
+#include <lilv/lilv.h>
+#include <lv2/urid/urid.h>
+#include <raul/Noncopyable.hpp>
 
 namespace ingen {
 

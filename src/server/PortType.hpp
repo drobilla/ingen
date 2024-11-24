@@ -17,10 +17,9 @@
 #ifndef INGEN_ENGINE_PORTTYPE_HPP
 #define INGEN_ENGINE_PORTTYPE_HPP
 
-#include "ingen/URI.hpp"
-
-#include "lv2/atom/atom.h"
-#include "lv2/core/lv2.h"
+#include <ingen/URI.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/core/lv2.h>
 
 namespace ingen {
 

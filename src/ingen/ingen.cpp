@@ -14,21 +14,21 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/World.hpp"
-#include "ingen/fmt.hpp"
-#include "ingen/paths.hpp"
-#include "ingen/runtime_paths.hpp"
-#include "ingen_config.h"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
-#include "serd/serd.h"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/EngineBase.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Parser.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <ingen/fmt.hpp>
+#include <ingen/paths.hpp>
+#include <ingen/runtime_paths.hpp>
+#include <ingen_config.h>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
+#include <serd/serd.h>
 
 #if USE_SOCKET
 #include "ingen/client/SocketClient.hpp"

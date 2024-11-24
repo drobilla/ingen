@@ -14,22 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/ObjectModel.hpp"
+#include <ingen/client/ObjectModel.hpp>
 
-#include "ingen/Atom.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
+#include <sigc++/signal.h>
 
 #include <cassert>
 #include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
+
+namespace ingen {
+class URI;
+} // namespace ingen
 
 namespace ingen::client {
 

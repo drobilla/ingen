@@ -19,7 +19,7 @@
 
 #include "Event.hpp"
 
-#include "raul/Semaphore.hpp"
+#include <raul/Semaphore.hpp>
 
 #include <atomic>
 #include <chrono>

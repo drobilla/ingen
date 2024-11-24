@@ -20,16 +20,17 @@
 #include "GraphImpl.hpp"
 #include "ThreadManager.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Properties.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Properties.hpp>
+#include <raul/Path.hpp>
 
 #include <map>
 #include <utility>
 
-namespace raul {
-class Symbol;
-} // namespace raul
+namespace ingen {
+class URI;
+} // namespace ingen
 
 namespace ingen::server {
 

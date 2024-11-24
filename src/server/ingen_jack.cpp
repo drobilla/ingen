@@ -17,11 +17,11 @@
 #include "Engine.hpp"
 #include "JackDriver.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Module.hpp"
-#include "ingen/World.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Module.hpp>
+#include <ingen/World.hpp>
 
 #include <memory>
 #include <string>

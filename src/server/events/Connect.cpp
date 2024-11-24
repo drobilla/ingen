@@ -16,6 +16,7 @@
 
 #include "Connect.hpp"
 
+#include "../internals/BlockDelay.hpp"
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
@@ -26,15 +27,16 @@
 #include "InputPort.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
-#include "internals/BlockDelay.hpp"
 #include "types.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Maid.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Maid.hpp>
 
 #include <cassert>
 #include <memory>

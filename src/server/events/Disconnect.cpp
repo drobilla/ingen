@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "events/Disconnect.hpp"
+#include "Disconnect.hpp"
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
@@ -30,14 +30,15 @@
 #include "PreProcessContext.hpp"
 #include "ThreadManager.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/Store.hpp"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/Store.hpp>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
 
 #include <cassert>
 #include <cstdint>

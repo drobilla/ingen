@@ -17,12 +17,12 @@
 #ifndef INGEN_MESSAGE_HPP
 #define INGEN_MESSAGE_HPP
 
-#include "ingen/Atom.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/URI.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/URI.hpp>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <string>

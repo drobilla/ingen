@@ -19,16 +19,17 @@
 #include "App.hpp"
 #include "ObjectMenu.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PluginModel.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/PluginModel.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <raul/Symbol.hpp>
 
 #include <glib.h>
 #include <glibmm/convert.h>

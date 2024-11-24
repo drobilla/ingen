@@ -19,10 +19,10 @@
 
 #include "PluginImpl.hpp"
 
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "lilv/lilv.h"
-#include "raul/Symbol.hpp"
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <lilv/lilv.h>
+#include <raul/Symbol.hpp>
 
 #include <string>
 

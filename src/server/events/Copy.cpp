@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "events/Copy.hpp"
+#include "Copy.hpp"
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
@@ -23,17 +23,18 @@
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/Serialiser.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/World.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Parser.hpp>
+#include <ingen/Serialiser.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <map>
 #include <memory>

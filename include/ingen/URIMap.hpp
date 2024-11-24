@@ -17,12 +17,12 @@
 #ifndef INGEN_URIMAP_HPP
 #define INGEN_URIMAP_HPP
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/ingen.h"
-#include "ingen/memory.hpp"
-#include "lv2/core/lv2.h"
-#include "lv2/urid/urid.h"
-#include "raul/Noncopyable.hpp"
+#include <ingen/LV2Features.hpp>
+#include <ingen/ingen.h>
+#include <ingen/memory.hpp>
+#include <lv2/core/lv2.h>
+#include <lv2/urid/urid.h>
+#include <raul/Noncopyable.hpp>
 
 #include <cstdint>
 #include <memory>

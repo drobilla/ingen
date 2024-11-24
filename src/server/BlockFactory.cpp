@@ -22,16 +22,17 @@
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "internals/BlockDelay.hpp"
-#include "internals/Controller.hpp"
-#include "internals/Note.hpp"
-#include "internals/Time.hpp"
-#include "internals/Trigger.hpp"
-#include "lilv/lilv.h"
+#include <ingen/LV2Features.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <internals/BlockDelay.hpp>
+#include <internals/Controller.hpp>
+#include <internals/Note.hpp>
+#include <internals/Time.hpp>
+#include <internals/Trigger.hpp>
+#include <lilv/lilv.h>
 
 #include <algorithm>
 #include <cstdint>

@@ -28,15 +28,15 @@
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Forge.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <lv2/urid/urid.h>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Symbol.hpp>
 
 #include <cassert>
 #include <cstddef>

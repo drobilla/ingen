@@ -17,11 +17,11 @@
 #ifndef INGEN_RESOURCE_HPP
 #define INGEN_RESOURCE_HPP
 
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/ingen.h"
-#include "raul/Deletable.hpp"
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/ingen.h>
+#include <raul/Deletable.hpp>
 
 #include <cassert>
 #include <utility>

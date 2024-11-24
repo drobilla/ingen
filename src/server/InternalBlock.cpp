@@ -23,8 +23,8 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
-#include "ingen/URIs.hpp"
-#include "raul/Array.hpp"
+#include <ingen/URIs.hpp>
+#include <raul/Array.hpp>
 
 #include <boost/smart_ptr/intrusive_ptr.hpp>
 

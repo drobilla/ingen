@@ -21,7 +21,7 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-#include "ingen/Message.hpp"
+#include <ingen/Message.hpp>
 
 #include <list>
 #include <memory>

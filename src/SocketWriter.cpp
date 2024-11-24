@@ -14,10 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/SocketWriter.hpp"
+#include <ingen/SocketWriter.hpp>
 
-#include "ingen/URI.hpp"
-#include "raul/Socket.hpp"
+#include <ingen/Message.hpp>
+#include <ingen/TurtleWriter.hpp>
+#include <ingen/URI.hpp>
+#include <raul/Socket.hpp>
 
 #include <memory>
 #include <sys/socket.h>

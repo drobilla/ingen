@@ -19,11 +19,11 @@
 #include "Engine.hpp"
 #include "EventWriter.hpp"
 
-#include "ingen/AtomReader.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/Status.hpp"
-#include "lv2/atom/atom.h"
+#include <ingen/AtomReader.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Status.hpp>
+#include <lv2/atom/atom.h>
 
 #include <deque>
 #include <memory>

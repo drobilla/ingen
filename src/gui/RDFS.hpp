@@ -17,8 +17,8 @@
 #ifndef INGEN_GUI_RDF_HPP
 #define INGEN_GUI_RDF_HPP
 
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
 
 #include <map>
 #include <memory>

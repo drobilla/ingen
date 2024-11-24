@@ -22,15 +22,15 @@
 #include "PortImpl.hpp"
 #include "Task.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/RingBuffer.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <lv2/urid/urid.h>
+#include <raul/RingBuffer.hpp>
 
 #include <cerrno>
 #include <cstring>

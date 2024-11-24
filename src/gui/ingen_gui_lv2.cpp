@@ -17,28 +17,28 @@
 #include "App.hpp"
 #include "GraphBox.hpp"
 
-#include "ingen/AtomReader.hpp"
-#include "ingen/AtomSink.hpp"
-#include "ingen/AtomWriter.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
-#include "ingen/client/SigClientInterface.hpp"
-#include "ingen/ingen.h"
-#include "ingen/paths.hpp"
-#include "ingen/runtime_paths.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "lv2/core/lv2.h"
-#include "lv2/log/log.h"
-#include "lv2/ui/ui.h"
-#include "lv2/urid/urid.h"
-#include "raul/Path.hpp"
+#include <ingen/AtomReader.hpp>
+#include <ingen/AtomSink.hpp>
+#include <ingen/AtomWriter.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/ClientStore.hpp>
+#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/SigClientInterface.hpp>
+#include <ingen/ingen.h>
+#include <ingen/paths.hpp>
+#include <ingen/runtime_paths.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <lv2/core/lv2.h>
+#include <lv2/log/log.h>
+#include <lv2/ui/ui.h>
+#include <lv2/urid/urid.h>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <cstring>

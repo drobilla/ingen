@@ -19,7 +19,7 @@
 #include "BlockFactory.hpp"
 #include "PluginImpl.hpp"
 
-#include "ingen/Interface.hpp"
+#include <ingen/Interface.hpp>
 
 #include <cstddef>
 #include <memory>

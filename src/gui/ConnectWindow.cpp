@@ -20,23 +20,25 @@
 #include "Window.hpp"
 #include "WindowFactory.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/QueuedInterface.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
-#include "ingen/client/SigClientInterface.hpp"
-#include "ingen/client/SocketClient.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
-#include "raul/Process.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/EngineBase.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/QueuedInterface.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/ClientStore.hpp>
+#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/SigClientInterface.hpp>
+#include <ingen/client/SocketClient.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <raul/Process.hpp>
 
 #include <glib.h>
 #include <glibmm/main.h>

@@ -14,18 +14,18 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/SocketReader.hpp"
+#include <ingen/SocketReader.hpp>
 
-#include "ingen/AtomForge.hpp"
-#include "ingen/AtomReader.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/World.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/Socket.hpp"
-#include "serd/serd.h"
-#include "sord/sord.h"
-#include "sord/sordmm.hpp"
+#include <ingen/AtomForge.hpp>
+#include <ingen/AtomReader.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/World.hpp>
+#include <lv2/urid/urid.h>
+#include <raul/Socket.hpp>
+#include <serd/serd.h>
+#include <sord/sord.h>
+#include <sord/sordmm.hpp>
 
 #include <cerrno>
 #include <cstdint>

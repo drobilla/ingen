@@ -14,29 +14,30 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "events/CreateGraph.hpp"
+#include "CreateGraph.hpp"
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "CompiledGraph.hpp"
+#include "CreatePort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
-#include "events/CreatePort.hpp"
 #include "types.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/Store.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/Store.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <boost/intrusive/slist.hpp>
 

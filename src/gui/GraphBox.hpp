@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_GRAPH_BOX_HPP
 #define INGEN_GUI_GRAPH_BOX_HPP
 
-#include "ingen/ingen.h"
+#include <ingen/ingen.h>
 
 #include <gdk/gdk.h>
 #include <glibmm/ustring.h>

@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_ARC_HPP
 #define INGEN_GUI_ARC_HPP
 
-#include "ganv/Edge.hpp"
+#include <ganv/Edge.hpp>
 
 #include <memory>
 

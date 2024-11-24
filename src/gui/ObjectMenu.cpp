@@ -19,12 +19,13 @@
 #include "App.hpp"
 #include "WindowFactory.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/ObjectModel.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/ObjectModel.hpp>
 
 #include <glibmm/refptr.h>
 #include <gtkmm/builder.h>

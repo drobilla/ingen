@@ -19,9 +19,9 @@
 
 #include "Window.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/URI.hpp"
-#include "lv2/urid/urid.h"
+#include <ingen/Atom.hpp>
+#include <ingen/URI.hpp>
+#include <lv2/urid/urid.h>
 
 #include <glibmm/refptr.h>
 #include <gtkmm/liststore.h>

@@ -17,8 +17,8 @@
 #ifndef INGEN_GUI_WINDOWFACTORY_HPP
 #define INGEN_GUI_WINDOWFACTORY_HPP
 
-#include "ingen/Properties.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Properties.hpp>
+#include <raul/Path.hpp>
 
 #include <gdk/gdk.h>
 

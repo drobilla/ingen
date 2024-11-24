@@ -17,9 +17,9 @@
 #ifndef INGEN_SOCKETWRITER_HPP
 #define INGEN_SOCKETWRITER_HPP
 
-#include "ingen/Message.hpp"
-#include "ingen/TurtleWriter.hpp"
-#include "ingen/ingen.h"
+#include <ingen/Message.hpp>
+#include <ingen/TurtleWriter.hpp>
+#include <ingen/ingen.h>
 
 #include <cstddef>
 #include <memory>

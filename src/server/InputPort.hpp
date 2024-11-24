@@ -21,8 +21,8 @@
 #include "PortImpl.hpp"
 #include "types.hpp"
 
-#include "lv2/urid/urid.h"
-#include "raul/Maid.hpp"
+#include <lv2/urid/urid.h>
+#include <raul/Maid.hpp>
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>

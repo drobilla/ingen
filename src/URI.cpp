@@ -14,11 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/URI.hpp"
+#include <ingen/URI.hpp>
 
-#include "ingen/FilePath.hpp"
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
+#include <ingen/FilePath.hpp>
+#include <serd/serd.h>
+#include <sord/sordmm.hpp>
 
 #include <cassert>
 

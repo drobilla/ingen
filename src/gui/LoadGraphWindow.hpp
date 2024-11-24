@@ -17,8 +17,8 @@
 #ifndef INGEN_GUI_LOADGRAPHWINDOW_HPP
 #define INGEN_GUI_LOADGRAPHWINDOW_HPP
 
-#include "ingen/Properties.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Properties.hpp>
+#include <raul/Symbol.hpp>
 
 #include <glibmm/ustring.h>
 #include <gtkmm/filechooserdialog.h>

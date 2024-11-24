@@ -19,12 +19,13 @@
 #include "Engine.hpp"
 #include "LV2Block.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lilv/lilv.h"
-#include "raul/Symbol.hpp"
+#include <ingen/Forge.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <lilv/lilv.h>
+#include <raul/Symbol.hpp>
 
 #include <cstdlib>
 #include <string>

@@ -21,7 +21,7 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-#include "raul/Path.hpp"
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <memory>

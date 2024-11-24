@@ -14,15 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Forge.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "lilv/lilv.h"
-
 #include "RDFS.hpp"
+
+#include <ingen/Forge.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <lilv/lilv.h>
 
 #include <utility>
 

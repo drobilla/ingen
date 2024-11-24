@@ -14,9 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/runtime_paths.hpp"
+#include <ingen/runtime_paths.hpp>
 
-#include "ingen/FilePath.hpp"
+#include <ingen/FilePath.hpp>
+
 #include "ingen_config.h"
 
 #include <cstdlib>

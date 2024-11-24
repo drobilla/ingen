@@ -21,13 +21,13 @@
 #ifndef INGEN_CLIENT_OBJECTMODEL_HPP
 #define INGEN_CLIENT_OBJECTMODEL_HPP
 
-#include "ingen/Node.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/signal.hpp"
-#include "ingen/ingen.h"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Node.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/signal.hpp>
+#include <ingen/ingen.h>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <memory>
 

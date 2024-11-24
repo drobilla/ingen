@@ -19,7 +19,7 @@
 
 #include "Window.hpp"
 
-#include "ingen/URI.hpp"
+#include <ingen/URI.hpp>
 
 #include <gdk/gdk.h>
 #include <glibmm/refptr.h>

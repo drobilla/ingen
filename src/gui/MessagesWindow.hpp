@@ -19,7 +19,7 @@
 
 #include "Window.hpp"
 
-#include "lv2/urid/urid.h"
+#include <lv2/urid/urid.h>
 
 #include <glibmm/refptr.h>
 #include <gtkmm/texttag.h>

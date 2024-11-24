@@ -14,13 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/PortModel.hpp"
+#include <ingen/client/PortModel.hpp>
 
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "lv2/urid/urid.h"
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <lv2/urid/urid.h>
+#include <sigc++/signal.h>
 
 #include <algorithm>
 #include <cstdint>

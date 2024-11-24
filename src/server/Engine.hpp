@@ -22,9 +22,9 @@
 #include "server.h"
 #include "types.hpp"
 
-#include "ingen/Clock.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/Properties.hpp"
+#include <ingen/Clock.hpp>
+#include <ingen/EngineBase.hpp>
+#include <ingen/Properties.hpp>
 
 #include <chrono>
 #include <condition_variable>

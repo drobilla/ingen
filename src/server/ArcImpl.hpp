@@ -19,8 +19,8 @@
 
 #include "BufferRef.hpp"
 
-#include "ingen/Arc.hpp"
-#include "raul/Noncopyable.hpp"
+#include <ingen/Arc.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <boost/intrusive/slist_hook.hpp>
 

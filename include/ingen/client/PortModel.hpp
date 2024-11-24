@@ -17,13 +17,13 @@
 #ifndef INGEN_CLIENT_PORTMODEL_HPP
 #define INGEN_CLIENT_PORTMODEL_HPP
 
-#include "ingen/Node.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/signal.hpp"
-#include "ingen/ingen.h"
-#include "raul/Path.hpp"
+#include <ingen/Node.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/signal.hpp>
+#include <ingen/ingen.h>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <memory>

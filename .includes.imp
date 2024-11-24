@@ -1,6 +1,6 @@
 [
   { "symbol": [ "GdkEvent",          "private", "<gdk/gdk.h>",     "public" ] },
-  { "symbol": [ "LilvWorld",         "private", "\"lilv/lilv.h\"", "public" ] },
+  { "symbol": [ "LilvWorld",         "private", "<lilv/lilv.h>",   "public" ] },
   { "symbol": [ "clockid_t",         "private", "<sys/types.h>",   "public" ] },
   { "symbol": [ "clockid_t",         "private", "<time.h>",        "public" ] },
   { "symbol": [ "fmt::format",       "private", "<fmt/core.h>",    "public" ] },

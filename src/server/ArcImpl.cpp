@@ -22,8 +22,8 @@
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 
-#include "ingen/URIs.hpp"
-#include "raul/Path.hpp"
+#include <ingen/URIs.hpp>
+#include <raul/Path.hpp>
 
 #include <algorithm>
 #include <cassert>

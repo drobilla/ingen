@@ -17,11 +17,11 @@
 #ifndef INGEN_NODE_HPP
 #define INGEN_NODE_HPP
 
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/ingen.h"
-#include "ingen/paths.hpp"
-#include "lilv/lilv.h"
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/ingen.h>
+#include <ingen/paths.hpp>
+#include <lilv/lilv.h>
 
 #include <cstdint>
 #include <filesystem>

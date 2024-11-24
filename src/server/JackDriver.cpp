@@ -29,19 +29,20 @@
 #include "ingen_config.h"
 #include "util.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/forge.h"
-#include "lv2/atom/util.h"
-#include "raul/Path.hpp"
-#include "raul/Semaphore.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/memory.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/forge.h>
+#include <lv2/atom/util.h>
+#include <raul/Path.hpp>
+#include <raul/Semaphore.hpp>
 
 #include <jack/jack.h>
 #include <jack/midiport.h>

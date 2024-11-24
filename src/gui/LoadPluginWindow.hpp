@@ -19,9 +19,9 @@
 
 #include "Window.hpp"
 
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/client/ClientStore.hpp"
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/client/ClientStore.hpp>
 
 #include <gdk/gdk.h>
 #include <glibmm/refptr.h>

@@ -22,13 +22,13 @@
 #include "State.hpp"
 #include "types.hpp"
 
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
-#include "lv2/urid/urid.h"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
+#include <lv2/urid/urid.h>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
 
 #include <boost/intrusive/slist_hook.hpp>
 

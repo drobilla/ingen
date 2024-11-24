@@ -17,9 +17,9 @@
 #ifndef INGEN_STREAMWRITER_HPP
 #define INGEN_STREAMWRITER_HPP
 
-#include "ingen/ColorContext.hpp"
-#include "ingen/TurtleWriter.hpp"
-#include "ingen/ingen.h"
+#include <ingen/ColorContext.hpp>
+#include <ingen/TurtleWriter.hpp>
+#include <ingen/ingen.h>
 
 #include <cstdio>
 

@@ -20,8 +20,8 @@
 #include "Window.hpp"
 #include "ingen_config.h"
 
-#include "ingen/URIs.hpp"
-#include "lv2/urid/urid.h"
+#include <ingen/URIs.hpp>
+#include <lv2/urid/urid.h>
 
 #include <gdkmm/color.h>
 #include <glibmm/propertyproxy.h>

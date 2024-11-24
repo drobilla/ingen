@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_UTIL_HPP
 #define INGEN_ENGINE_UTIL_HPP
 
-#include "ingen/Log.hpp"
+#include <ingen/Log.hpp>
 
 #ifdef __SSE__
 #include <xmmintrin.h> // IWYU pragma: keep

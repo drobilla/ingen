@@ -16,11 +16,12 @@
 
 #include "Arc.hpp"
 
-#include "ingen/URI.hpp"
-#include "ingen/client/ArcModel.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PortModel.hpp"
+#include <ganv/Edge.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/client/ArcModel.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/PortModel.hpp>
 
 #include <glib-object.h>
 

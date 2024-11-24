@@ -19,9 +19,9 @@
 
 #include "PluginImpl.hpp"
 
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
-#include "raul/Symbol.hpp"
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
+#include <raul/Symbol.hpp>
 
 namespace ingen {
 

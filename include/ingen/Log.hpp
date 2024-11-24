@@ -17,12 +17,12 @@
 #ifndef INGEN_LOG_HPP
 #define INGEN_LOG_HPP
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/fmt.hpp" // IWYU pragma: export
-#include "ingen/ingen.h"
-#include "lv2/core/lv2.h"
-#include "lv2/log/log.h"
-#include "lv2/urid/urid.h"
+#include <ingen/LV2Features.hpp>
+#include <ingen/fmt.hpp> // IWYU pragma: export
+#include <ingen/ingen.h>
+#include <lv2/core/lv2.h>
+#include <lv2/log/log.h>
+#include <lv2/urid/urid.h>
 
 #include <cstdarg>
 #include <functional>

@@ -20,8 +20,8 @@
 #include "RunContext.hpp"
 #include "types.hpp"
 
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
 
 namespace ingen::server {
 

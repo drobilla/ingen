@@ -14,7 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Library.hpp"
+#include <ingen/FilePath.hpp>
+#include <ingen/Library.hpp>
 
 #ifdef _WIN32
 #    include <windows.h>

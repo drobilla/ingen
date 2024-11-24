@@ -17,10 +17,10 @@
 #ifndef INGEN_CLIENT_ARCMODEL_HPP
 #define INGEN_CLIENT_ARCMODEL_HPP
 
-#include "ingen/Arc.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "ingen/ingen.h"
-#include "raul/Path.hpp"
+#include <ingen/Arc.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <ingen/ingen.h>
+#include <raul/Path.hpp>
 
 #include <cassert>
 #include <memory>

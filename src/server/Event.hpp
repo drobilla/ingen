@@ -19,12 +19,12 @@
 
 #include "types.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/paths.hpp"
-#include "raul/Deletable.hpp"
-#include "raul/Noncopyable.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/paths.hpp>
+#include <raul/Deletable.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <atomic>
 #include <cstdint>

@@ -19,10 +19,10 @@
 
 #include "GraphView.hpp"
 
-#include "ingen/Message.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/client/GraphModel.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Message.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/client/GraphModel.hpp>
+#include <raul/Path.hpp>
 
 #include <glibmm/ustring.h>
 #include <gtkmm/box.h>

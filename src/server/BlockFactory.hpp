@@ -17,8 +17,8 @@
 #ifndef INGEN_ENGINE_BLOCKFACTORY_HPP
 #define INGEN_ENGINE_BLOCKFACTORY_HPP
 
-#include "ingen/URI.hpp"
-#include "raul/Noncopyable.hpp"
+#include <ingen/URI.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <map>
 #include <memory>

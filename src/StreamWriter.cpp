@@ -14,10 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/StreamWriter.hpp"
+#include <ingen/StreamWriter.hpp>
 
-#include "ingen/ColorContext.hpp"
-#include "ingen/URI.hpp"
+#include <ingen/ColorContext.hpp>
+#include <ingen/TurtleWriter.hpp>
+#include <ingen/URI.hpp>
 
 namespace ingen {
 

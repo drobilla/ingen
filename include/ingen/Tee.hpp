@@ -17,9 +17,9 @@
 #ifndef INGEN_TEE_HPP
 #define INGEN_TEE_HPP
 
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/URI.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/URI.hpp>
 
 #include <memory>
 #include <mutex>

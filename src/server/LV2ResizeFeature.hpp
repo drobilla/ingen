@@ -21,8 +21,8 @@
 #include "Buffer.hpp"
 #include "PortImpl.hpp"
 
-#include "ingen/LV2Features.hpp"
-#include "lv2/resize-port/resize-port.h"
+#include <ingen/LV2Features.hpp>
+#include <lv2/resize-port/resize-port.h>
 
 #include <memory>
 

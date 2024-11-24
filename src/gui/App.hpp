@@ -17,13 +17,13 @@
 #ifndef INGEN_GUI_APP_HPP
 #define INGEN_GUI_APP_HPP
 
-#include "ingen/Message.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/World.hpp"
-#include "ingen/ingen.h"
-#include "lilv/lilv.h"
+#include <ingen/Message.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <ingen/ingen.h>
+#include <lilv/lilv.h>
 
 #include <sigc++/signal.h>
 

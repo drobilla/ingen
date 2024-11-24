@@ -17,7 +17,7 @@
 #ifndef INGEN_COLORCONTEXT_HPP
 #define INGEN_COLORCONTEXT_HPP
 
-#include "ingen/ingen.h"
+#include <ingen/ingen.h>
 
 #include <cstdio>
 

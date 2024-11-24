@@ -14,7 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/ColorContext.hpp"
+#include <ingen/ColorContext.hpp>
+
 #include "ingen_config.h"
 
 #if USE_ISATTY

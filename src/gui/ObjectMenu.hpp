@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_OBJECTMENU_HPP
 #define INGEN_GUI_OBJECTMENU_HPP
 
-#include "ingen/URI.hpp"
+#include <ingen/URI.hpp>
 
 #include <gtkmm/menu.h>
 

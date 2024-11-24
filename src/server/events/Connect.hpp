@@ -21,9 +21,9 @@
 #include "PortImpl.hpp"
 #include "types.hpp"
 
-#include "ingen/Message.hpp"
-#include "ingen/Properties.hpp"
-#include "raul/Maid.hpp"
+#include <ingen/Message.hpp>
+#include <ingen/Properties.hpp>
+#include <raul/Maid.hpp>
 
 #include <memory>
 

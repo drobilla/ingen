@@ -21,18 +21,20 @@
 #include "URIEntry.hpp"
 #include "Window.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/ObjectModel.hpp"
-#include "lilv/lilv.h"
-#include "lv2/urid/urid.h"
-#include "raul/Path.hpp"
-#include "sord/sordmm.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/ObjectModel.hpp>
+#include <lilv/lilv.h>
+#include <lv2/urid/urid.h>
+#include <raul/Path.hpp>
+#include <sord/sordmm.hpp>
 
 #include <glibmm/containers.h>
 #include <glibmm/propertyproxy.h>

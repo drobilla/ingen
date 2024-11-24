@@ -17,9 +17,9 @@
 #include "Engine.hpp"
 #include "PortAudioDriver.hpp"
 
-#include "ingen/Log.hpp"
-#include "ingen/Module.hpp"
-#include "ingen/World.hpp"
+#include <ingen/Log.hpp>
+#include <ingen/Module.hpp>
+#include <ingen/World.hpp>
 
 #include <memory>
 

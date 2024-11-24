@@ -14,29 +14,29 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/World.hpp"
+#include <ingen/World.hpp>
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/DataAccess.hpp"
-#include "ingen/EngineBase.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/InstanceAccess.hpp"
-#include "ingen/LV2Features.hpp"
-#include "ingen/Library.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Module.hpp"
-#include "ingen/Parser.hpp"
-#include "ingen/Serialiser.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/ingen.h"
-#include "ingen/runtime_paths.hpp"
-#include "lilv/lilv.h"
-#include "lv2/log/log.h"
-#include "lv2/urid/urid.h"
-#include "sord/sordmm.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/DataAccess.hpp>
+#include <ingen/EngineBase.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/InstanceAccess.hpp>
+#include <ingen/LV2Features.hpp>
+#include <ingen/Library.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Module.hpp>
+#include <ingen/Parser.hpp>
+#include <ingen/Serialiser.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/ingen.h>
+#include <ingen/runtime_paths.hpp>
+#include <lilv/lilv.h>
+#include <lv2/log/log.h>
+#include <lv2/urid/urid.h>
+#include <sord/sordmm.hpp>
 
 #include <cstdint>
 #include <filesystem>

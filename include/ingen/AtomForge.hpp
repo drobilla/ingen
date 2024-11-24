@@ -17,13 +17,13 @@
 #ifndef INGEN_ATOMFORGE_HPP
 #define INGEN_ATOMFORGE_HPP
 
-#include "ingen/ingen.h"
-#include "ingen/memory.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/forge.h"
-#include "lv2/urid/urid.h"
-#include "sord/sord.h"
-#include "sratom/sratom.h"
+#include <ingen/ingen.h>
+#include <ingen/memory.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/forge.h>
+#include <lv2/urid/urid.h>
+#include <sord/sord.h>
+#include <sratom/sratom.h>
 
 #include <cstdint>
 #include <cstdlib>

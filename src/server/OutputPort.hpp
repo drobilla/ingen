@@ -20,7 +20,7 @@
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 
-#include "lv2/urid/urid.h"
+#include <lv2/urid/urid.h>
 
 #include <cstddef>
 #include <cstdint>

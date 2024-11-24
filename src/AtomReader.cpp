@@ -14,21 +14,21 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/AtomReader.hpp"
+#include <ingen/AtomReader.hpp>
 
-#include "ingen/Atom.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/paths.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/paths.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <cstring>

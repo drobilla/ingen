@@ -24,7 +24,7 @@
 #include "RunContext.hpp"
 #include "types.hpp"
 
-#include "raul/Path.hpp"
+#include <raul/Path.hpp>
 
 #include <boost/intrusive/slist.hpp>
 

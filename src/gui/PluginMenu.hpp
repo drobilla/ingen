@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_PLUGINMENU_HPP
 #define INGEN_GUI_PLUGINMENU_HPP
 
-#include "lilv/lilv.h"
+#include <lilv/lilv.h>
 
 #include <gtkmm/menu.h>
 #include <sigc++/signal.h>

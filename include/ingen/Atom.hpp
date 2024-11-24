@@ -17,9 +17,9 @@
 #ifndef INGEN_ATOM_HPP
 #define INGEN_ATOM_HPP
 
-#include "ingen/ingen.h"
-#include "lv2/atom/atom.h"
-#include "lv2/urid/urid.h"
+#include <ingen/ingen.h>
+#include <lv2/atom/atom.h>
+#include <lv2/urid/urid.h>
 
 #include <algorithm>
 #include <cassert>

@@ -23,11 +23,14 @@
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 
-#include "ingen/Arc.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/URIs.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Arc.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <raul/Path.hpp>
 
 #include <boost/intrusive/slist.hpp>
 

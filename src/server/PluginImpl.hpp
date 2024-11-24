@@ -17,11 +17,11 @@
 #ifndef INGEN_ENGINE_PLUGINIMPL_HPP
 #define INGEN_ENGINE_PLUGINIMPL_HPP
 
-#include "ingen/Atom.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
+#include <raul/Symbol.hpp>
 
 #include <map>
 #include <string>

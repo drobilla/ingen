@@ -22,10 +22,10 @@
 #include "PortType.hpp"
 #include "types.hpp"
 
-#include "ingen/Properties.hpp"
-#include "lv2/urid/urid.h"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Properties.hpp>
+#include <lv2/urid/urid.h>
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <memory>

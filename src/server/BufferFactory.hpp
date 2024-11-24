@@ -17,12 +17,12 @@
 #ifndef INGEN_ENGINE_BUFFERFACTORY_HPP
 #define INGEN_ENGINE_BUFFERFACTORY_HPP
 
-#include "ingen/URIs.hpp"
-#include "lv2/urid/urid.h"
-#include "server.h"
-
 #include "BufferRef.hpp"
+#include "server.h"
 #include "types.hpp"
+
+#include <ingen/URIs.hpp>
+#include <lv2/urid/urid.h>
 
 #include <atomic>
 #include <cstdint>

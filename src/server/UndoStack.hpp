@@ -17,12 +17,12 @@
 #ifndef INGEN_ENGINE_UNDOSTACK_HPP
 #define INGEN_ENGINE_UNDOSTACK_HPP
 
-#include "ingen/AtomSink.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "serd/serd.h"
-#include "server.h"
-#include "sratom/sratom.h"
+#include <ingen/AtomSink.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <serd/serd.h>
+#include <server.h>
+#include <sratom/sratom.h>
 
 #include <cstdint>
 #include <cstdio>

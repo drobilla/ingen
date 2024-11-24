@@ -23,16 +23,17 @@
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "lv2/urid/urid.h"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <lv2/urid/urid.h>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Path.hpp>
 
 #include <algorithm>
 #include <cassert>

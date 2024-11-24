@@ -16,14 +16,14 @@
 
 #include "App.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/Module.hpp"
-#include "ingen/QueuedInterface.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/SigClientInterface.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Module.hpp>
+#include <ingen/QueuedInterface.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/SigClientInterface.hpp>
 
 #include <glibmm/thread.h>
 

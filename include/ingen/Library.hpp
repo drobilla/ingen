@@ -17,8 +17,8 @@
 #ifndef INGEN_LIBRARY_HPP
 #define INGEN_LIBRARY_HPP
 
-#include "ingen/FilePath.hpp"
-#include "ingen/ingen.h"
+#include <ingen/FilePath.hpp>
+#include <ingen/ingen.h>
 
 namespace ingen {
 

@@ -19,9 +19,12 @@
 #include "App.hpp"
 #include "GraphView.hpp"
 
-#include "ingen/client/SigClientInterface.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Message.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/client/GraphModel.hpp>
+#include <ingen/client/SigClientInterface.hpp>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
 
 #include <sigc++/adaptors/bind.h>
 #include <sigc++/functors/mem_fun.h>

@@ -17,8 +17,8 @@
 #include "Engine.hpp"
 #include "util.hpp"
 
-#include "ingen/Module.hpp"
-#include "ingen/World.hpp"
+#include <ingen/Module.hpp>
+#include <ingen/World.hpp>
 
 #include <memory>
 

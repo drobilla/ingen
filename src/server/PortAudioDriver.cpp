@@ -21,17 +21,22 @@
 #include "FrameTimer.hpp"
 #include "PortType.hpp"
 #include "RunContext.hpp"
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "raul/Path.hpp"
+
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <raul/Path.hpp>
 
 #include <portaudio.h>
 
 #include <cstdio>
 #include <cstring>
 #include <string>
+
+namespace ingen {
+class URI;
+} // namespace ingen
 
 namespace ingen::server {
 

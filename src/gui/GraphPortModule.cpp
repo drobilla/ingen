@@ -20,17 +20,18 @@
 #include "GraphCanvas.hpp"
 #include "Port.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "raul/Symbol.hpp"
-
-#include "ingen/Configuration.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
-#include "ingen/client/PortModel.hpp"
+#include <ganv/Module.hpp>
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/PortModel.hpp>
+#include <raul/Symbol.hpp>
 
 #include <sigc++/functors/mem_fun.h>
 #include <sigc++/signal.h>

@@ -19,8 +19,8 @@
 
 #include "BufferRef.hpp"
 
-#include "lv2/atom/forge.h"
-#include "raul/Maid.hpp"
+#include <lv2/atom/forge.h>
+#include <raul/Maid.hpp>
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/set.hpp>

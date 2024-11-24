@@ -19,11 +19,11 @@
 #include "Buffer.hpp"
 #include "Engine.hpp"
 
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/urid/urid.h"
+#include <ingen/Log.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/urid/urid.h>
 
 #include <algorithm>
 #include <memory>

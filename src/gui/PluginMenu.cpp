@@ -16,11 +16,11 @@
 
 #include "PluginMenu.hpp"
 
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/PluginModel.hpp"
-#include "lilv/lilv.h"
+#include <ingen/Log.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/PluginModel.hpp>
+#include <lilv/lilv.h>
 
 #include <glibmm/ustring.h>
 #include <gtkmm/menu_elems.h>

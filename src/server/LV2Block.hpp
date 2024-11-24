@@ -22,14 +22,14 @@
 #include "State.hpp"
 #include "types.hpp"
 
-#include "ingen/LV2Features.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
-#include "lv2/worker/worker.h"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Noncopyable.hpp"
+#include <ingen/LV2Features.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
+#include <lv2/worker/worker.h>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/slist.hpp>

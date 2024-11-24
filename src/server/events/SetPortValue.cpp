@@ -24,11 +24,12 @@
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
 
-#include "ingen/Forge.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "lv2/atom/atom.h"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <lv2/atom/atom.h>
 
 #include <cassert>
 #include <memory>

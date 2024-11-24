@@ -17,10 +17,10 @@
 #ifndef INGEN_URI_HPP
 #define INGEN_URI_HPP
 
-#include "ingen/FilePath.hpp"
-#include "ingen/ingen.h"
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
+#include <ingen/FilePath.hpp>
+#include <ingen/ingen.h>
+#include <serd/serd.h>
+#include <sord/sordmm.hpp>
 
 #include <cstddef>
 #include <cstdint>

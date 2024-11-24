@@ -14,26 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/URIs.hpp"
+#include <ingen/URIs.hpp>
 
-#include "ingen/Forge.hpp"
-#include "ingen/ingen.h"
-#include "lilv/lilv.h"
-#include "lv2/atom/atom.h"
-#include "lv2/buf-size/buf-size.h"
-#include "lv2/core/lv2.h"
-#include "lv2/log/log.h"
-#include "lv2/midi/midi.h"
-#include "lv2/morph/morph.h"
-#include "lv2/options/options.h"
-#include "lv2/parameters/parameters.h"
-#include "lv2/patch/patch.h"
-#include "lv2/port-props/port-props.h"
-#include "lv2/presets/presets.h"
-#include "lv2/resize-port/resize-port.h"
-#include "lv2/state/state.h"
-#include "lv2/time/time.h"
-#include "lv2/worker/worker.h"
+#include <ingen/Forge.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/ingen.h>
+#include <lilv/lilv.h>
+#include <lv2/atom/atom.h>
+#include <lv2/buf-size/buf-size.h>
+#include <lv2/core/lv2.h>
+#include <lv2/log/log.h>
+#include <lv2/midi/midi.h>
+#include <lv2/morph/morph.h>
+#include <lv2/options/options.h>
+#include <lv2/parameters/parameters.h>
+#include <lv2/patch/patch.h>
+#include <lv2/port-props/port-props.h>
+#include <lv2/presets/presets.h>
+#include <lv2/resize-port/resize-port.h>
+#include <lv2/state/state.h>
+#include <lv2/time/time.h>
+#include <lv2/worker/worker.h>
 
 namespace ingen {
 

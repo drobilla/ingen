@@ -19,8 +19,9 @@
 #include "App.hpp"
 #include "RDFS.hpp"
 
-#include "ingen/World.hpp"
-#include "lilv/lilv.h"
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <lilv/lilv.h>
 
 #include <gdk/gdk.h>
 #include <gtkmm/button.h>

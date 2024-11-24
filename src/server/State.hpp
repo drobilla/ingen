@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_STATE_HPP
 #define INGEN_ENGINE_STATE_HPP
 
-#include "lilv/lilv.h"
+#include <lilv/lilv.h>
 
 #include <memory>
 

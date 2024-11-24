@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "internals/Trigger.hpp"
+#include "Trigger.hpp"
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
@@ -25,16 +25,16 @@
 #include "PortType.hpp"
 #include "RunContext.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "lv2/midi/midi.h"
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-#include "raul/Symbol.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <lv2/midi/midi.h>
+#include <raul/Array.hpp>
+#include <raul/Maid.hpp>
+#include <raul/Symbol.hpp>
 
 #include <cassert>
 #include <cmath>

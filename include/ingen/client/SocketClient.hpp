@@ -17,13 +17,13 @@
 #ifndef INGEN_CLIENT_SOCKETCLIENT_HPP
 #define INGEN_CLIENT_SOCKETCLIENT_HPP
 
-#include "ingen/Log.hpp"
-#include "ingen/SocketReader.hpp"
-#include "ingen/SocketWriter.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/World.hpp"
-#include "ingen/ingen.h"
-#include "raul/Socket.hpp"
+#include <ingen/Log.hpp>
+#include <ingen/SocketReader.hpp>
+#include <ingen/SocketWriter.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/World.hpp>
+#include <ingen/ingen.h>
+#include <raul/Socket.hpp>
 
 #include <cerrno>
 #include <cstring>

@@ -21,8 +21,8 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-#include "ingen/Properties.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Properties.hpp>
+#include <raul/Path.hpp>
 
 #include <cstdint>
 #include <list>

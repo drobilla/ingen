@@ -21,11 +21,11 @@
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
-#include "ingen/Message.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/ingen.h"
+#include <ingen/Message.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/Resource.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/ingen.h>
 
 #include <cstdint>
 #include <memory>

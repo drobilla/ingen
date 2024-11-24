@@ -14,25 +14,26 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "events/DisconnectAll.hpp"
+#include "DisconnectAll.hpp"
 
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "CompiledGraph.hpp"
+#include "Disconnect.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
-#include "events/Disconnect.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Status.hpp"
-#include "ingen/Store.hpp"
-#include "raul/Path.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/Node.hpp>
+#include <ingen/Status.hpp>
+#include <ingen/Store.hpp>
+#include <raul/Path.hpp>
 
 #include <algorithm>
 #include <iterator>

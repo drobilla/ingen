@@ -17,10 +17,10 @@
 #ifndef INGEN_STORE_HPP
 #define INGEN_STORE_HPP
 
-#include "ingen/ingen.h"
-#include "raul/Deletable.hpp"
-#include "raul/Noncopyable.hpp"
-#include "raul/Path.hpp"
+#include <ingen/ingen.h>
+#include <raul/Deletable.hpp>
+#include <raul/Noncopyable.hpp>
+#include <raul/Path.hpp>
 
 #include <map>
 #include <memory>

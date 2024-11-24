@@ -22,12 +22,12 @@
 #include "RunContext.hpp"
 #include "ingen_config.h"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/URIs.hpp"
-#include "lv2/atom/atom.h"
-#include "lv2/atom/util.h"
-#include "lv2/urid/urid.h"
+#include <ingen/Atom.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/URIs.hpp>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/util.h>
+#include <lv2/urid/urid.h>
 
 #include <algorithm>
 #include <cstdint>

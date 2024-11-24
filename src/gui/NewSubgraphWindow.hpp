@@ -19,7 +19,7 @@
 
 #include "Window.hpp"
 
-#include "ingen/Properties.hpp"
+#include <ingen/Properties.hpp>
 
 #include <memory>
 

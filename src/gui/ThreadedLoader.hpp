@@ -17,8 +17,8 @@
 #ifndef INGEN_GUI_THREADEDLOADER_HPP
 #define INGEN_GUI_THREADEDLOADER_HPP
 
-#include "ingen/FilePath.hpp"
-#include "raul/Semaphore.hpp"
+#include <ingen/FilePath.hpp>
+#include <raul/Semaphore.hpp>
 
 #include <sigc++/functors/slot.h>
 

@@ -20,9 +20,9 @@
 #include "Event.hpp"
 #include "types.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/URI.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/URI.hpp>
 
 #include <memory>
 

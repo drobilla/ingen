@@ -17,8 +17,8 @@
 #ifndef INGEN_GUI_URI_ENTRY_HPP
 #define INGEN_GUI_URI_ENTRY_HPP
 
-#include "ingen/URI.hpp"
-#include "lilv/lilv.h"
+#include <ingen/URI.hpp>
+#include <lilv/lilv.h>
 
 #include <gdk/gdk.h>
 #include <glibmm/signalproxy.h>

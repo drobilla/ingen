@@ -24,14 +24,18 @@
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
-#include "lv2/urid/urid.h"
-#include "raul/Array.hpp"
-#include "raul/Symbol.hpp"
+#include <lv2/urid/urid.h>
+#include <raul/Array.hpp>
+#include <raul/Symbol.hpp>
 
 #include <cassert>
 #include <cstdint>
 #include <initializer_list>
 #include <string>
+
+namespace ingen {
+class Resource;
+} // namespace ingen
 
 namespace ingen::server {
 

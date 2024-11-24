@@ -19,8 +19,8 @@
 
 #include "Window.hpp"
 
-#include "ingen/Message.hpp"
-#include "ingen/URI.hpp"
+#include <ingen/Message.hpp>
+#include <ingen/URI.hpp>
 
 #include <glibmm/refptr.h>
 #include <gtkmm/builder.h>

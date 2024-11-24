@@ -19,8 +19,8 @@
 
 #include "types.hpp"
 
-#include "lv2/urid/urid.h"
-#include "raul/RingBuffer.hpp"
+#include <lv2/urid/urid.h>
+#include <raul/RingBuffer.hpp>
 
 #include <cstdint>
 #include <memory>

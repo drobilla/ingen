@@ -17,9 +17,9 @@
 #ifndef INGEN_PROPERTIES_HPP
 #define INGEN_PROPERTIES_HPP
 
-#include "ingen/Atom.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIs.hpp"
+#include <ingen/Atom.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIs.hpp>
 
 #include <initializer_list>
 #include <map>

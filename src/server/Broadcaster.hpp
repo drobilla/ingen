@@ -19,10 +19,10 @@
 
 #include "BlockFactory.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Message.hpp"
-#include "ingen/URI.hpp"
-#include "raul/Noncopyable.hpp"
+#include <ingen/Interface.hpp>
+#include <ingen/Message.hpp>
+#include <ingen/URI.hpp>
+#include <raul/Noncopyable.hpp>
 
 #include <atomic>
 #include <memory>

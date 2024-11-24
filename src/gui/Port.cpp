@@ -27,24 +27,25 @@
 #include "ingen_config.h"
 #include "rgba.hpp"
 
-#include "ingen/Atom.hpp"
-#include "ingen/Configuration.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/Properties.hpp"
-#include "ingen/URI.hpp"
-#include "ingen/URIMap.hpp"
-#include "ingen/URIs.hpp"
-#include "ingen/World.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/GraphModel.hpp" // IWYU pragma: keep
-#include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PluginModel.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "lilv/lilv.h"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
-#include "sord/sordmm.hpp"
+#include <ganv/Port.hpp>
+#include <ingen/Atom.hpp>
+#include <ingen/Configuration.hpp>
+#include <ingen/Forge.hpp>
+#include <ingen/Log.hpp>
+#include <ingen/Properties.hpp>
+#include <ingen/URI.hpp>
+#include <ingen/URIMap.hpp>
+#include <ingen/URIs.hpp>
+#include <ingen/World.hpp>
+#include <ingen/client/BlockModel.hpp>
+#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/ObjectModel.hpp>
+#include <ingen/client/PluginModel.hpp>
+#include <ingen/client/PortModel.hpp>
+#include <lilv/lilv.h>
+#include <raul/Path.hpp>
+#include <raul/Symbol.hpp>
+#include <sord/sordmm.hpp>
 
 #include <glibmm/ustring.h>
 #include <gtkmm/menu.h>
