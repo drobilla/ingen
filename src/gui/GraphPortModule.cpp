@@ -29,7 +29,7 @@
 #include <ingen/URI.hpp>
 #include <ingen/URIs.hpp>
 #include <ingen/World.hpp>
-#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/GraphModel.hpp>
 #include <ingen/client/PortModel.hpp>
 #include <raul/Symbol.hpp>
 

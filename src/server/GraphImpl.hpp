@@ -34,8 +34,6 @@
 #include <memory>
 #include <utility>
 
-// IWYU pragma: no_include "CompiledGraph.hpp"
-
 namespace raul {
 class Symbol;
 } // namespace raul
@@ -44,7 +42,7 @@ namespace ingen::server {
 
 class ArcImpl;
 class BufferFactory;
-class CompiledGraph; // IWYU pragma: keep
+class CompiledGraph;
 class Engine;
 class PortImpl;
 class RunContext;

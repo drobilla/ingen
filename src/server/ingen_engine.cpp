@@ -22,8 +22,6 @@
 
 #include <memory>
 
-// IWYU pragma: no_include "ingen/Atom.hpp"
-
 namespace ingen {
 
 struct EngineModule : public Module {

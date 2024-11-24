@@ -19,8 +19,6 @@
 #include <iostream>
 #include <string>
 
-// IWYU pragma: no_include "ingen/FilePath.hpp"
-
 #define EXPECT_TRUE(value) \
 	do { \
 		if (!(value)) { \

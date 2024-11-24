@@ -27,7 +27,7 @@
 #include <ingen/URIs.hpp>
 #include <ingen/World.hpp>
 #include <ingen/client/ClientStore.hpp>
-#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/GraphModel.hpp>
 #include <ingen/client/SigClientInterface.hpp>
 #include <ingen/ingen.h>
 #include <ingen/paths.hpp>

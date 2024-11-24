@@ -20,7 +20,7 @@
 #include <ingen/Log.hpp>
 
 #ifdef __SSE__
-#include <xmmintrin.h> // IWYU pragma: keep
+#include <xmmintrin.h>
 #endif
 
 #ifdef __clang__

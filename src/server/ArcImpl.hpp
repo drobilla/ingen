@@ -26,10 +26,8 @@
 
 #include <cstdint>
 
-// IWYU pragma: no_include "raul/Path.hpp"
-
 namespace raul {
-class Path; // IWYU pragma: keep
+class Path;
 } // namespace raul
 
 namespace ingen::server {

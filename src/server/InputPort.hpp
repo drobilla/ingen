@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_INPUTPORT_HPP
 #define INGEN_ENGINE_INPUTPORT_HPP
 
-#include "ArcImpl.hpp" // IWYU pragma: keep
+#include "ArcImpl.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
 

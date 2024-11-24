@@ -38,7 +38,7 @@
 #include <ingen/URIs.hpp>
 #include <ingen/World.hpp>
 #include <ingen/client/BlockModel.hpp>
-#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/GraphModel.hpp>
 #include <ingen/client/ObjectModel.hpp>
 #include <ingen/client/PluginModel.hpp>
 #include <ingen/client/PortModel.hpp>

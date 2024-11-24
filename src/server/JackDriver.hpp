@@ -18,11 +18,11 @@
 #define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
 #include "Driver.hpp"
-#include "EnginePort.hpp" // IWYU pragma: keep
+#include "EnginePort.hpp"
 #include "types.hpp"
 
 #include <ingen/URI.hpp>
-#include <ingen/memory.hpp> // IWYU pragma: keep
+#include <ingen/memory.hpp>
 #include <lv2/atom/forge.h>
 #include <raul/Semaphore.hpp>
 

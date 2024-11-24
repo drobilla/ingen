@@ -47,6 +47,7 @@
 #include <ingen/client/PluginModel.hpp>
 #include <ingen/client/PortModel.hpp>
 #include <ingen/client/SigClientInterface.hpp>
+#include <ingen/fmt.hpp>
 #include <ingen/runtime_paths.hpp>
 #include <lilv/lilv.h>
 #include <lv2/urid/urid.h>

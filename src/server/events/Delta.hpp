@@ -18,6 +18,7 @@
 #define INGEN_EVENTS_DELTA_HPP
 
 #include "ClientUpdate.hpp"
+#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "SetPortValue.hpp"
@@ -33,9 +34,6 @@
 #include <optional>
 #include <vector>
 
-// IWYU pragma: no_include "CompiledGraph.hpp"
-// IWYU pragma: no_include <algorithm>
-
 namespace ingen {
 
 class Interface;
@@ -45,7 +43,6 @@ struct SetProperty;
 
 namespace server {
 
-class CompiledGraph; // IWYU pragma: keep
 class Engine;
 class GraphImpl;
 class PreProcessContext;

@@ -19,7 +19,7 @@
 
 #include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
-#include <gtkmm/builder.h> // IWYU pragma: keep
+#include <gtkmm/builder.h>
 
 #include <string>
 

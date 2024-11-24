@@ -19,6 +19,7 @@
 
 #include "Event.hpp"
 #include "Load.hpp"
+#include "RunContext.hpp"
 #include "server.h"
 #include "types.hpp"
 
@@ -35,12 +36,9 @@
 #include <random>
 #include <vector>
 
-// IWYU pragma: no_include "RunContext.hpp"
-// IWYU pragma: no_include "raul/RingBuffer.hpp"
-
 namespace raul {
 class Maid;
-class RingBuffer; // IWYU pragma: keep
+class RingBuffer;
 } // namespace raul
 
 namespace ingen {
@@ -63,7 +61,6 @@ class GraphImpl;
 class LV2Options;
 class PostProcessor;
 class PreProcessor;
-class RunContext; // IWYU pragma: keep
 class SocketListener;
 class Task;
 class UndoStack;

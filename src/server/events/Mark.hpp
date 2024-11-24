@@ -17,13 +17,12 @@
 #ifndef INGEN_EVENTS_MARK_HPP
 #define INGEN_EVENTS_MARK_HPP
 
+#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "types.hpp"
 
 #include <map>
 #include <memory>
-
-// IWYU pragma: no_include "CompiledGraph.hpp"
 
 namespace ingen {
 
@@ -33,7 +32,6 @@ struct BundleEnd;
 
 namespace server {
 
-class CompiledGraph; // IWYU pragma: keep
 class Engine;
 class GraphImpl;
 class PreProcessContext;

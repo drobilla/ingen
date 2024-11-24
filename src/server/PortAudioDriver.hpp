@@ -18,7 +18,7 @@
 #define INGEN_ENGINE_PORTAUDIODRIVER_HPP
 
 #include "Driver.hpp"
-#include "EnginePort.hpp" // IWYU pragma: keep
+#include "EnginePort.hpp"
 #include "types.hpp"
 
 #include <ingen/URI.hpp>

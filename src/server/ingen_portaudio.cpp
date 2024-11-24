@@ -23,8 +23,6 @@
 
 #include <memory>
 
-// IWYU pragma: no_include "ingen/FilePath.hpp"
-
 namespace ingen::server {
 
 class Driver;

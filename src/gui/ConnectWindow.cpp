@@ -33,9 +33,10 @@
 #include <ingen/URIs.hpp>
 #include <ingen/World.hpp>
 #include <ingen/client/ClientStore.hpp>
-#include <ingen/client/GraphModel.hpp> // IWYU pragma: keep
+#include <ingen/client/GraphModel.hpp>
 #include <ingen/client/SigClientInterface.hpp>
 #include <ingen/client/SocketClient.hpp>
+#include <ingen/fmt.hpp>
 #include <ingen/paths.hpp>
 #include <raul/Path.hpp>
 #include <raul/Process.hpp>

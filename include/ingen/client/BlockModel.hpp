@@ -20,7 +20,7 @@
 #include <ingen/Node.hpp>
 #include <ingen/URI.hpp>
 #include <ingen/client/ObjectModel.hpp>
-#include <ingen/client/PluginModel.hpp> // IWYU pragma: keep
+#include <ingen/client/PluginModel.hpp>
 #include <ingen/client/signal.hpp>
 #include <ingen/ingen.h>
 
@@ -28,8 +28,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-// IWYU pragma: no_include <algorithm>
 
 namespace raul {
 class Path;
