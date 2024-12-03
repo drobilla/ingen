@@ -113,6 +113,7 @@ elif cpp.get_id() == 'gcc'
       '-Wno-sign-conversion',
       '-Wno-stack-protector',
       '-Wno-strict-overflow',
+      '-Wno-suggest-attribute=cold',
       '-Wno-suggest-attribute=const',
       '-Wno-suggest-attribute=format',
       '-Wno-suggest-attribute=noreturn',
@@ -129,10 +130,11 @@ elif cpp.get_id() == 'gcc'
   endif
 
   if warning_level in ['everything', '3']
-    cpp_suppressions += [
-      '-Wno-unused-parameter',
-      '-Wno-vla',
-    ]
+    cpp_suppressions += ['-Wno-vla']
+  endif
+
+  if warning_level in ['everything', '3', '2']
+    cpp_suppressions += ['-Wno-unused-parameter']
   endif
 endif
 
