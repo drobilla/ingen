@@ -97,7 +97,7 @@ DuplexPort::duplicate(Engine&             engine,
                       GraphImpl*          parent)
 {
 	BufferFactory& bufs       = *engine.buffer_factory();
-	const Atom     polyphonic = get_property(bufs.uris().ingen_polyphonic);
+	const Atom&    polyphonic = get_property(bufs.uris().ingen_polyphonic);
 
 	auto* dup = new DuplexPort(
 		bufs, parent, symbol, _index,
