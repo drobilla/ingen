@@ -31,13 +31,15 @@ endif
 
 ingen_deps = [
   boost_dep,
-  lilv_dep,
   lv2_dep,
   raul_dep,
   serd_dep,
-  sord_dep,
-  sratom_dep,
   thread_dep,
+
+  sord_dep,
+
+  lilv_dep,
+  sratom_dep,
 ]
 
 ingen_include_dirs = include_directories('../include', 'include')
