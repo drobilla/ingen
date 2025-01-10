@@ -96,25 +96,5 @@ endforeach
 ########
 
 if get_option('lint')
-  if not meson.is_subproject()
-    # Check code with cppcheck
-    cppcheck = find_program('cppcheck', required: false)
-    if cppcheck.found()
-      compdb_path = join_paths(ingen_build_root, 'compile_commands.json')
-      suppress_path = join_paths(ingen_src_root, '.suppress.cppcheck')
-      test(
-        'cppcheck',
-        cppcheck,
-        args: [
-          '--enable=warning,style,performance,portability',
-          '--error-exitcode=1',
-          '--project=' + compdb_path,
-          '--suppressions-list=' + suppress_path,
-          '-q',
-        ],
-        suite: 'code',
-        timeout: 60,
-      )
-    endif
-  endif
+  subdir('lint')
 endif
