@@ -1,5 +1,6 @@
 Checks: >
   -*-avoid-c-arrays,
+  -*-macro-to-enum,
   -*-vararg,
   -android-cloexec-*,
   -bugprone-easily-swappable-parameters,

@@ -219,6 +219,7 @@ thread_dep = dependency('threads')
 serd_dep = dependency(
   'serd-0',
   fallback: ['serd', 'serd_dep'],
+  include_type: 'system',
   version: '>= 0.30.4',
 )
 
@@ -232,12 +233,14 @@ sord_dep = dependency(
 sratom_dep = dependency(
   'sratom-0',
   fallback: ['sratom', 'sratom_dep'],
+  include_type: 'system',
   version: '>= 0.6.0',
 )
 
 suil_dep = dependency(
   'suil-0',
   fallback: ['suil', 'suil_dep'],
+  include_type: 'system',
   version: '>= 0.10.0',
 )
 
@@ -251,6 +254,7 @@ lv2_dep = dependency(
 lilv_dep = dependency(
   'lilv-0',
   fallback: ['lilv', 'lilv_dep'],
+  include_type: 'system',
   version: '>= 0.24.21',
 )
 

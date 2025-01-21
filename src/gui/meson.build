@@ -31,6 +31,7 @@ gtkmm_dep = dependency(
 ganv_dep = dependency(
   'ganv-1',
   fallback: ['ganv', 'ganv_dep'],
+  include_type: 'system',
   required: get_option('gui'),
   version: '>= 1.5.2',
 )
