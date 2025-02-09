@@ -77,14 +77,14 @@ public:
 
 	/** Serialize an object (graph, block, or port).
 	 *
-	 * @throw std::logic_error
+	 * @throw std::logic_error A serialization hasn't been started.
 	 */
 	virtual void serialise(const std::shared_ptr<const Node>& object,
 	                       Property::Graph context = Property::Graph::DEFAULT);
 
 	/** Serialize an arc.
 	 *
-	 * @throw std::logic_error
+	 * @throw std::logic_error A serialization hasn't been started.
 	 */
 	virtual void serialise_arc(const Sord::Node&                 parent,
 	                           const std::shared_ptr<const Arc>& arc);

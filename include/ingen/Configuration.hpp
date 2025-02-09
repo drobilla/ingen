@@ -82,7 +82,7 @@ public:
 
 	/** Parse a command line.
 	 *
-	 * @throw OptionError
+	 * @throw OptionError An option is unknown or an option value is invalid.
 	 */
 	void parse(int argc, char **argv);
 
