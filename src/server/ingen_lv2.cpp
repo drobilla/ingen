@@ -98,12 +98,16 @@ public:
 	Graphs graphs;
 };
 
+namespace {
+
 inline size_t
 ui_ring_size(SampleCount block_length)
 {
 	return std::max(static_cast<size_t>(8192U),
 	                static_cast<size_t>(block_length) * 16U);
 }
+
+} // namespace
 
 class LV2Driver : public Driver, public ingen::AtomSink
 {
