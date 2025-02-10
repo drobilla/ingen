@@ -28,4 +28,5 @@ Checks: >
   -misc-no-recursion,
   -misc-unused-parameters,
   -readability-function-cognitive-complexity,
+  -readability-static-accessed-through-instance,
 InheritParentConfig: true
