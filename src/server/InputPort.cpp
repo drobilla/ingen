@@ -34,6 +34,7 @@
 #include <raul/Array.hpp>
 #include <raul/Maid.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <cstdlib>
 #include <memory>
@@ -231,9 +232,7 @@ InputPort::next_value_offset(SampleCount offset, SampleCount end) const
 
 	for (const auto& arc : _arcs) {
 		const SampleCount o = arc.tail()->next_value_offset(offset, end);
-		if (o < earliest) {
-			earliest = o;
-		}
+		earliest = std::min(o, earliest);
 	}
 
 	return earliest;

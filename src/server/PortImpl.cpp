@@ -537,9 +537,7 @@ PortImpl::next_value_offset(SampleCount offset, SampleCount end) const
 	SampleCount earliest = end;
 	for (uint32_t v = 0; v < _poly; ++v) {
 		const SampleCount o = _voices->at(v).buffer->next_value_offset(offset, end);
-		if (o < earliest) {
-			earliest = o;
-		}
+        earliest = std::min(o, earliest);
 	}
 	return earliest;
 }

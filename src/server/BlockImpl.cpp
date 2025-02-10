@@ -28,6 +28,7 @@
 #include <raul/Array.hpp>
 #include <raul/Symbol.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <initializer_list>
@@ -245,9 +246,7 @@ BlockImpl::process(RunContext& ctx)
 			if (port->type() == PortType::CONTROL && port->is_input()) {
 				const SampleCount o = port->next_value_offset(
 					offset, ctx.nframes());
-				if (o < chunk_end) {
-					chunk_end = o;
-				}
+				chunk_end = std::min(o, chunk_end);
 			}
 		}
 

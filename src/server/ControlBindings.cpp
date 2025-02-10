@@ -38,6 +38,7 @@
 
 #include <boost/intrusive/bstree.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <string>
@@ -316,13 +317,7 @@ ControlBindings::port_value_to_control(RunContext& ctx,
 	const float value  = value_atom.get<float>();
 	float       normal = (value - min) / (max - min);
 
-	if (normal < 0.0f) {
-		normal = 0.0f;
-	}
-
-	if (normal > 1.0f) {
-		normal = 1.0f;
-	}
+	normal = std::max(0.0f, std::min(1.0f, normal));
 
 	if (port->is_logarithmic()) {
 		normal = logf((normal * (static_cast<float>(M_E) - 1.0f)) + 1.0f);
