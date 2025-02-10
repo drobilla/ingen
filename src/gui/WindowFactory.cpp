@@ -224,7 +224,7 @@ WindowFactory::present_load_plugin(
 		int width  = 0;
 		int height = 0;
 		w->second->get_size(width, height);
-		_load_plugin_win->set_default_size(width - width / 8, height / 2);
+		_load_plugin_win->set_default_size(width - (width / 8), height / 2);
 	}
 	_load_plugin_win->set_title(
 		std::string("Load Plugin - ") + graph->path() + " - Ingen");

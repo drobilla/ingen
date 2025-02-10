@@ -476,8 +476,8 @@ ConnectWindow::gtk_callback()
 
 	// Show if attempted connection goes on for a noticeable amount of time
 	if (!is_visible()) {
-		const float ms_since_start = (now.tv_sec - start.tv_sec) * 1000.0f +
-			(now.tv_usec - start.tv_usec) * 0.001f;
+		const float ms_since_start = ((now.tv_sec - start.tv_sec) * 1000.0f) +
+		                             ((now.tv_usec - start.tv_usec) * 0.001f);
 		if (ms_since_start > 500) {
 			present();
 			set_connecting_widget_states();
@@ -485,8 +485,8 @@ ConnectWindow::gtk_callback()
 	}
 
 	if (_connect_stage == 0) {
-		const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
-			(now.tv_usec - last.tv_usec) * 0.001f;
+		const float ms_since_last = ((now.tv_sec - last.tv_sec) * 1000.0f) +
+		                            ((now.tv_usec - last.tv_usec) * 0.001f);
 		if (ms_since_last >= 250) {
 			last = now;
 			if (_mode == Mode::INTERNAL) {
@@ -515,8 +515,8 @@ ConnectWindow::gtk_callback()
 		if (_attached) {
 			next_stage();
 		} else {
-			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
-				(now.tv_usec - last.tv_usec) * 0.001f;
+			const float ms_since_last = ((now.tv_sec - last.tv_sec) * 1000.0f) +
+			                            ((now.tv_usec - last.tv_usec) * 0.001f);
 			if (attempts > 10) {
 				error("Failed to ping engine");
 				_connect_stage = -1;

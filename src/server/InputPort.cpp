@@ -177,7 +177,7 @@ InputPort::pre_run(RunContext& ctx)
 {
 	if ((_user_buffer || !_arcs.empty()) && !direct_connect()) {
 		const uint32_t src_poly   = max_tail_poly(ctx);
-		const uint32_t max_n_srcs = _arcs.size() * src_poly + 1;
+		const uint32_t max_n_srcs = (_arcs.size() * src_poly) + 1;
 
 		for (uint32_t v = 0; v < _poly; ++v) {
 			if (!buffer(v)->get<void>()) {

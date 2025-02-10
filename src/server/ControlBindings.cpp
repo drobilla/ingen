@@ -296,7 +296,7 @@ ControlBindings::control_to_port_value(RunContext&     ctx,
 	float max = 1.0f;
 	get_range(ctx, port, &min, &max);
 
-	return normal * (max - min) + min;
+	return (normal * (max - min)) + min;
 }
 
 int16_t
@@ -325,7 +325,7 @@ ControlBindings::port_value_to_control(RunContext& ctx,
 	}
 
 	if (port->is_logarithmic()) {
-		normal = logf(normal * (static_cast<float>(M_E) - 1.0f) + 1.0f);
+		normal = logf((normal * (static_cast<float>(M_E) - 1.0f)) + 1.0f);
 	}
 
 	switch (type) {

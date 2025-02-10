@@ -172,7 +172,7 @@ ControllerNode::control(RunContext& ctx, uint8_t control_num, uint8_t val, Frame
 		}
 		const Sample min = logf(min_port_val + 1 + log_offset);
 		const Sample max = logf(max_port_val + 1 + log_offset);
-		scaled_value = expf(nval * (max - min) + min) - 1 - log_offset;
+		scaled_value = expf((nval * (max - min)) + min) - 1 - log_offset;
 	} else {
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}

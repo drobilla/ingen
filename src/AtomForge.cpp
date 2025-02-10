@@ -107,7 +107,7 @@ AtomForge::deref(const intptr_t ref)
 	   only dereference references to aligned atoms. */
 	LV2_Atom* const ptr = _buf.get();
 	assert((ref - 1) % sizeof(LV2_Atom) == 0);
-	return static_cast<LV2_Atom*>(ptr + (ref - 1) / sizeof(LV2_Atom));
+	return static_cast<LV2_Atom*>(ptr + ((ref - 1) / sizeof(LV2_Atom)));
 
 	// Alternatively:
 	// return (LV2_Atom*)((uint8_t*)_buf.get() + ref - 1);
