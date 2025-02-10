@@ -53,6 +53,8 @@ Resource::add_property(const URI& uri, const Atom& value, Graph ctx)
 const Atom&
 Resource::set_property(const URI& uri, const Atom& value, Resource::Graph ctx)
 {
+	assert(uri != _uris.ingen_activity); // Always ephemeral
+
 	// Erase existing property in this context
 	for (auto i = _properties.find(uri);
 	     (i != _properties.end()) && (i->first == uri);) {
@@ -66,16 +68,10 @@ Resource::set_property(const URI& uri, const Atom& value, Resource::Graph ctx)
 		i = next;
 	}
 
-	if (uri != _uris.ingen_activity) {
-		// Insert new property
-		const Atom& v = _properties.emplace(uri, Property(value, ctx))->second;
-		on_property(uri, v);
-		return v;
-	}
-
-	// Announce ephemeral activity, but do not store
-	on_property(uri, value);
-	return value;
+	// Insert new property
+	const Atom& v = _properties.emplace(uri, Property(value, ctx))->second;
+	on_property(uri, v);
+	return v;
 }
 
 const Atom&
