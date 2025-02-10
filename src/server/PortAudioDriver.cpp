@@ -34,10 +34,6 @@
 #include <cstring>
 #include <string>
 
-namespace ingen {
-class URI;
-} // namespace ingen
-
 namespace ingen::server {
 
 static bool

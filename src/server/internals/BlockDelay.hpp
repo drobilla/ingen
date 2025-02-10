@@ -36,7 +36,6 @@ class GraphImpl;
 class InputPort;
 class InternalPlugin;
 class OutputPort;
-class RunContext;
 
 namespace internals {
 

@@ -43,6 +43,7 @@
 #include <gtkmm/combobox.h>
 #include <gtkmm/enums.h>
 #include <gtkmm/messagedialog.h>
+#include <gtkmm/object.h>
 #include <gtkmm/treeiter.h>
 #include <gtkmm/treepath.h>
 #include <gtkmm/treeview.h>

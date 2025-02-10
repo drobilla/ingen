@@ -34,8 +34,6 @@
 namespace ingen {
 
 class Log;
-class Node;
-class World;
 
 /** URI to integer map and implementation of LV2 URID extension.
  * @ingroup IngenShared

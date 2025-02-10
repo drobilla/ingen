@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_NODEIMPL_HPP
 
 #include <ingen/Node.hpp>
-#include <ingen/URI.hpp>
 #include <ingen/paths.hpp>
 #include <raul/Path.hpp>
 #include <raul/Symbol.hpp>
@@ -27,7 +26,6 @@
 
 namespace ingen {
 
-class Atom;
 class URIs;
 
 namespace server {

@@ -33,10 +33,6 @@
 #include <initializer_list>
 #include <string>
 
-namespace ingen {
-class Resource;
-} // namespace ingen
-
 namespace ingen::server {
 
 BlockImpl::BlockImpl(PluginImpl*         plugin,

@@ -37,7 +37,6 @@ class CompiledGraph;
 class Engine;
 class GraphImpl;
 class InputPort;
-class PreProcessContext;
 class RunContext;
 
 namespace events {

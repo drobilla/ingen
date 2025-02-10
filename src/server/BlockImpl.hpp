@@ -45,8 +45,6 @@ namespace ingen {
 
 enum class PortType;
 
-class Node;
-
 namespace server {
 
 class BufferFactory;

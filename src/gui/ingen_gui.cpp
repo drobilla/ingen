@@ -28,6 +28,7 @@
 #include <glibmm/thread.h>
 
 #include <memory>
+#include <string>
 
 namespace ingen::gui {
 

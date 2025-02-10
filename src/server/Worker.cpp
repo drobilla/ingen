@@ -30,11 +30,7 @@
 #include <cstdlib>
 #include <memory>
 
-namespace ingen {
-
-class World;
-
-namespace server {
+namespace ingen::server {
 
 /// A message in the Worker::_requests ring
 struct MessageHeader {
@@ -166,5 +162,4 @@ Worker::run()
 	}
 }
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server

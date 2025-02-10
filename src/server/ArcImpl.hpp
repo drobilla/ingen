@@ -26,10 +26,6 @@
 
 #include <cstdint>
 
-namespace raul {
-class Path;
-} // namespace raul
-
 namespace ingen::server {
 
 class InputPort;

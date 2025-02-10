@@ -72,6 +72,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdarg>
 #include <cstdio>
 #include <exception>
 #include <iostream>

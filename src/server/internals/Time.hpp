@@ -34,7 +34,6 @@ class BufferFactory;
 class GraphImpl;
 class InternalPlugin;
 class OutputPort;
-class RunContext;
 
 namespace internals {
 

@@ -31,11 +31,6 @@ class URIs;
 
 namespace server {
 
-class BlockImpl;
-class BufferFactory;
-class Engine;
-class GraphImpl;
-
 /** Implementation of an Internal plugin.
  */
 class InternalPlugin : public PluginImpl

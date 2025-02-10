@@ -18,7 +18,6 @@
 #define INGEN_CLIENT_PORTMODEL_HPP
 
 #include <ingen/Node.hpp>
-#include <ingen/URI.hpp>
 #include <ingen/URIs.hpp>
 #include <ingen/client/ObjectModel.hpp>
 #include <ingen/client/signal.hpp>
@@ -26,7 +25,6 @@
 #include <raul/Path.hpp>
 
 #include <cstdint>
-#include <memory>
 #include <string>
 
 namespace ingen {

@@ -32,8 +32,6 @@ struct Undo;
 namespace server {
 
 class Engine;
-class PreProcessContext;
-class RunContext;
 
 namespace events {
 

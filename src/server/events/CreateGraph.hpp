@@ -37,8 +37,6 @@ namespace server {
 class CompiledGraph;
 class Engine;
 class GraphImpl;
-class PreProcessContext;
-class RunContext;
 
 namespace events {
 

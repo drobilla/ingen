@@ -37,7 +37,6 @@
 #include <ingen/URIMap.hpp>
 #include <ingen/URIs.hpp>
 #include <ingen/World.hpp>
-#include <ingen/memory.hpp>
 #include <lv2/atom/atom.h>
 #include <lv2/atom/forge.h>
 #include <lv2/atom/util.h>

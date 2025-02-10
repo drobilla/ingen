@@ -43,7 +43,6 @@ class Atom;
 namespace server {
 
 class GraphImpl;
-class RunContext;
 
 InternalBlock::InternalBlock(PluginImpl*         plugin,
                              const raul::Symbol& symbol,

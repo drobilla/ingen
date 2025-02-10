@@ -39,18 +39,12 @@
 #include <memory>
 #include <string>
 
-namespace raul {
-class Path;
-} // namespace raul
-
 namespace ingen {
 
 class Atom;
 
 namespace server {
 
-class Buffer;
-class DuplexPort;
 class Engine;
 class FrameTimer;
 class RunContext;

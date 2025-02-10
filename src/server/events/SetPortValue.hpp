@@ -35,7 +35,6 @@ namespace server {
 
 class Engine;
 class PortImpl;
-class PreProcessContext;
 class RunContext;
 
 namespace events {

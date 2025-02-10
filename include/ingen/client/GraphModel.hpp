@@ -36,7 +36,6 @@ class URIs;
 namespace client {
 
 class ArcModel;
-class ObjectModel;
 class PortModel;
 
 /** Client's model of a graph.

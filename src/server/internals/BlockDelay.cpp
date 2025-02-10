@@ -33,11 +33,7 @@
 
 #include <memory>
 
-namespace ingen::server {
-
-class RunContext;
-
-namespace internals {
+namespace ingen::server::internals {
 
 InternalPlugin* BlockDelayNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
@@ -90,5 +86,4 @@ BlockDelayNode::run(RunContext& ctx)
 	_buffer->copy(ctx, _in_port->buffer(0).get());
 }
 
-} // namespace internals
-} // namespace ingen::server
+} // namespace ingen::server::internals

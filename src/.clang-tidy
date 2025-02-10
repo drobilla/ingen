@@ -3,6 +3,7 @@ Checks: >
   -*-macro-to-enum,
   -*-vararg,
   -android-cloexec-*,
+  -boost-use-ranges,
   -bugprone-easily-swappable-parameters,
   -bugprone-multi-level-implicit-pointer-conversion,
   -bugprone-unchecked-optional-access,

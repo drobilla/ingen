@@ -41,8 +41,6 @@ class DuplexPort;
 class Engine;
 class EnginePort;
 class GraphImpl;
-class PreProcessContext;
-class RunContext;
 
 namespace events {
 

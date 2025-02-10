@@ -21,18 +21,12 @@
 
 #include <ingen/URI.hpp>
 #include <lilv/lilv.h>
-#include <raul/Symbol.hpp>
 
 namespace ingen {
 
 class World;
 
 namespace server {
-
-class BlockImpl;
-class BufferFactory;
-class Engine;
-class GraphImpl;
 
 /** Implementation of an LV2 plugin (loaded shared library).
  */

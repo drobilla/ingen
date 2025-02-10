@@ -23,8 +23,6 @@
 #include "types.hpp"
 
 #include <ingen/LV2Features.hpp>
-#include <ingen/Properties.hpp>
-#include <ingen/URI.hpp>
 #include <lilv/lilv.h>
 #include <lv2/worker/worker.h>
 #include <raul/Array.hpp>
@@ -41,7 +39,6 @@
 #include <filesystem>
 #include <memory>
 #include <mutex>
-#include <optional>
 
 namespace raul {
 class Symbol;
@@ -49,18 +46,14 @@ class Symbol;
 
 namespace ingen {
 
-class Resource;
 class URIs;
 class World;
 
 namespace server {
 
 class BufferFactory;
-class Engine;
 class GraphImpl;
 class LV2Plugin;
-class RunContext;
-class Worker;
 
 /** An instance of a LV2 plugin.
  *

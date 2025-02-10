@@ -32,10 +32,6 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-class URI;
-} // namespace ingen
-
 namespace ingen::client {
 
 ObjectModel::ObjectModel(URIs& uris, const raul::Path& path)

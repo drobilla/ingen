@@ -72,6 +72,7 @@
 #include <limits>
 #include <map>
 #include <memory>
+#include <string>
 #include <thread>
 #include <utility>
 

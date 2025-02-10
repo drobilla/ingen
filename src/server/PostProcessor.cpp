@@ -23,8 +23,6 @@
 
 namespace ingen::server {
 
-class PreProcessContext;
-
 class Sentinel : public Event
 {
 public:

@@ -38,8 +38,6 @@ class TextView;
 
 namespace ingen::gui {
 
-class App;
-
 /** Messages Window.
  *
  * Loaded from XML as a derived object.

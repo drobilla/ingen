@@ -35,8 +35,6 @@ namespace server {
 
 class Engine;
 class PluginImpl;
-class PreProcessContext;
-class RunContext;
 
 namespace events {
 

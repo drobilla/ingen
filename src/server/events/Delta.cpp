@@ -58,11 +58,7 @@
 #include <utility>
 #include <vector>
 
-namespace ingen::server {
-
-class PreProcessContext;
-
-namespace events {
+namespace ingen::server::events {
 
 Delta::Delta(Engine&                           engine,
              const std::shared_ptr<Interface>& client,
@@ -674,5 +670,4 @@ Delta::get_execution() const
 	return _block ? Execution::ATOMIC : Execution::NORMAL;
 }
 
-} // namespace events
-} // namespace ingen::server
+} // namespace ingen::server::events

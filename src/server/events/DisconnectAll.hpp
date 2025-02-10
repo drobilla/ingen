@@ -40,8 +40,6 @@ class CompiledGraph;
 class Engine;
 class GraphImpl;
 class PortImpl;
-class PreProcessContext;
-class RunContext;
 
 namespace events {
 

@@ -27,6 +27,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <memory>
 
 namespace ingen {
 

@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <memory>
+#include <string>
 
 namespace ingen::server {
 

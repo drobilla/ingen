@@ -21,7 +21,6 @@
 #include "EnginePort.hpp"
 #include "types.hpp"
 
-#include <ingen/URI.hpp>
 #include <raul/Semaphore.hpp>
 
 #include <boost/intrusive/options.hpp>
@@ -32,18 +31,8 @@
 #include <cstdint>
 #include <memory>
 
-namespace raul {
-class Path;
-} // namespace raul
+namespace ingen::server {
 
-namespace ingen {
-
-class Atom;
-
-namespace server {
-
-class Buffer;
-class DuplexPort;
 class Engine;
 class FrameTimer;
 class RunContext;
@@ -129,7 +118,6 @@ protected:
 	bool                        _is_activated{false};
 };
 
-} // namespace server
-} // namespace ingen
+} // namespace ingen::server
 
 #endif // INGEN_ENGINE_PORTAUDIODRIVER_HPP

@@ -22,7 +22,6 @@
 #define INGEN_CLIENT_OBJECTMODEL_HPP
 
 #include <ingen/Node.hpp>
-#include <ingen/URI.hpp>
 #include <ingen/URIs.hpp>
 #include <ingen/client/signal.hpp>
 #include <ingen/ingen.h>
@@ -34,6 +33,7 @@
 namespace ingen {
 
 class Atom;
+class URI;
 
 namespace client {
 

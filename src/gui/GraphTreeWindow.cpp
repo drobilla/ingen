@@ -47,6 +47,7 @@
 #include <cassert>
 #include <cstdint>
 #include <memory>
+#include <string>
 
 namespace ingen {
 

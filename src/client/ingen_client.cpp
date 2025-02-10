@@ -16,18 +16,13 @@
 
 #include <ingen/Module.hpp>
 
-namespace ingen {
-
-class World;
-
-namespace client {
+namespace ingen::client {
 
 struct ClientModule : public ingen::Module {
 	void load(ingen::World& world) override {}
 };
 
-} // namespace client
-} // namespace ingen
+} // namespace ingen::client
 
 extern "C" {
 

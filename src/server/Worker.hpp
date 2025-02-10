@@ -30,8 +30,6 @@
 namespace ingen {
 
 class Log;
-class Node;
-class World;
 
 namespace server {
 

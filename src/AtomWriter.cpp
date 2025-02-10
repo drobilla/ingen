@@ -67,6 +67,7 @@
 #include <cassert>
 #include <cstdint>
 #include <map>
+#include <string>
 #include <utility>
 #include <variant>
 

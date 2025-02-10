@@ -34,6 +34,8 @@
 #include <utility>
 #include <vector>
 
+// IWYU pragma: no_include <iterator>
+
 namespace ingen {
 
 class Interface;
@@ -45,8 +47,6 @@ class CompiledGraph;
 class DuplexPort;
 class Engine;
 class EnginePort;
-class PreProcessContext;
-class RunContext;
 
 namespace events {
 

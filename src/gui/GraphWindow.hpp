@@ -44,8 +44,6 @@ class PortModel;
 
 namespace gui {
 
-class App;
-
 /** A window for a graph.
  *
  * \ingroup GUI

@@ -26,7 +26,6 @@
 
 #include <cstdarg>
 #include <functional>
-#include <memory>
 #include <string>
 #include <utility>
 
@@ -34,7 +33,6 @@ namespace ingen {
 
 class Node;
 class URIs;
-class World;
 
 class INGEN_API Log
 {

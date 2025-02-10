@@ -50,11 +50,7 @@
 #include <string>
 #include <string_view>
 
-namespace ingen::server {
-
-class RunContext;
-
-namespace events {
+namespace ingen::server::events {
 
 Delete::Delete(Engine&                           engine,
                const std::shared_ptr<Interface>& client,
@@ -231,5 +227,4 @@ Delete::undo(Interface& target)
 	}
 }
 
-} // namespace events
-} // namespace ingen::server
+} // namespace ingen::server::events

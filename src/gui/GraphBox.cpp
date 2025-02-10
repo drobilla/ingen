@@ -50,6 +50,7 @@
 #include <raul/Symbol.hpp>
 
 #include <gdk/gdk.h>
+#include <glib.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
 #include <glibmm/fileutils.h>

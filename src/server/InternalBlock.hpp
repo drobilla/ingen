@@ -26,10 +26,8 @@ class Symbol;
 
 namespace ingen::server {
 
-class Engine;
 class GraphImpl;
 class PluginImpl;
-class RunContext;
 
 /** An internal Block implemented inside Ingen.
  *

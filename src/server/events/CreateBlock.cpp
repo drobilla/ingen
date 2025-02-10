@@ -45,13 +45,10 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <utility>
 
-namespace ingen::server {
-
-class RunContext;
-
-namespace events {
+namespace ingen::server::events {
 
 CreateBlock::CreateBlock(Engine&                           engine,
                          const std::shared_ptr<Interface>& client,
@@ -199,5 +196,4 @@ CreateBlock::undo(Interface& target)
 	target.del(_block->uri());
 }
 
-} // namespace events
-} // namespace ingen::server
+} // namespace ingen::server::events

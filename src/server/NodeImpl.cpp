@@ -28,10 +28,6 @@
 #include <map>
 #include <utility>
 
-namespace ingen {
-class URI;
-} // namespace ingen
-
 namespace ingen::server {
 
 NodeImpl::NodeImpl(const ingen::URIs&  uris,

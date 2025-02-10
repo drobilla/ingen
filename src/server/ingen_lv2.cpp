@@ -76,11 +76,7 @@
 
 // #define CLEAR_GRAPH_ON_RESTORE 1
 
-namespace ingen {
-
-class Atom;
-
-namespace server {
+namespace ingen::server {
 
 class GraphImpl;
 
@@ -857,8 +853,8 @@ lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 }
 
 } // extern "C"
-} // namespace server
-} // namespace ingen
+
+} // namespace ingen::server
 
 extern "C" {
 

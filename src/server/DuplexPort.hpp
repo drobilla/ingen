@@ -22,7 +22,6 @@
 #include "server.h"
 #include "types.hpp"
 
-#include <ingen/URI.hpp>
 #include <lv2/urid/urid.h>
 #include <raul/Maid.hpp>
 
@@ -40,14 +39,12 @@ namespace ingen {
 enum class PortType;
 
 class Atom;
-class Properties;
 
 namespace server {
 
 class BufferFactory;
 class Engine;
 class GraphImpl;
-class RunContext;
 
 /** A duplex Port (both an input and output port on a Graph)
  *

@@ -39,10 +39,6 @@
 #include <string>
 #include <utility>
 
-namespace ingen {
-class Node;
-} // namespace ingen
-
 namespace ingen::client {
 
 BlockModel::BlockModel(URIs&                               uris,

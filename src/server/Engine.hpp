@@ -19,7 +19,6 @@
 
 #include "Event.hpp"
 #include "Load.hpp"
-#include "RunContext.hpp"
 #include "server.h"
 #include "types.hpp"
 
@@ -61,6 +60,7 @@ class GraphImpl;
 class LV2Options;
 class PostProcessor;
 class PreProcessor;
+class RunContext;
 class SocketListener;
 class Task;
 class UndoStack;

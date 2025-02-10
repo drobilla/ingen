@@ -39,6 +39,7 @@
 #include <glibmm/containers.h>
 #include <glibmm/propertyproxy.h>
 #include <glibmm/ustring.h>
+#include <gtk/gtk.h>
 #include <gtkmm/alignment.h>
 #include <gtkmm/bin.h>
 #include <gtkmm/box.h>
