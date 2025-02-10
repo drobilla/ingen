@@ -130,7 +130,7 @@ run(int argc, char** argv)
 	if (ftell(log.get()) == 0) {
 		fprintf(log.get(), "# n_threads\trun_time\treal_time\n");
 	}
-	fprintf(log.get(), "%u\t%f\t%f\n",
+	fprintf(log.get(), "%d\t%f\t%f\n",
 	        world->conf().option("threads").get<int32_t>(),
 	        static_cast<double>(t_end - t_start) / 1000000.0,
 	        (n_test_frames / 48000.0));
