@@ -158,7 +158,7 @@ ClashAvoider::adjust_name(const raul::Path&  old_path,
 {
 	const auto name_suffix_start = numeric_suffix_start(name);
 	if (!name_suffix_start) {
-		return name; // No numeric suffix, just re-use old label
+		return name; // No numeric suffix, just reuse old label
 	}
 
 	const auto name_suffix      = atoi(name.c_str() + *name_suffix_start);

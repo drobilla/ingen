@@ -96,7 +96,7 @@ public:
 
 	/** Like `get_buffers`, but for the pre-process thread.
 	 *
-	 * This uses the "current" number of arcs fromthe perspective of the
+	 * This uses the "current" number of arcs from the perspective of the
 	 * pre-process thread to allocate buffers for application of a
 	 * connection/disconnection/etc in the next process cycle.
 	 */

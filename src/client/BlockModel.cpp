@@ -226,7 +226,7 @@ BlockModel::port_value_range(const std::shared_ptr<const PortModel>& port,
 
 	default_port_value_range(port, min, max);
 
-	// Possibly overriden
+	// Possibly overridden
 	const Atom& min_atom = port->get_property(_uris.lv2_minimum);
 	const Atom& max_atom = port->get_property(_uris.lv2_maximum);
 	if (min_atom.type() == _uris.forge.Float) {

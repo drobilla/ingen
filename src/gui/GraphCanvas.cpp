@@ -253,7 +253,7 @@ GraphCanvas::build_menus()
 		_menu->reorder_child(*internal_menu_item, 4);
 	}
 
-	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
+	// Build skeleton LV2 plugin class hierarchy for 'Plugin' menu
 	if (_plugin_menu) {
 		_plugin_menu->clear();
 	} else {
@@ -269,7 +269,7 @@ GraphCanvas::build_menus()
 			sigc::mem_fun(this, &GraphCanvas::load_plugin));
 	}
 
-	// Add known plugins to menu heirarchy
+	// Add known plugins to menu hierarchy
 	auto plugins = _app.store()->plugins();
 	for (const auto& p : *plugins) {
 		add_plugin(p.second);

@@ -50,7 +50,7 @@ class App;
 
 /** Thread for loading graph files.
  *
- * This is a seperate thread so it can send all the loading message without
+ * This is a separate thread so it can send all the loading message without
  * blocking everything else, so the app can respond to the incoming events
  * caused as a result of the graph loading, while the graph loads.
  *

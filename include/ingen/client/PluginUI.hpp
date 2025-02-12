@@ -61,7 +61,7 @@ public:
 
 	/** Instantiate the UI.
 	 *
-	 * If true is returned, instantiation was successfull and the widget can be
+	 * If true is returned, instantiation was successful and the widget can be
 	 * obtained with get_widget(). Otherwise, instantiation failed, so there is
 	 * no widget and the UI can not be used.
 	 */

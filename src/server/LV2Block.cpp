@@ -226,7 +226,7 @@ LV2Block::apply_poly(RunContext& ctx, uint32_t poly)
 
 /** Instantiate self from LV2 plugin descriptor.
  *
- * Implemented as a seperate function (rather than in the constructor) to
+ * Implemented as a separate function (rather than in the constructor) to
  * allow graceful error-catching of broken plugins.
  *
  * Returns whether or not plugin was successfully instantiated.  If return
