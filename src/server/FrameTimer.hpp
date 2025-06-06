@@ -72,7 +72,7 @@ public:
 
 		const double delta = static_cast<double>(usec) - t0;
 		const double period = t1 - t0;
-		return n0 + std::round(delta / period * nper);
+		return n0 + static_cast<uint64_t>(std::round(delta / period * nper));
 	}
 
 private:

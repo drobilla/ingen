@@ -56,7 +56,7 @@ public:
 	             SampleCount block_length,
 	             uint32_t    seq_size)
 		: _engine(engine)
-		, _sample_rate(sample_rate)
+		, _sample_rate(static_cast<SampleCount>(sample_rate))
 		, _block_length(block_length)
 		, _seq_size(seq_size)
 	{}

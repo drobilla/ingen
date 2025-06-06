@@ -115,7 +115,7 @@ public:
 	LV2Driver(Engine&     engine,
 	          SampleCount block_length,
 	          uint32_t    seq_size,
-	          SampleCount sample_rate)
+	          SampleRate  sample_rate)
 		: _engine(engine)
 		, _main_sem(0)
 		, _reader(engine.world().uri_map(),
@@ -395,7 +395,7 @@ public:
 
 	SampleCount block_length() const override { return _block_length; }
 	uint32_t    seq_size()     const override { return _seq_size; }
-	SampleCount sample_rate()  const override { return _sample_rate; }
+	SampleRate  sample_rate()  const override { return _sample_rate; }
 	SampleCount frame_time()   const override { return _frame_time; }
 
 	AtomReader& reader() { return _reader; }
@@ -419,7 +419,7 @@ private:
 	uint32_t         _notify_capacity{0};
 	SampleCount      _block_length;
 	uint32_t         _seq_size;
-	SampleCount      _sample_rate;
+	SampleRate       _sample_rate;
 	SampleCount      _frame_time{0};
 	raul::Semaphore  _to_ui_overflow_sem{0};
 	bool             _to_ui_overflow{false};
@@ -587,8 +587,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 	ThreadManager::single_threaded = true;
 
-	auto* driver = new LV2Driver(
-		*engine, block_length, static_cast<uint32_t>(seq_size), rate);
+	auto* driver = new LV2Driver(*engine,
+	                             block_length,
+	                             static_cast<uint32_t>(seq_size),
+	                             static_cast<SampleRate>(rate));
+
 	engine->set_driver(std::shared_ptr<Driver>(driver));
 
 	engine->activate();

@@ -436,7 +436,7 @@ PropertiesWindow::on_show()
 
 	const Gtk::Requisition& req = _table->size_request();
 
-	width   = 1.2 * std::max(width, req.width + 128);
+	width   = static_cast<int>(1.2 * std::max(width, req.width + 128));
 	height += req.height;
 
 	set_default_size(width + WIN_PAD, height + WIN_PAD);

@@ -86,7 +86,7 @@ PortAudioDriver::attach()
 	   PortAudio.  How such a glaring useless flaw exists in such a widespread
 	   library is beyond me... */
 
-	_sample_rate = in_dev->defaultSampleRate;
+	_sample_rate = static_cast<uint32_t>(in_dev->defaultSampleRate);
 
 	_timer = std::make_unique<FrameTimer>(_block_length, _sample_rate);
 

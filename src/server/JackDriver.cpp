@@ -448,7 +448,7 @@ JackDriver::append_time_events(RunContext& ctx, Buffer& buffer)
 		lv2_atom_forge_key(&_forge, uris.time_bar);
 		lv2_atom_forge_long(&_forge, pos->bar - 1);
 		lv2_atom_forge_key(&_forge, uris.time_beatUnit);
-		lv2_atom_forge_int(&_forge, pos->beat_type);
+		lv2_atom_forge_int(&_forge, static_cast<int32_t>(pos->beat_type));
 		lv2_atom_forge_key(&_forge, uris.time_beatsPerBar);
 		lv2_atom_forge_float(&_forge, pos->beats_per_bar);
 		lv2_atom_forge_key(&_forge, uris.time_beatsPerMinute);

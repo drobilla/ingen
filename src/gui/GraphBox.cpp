@@ -907,8 +907,9 @@ GraphBox::event_doc_pane_toggled()
 	if (_menu_show_doc_pane->get_active()) {
 		_doc_scrolledwindow->show_all();
 		if (!_has_shown_documentation) {
-			const Gtk::Allocation allocation = get_allocation();
-			_doc_paned->set_position(allocation.get_width() / 1.61803399);
+			const auto allocation = get_allocation();
+			const auto pos = static_cast<int>(allocation.get_width() / 1.61803399);
+			_doc_paned->set_position(pos);
 			_has_shown_documentation = true;
 		}
 	} else {

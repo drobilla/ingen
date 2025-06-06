@@ -44,7 +44,7 @@
 namespace ingen::server {
 namespace {
 
-const uint32_t monitor_rate = 25.0; // Hz
+const uint32_t monitor_rate = 25; // Hz
 
 /** The length of time between monitor updates in frames */
 inline uint32_t
@@ -183,9 +183,9 @@ PortImpl::activate(BufferFactory& bufs)
 	   monitor period, to spread the load out over time.  Otherwise, every
 	   port would try to send an update at exactly the same time, every time.
 	*/
-	const double   srate  = bufs.engine().sample_rate();
-	const uint32_t period = srate / monitor_rate;
-	_frames_since_monitor = bufs.engine().frand() * period;
+	const auto srate      = bufs.engine().sample_rate();
+	const auto period     = srate / static_cast<float>(monitor_rate);
+	_frames_since_monitor = static_cast<uint32_t>(bufs.engine().frand() * period);
 	_monitor_value        = 0.0f;
 	_peak                 = 0.0f;
 

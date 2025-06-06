@@ -785,8 +785,8 @@ GraphCanvas::paste()
 	int scroll_y       = 0;
 	widget().get_pointer(widget_point_x, widget_point_y);
 	get_scroll_offsets(scroll_x, scroll_y);
-	const int paste_x = widget_point_x + scroll_x + (20.0f * _paste_count);
-	const int paste_y = widget_point_y + scroll_y + (20.0f * _paste_count);
+	const int paste_x = widget_point_x + scroll_x + (20 * _paste_count);
+	const int paste_y = widget_point_y + scroll_y + (20 * _paste_count);
 
 	_app.interface()->bundle_begin();
 
