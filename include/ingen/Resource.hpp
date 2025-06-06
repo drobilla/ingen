@@ -60,9 +60,9 @@ public:
 
 	static URI graph_to_uri(Graph g) {
 		switch (g) {
+		case Graph::DEFAULT:  return URI(INGEN_NS "defaultContext");
 		case Graph::EXTERNAL: return URI(INGEN_NS "externalContext");
 		case Graph::INTERNAL: return URI(INGEN_NS "internalContext");
-		default:              return URI(INGEN_NS "defaultContext");
 		}
 	}
 

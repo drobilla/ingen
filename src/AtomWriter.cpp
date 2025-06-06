@@ -182,6 +182,8 @@ void
 AtomWriter::forge_context(Resource::Graph ctx)
 {
 	switch (ctx) {
+	case Resource::Graph::DEFAULT:
+		break;
 	case Resource::Graph::EXTERNAL:
 		lv2_atom_forge_key(&_forge, _uris.patch_context);
 		forge_uri(_uris.ingen_externalContext);
@@ -190,7 +192,6 @@ AtomWriter::forge_context(Resource::Graph ctx)
 		lv2_atom_forge_key(&_forge, _uris.patch_context);
 		forge_uri(_uris.ingen_internalContext);
 		break;
-	default: break;
 	}
 }
 
