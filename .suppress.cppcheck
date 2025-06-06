@@ -2,15 +2,13 @@ constParameterPointer
 constParameterReference
 constVariablePointer
 constVariableReference
-cstyleCast
 duplInheritedMember
 duplicateExpression
 knownConditionTrueFalse
 missingReturn
 noExplicitConstructor
 normalCheckLevelMaxBranches
+nullPointerOutOfMemory
 shadowFunction
-unsafeClassCanLeak
 useStlAlgorithm
-uselessOverride
 virtualCallInConstructor
