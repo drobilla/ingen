@@ -107,7 +107,7 @@ SocketReader::c_recv(void* buf, size_t size, size_t nmemb, void* stream)
 int
 SocketReader::c_err(void* stream)
 {
-	auto* self = static_cast<SocketReader*>(stream);
+	const auto* self = static_cast<SocketReader*>(stream);
 
 	return self->_socket_error;
 }

@@ -65,17 +65,6 @@ public:
 
 	void run(RunContext& ctx) override;
 
-	void note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time);
-	void note_off(RunContext& ctx, uint8_t note_num, FrameTime time);
-	void all_notes_off(RunContext& ctx, FrameTime time);
-
-	void sustain_on(RunContext& ctx, FrameTime time);
-	void sustain_off(RunContext& ctx, FrameTime time);
-
-	void bend(RunContext& ctx, FrameTime time, float amount);
-	void note_pressure(RunContext& ctx, FrameTime time, uint8_t note_num, float amount);
-	void channel_pressure(RunContext& ctx, FrameTime time, float amount);
-
 	static InternalPlugin* internal_plugin(URIs& uris);
 
 private:
@@ -99,7 +88,27 @@ private:
 
 	using Voices = raul::Array<Voice>;
 
-	void free_voice(RunContext& ctx, uint32_t voice, FrameTime time);
+	void note_on(const RunContext& ctx,
+	             uint8_t           note_num,
+	             uint8_t           velocity,
+	             FrameTime         time);
+
+	void note_off(const RunContext& ctx, uint8_t note_num, FrameTime time);
+	void all_notes_off(const RunContext& ctx, FrameTime time);
+
+	void sustain_on(const RunContext& ctx, FrameTime time);
+	void sustain_off(const RunContext& ctx, FrameTime time);
+
+	void bend(const RunContext& ctx, FrameTime time, float amount);
+
+	void note_pressure(const RunContext& ctx,
+	                   FrameTime         time,
+	                   uint8_t           note_num,
+	                   float             amount);
+
+	void channel_pressure(const RunContext& ctx, FrameTime time, float amount);
+
+	void free_voice(const RunContext& ctx, uint32_t voice, FrameTime time);
 
 	raul::managed_ptr<Voices> _voices;
 	raul::managed_ptr<Voices> _prepared_voices;

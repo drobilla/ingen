@@ -34,7 +34,7 @@ namespace ingen::server {
 /** Set flags to disable denormal processing.
  */
 inline void
-set_denormal_flags(ingen::Log& log)
+set_denormal_flags(ingen::Log& log) // cppcheck-suppress constParameterReference
 {
 #ifdef __SSE__
 	_mm_setcsr(_mm_getcsr() | 0x8040);

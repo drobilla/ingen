@@ -243,7 +243,10 @@ note_to_freq(uint8_t num)
 } // namespace
 
 void
-NoteNode::note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time)
+NoteNode::note_on(const RunContext& ctx,
+                  const uint8_t     note_num,
+                  const uint8_t     velocity,
+                  const FrameTime   time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 	assert(note_num <= 127);
@@ -322,7 +325,9 @@ NoteNode::note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime
 }
 
 void
-NoteNode::note_off(RunContext& ctx, uint8_t note_num, FrameTime time)
+NoteNode::note_off(const RunContext& ctx,
+                   const uint8_t     note_num,
+                   const FrameTime   time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 
@@ -344,7 +349,9 @@ NoteNode::note_off(RunContext& ctx, uint8_t note_num, FrameTime time)
 }
 
 void
-NoteNode::free_voice(RunContext& ctx, uint32_t voice, FrameTime time)
+NoteNode::free_voice(const RunContext& ctx,
+                     const uint32_t    voice,
+                     const FrameTime   time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 
@@ -382,7 +389,7 @@ NoteNode::free_voice(RunContext& ctx, uint32_t voice, FrameTime time)
 }
 
 void
-NoteNode::all_notes_off(RunContext& ctx, FrameTime time)
+NoteNode::all_notes_off(const RunContext& ctx, const FrameTime time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 
@@ -395,13 +402,13 @@ NoteNode::all_notes_off(RunContext& ctx, FrameTime time)
 }
 
 void
-NoteNode::sustain_on(RunContext&, FrameTime)
+NoteNode::sustain_on(const RunContext&, FrameTime)
 {
 	_sustain = true;
 }
 
 void
-NoteNode::sustain_off(RunContext& ctx, FrameTime time)
+NoteNode::sustain_off(const RunContext& ctx, const FrameTime time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 
@@ -415,13 +422,16 @@ NoteNode::sustain_off(RunContext& ctx, FrameTime time)
 }
 
 void
-NoteNode::bend(RunContext& ctx, FrameTime time, float amount)
+NoteNode::bend(const RunContext& ctx, const FrameTime time, const float amount)
 {
 	_bend_port->set_control_value(ctx, time, amount);
 }
 
 void
-NoteNode::note_pressure(RunContext& ctx, FrameTime time, uint8_t note_num, float amount)
+NoteNode::note_pressure(const RunContext& ctx,
+                        const FrameTime   time,
+                        const uint8_t     note_num,
+                        const float       amount)
 {
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		if ((*_voices)[i].state != Voice::State::FREE && (*_voices)[i].note == note_num) {
@@ -432,7 +442,9 @@ NoteNode::note_pressure(RunContext& ctx, FrameTime time, uint8_t note_num, float
 }
 
 void
-NoteNode::channel_pressure(RunContext& ctx, FrameTime time, float amount)
+NoteNode::channel_pressure(const RunContext& ctx,
+                           const FrameTime   time,
+                           const float       amount)
 {
 	_pressure_port->set_control_value(ctx, time, amount);
 }

@@ -160,7 +160,10 @@ TriggerNode::run(RunContext& ctx)
 }
 
 bool
-TriggerNode::note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time)
+TriggerNode::note_on(const RunContext& ctx,
+                     const uint8_t     note_num,
+                     const uint8_t     velocity,
+                     const FrameTime   time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 	const uint32_t offset = time - ctx.start();
@@ -182,7 +185,9 @@ TriggerNode::note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameT
 }
 
 bool
-TriggerNode::note_off(RunContext& ctx, uint8_t note_num, FrameTime time)
+TriggerNode::note_off(const RunContext& ctx,
+                      const uint8_t     note_num,
+                      const FrameTime   time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 	const uint32_t offset = time - ctx.start();

@@ -196,10 +196,10 @@ ControlBindings::set_port_binding(RunContext&,
 }
 
 void
-ControlBindings::port_value_changed(RunContext& ctx,
-                                    PortImpl*   port,
-                                    Key         key,
-                                    const Atom& value_atom)
+ControlBindings::port_value_changed(const RunContext& ctx,
+                                    const PortImpl*   port,
+                                    const Key         key,
+                                    const Atom&       value_atom)
 {
 	const ingen::URIs& uris = ctx.engine().world().uris();
 	if (!!key) {
@@ -263,7 +263,7 @@ ControlBindings::start_learn(PortImpl* port)
 namespace {
 
 void
-get_range(RunContext& ctx, const PortImpl* port, float* min, float* max)
+get_range(const RunContext& ctx, const PortImpl* port, float* min, float* max)
 {
 	*min = port->minimum().get<float>();
 	*max = port->maximum().get<float>();
@@ -276,10 +276,10 @@ get_range(RunContext& ctx, const PortImpl* port, float* min, float* max)
 } // namespace
 
 float
-ControlBindings::control_to_port_value(RunContext&     ctx,
-                                       const PortImpl* port,
-                                       Type            type,
-                                       int16_t         value)
+ControlBindings::control_to_port_value(const RunContext&     ctx,
+                                       const PortImpl* const port,
+                                       const Type            type,
+                                       const int16_t         value)
 {
 	float normal = 0.0f;
 	switch (type) {
@@ -309,10 +309,10 @@ ControlBindings::control_to_port_value(RunContext&     ctx,
 }
 
 int16_t
-ControlBindings::port_value_to_control(RunContext& ctx,
-                                       PortImpl*   port,
-                                       Type        type,
-                                       const Atom& value_atom)
+ControlBindings::port_value_to_control(const RunContext& ctx,
+                                       const PortImpl*   port,
+                                       const Type        type,
+                                       const Atom&       value_atom)
 {
 	if (value_atom.type() != port->bufs().forge().Float) {
 		return 0;

@@ -1,7 +1,3 @@
-constParameterPointer
-constParameterReference
-constVariablePointer
-constVariableReference
 duplicateExpression
 knownConditionTrueFalse
 missingReturn

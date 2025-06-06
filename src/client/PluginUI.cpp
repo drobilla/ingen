@@ -47,7 +47,7 @@ SuilHost* PluginUI::ui_host = nullptr;
 namespace {
 
 std::shared_ptr<const PortModel>
-get_port(PluginUI* ui, uint32_t port_index)
+get_port(const PluginUI* const ui, const uint32_t port_index)
 {
 	if (port_index >= ui->block()->ports().size()) {
 		ui->world().log().error("%1% UI tried to access invalid port %2%\n",
@@ -111,7 +111,7 @@ lv2_ui_write(SuilController controller,
 uint32_t
 lv2_ui_port_index(SuilController controller, const char* port_symbol)
 {
-	auto* const ui = static_cast<PluginUI*>(controller);
+	const auto* const ui = static_cast<const PluginUI*>(controller);
 
 	const BlockModel::Ports& ports = ui->block()->ports();
 	for (uint32_t i = 0; i < ports.size(); ++i) {

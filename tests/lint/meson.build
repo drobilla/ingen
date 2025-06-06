@@ -14,6 +14,7 @@ if not meson.is_subproject()
         '--cppcheck-build-dir=' + meson.current_build_dir(),
         '--enable=warning,style,performance,portability',
         '--error-exitcode=1',
+        '--inline-suppr',
         '--project=' + compdb_path,
         '--suppressions-list=' + suppress_path,
         '-q',

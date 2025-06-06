@@ -60,13 +60,16 @@ public:
 
 	void run(RunContext& ctx) override;
 
-	bool control(RunContext& ctx, uint8_t control_num, uint8_t val, FrameTime time);
-
 	void learn() override { _learning = true; }
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 
 private:
+	bool control(const RunContext& ctx,
+	             uint8_t           control_num,
+	             uint8_t           val,
+	             FrameTime         time);
+
 	InputPort*  _midi_in_port;
 	OutputPort* _midi_out_port;
 	InputPort*  _param_port;

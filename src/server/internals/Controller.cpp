@@ -136,7 +136,10 @@ ControllerNode::run(RunContext& ctx)
 }
 
 bool
-ControllerNode::control(RunContext& ctx, uint8_t control_num, uint8_t val, FrameTime time)
+ControllerNode::control(const RunContext& ctx,
+                        const uint8_t     control_num,
+                        const uint8_t     val,
+                        const FrameTime   time)
 {
 	assert(time >= ctx.start() && time <= ctx.end());
 	const uint32_t offset = time - ctx.start();

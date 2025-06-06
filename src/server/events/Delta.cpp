@@ -265,7 +265,7 @@ Delta::pre_process(PreProcessContext& ctx)
 		const URI&  key   = r.first;
 		const Atom& value = r.second;
 		if (key == uris.midi_binding && value == uris.patch_wildcard) {
-			auto* port = dynamic_cast<PortImpl*>(_object);
+			const auto* port = dynamic_cast<const PortImpl*>(_object);
 			if (port) {
 				_engine.control_bindings()->get_all(port->path(), _removed_bindings);
 			}
@@ -421,7 +421,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			}
 
 			if (!_create_event && key == uris.ingen_polyphonic) {
-				auto* parent = dynamic_cast<GraphImpl*>(obj->parent());
+				const auto* parent = dynamic_cast<const GraphImpl*>(obj->parent());
 				if (!parent) {
 					_status = Status::BAD_OBJECT_TYPE;
 				} else if (value.type() != uris.forge.Bool) {
@@ -530,7 +530,7 @@ Delta::execute(RunContext& ctx)
 		case SpecialType::POLYPHONIC: {
 			if (object) {
 				if (value.get<int32_t>()) {
-					auto* parent = reinterpret_cast<GraphImpl*>(object->parent());
+					const auto* parent = reinterpret_cast<const GraphImpl*>(object->parent());
 					object->apply_poly(ctx, parent->internal_poly_process());
 				} else {
 					object->apply_poly(ctx, 1);

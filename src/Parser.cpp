@@ -101,7 +101,7 @@ get_path(const URI& base, const URI& uri)
 }
 
 bool
-skip_property(ingen::URIs& uris, const Sord::Node& predicate)
+skip_property(const ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate == INGEN__file || predicate == uris.ingen_arc ||
 	        predicate == uris.ingen_block || predicate == uris.lv2_port);

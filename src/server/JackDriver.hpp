@@ -125,7 +125,7 @@ private:
 	// Internal methods for processing
 
 	void pre_process_port(RunContext& ctx, EnginePort* port);
-	void post_process_port(RunContext& ctx, EnginePort* port) const;
+	void post_process_port(const RunContext& ctx, EnginePort* port) const;
 
 	void port_property_internal(const jack_port_t* jport,
 	                            const URI&         uri,

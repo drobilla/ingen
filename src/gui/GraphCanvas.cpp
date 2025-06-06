@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// cppcheck-suppress-file constVariablePointer
+
 #include "GraphCanvas.hpp"
 
 #include "App.hpp"

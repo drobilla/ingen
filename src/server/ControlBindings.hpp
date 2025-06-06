@@ -111,10 +111,10 @@ public:
 	                      Binding*    binding,
 	                      const Atom& value);
 
-	void port_value_changed(RunContext& ctx,
-	                        PortImpl*   port,
-	                        Key         key,
-	                        const Atom& value_atom);
+	void port_value_changed(const RunContext& ctx,
+	                        const PortImpl*   port,
+	                        Key               key,
+	                        const Atom&       value_atom);
 
 	void pre_process(RunContext& ctx, Buffer* buffer);
 	void post_process(RunContext& ctx, Buffer* buffer);
@@ -140,15 +140,15 @@ private:
 
 	bool finish_learn(RunContext& ctx, Key key);
 
-	static float control_to_port_value(RunContext&     ctx,
-	                                   const PortImpl* port,
-	                                   Type            type,
-	                                   int16_t         value);
+	static float control_to_port_value(const RunContext& ctx,
+	                                   const PortImpl*   port,
+	                                   Type              type,
+	                                   int16_t           value);
 
-	static int16_t port_value_to_control(RunContext& ctx,
-	                                     PortImpl*   port,
-	                                     Type        type,
-	                                     const Atom& value_atom);
+	static int16_t port_value_to_control(const RunContext& ctx,
+	                                     const PortImpl*   port,
+	                                     Type              type,
+	                                     const Atom&       value_atom);
 
 	Engine&                   _engine;
 	std::atomic<Binding*>     _learn_binding;

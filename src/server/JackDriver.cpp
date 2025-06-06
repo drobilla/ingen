@@ -371,7 +371,7 @@ JackDriver::pre_process_port(RunContext& ctx, EnginePort* port)
 }
 
 void
-JackDriver::post_process_port(RunContext& ctx, EnginePort* port) const
+JackDriver::post_process_port(const RunContext& ctx, EnginePort* port) const
 {
 	const URIs&       uris       = ctx.engine().world().uris();
 	const SampleCount nframes    = ctx.nframes();

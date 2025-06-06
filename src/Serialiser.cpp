@@ -464,8 +464,8 @@ Serialiser::Impl::serialise_block(const std::shared_ptr<const Node>& block,
 	}
 
 	for (uint32_t i = 0; i < block->num_ports(); ++i) {
-		Node* const      p       = block->port(i);
-		const Sord::Node port_id = path_rdf_node(p->path());
+		const Node* const p       = block->port(i);
+		const Sord::Node  port_id = path_rdf_node(p->path());
 		serialise_port(p, Resource::Graph::DEFAULT, port_id);
 		_model->add_statement(block_id,
 		                      Sord::URI(_model->world(), uris.lv2_port),
@@ -548,7 +548,7 @@ Serialiser::Impl::serialise_arc(const Sord::Node&                 parent,
 namespace {
 
 bool
-skip_property(ingen::URIs& uris, const Sord::Node& predicate)
+skip_property(const ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate == INGEN__file || predicate == uris.ingen_arc ||
 	        predicate == uris.ingen_block || predicate == uris.lv2_port);
