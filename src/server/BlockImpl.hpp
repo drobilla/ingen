@@ -104,8 +104,11 @@ public:
 	/** Return true iff this block is enabled (not bypassed). */
 	bool enabled() const { return _enabled; }
 
-	/** Enable or disable (bypass) this block. */
-	void set_enabled(bool e) { _enabled = e; }
+	/** Enable this block. */
+	virtual void enable();
+
+	/** Disable (bypass) this block. */
+	virtual void disable(RunContext& ctx);
 
 	/** Load a preset from the world for this block. */
 	virtual StatePtr load_preset(const URI& uri) { return {}; }

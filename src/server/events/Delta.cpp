@@ -514,17 +514,17 @@ Delta::execute(RunContext& ctx)
 			}
 			break;
 		case SpecialType::ENABLE:
-			if (_graph) {
+			if (block) {
 				if (value.get<int32_t>()) {
-					if (_compiled_graph) {
-						_compiled_graph = _graph->swap_compiled_graph(std::move(_compiled_graph));
+					if (_graph && _compiled_graph) {
+						_compiled_graph = _graph->swap_compiled_graph(
+						  std::move(_compiled_graph));
 					}
-					_graph->enable();
+
+					block->enable();
 				} else {
-					_graph->disable(ctx);
+					block->disable(ctx);
 				}
-			} else if (block) {
-				block->set_enabled(value.get<int32_t>());
 			}
 			break;
 		case SpecialType::POLYPHONIC: {
@@ -564,7 +564,7 @@ Delta::execute(RunContext& ctx)
 			break;
         case SpecialType::PRESET:
 	        if (block) {
-		        block->set_enabled(false);
+		        block->disable(ctx);
 	        }
 			break;
 		case SpecialType::NONE:
@@ -589,7 +589,7 @@ Delta::post_process()
 		auto* block = dynamic_cast<BlockImpl*>(_object);
 		if (block) {
 			block->apply_state(_engine.sync_worker(), _state.get());
-			block->set_enabled(true);
+			block->enable();
 		}
 
 		_state.reset();

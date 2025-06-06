@@ -2,7 +2,6 @@ constParameterPointer
 constParameterReference
 constVariablePointer
 constVariableReference
-duplInheritedMember
 duplicateExpression
 knownConditionTrueFalse
 missingReturn

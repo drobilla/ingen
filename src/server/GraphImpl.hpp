@@ -190,10 +190,7 @@ public:
 
 	raul::managed_ptr<Ports> build_ports_array(raul::Maid& maid);
 
-	/** Whether to run this graph's DSP bits in the audio thread */
-	bool enabled() const { return _process; }
-	void enable() { _process = true; }
-	void disable(RunContext& ctx);
+	void disable(RunContext& ctx) override;
 
 	uint32_t internal_poly()         const { return _poly_pre; }
 	uint32_t internal_poly_process() const { return _poly_process; }
@@ -210,7 +207,6 @@ private:
 	PortList         _inputs;         ///< Pre-process thread only
 	PortList         _outputs;        ///< Pre-process thread only
 	Blocks           _blocks;         ///< Pre-process thread only
-	bool             _process{false}; ///< True iff graph is enabled
 };
 
 } // namespace ingen::server

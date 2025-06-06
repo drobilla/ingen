@@ -178,6 +178,18 @@ BlockImpl::port_by_symbol(const char* symbol)
 }
 
 void
+BlockImpl::enable()
+{
+	_enabled = true;
+}
+
+void
+BlockImpl::disable(RunContext& ctx)
+{
+	_enabled = false;
+}
+
+void
 BlockImpl::pre_process(RunContext& ctx)
 {
 	// Mix down input ports

@@ -64,6 +64,8 @@ GraphImpl::GraphImpl(Engine&             engine,
 {
 	assert(internal_poly >= 1);
 	assert(internal_poly <= 128);
+
+	_enabled = false;
 }
 
 GraphImpl::~GraphImpl()
@@ -165,7 +167,8 @@ GraphImpl::deactivate()
 void
 GraphImpl::disable(RunContext& ctx)
 {
-	_process = false;
+	BlockImpl::disable(ctx);
+
 	for (auto& o : _outputs) {
 		o.clear_buffers(ctx);
 	}
@@ -234,7 +237,7 @@ GraphImpl::pre_process(RunContext& ctx)
 void
 GraphImpl::process(RunContext& ctx)
 {
-	if (!_process) {
+	if (!_enabled) {
 		return;
 	}
 
