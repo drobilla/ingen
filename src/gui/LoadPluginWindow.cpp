@@ -173,10 +173,8 @@ LoadPluginWindow::name_changed()
 	// Toggle add button sensitivity according name legality
 	if (_selection->get_selected_rows().size() == 1) {
 		const string sym = _name_entry->get_text();
-		if (!raul::Symbol::is_valid(sym)) {
-			_add_button->property_sensitive() = false;
-		} else if (_app->store()->find(_graph->path().child(raul::Symbol(sym)))
-		           != _app->store()->end()) {
+		if (!raul::Symbol::is_valid(sym) ||
+		    _app->store()->count(_graph->path().child(raul::Symbol(sym)))) {
 			_add_button->property_sensitive() = false;
 		} else {
 			_add_button->property_sensitive() = true;

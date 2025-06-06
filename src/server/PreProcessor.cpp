@@ -205,9 +205,6 @@ PreProcessor::run()
 		case Event::Execution::NORMAL:
 			break;
 		case Event::Execution::ATOMIC:
-			assert(_block_state == BlockState::UNBLOCKED);
-			_block_state = BlockState::PRE_BLOCKED;
-			break;
 		case Event::Execution::BLOCK:
 			assert(_block_state == BlockState::UNBLOCKED);
 			_block_state = BlockState::PRE_BLOCKED;

@@ -146,11 +146,10 @@ GraphPortModule::property_changed(const URI& key, const Atom& value)
 			move_to(get_x(), static_cast<double>(value.get<float>()));
 		}
 	} else if (value.type() == uris.forge.String) {
-		if (key == uris.lv2_name &&
-		    app().world().conf().option("human-names").get<int32_t>()) {
-			set_name(value.ptr<char>());
-		} else if (key == uris.lv2_symbol &&
-		           !app().world().conf().option("human-names").get<int32_t>()) {
+		if ((key == uris.lv2_name &&
+		     app().world().conf().option("human-names").get<int32_t>()) ||
+		    (key == uris.lv2_symbol &&
+		     !app().world().conf().option("human-names").get<int32_t>())) {
 			set_name(value.ptr<char>());
 		}
 	} else if (value.type() == uris.forge.Bool) {

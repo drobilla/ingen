@@ -3,7 +3,6 @@ Checks: >
   -*-narrowing-conversions,
   -*-non-private-member-variables-in-classes,
   -*-vararg,
-  -bugprone-branch-clone,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
   -bugprone-suspicious-string-compare,
