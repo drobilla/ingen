@@ -636,8 +636,8 @@ destroy_node(GanvNode* node, void* data)
 	} else {
 		const auto* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module &&
-		    strcmp(port_module->port()->path().symbol(), "control") &&
-		    strcmp(port_module->port()->path().symbol(), "notify")) {
+		    !!strcmp(port_module->port()->path().symbol(), "control") &&
+		    !!strcmp(port_module->port()->path().symbol(), "notify")) {
 			app->interface()->del(port_module->port()->uri());
 		}
 	}

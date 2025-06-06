@@ -5,7 +5,6 @@ Checks: >
   -*-vararg,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
-  -bugprone-suspicious-string-compare,
   -cert-dcl37-c,
   -cert-dcl51-cpp,
   -cppcoreguidelines-pro-bounds-constant-array-index,
