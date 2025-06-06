@@ -9,5 +9,4 @@ noExplicitConstructor
 normalCheckLevelMaxBranches
 nullPointerOutOfMemory
 shadowFunction
-useStlAlgorithm
 virtualCallInConstructor

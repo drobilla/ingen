@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2015-2024 David Robillard <http://drobilla.net/>
+  Copyright 2015-2025 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -38,6 +38,7 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <numeric>
 #include <utility>
 
 namespace ingen::server {
@@ -114,10 +115,13 @@ parallel_depth(const BlockImpl* block)
 		return 2;
 	}
 
-	size_t min_provider_depth = std::numeric_limits<size_t>::max();
-	for (const auto* p : block->providers()) {
-		min_provider_depth = std::min(min_provider_depth, parallel_depth(p));
-	}
+	const auto min_provider_depth =
+	  std::accumulate(block->providers().begin(),
+	                  block->providers().end(),
+	                  std::numeric_limits<size_t>::max(),
+	                  [](const size_t d, const BlockImpl* const b) {
+		                  return std::min(d, parallel_depth(b));
+	                  });
 
 	return 2 + min_provider_depth;
 }
@@ -146,10 +150,13 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 		std::set<BlockImpl*> predecessors;
 
 		// Calculate maximum sequential depth to consume this phase
-		size_t depth = std::numeric_limits<size_t>::max();
-		for (const auto* i : blocks) {
-			depth = std::min(depth, parallel_depth(i));
-		}
+		const auto depth =
+		  std::accumulate(blocks.begin(),
+		                  blocks.end(),
+		                  std::numeric_limits<size_t>::max(),
+		                  [](const size_t d, const BlockImpl* const b) {
+			                  return std::min(d, parallel_depth(b));
+		                  });
 
 		Task par(Task::Mode::PARALLEL);
 		for (auto* b : blocks) {
