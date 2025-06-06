@@ -53,6 +53,8 @@ namespace ingen {
 class Interface;
 class Store;
 
+namespace {
+
 /** Load a dynamic module from the default path.
  *
  * This will check in the directories specified in the environment variable
@@ -61,7 +63,7 @@ class Store;
  *
  * \param name The base name of the module, e.g. "ingen_jack"
  */
-static std::unique_ptr<Library>
+std::unique_ptr<Library>
 ingen_load_library(Log& log, const string& name)
 {
 	const auto path = ingen_module_path(name);
@@ -85,6 +87,8 @@ ingen_load_library(Log& log, const string& name)
 	          Library::get_last_error());
 	return nullptr;
 }
+
+} // namespace
 
 class World::Impl
 {

@@ -545,12 +545,16 @@ Serialiser::Impl::serialise_arc(const Sord::Node&                 parent,
 	}
 }
 
-static bool
+namespace {
+
+bool
 skip_property(ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate == INGEN__file || predicate == uris.ingen_arc ||
 	        predicate == uris.ingen_block || predicate == uris.lv2_port);
 }
+
+} // namespace
 
 void
 Serialiser::Impl::serialise_properties(Sord::Node id, const Properties& props)

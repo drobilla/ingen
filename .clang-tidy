@@ -25,7 +25,6 @@ Checks: >
   -llvmlibc-*,
   -misc-include-cleaner,
   -misc-unused-parameters,
-  -misc-use-anonymous-namespace,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   -performance-enum-size,

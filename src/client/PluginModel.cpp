@@ -71,7 +71,9 @@ PluginModel::PluginModel(URIs&             uris,
 	}
 }
 
-static size_t
+namespace {
+
+size_t
 last_uri_delim(const std::string& str)
 {
 	for (size_t i = str.length() - 1; i > 0; --i) {
@@ -83,7 +85,7 @@ last_uri_delim(const std::string& str)
 	return string::npos;
 }
 
-static bool
+bool
 contains_alpha_after(const std::string& str, size_t begin)
 {
 	for (size_t i = begin; i < str.length(); ++i) {
@@ -93,6 +95,8 @@ contains_alpha_after(const std::string& str, size_t begin)
 	}
 	return false;
 }
+
+} // namespace
 
 const Atom&
 PluginModel::get_property(const URI& key) const
@@ -260,7 +264,9 @@ PluginModel::ui(ingen::World&                            world,
 	return PluginUI::create(world, block, _lilv_plugin);
 }
 
-static std::string
+namespace {
+
+std::string
 heading(const std::string& text, bool html, unsigned level)
 {
 	if (html) {
@@ -271,7 +277,7 @@ heading(const std::string& text, bool html, unsigned level)
 	return text + ":\n\n";
 }
 
-static std::string
+std::string
 link(const std::string& addr, bool html)
 {
 	if (html) {
@@ -280,6 +286,8 @@ link(const std::string& addr, bool html)
 
 	return addr;
 }
+
+} // namespace
 
 std::string
 PluginModel::get_documentation(const LilvNode* subject, bool html)

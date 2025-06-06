@@ -89,7 +89,9 @@ Parser::find_resources(Sord::World& world,
 	return resources;
 }
 
-static std::optional<raul::Path>
+namespace {
+
+std::optional<raul::Path>
 get_path(const URI& base, const URI& uri)
 {
 	const URI         relative = uri.make_relative(base, base);
@@ -98,14 +100,14 @@ get_path(const URI& base, const URI& uri)
 	                                     : std::optional<raul::Path>();
 }
 
-static bool
+bool
 skip_property(ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate == INGEN__file || predicate == uris.ingen_arc ||
 	        predicate == uris.ingen_block || predicate == uris.lv2_port);
 }
 
-static Properties
+Properties
 get_properties(ingen::World&                    world,
                Sord::Model&                     model,
                const Sord::Node&                subject,
@@ -152,7 +154,7 @@ get_properties(ingen::World&                    world,
 
 using PortRecord = std::pair<raul::Path, Properties>;
 
-static std::optional<PortRecord>
+std::optional<PortRecord>
 get_port(ingen::World&     world,
          Sord::Model&      model,
          const Sord::Node& subject,
@@ -202,7 +204,7 @@ get_port(ingen::World&     world,
 	return make_pair(port_path, props);
 }
 
-static std::optional<raul::Path>
+std::optional<raul::Path>
 parse(World&                             world,
       Interface&                         target,
       Sord::Model&                       model,
@@ -212,7 +214,7 @@ parse(World&                             world,
       const std::optional<raul::Symbol>& symbol = std::optional<raul::Symbol>(),
       const std::optional<Properties>&   data   = std::optional<Properties>());
 
-static std::optional<raul::Path>
+std::optional<raul::Path>
 parse_graph(
     World&                             world,
     Interface&                         target,
@@ -224,7 +226,7 @@ parse_graph(
     const std::optional<raul::Symbol>& symbol = std::optional<raul::Symbol>(),
     const std::optional<Properties>&   data   = std::optional<Properties>());
 
-static std::optional<raul::Path>
+std::optional<raul::Path>
 parse_block(
     World&                           world,
     Interface&                       target,
@@ -234,7 +236,7 @@ parse_block(
     const raul::Path&                path,
     const std::optional<Properties>& data = std::optional<Properties>());
 
-static bool
+bool
 parse_arcs(World&            world,
            Interface&        target,
            Sord::Model&      model,
@@ -242,7 +244,7 @@ parse_arcs(World&            world,
            const Sord::Node& subject,
            const raul::Path& graph);
 
-static std::optional<raul::Path>
+std::optional<raul::Path>
 parse_block(ingen::World&                    world,
             ingen::Interface&                target,
             Sord::Model&                     model,
@@ -331,7 +333,7 @@ parse_block(ingen::World&                    world,
 	return path;
 }
 
-static std::optional<raul::Path>
+std::optional<raul::Path>
 parse_graph(ingen::World&                      world,
             ingen::Interface&                  target,
             Sord::Model&                       model,
@@ -442,7 +444,7 @@ parse_graph(ingen::World&                      world,
 	return {graph_path};
 }
 
-static bool
+bool
 parse_arc(ingen::World&     world,
           ingen::Interface& target,
           Sord::Model&      model,
@@ -498,7 +500,7 @@ parse_arc(ingen::World&     world,
 	return true;
 }
 
-static bool
+bool
 parse_arcs(ingen::World&     world,
            ingen::Interface& target,
            Sord::Model&      model,
@@ -516,7 +518,7 @@ parse_arcs(ingen::World&     world,
 	return true;
 }
 
-static std::optional<raul::Path>
+std::optional<raul::Path>
 parse(ingen::World&                      world,
       ingen::Interface&                  target,
       Sord::Model&                       model,
@@ -605,6 +607,8 @@ parse(ingen::World&                      world,
 
 	return {};
 }
+
+} // namespace
 
 bool
 Parser::parse_file(ingen::World&                      world,

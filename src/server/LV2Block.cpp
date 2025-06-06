@@ -690,7 +690,9 @@ LV2Block::apply_state(const std::unique_ptr<Worker>& worker,
 	}
 }
 
-static const void*
+namespace {
+
+const void*
 get_port_value(const char* port_symbol,
                void*       user_data,
                uint32_t*   size,
@@ -707,6 +709,8 @@ get_port_value(const char* port_symbol,
 
 	return nullptr;
 }
+
+} // namespace
 
 std::optional<Resource>
 LV2Block::save_preset(const URI&        uri,

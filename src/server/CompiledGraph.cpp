@@ -58,7 +58,9 @@ public:
 	const BlockImpl* root = nullptr;
 };
 
-static bool
+namespace {
+
+bool
 has_provider_with_many_dependants(const BlockImpl* n)
 {
 	return std::any_of(n->providers().begin(),
@@ -67,6 +69,8 @@ has_provider_with_many_dependants(const BlockImpl* n)
 		                   return p->dependants().size() > 1;
 	                   });
 }
+
+} // namespace
 
 CompiledGraph::CompiledGraph(GraphImpl* graph)
 	: _master{std::make_unique<Task>(Task::Mode::SEQUENTIAL)}
@@ -91,7 +95,9 @@ CompiledGraph::compile(GraphImpl& graph)
 	}
 }
 
-static size_t
+namespace {
+
+size_t
 num_unvisited_dependants(const BlockImpl* block)
 {
 	return std::count_if(block->dependants().begin(),
@@ -101,7 +107,7 @@ num_unvisited_dependants(const BlockImpl* block)
 	                     });
 }
 
-static size_t
+size_t
 parallel_depth(const BlockImpl* block)
 {
 	if (has_provider_with_many_dependants(block)) {
@@ -115,6 +121,8 @@ parallel_depth(const BlockImpl* block)
 
 	return 2 + min_provider_depth;
 }
+
+} // namespace
 
 void
 CompiledGraph::compile_graph(GraphImpl* graph)
@@ -162,8 +170,10 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 	}
 }
 
+namespace {
+
 /** Throw a FeedbackException iff `dependant` has `root` as a dependency. */
-static void
+void
 check_feedback(const BlockImpl* root, BlockImpl* provider)
 {
 	if (provider == root) {
@@ -185,6 +195,8 @@ check_feedback(const BlockImpl* root, BlockImpl* provider)
 		p->set_mark(mark);
 	}
 }
+
+} // namespace
 
 void
 CompiledGraph::compile_provider(const BlockImpl*      root,

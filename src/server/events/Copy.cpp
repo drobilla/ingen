@@ -142,7 +142,9 @@ Copy::engine_to_engine(PreProcessContext& ctx)
 	return Event::pre_process_done(Status::SUCCESS);
 }
 
-static bool
+namespace {
+
+bool
 ends_with(const std::string& str, const std::string& end)
 {
     if (str.length() >= end.length()) {
@@ -150,6 +152,8 @@ ends_with(const std::string& str, const std::string& end)
     }
     return false;
 }
+
+} // namespace
 
 bool
 Copy::engine_to_filesystem(PreProcessContext&)

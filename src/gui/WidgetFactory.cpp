@@ -27,7 +27,9 @@ namespace ingen::gui {
 
 Glib::ustring WidgetFactory::ui_filename = "";
 
-static inline bool
+namespace {
+
+inline bool
 is_readable(const std::string& filename)
 {
 	std::ifstream fs(filename.c_str());
@@ -35,6 +37,8 @@ is_readable(const std::string& filename)
 	fs.close();
 	return !fail;
 }
+
+} // namespace
 
 void
 WidgetFactory::find_ui_file()

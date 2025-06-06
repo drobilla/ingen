@@ -44,7 +44,9 @@ namespace ingen::client {
 
 SuilHost* PluginUI::ui_host = nullptr;
 
-static std::shared_ptr<const PortModel>
+namespace {
+
+std::shared_ptr<const PortModel>
 get_port(PluginUI* ui, uint32_t port_index)
 {
 	if (port_index >= ui->block()->ports().size()) {
@@ -56,7 +58,7 @@ get_port(PluginUI* ui, uint32_t port_index)
 	return ui->block()->ports()[port_index];
 }
 
-static void
+void
 lv2_ui_write(SuilController controller,
              uint32_t       port_index,
              uint32_t       buffer_size,
@@ -106,7 +108,7 @@ lv2_ui_write(SuilController controller,
 	}
 }
 
-static uint32_t
+uint32_t
 lv2_ui_port_index(SuilController controller, const char* port_symbol)
 {
 	auto* const ui = static_cast<PluginUI*>(controller);
@@ -120,7 +122,7 @@ lv2_ui_port_index(SuilController controller, const char* port_symbol)
 	return LV2UI_INVALID_PORT_INDEX;
 }
 
-static uint32_t
+uint32_t
 lv2_ui_subscribe(SuilController            controller,
                  uint32_t                  port_index,
                  uint32_t                  protocol,
@@ -141,7 +143,7 @@ lv2_ui_subscribe(SuilController            controller,
 	return 0;
 }
 
-static uint32_t
+uint32_t
 lv2_ui_unsubscribe(SuilController            controller,
                    uint32_t                  port_index,
                    uint32_t                  protocol,
@@ -161,6 +163,8 @@ lv2_ui_unsubscribe(SuilController            controller,
 
 	return 0;
 }
+
+} // namespace
 
 PluginUI::PluginUI(ingen::World&                     world,
                    std::shared_ptr<const BlockModel> block,

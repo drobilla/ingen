@@ -116,7 +116,9 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 	return ret;
 }
 
-static int
+namespace {
+
+int
 log_vprintf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, va_list args)
 {
 	auto* const f = static_cast<Log::Feature::Handle*>(handle);
@@ -128,7 +130,7 @@ log_vprintf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, va_list args)
 	return ret;
 }
 
-static int
+int
 log_printf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, ...)
 {
 	va_list args;
@@ -139,12 +141,14 @@ log_printf(LV2_Log_Handle handle, LV2_URID type, const char* fmt, ...)
 	return ret;
 }
 
-static void
+void
 free_log_feature(LV2_Feature* feature) {
 	auto* lv2_log = static_cast<LV2_Log_Log*>(feature->data);
 	free(lv2_log->handle);
 	free(feature);
 }
+
+} // namespace
 
 std::shared_ptr<LV2_Feature>
 Log::Feature::feature(World& world, Node* block)

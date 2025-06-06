@@ -89,7 +89,9 @@ struct IngenLV2UI {
 
 } // namespace ingen
 
-static LV2UI_Handle
+namespace {
+
+LV2UI_Handle
 instantiate(const LV2UI_Descriptor*   descriptor,
             const char*               plugin_uri,
             const char*               bundle_path,
@@ -166,14 +168,14 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	return ui;
 }
 
-static void
+void
 cleanup(LV2UI_Handle handle)
 {
 	auto* ui = static_cast<ingen::IngenLV2UI*>(handle);
 	delete ui;
 }
 
-static void
+void
 port_event(LV2UI_Handle handle,
            uint32_t     port_index,
            uint32_t     buffer_size,
@@ -185,19 +187,21 @@ port_event(LV2UI_Handle handle,
 	ui->reader->write(atom);
 }
 
-static const void*
+const void*
 extension_data(const char* uri)
 {
 	return nullptr;
 }
 
-static const LV2UI_Descriptor descriptor = {
+const LV2UI_Descriptor descriptor = {
 	INGEN_LV2_UI_URI,
 	instantiate,
 	cleanup,
 	port_event,
 	extension_data
 };
+
+} // namespace
 
 LV2_SYMBOL_EXPORT
 const LV2UI_Descriptor*

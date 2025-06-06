@@ -231,12 +231,16 @@ NoteNode::run(RunContext& ctx)
 	}
 }
 
-static inline float
+namespace {
+
+inline float
 note_to_freq(uint8_t num)
 {
 	static const float A4 = 440.0f;
 	return A4 * powf(2.0f, static_cast<float>(num - 57.0f) / 12.0f);
 }
+
+} // namespace
 
 void
 NoteNode::note_on(RunContext& ctx, uint8_t note_num, uint8_t velocity, FrameTime time)

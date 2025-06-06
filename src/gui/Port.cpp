@@ -377,7 +377,9 @@ Port::on_event(GdkEvent* ev)
 	return false;
 }
 
-static inline uint32_t
+namespace {
+
+inline uint32_t
 peak_color(float peak)
 {
 	static const uint32_t min      = 0x4A8A0EC0;
@@ -391,6 +393,8 @@ peak_color(float peak)
 
 	return rgba_interpolate(peak_min, peak_max, fminf(peak, 2.0f) - 1.0f);
 }
+
+} // namespace
 
 void
 Port::activity(const Atom& value)

@@ -136,7 +136,9 @@ ClashAvoider::exists(const raul::Path& path) const
 	return _store.find(path) != _store.end();
 }
 
-static std::optional<size_t>
+namespace {
+
+std::optional<size_t>
 numeric_suffix_start(const std::string& str)
 {
 	if (!isdigit(str[str.length() - 1])) {
@@ -150,6 +152,8 @@ numeric_suffix_start(const std::string& str)
 
 	return i;
 }
+
+} // namespace
 
 std::string
 ClashAvoider::adjust_name(const raul::Path&  old_path,

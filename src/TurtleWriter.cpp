@@ -29,20 +29,23 @@
 #define USTR(s) reinterpret_cast<const uint8_t*>(s)
 
 namespace ingen {
+namespace {
 
-static size_t
+size_t
 c_text_sink(const void* buf, size_t len, void* stream)
 {
 	auto* writer = static_cast<TurtleWriter*>(stream);
 	return writer->text_sink(buf, len);
 }
 
-static SerdStatus
+SerdStatus
 write_prefix(void* handle, const SerdNode* name, const SerdNode* uri)
 {
 	serd_writer_set_prefix(static_cast<SerdWriter*>(handle), name, uri);
 	return SERD_SUCCESS;
 }
+
+} // namespace
 
 TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
 	: AtomWriter{map, uris, *this}

@@ -61,7 +61,9 @@ comment(World& world, const LilvNode* node)
 	return comment;
 }
 
-static void
+namespace {
+
+void
 closure(World& world, const LilvNode* pred, URISet& types, bool super)
 {
 	unsigned added = 0;
@@ -91,6 +93,8 @@ closure(World& world, const LilvNode* pred, URISet& types, bool super)
 		types.insert(klasses.begin(), klasses.end());
 	} while (added > 0);
 }
+
+} // namespace
 
 void
 classes(World& world, URISet& types, bool super)

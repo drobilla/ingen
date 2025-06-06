@@ -254,7 +254,9 @@ LoadPluginWindow::new_plugin(const std::shared_ptr<const PluginModel>& pm)
 	}
 }
 
-static std::string
+namespace {
+
+std::string
 get_project_name(const std::shared_ptr<const PluginModel>& plugin)
 {
 	std::string name;
@@ -280,7 +282,7 @@ get_project_name(const std::shared_ptr<const PluginModel>& plugin)
 	return name;
 }
 
-static std::string
+std::string
 get_author_name(const std::shared_ptr<const PluginModel>& plugin)
 {
 	std::string name;
@@ -293,6 +295,8 @@ get_author_name(const std::shared_ptr<const PluginModel>& plugin)
 	}
 	return name;
 }
+
+} // namespace
 
 void
 LoadPluginWindow::set_row(Gtk::TreeModel::Row&                      row,

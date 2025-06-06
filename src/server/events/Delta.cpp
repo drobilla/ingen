@@ -137,7 +137,9 @@ Delta::add_set_event(const char* port_symbol,
 			port, Atom(size, type, value), false, true));
 }
 
-static void
+namespace {
+
+void
 s_add_set_event(const char* port_symbol,
                 void*       user_data,
                 const void* value,
@@ -147,7 +149,7 @@ s_add_set_event(const char* port_symbol,
 	static_cast<Delta*>(user_data)->add_set_event(port_symbol, value, size, type);
 }
 
-static LilvNode*
+LilvNode*
 get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 {
 	if (value.type() == uris.atom_Path) {
@@ -163,6 +165,8 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 
 	return nullptr;
 }
+
+} // namespace
 
 bool
 Delta::pre_process(PreProcessContext& ctx)

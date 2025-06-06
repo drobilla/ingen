@@ -435,9 +435,9 @@ struct IngenPlugin {
 	char**                       argv = nullptr;
 };
 
-extern "C" {
+namespace {
 
-static void
+void
 ingen_lv2_main(const std::shared_ptr<Engine>&    engine,
                const std::shared_ptr<LV2Driver>& driver)
 {
@@ -455,7 +455,7 @@ ingen_lv2_main(const std::shared_ptr<Engine>&    engine,
 	}
 }
 
-static Lib::Graphs
+Lib::Graphs
 find_graphs(const URI& manifest_uri)
 {
 	Sord::World world;
@@ -475,7 +475,12 @@ find_graphs(const URI& manifest_uri)
 	return graphs;
 }
 
-static LV2_Handle
+} // namespace
+
+extern "C" {
+namespace {
+
+LV2_Handle
 ingen_instantiate(const LV2_Descriptor*    descriptor,
                   double                   rate,
                   const char*              bundle_path,
@@ -619,7 +624,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	return static_cast<LV2_Handle>(plugin);
 }
 
-static void
+void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
 	auto*         me     = static_cast<IngenPlugin*>(instance);
@@ -632,7 +637,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	}
 }
 
-static void
+void
 ingen_activate(LV2_Handle instance)
 {
 	auto*      me     = static_cast<IngenPlugin*>(instance);
@@ -642,7 +647,7 @@ ingen_activate(LV2_Handle instance)
 	me->main = std::make_unique<std::thread>(ingen_lv2_main, engine, driver);
 }
 
-static void
+void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	auto*      me     = static_cast<IngenPlugin*>(instance);
@@ -655,7 +660,7 @@ ingen_run(LV2_Handle instance, uint32_t sample_count)
 	driver->run(sample_count);
 }
 
-static void
+void
 ingen_deactivate(LV2_Handle instance)
 {
 	auto* me = static_cast<IngenPlugin*>(instance);
@@ -666,7 +671,7 @@ ingen_deactivate(LV2_Handle instance)
 	}
 }
 
-static void
+void
 ingen_cleanup(LV2_Handle instance)
 {
 	auto* me = static_cast<IngenPlugin*>(instance);
@@ -682,7 +687,7 @@ ingen_cleanup(LV2_Handle instance)
 	world.reset();
 }
 
-static void
+void
 get_state_features(const LV2_Feature* const* features,
                    LV2_State_Map_Path**      map,
                    LV2_State_Make_Path**     make)
@@ -696,7 +701,7 @@ get_state_features(const LV2_Feature* const* features,
 	}
 }
 
-static LV2_State_Status
+LV2_State_Status
 ingen_save(LV2_Handle                instance,
            LV2_State_Store_Function  store,
            LV2_State_Handle          handle,
@@ -743,7 +748,7 @@ ingen_save(LV2_Handle                instance,
 	return LV2_STATE_SUCCESS;
 }
 
-static LV2_State_Status
+LV2_State_Status
 ingen_restore(LV2_Handle                  instance,
               LV2_State_Retrieve_Function retrieve,
               LV2_State_Handle            handle,
@@ -802,7 +807,7 @@ ingen_restore(LV2_Handle                  instance,
 	return LV2_STATE_SUCCESS;
 }
 
-static const void*
+const void*
 ingen_extension_data(const char* uri)
 {
 	static const LV2_State_Interface state = { ingen_save, ingen_restore };
@@ -811,6 +816,9 @@ ingen_extension_data(const char* uri)
 	}
 	return nullptr;
 }
+
+} // namespace
+} // extern "C"
 
 LV2Graph::LV2Graph(Parser::ResourceRecord record)
 	: Parser::ResourceRecord(std::move(record))
@@ -842,21 +850,23 @@ Lib::Lib(const char* bundle_path)
 	serd_node_free(&manifest_node);
 }
 
-static void
+namespace {
+
+void
 lib_cleanup(LV2_Lib_Handle handle)
 {
 	Lib* lib = static_cast<Lib*>(handle);
 	delete lib;
 }
 
-static const LV2_Descriptor*
+const LV2_Descriptor*
 lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 {
 	Lib* lib = static_cast<Lib*>(handle);
 	return index < lib->graphs.size() ? &lib->graphs[index]->descriptor : nullptr;
 }
 
-} // extern "C"
+} // namespace
 
 } // namespace ingen::server
 

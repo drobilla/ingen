@@ -35,14 +35,17 @@
 #include <string>
 
 namespace ingen::server {
+namespace {
 
-static bool
+bool
 pa_error(const char* msg, PaError err)
 {
 	fprintf(stderr, "error: %s (%s)\n", msg, Pa_GetErrorText(err));
 	Pa_Terminate();
 	return false;
 }
+
+} // namespace
 
 PortAudioDriver::PortAudioDriver(Engine& engine)
 	: _engine(engine)

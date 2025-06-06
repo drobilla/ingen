@@ -42,10 +42,11 @@
 #include <thread>
 
 namespace ingen::server {
+namespace {
 
-static constexpr const char* const unix_scheme = "unix://";
+constexpr const char* const unix_scheme = "unix://";
 
-static std::string
+std::string
 get_link_target(const char* link_path)
 {
 	// Stat the link to get the required size for the target path
@@ -66,10 +67,10 @@ get_link_target(const char* link_path)
 	return {};
 }
 
-static void ingen_listen(Engine*       engine,
-                         raul::Socket* unix_sock,
-                         raul::Socket* net_sock);
+void
+ingen_listen(Engine* engine, raul::Socket* unix_sock, raul::Socket* net_sock);
 
+} // namespace
 
 SocketListener::SocketListener(Engine& engine)
 	: unix_sock(raul::Socket::Type::UNIX)
@@ -84,7 +85,9 @@ SocketListener::~SocketListener() {
 	unlink(unix_sock.uri().substr(strlen(unix_scheme)).c_str());
 }
 
-static void
+namespace {
+
+void
 ingen_listen(Engine* engine, raul::Socket* unix_sock, raul::Socket* net_sock)
 {
 	ingen::World& world = engine->world();
@@ -195,5 +198,7 @@ ingen_listen(Engine* engine, raul::Socket* unix_sock, raul::Socket* net_sock)
 		unlink(link_path.c_str());
 	}
 }
+
+} // namespace
 
 } // namespace ingen::server

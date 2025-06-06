@@ -112,10 +112,13 @@ using client::PluginModel;
 using client::PortModel;
 
 namespace gui {
+namespace {
 
-static const int STATUS_CONTEXT_ENGINE = 0;
-static const int STATUS_CONTEXT_GRAPH  = 1;
-static const int STATUS_CONTEXT_HOVER  = 2;
+const int STATUS_CONTEXT_ENGINE = 0;
+const int STATUS_CONTEXT_GRAPH  = 1;
+const int STATUS_CONTEXT_HOVER  = 2;
+
+} // namespace
 
 GraphBox::GraphBox(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)

@@ -73,11 +73,15 @@ ControlBindings::port_binding(PortImpl* port) const
 	return binding_key(binding);
 }
 
-static int16_t
+namespace {
+
+int16_t
 get_atom_num(const LV2_Atom* const atom)
 {
 	return static_cast<int16_t>(reinterpret_cast<const LV2_Atom_Int*>(atom)->body);
 }
+
+} // namespace
 
 ControlBindings::Key
 ControlBindings::binding_key(const Atom& binding) const
@@ -256,7 +260,9 @@ ControlBindings::start_learn(PortImpl* port)
 	}
 }
 
-static void
+namespace {
+
+void
 get_range(RunContext& ctx, const PortImpl* port, float* min, float* max)
 {
 	*min = port->minimum().get<float>();
@@ -266,6 +272,8 @@ get_range(RunContext& ctx, const PortImpl* port, float* min, float* max)
 		*max *= ctx.engine().sample_rate();
 	}
 }
+
+} // namespace
 
 float
 ControlBindings::control_to_port_value(RunContext&     ctx,
@@ -336,7 +344,9 @@ ControlBindings::port_value_to_control(RunContext& ctx,
 	}
 }
 
-static void
+namespace {
+
+void
 forge_binding(const URIs&           uris,
               LV2_Atom_Forge*       forge,
               ControlBindings::Type binding_type,
@@ -370,6 +380,8 @@ forge_binding(const URIs&           uris,
 		break;
 	}
 }
+
+} // namespace
 
 void
 ControlBindings::set_port_value(RunContext& ctx,

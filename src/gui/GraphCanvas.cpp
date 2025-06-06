@@ -113,8 +113,9 @@ using client::PluginModel;
 using client::PortModel;
 
 namespace gui {
+namespace {
 
-static int
+int
 port_order(const GanvPort* a, const GanvPort* b, void* data)
 {
 	const Port* pa = dynamic_cast<const Port*>(Glib::wrap(a));
@@ -125,6 +126,8 @@ port_order(const GanvPort* a, const GanvPort* b, void* data)
 	}
 	return 0;
 }
+
+} // namespace
 
 GraphCanvas::GraphCanvas(App&                              app,
                          std::shared_ptr<const GraphModel> graph,
@@ -302,7 +305,9 @@ GraphCanvas::build()
 	}
 }
 
-static void
+namespace {
+
+void
 show_module_human_names(GanvNode* node, void* data)
 {
 	const bool b = *static_cast<bool*>(data);
@@ -320,6 +325,8 @@ show_module_human_names(GanvNode* node, void* data)
 	}
 }
 
+} // namespace
+
 void
 GraphCanvas::show_human_names(bool b)
 {
@@ -329,7 +336,9 @@ GraphCanvas::show_human_names(bool b)
 	for_each_node(show_module_human_names, &b);
 }
 
-static void
+namespace {
+
+void
 ensure_port_labels(GanvNode* node, void* data)
 {
 	if (GANV_IS_MODULE(node)) {
@@ -342,6 +351,8 @@ ensure_port_labels(GanvNode* node, void* data)
 		}
 	}
 }
+
+} // namespace
 
 void
 GraphCanvas::show_port_names(bool b)
@@ -607,7 +618,9 @@ GraphCanvas::clear_selection()
 	Ganv::Canvas::clear_selection();
 }
 
-static void
+namespace {
+
+void
 destroy_node(GanvNode* node, void* data)
 {
 	if (!GANV_IS_MODULE(node)) {
@@ -630,7 +643,7 @@ destroy_node(GanvNode* node, void* data)
 	}
 }
 
-static void
+void
 destroy_arc(GanvEdge* arc, void* data)
 {
 	const App*  app   = static_cast<App*>(data);
@@ -640,6 +653,8 @@ destroy_arc(GanvEdge* arc, void* data)
 	const Port* head = dynamic_cast<Port*>(arcmm->get_head());
 	app->interface()->disconnect(tail->model()->path(), head->model()->path());
 }
+
+} // namespace
 
 void
 GraphCanvas::destroy_selection()
@@ -653,7 +668,9 @@ GraphCanvas::destroy_selection()
 	_app.interface()->bundle_end();
 }
 
-static void
+namespace {
+
+void
 serialise_node(GanvNode* node, void* data)
 {
 	auto* serialiser = static_cast<Serialiser*>(data);
@@ -674,7 +691,7 @@ serialise_node(GanvNode* node, void* data)
 	}
 }
 
-static void
+void
 serialise_arc(GanvEdge* arc, void* data)
 {
 	auto* serialiser = static_cast<Serialiser*>(data);
@@ -687,6 +704,8 @@ serialise_arc(GanvEdge* arc, void* data)
 		serialiser->serialise_arc(Sord::Node(), garc->model());
 	}
 }
+
+} // namespace
 
 void
 GraphCanvas::copy_selection()

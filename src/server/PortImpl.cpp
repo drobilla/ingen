@@ -42,16 +42,19 @@
 #include <utility>
 
 namespace ingen::server {
+namespace {
 
-static const uint32_t monitor_rate = 25.0; // Hz
+const uint32_t monitor_rate = 25.0; // Hz
 
 /** The length of time between monitor updates in frames */
-static inline uint32_t
+inline uint32_t
 monitor_period(const Engine& engine)
 {
 	return std::max(engine.block_length(),
 	                engine.sample_rate() / monitor_rate);
 }
+
+} // namespace
 
 PortImpl::PortImpl(BufferFactory&      bufs,
                    BlockImpl* const    block,

@@ -27,24 +27,25 @@
 #include <string>
 
 namespace ingen {
+namespace {
 
-static FilePath bundle_path;
+FilePath bundle_path;
 
 #if defined(__APPLE__)
-const char               search_path_separator = ':';
-static const char* const library_prefix        = "lib";
-static const char* const library_suffix        = ".dylib";
+const char        search_path_separator = ':';
+const char* const library_prefix        = "lib";
+const char* const library_suffix        = ".dylib";
 #elif defined(_WIN32) && !defined(__CYGWIN__)
-const char               search_path_separator = ';';
-static const char* const library_prefix        = "";
-static const char* const library_suffix        = ".dll";
+const char        search_path_separator = ';';
+const char* const library_prefix        = "";
+const char* const library_suffix        = ".dll";
 #else
-const char               search_path_separator = ':';
-static const char* const library_prefix        = "lib";
-static const char* const library_suffix        = ".so";
+const char        search_path_separator = ':';
+const char* const library_prefix        = "lib";
+const char* const library_suffix        = ".so";
 #endif
 
-static std::vector<FilePath>
+std::vector<FilePath>
 parse_search_path(const char*                  search_path,
                   const std::vector<FilePath>& defaults)
 {
@@ -60,6 +61,8 @@ parse_search_path(const char*                  search_path,
 	}
 	return paths;
 }
+
+} // namespace
 
 /** Must be called once at startup, and passed a pointer to a function
  * that lives in the 'top level' of the bundle (e.g. the executable).

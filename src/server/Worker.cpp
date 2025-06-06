@@ -31,6 +31,7 @@
 #include <memory>
 
 namespace ingen::server {
+namespace {
 
 /// A message in the Worker::_requests ring
 struct MessageHeader {
@@ -39,7 +40,7 @@ struct MessageHeader {
 	                 // `size' bytes of data follow here
 };
 
-static LV2_Worker_Status
+LV2_Worker_Status
 schedule(LV2_Worker_Schedule_Handle handle,
          uint32_t                   size,
          const void*                data)
@@ -50,7 +51,7 @@ schedule(LV2_Worker_Schedule_Handle handle,
 	return engine.worker()->request(block, size, data);
 }
 
-static LV2_Worker_Status
+LV2_Worker_Status
 schedule_sync(LV2_Worker_Schedule_Handle handle,
               uint32_t                   size,
               const void*                data)
@@ -60,6 +61,8 @@ schedule_sync(LV2_Worker_Schedule_Handle handle,
 
 	return engine.sync_worker()->request(block, size, data);
 }
+
+} // namespace
 
 LV2_Worker_Status
 Worker::request(LV2Block*   block,

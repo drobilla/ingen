@@ -348,7 +348,9 @@ App::property_change(const URI&      subject,
 	}
 }
 
-static std::string
+namespace {
+
+std::string
 fraction_label(float f)
 {
 	static const uint32_t GREEN = 0x4A8A0EFF;
@@ -360,6 +362,8 @@ fraction_label(float f)
 	         RGBA_R(col), RGBA_G(col), RGBA_B(col));
 	return fmt("<span color='#%s'>%d%%</span>", col_str, (f * 100));
 }
+
+} // namespace
 
 std::string
 App::status_text() const

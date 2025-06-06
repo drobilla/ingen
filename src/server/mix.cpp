@@ -24,8 +24,9 @@
 #include <lv2/atom/util.h>
 
 namespace ingen::server {
+namespace {
 
-static inline bool
+inline bool
 is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 {
 	const auto* atom = buf->get<const LV2_Atom>();
@@ -34,6 +35,8 @@ is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 		atom->size,
 		ev);
 }
+
+} // namespace
 
 void
 mix(const RunContext&   ctx,

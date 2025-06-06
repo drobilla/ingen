@@ -140,13 +140,17 @@ ClientUpdate::del(const URI& subject)
 	dels.push_back(subject);
 }
 
+namespace {
+
 /** Returns true if a is closer to the root than b. */
-static inline bool
+inline bool
 put_higher_than(const ClientUpdate::Put& a, const ClientUpdate::Put& b)
 {
 	return (std::count(a.uri.begin(), a.uri.end(), '/') <
 	        std::count(b.uri.begin(), b.uri.end(), '/'));
 }
+
+} // namespace
 
 void
 ClientUpdate::send(Interface& dest)
