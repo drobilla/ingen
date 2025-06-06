@@ -31,6 +31,12 @@ LV2Features::Feature::free_feature(LV2_Feature* feature)
 	free(feature);
 }
 
+std::shared_ptr<LV2_Feature>
+LV2Features::EmptyFeature::feature(World& world, Node* block)
+{
+	return std::make_shared<LV2_Feature>(LV2_Feature{_uri, nullptr});
+}
+
 void
 LV2Features::add_feature(const std::shared_ptr<Feature>& feature)
 {

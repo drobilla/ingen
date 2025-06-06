@@ -59,10 +59,7 @@ public:
 
 		const char* uri() const override { return _uri; }
 
-		std::shared_ptr<LV2_Feature> feature(World& world, Node* block) override
-		{
-			return nullptr;
-		}
+		std::shared_ptr<LV2_Feature> feature(World& world, Node* block) override;
 
 		const char* _uri;
 	};
