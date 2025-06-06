@@ -1,7 +1,6 @@
 Checks: >
   -*-narrowing-conversions,
   -android-cloexec-*,
-  -bugprone-exception-escape,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
   -cert-dcl21-cpp,

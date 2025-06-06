@@ -280,8 +280,14 @@ run(int argc, char** argv)
 int
 main(int argc, char** argv)
 {
-	ingen::set_bundle_path_from_code(
-		reinterpret_cast<void (*)()>(&ingen::run));
+	try {
+		ingen::set_bundle_path_from_code(
+		  reinterpret_cast<void (*)()>(&ingen::run));
 
-	return ingen::run(argc, argv);
+		return ingen::run(argc, argv);
+	} catch (const std::exception& e) {
+		std::cerr << "error: " << e.what() << "\n";
+	}
+
+	return 1;
 }
