@@ -14,4 +14,7 @@ Checks: >
   -hicpp-multiway-paths-covered,
   -llvm-header-guard,
   -portability-simd-intrinsics,
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '100'
 InheritParentConfig: true

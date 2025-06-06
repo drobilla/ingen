@@ -12,5 +12,7 @@ Checks: >
   -fuchsia-statically-constructed-objects,
   -google-readability-todo,
   -llvm-header-guard,
-  -readability-function-cognitive-complexity,
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '13'
 InheritParentConfig: true

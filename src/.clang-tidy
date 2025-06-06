@@ -25,6 +25,8 @@ Checks: >
   -hicpp-no-malloc,
   -misc-no-recursion,
   -misc-unused-parameters,
-  -readability-function-cognitive-complexity,
   -readability-static-accessed-through-instance,
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '84'
 InheritParentConfig: true

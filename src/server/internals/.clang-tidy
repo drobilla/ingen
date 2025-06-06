@@ -1,6 +1,4 @@
-Checks: >
-  -google-readability-todo,
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold
-    value: '36'
+    value: '28'
 InheritParentConfig: true

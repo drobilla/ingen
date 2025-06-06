@@ -20,4 +20,7 @@ Checks: >
   -hicpp-vararg,
   -llvm-header-guard,
   -readability-convert-member-functions-to-static,
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '40'
 InheritParentConfig: true
