@@ -262,7 +262,7 @@ PortAudioDriver::post_process_port(RunContext&,
 int
 PortAudioDriver::process_cb(const void*                     inputs,
                             void*                           outputs,
-                            unsigned long                   nframes,
+                            FrameCount                      nframes,
                             const PaStreamCallbackTimeInfo* time,
                             PaStreamCallbackFlags           flags)
 {

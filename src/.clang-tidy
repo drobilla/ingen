@@ -1,6 +1,5 @@
 Checks: >
   -*-avoid-c-arrays,
-  -*-macro-to-enum,
   -*-vararg,
   -android-cloexec-*,
   -boost-use-ranges,
@@ -12,7 +11,6 @@ Checks: >
   -cert-err34-c,
   -clang-analyzer-optin.core.EnumCastOutOfRange,
   -clang-analyzer-optin.cplusplus.VirtualCall,
-  -clang-analyzer-valist.Uninitialized,
   -concurrency-mt-unsafe,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-no-malloc,

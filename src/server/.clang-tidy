@@ -12,10 +12,8 @@ Checks: >
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-type-static-cast-downcast,
   -google-readability-todo,
-  -google-runtime-int,
   -google-runtime-references,
   -hicpp-multiway-paths-covered,
   -llvm-header-guard,
-  -misc-redundant-expression,
   -portability-simd-intrinsics,
 InheritParentConfig: true

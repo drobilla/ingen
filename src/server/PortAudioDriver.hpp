@@ -69,11 +69,13 @@ public:
 	SampleCount    sample_rate()  const override { return _sample_rate; }
 
 private:
+	using FrameCount = unsigned long; // NOLINT(google-runtime-int)
+
 	friend class PortAudioPort;
 
 	static int pa_process_cb(const void*                     inputs,
 	                         void*                           outputs,
-	                         unsigned long                   nframes,
+	                         FrameCount                      nframes,
 	                         const PaStreamCallbackTimeInfo* time,
 	                         PaStreamCallbackFlags           flags,
 	                         void*                           handle)
@@ -84,7 +86,7 @@ private:
 
 	int process_cb(const void*                     inputs,
 	               void*                           outputs,
-	               unsigned long                   nframes,
+	               FrameCount                      nframes,
 	               const PaStreamCallbackTimeInfo* time,
 	               PaStreamCallbackFlags           flags);
 

@@ -211,6 +211,6 @@
 #	define USE_JACK_PORT_RENAME 0
 #endif
 
-#define INGEN_BUNDLED 0
+#define INGEN_BUNDLED 0 // NOLINT(*-macro-to-enum)
 
 #endif // INGEN_CONFIG_H
