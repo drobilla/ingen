@@ -18,7 +18,6 @@
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "BufferRef.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"

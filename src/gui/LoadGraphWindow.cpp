@@ -50,7 +50,6 @@
 #include <sigc++/functors/mem_fun.h>
 
 #include <list>
-#include <map>
 #include <memory>
 #include <optional>
 #include <sstream>

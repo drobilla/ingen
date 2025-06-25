@@ -28,8 +28,6 @@
 #include <ingen/World.hpp>
 #include <raul/Path.hpp>
 
-#include <boost/intrusive/slist.hpp>
-
 #include <algorithm>
 #include <cassert>
 #include <cstdint>

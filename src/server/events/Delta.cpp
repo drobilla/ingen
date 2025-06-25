@@ -19,6 +19,7 @@
 #include "BlockFactory.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "CreateBlock.hpp"
@@ -48,6 +49,7 @@
 #include <ingen/World.hpp>
 #include <ingen/paths.hpp>
 #include <lilv/lilv.h>
+#include <raul/Maid.hpp>
 #include <raul/Path.hpp>
 
 #include <memory>

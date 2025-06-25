@@ -18,7 +18,6 @@
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "BufferRef.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "FrameTimer.hpp"
@@ -55,7 +54,6 @@
 #include <cassert>
 #include <chrono>
 #include <cstdint>
-#include <map>
 #include <string>
 #include <utility>
 

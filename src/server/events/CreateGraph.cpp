@@ -18,6 +18,7 @@
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "CompiledGraph.hpp"
 #include "CreatePort.hpp"
 #include "Engine.hpp"
@@ -38,8 +39,6 @@
 #include <ingen/paths.hpp>
 #include <raul/Path.hpp>
 #include <raul/Symbol.hpp>
-
-#include <boost/intrusive/slist.hpp>
 
 #include <map>
 #include <memory>

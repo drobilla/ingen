@@ -20,7 +20,6 @@
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "BufferRef.hpp"
 #include "GraphImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
@@ -37,7 +36,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
-#include <memory>
 
 namespace ingen::server {
 

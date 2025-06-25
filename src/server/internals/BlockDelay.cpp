@@ -31,8 +31,6 @@
 #include <raul/Maid.hpp>
 #include <raul/Symbol.hpp>
 
-#include <memory>
-
 namespace ingen::server::internals {
 
 InternalPlugin* BlockDelayNode::internal_plugin(URIs& uris) {

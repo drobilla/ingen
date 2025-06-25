@@ -82,7 +82,6 @@
 #include <gtkmm/textbuffer.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/toolitem.h>
-#include <gtkmm/widget.h>
 #include <sigc++/adaptors/retype_return.h>
 #include <sigc++/connection.h>
 #include <sigc++/functors/mem_fun.h>

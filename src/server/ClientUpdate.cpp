@@ -32,12 +32,9 @@
 #include <ingen/URIs.hpp>
 #include <raul/Path.hpp>
 
-#include <boost/intrusive/slist.hpp>
-
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
-#include <map>
 #include <memory>
 #include <utility>
 

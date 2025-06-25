@@ -38,7 +38,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
-#include <memory>
 #include <utility>
 
 namespace ingen::server {

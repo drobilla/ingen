@@ -61,7 +61,6 @@
 #include <sigc++/signal.h>
 
 #include <cassert>
-#include <map>
 #include <memory>
 #include <string>
 #include <utility>

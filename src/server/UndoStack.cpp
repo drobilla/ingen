@@ -26,7 +26,6 @@
 #include <sratom/sratom.h>
 
 #include <ctime>
-#include <iterator>
 
 #define NS_RDF "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 

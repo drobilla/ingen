@@ -38,7 +38,6 @@
 
 #include <cassert>
 #include <cmath>
-#include <memory>
 
 namespace ingen::server {
 

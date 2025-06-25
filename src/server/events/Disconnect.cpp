@@ -20,7 +20,6 @@
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "BufferRef.hpp"
 #include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"

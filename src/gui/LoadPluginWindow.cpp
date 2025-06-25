@@ -34,7 +34,6 @@
 #include <raul/Symbol.hpp>
 
 #include <gdk/gdkkeysyms-compat.h>
-#include <glibmm/listhandle.h>
 #include <glibmm/propertyproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/builder.h>

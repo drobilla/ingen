@@ -27,7 +27,6 @@
 
 #include <cassert>
 #include <memory>
-#include <unordered_set>
 #include <utility>
 
 namespace ingen::server::events {

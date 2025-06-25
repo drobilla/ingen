@@ -18,6 +18,7 @@
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "CompiledGraph.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
