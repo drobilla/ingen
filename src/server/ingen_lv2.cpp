@@ -284,13 +284,15 @@ public:
 
 	/** Called in run thread for events received at control input port. */
 	bool enqueue_message(const LV2_Atom* atom) {
-		if (_from_ui.write(lv2_atom_total_size(atom), atom) == 0) {
+		const auto success = !!_from_ui.write(lv2_atom_total_size(atom), atom);
+
 #ifndef NDEBUG
+		if (!success) {
 			_engine.log().error("Control input buffer overflow\n");
-#endif
-			return false;
 		}
-		return true;
+#endif
+
+		return success;
 	}
 
 	raul::Semaphore& main_sem() { return _main_sem; }
