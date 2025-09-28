@@ -97,8 +97,9 @@ LV2Block::make_instance(URIs&      uris,
 {
 	const Engine&     engine = parent_graph()->engine();
 	const LilvPlugin* lplug  = _lv2_plugin->lilv_plugin();
-	LilvInstance*     inst   = lilv_plugin_instantiate(
-		lplug, rate, _features->array());
+
+	std::shared_ptr<Instance> inst = std::make_shared<Instance>(
+	  lilv_plugin_instantiate(lplug, rate, _features->array()));
 
 	if (!inst) {
 		engine.log().error("Failed to instantiate <%1%>\n",
@@ -109,7 +110,7 @@ LV2Block::make_instance(URIs&      uris,
 	const LV2_Options_Interface* options_iface = nullptr;
 	if (lilv_plugin_has_extension_data(lplug, uris.opt_interface)) {
 		options_iface = static_cast<const LV2_Options_Interface*>(
-			lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface));
+			lilv_instance_get_extension_data(inst->instance, LV2_OPTIONS__interface));
 	}
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
@@ -125,7 +126,7 @@ LV2Block::make_instance(URIs&      uris,
 					  sizeof(LV2_URID), uris.atom_URID, &port_type },
 					{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, nullptr }
 				};
-				options_iface->set(inst->lv2_handle, options);
+				options_iface->set(inst->instance->lv2_handle, options);
 			}
 		}
 
@@ -149,7 +150,7 @@ LV2Block::make_instance(URIs&      uris,
 					{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, nullptr }
 				};
 
-				options_iface->get(inst->lv2_handle, options);
+				options_iface->get(inst->instance->lv2_handle, options);
 				if (options[0].value) {
 					LV2_URID type = *static_cast<const LV2_URID*>(options[0].value);
 					if (type == _uris.lv2_ControlPort) {
@@ -172,7 +173,7 @@ LV2Block::make_instance(URIs&      uris,
 		}
 	}
 
-	return std::make_shared<Instance>(inst);
+	return inst;
 }
 
 bool
