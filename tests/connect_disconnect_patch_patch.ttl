@@ -14,7 +14,7 @@
 	a patch:Put ;
 	patch:subject <ingen:/main/out> ;
 	patch:body [
-		a lv2:InputPort ,
+		a lv2:OutputPort ,
 			lv2:AudioPort
 	] .
 
