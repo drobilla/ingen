@@ -38,6 +38,7 @@
 #include <lv2/urid/urid.h>
 #include <sord/sordmm.hpp>
 
+#include <array>
 #include <cstdint>
 #include <filesystem>
 #include <list>
@@ -124,21 +125,20 @@ public:
 		rdf_world->add_prefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 
 		// Load internal 'plugin' information into lilv world
-		LilvNode* rdf_type =
-		    lilv_new_uri(lilv_world.get(),
-		                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		LilvNode*  ingen_Plugin = lilv_new_uri(lilv_world.get(), INGEN__Plugin);
-		LilvNodes* internals    = lilv_world_find_nodes(lilv_world.get(),
-                                                     nullptr,
-                                                     rdf_type,
-                                                     ingen_Plugin);
-		LILV_FOREACH (nodes, i, internals) {
-			const LilvNode* internal = lilv_nodes_get(internals, i);
+
+		constexpr std::array<const char*, 5U> internal_uris{
+		  "http://drobilla.net/ns/ingen-internals#BlockDelay",
+		  "http://drobilla.net/ns/ingen-internals#Controller",
+		  "http://drobilla.net/ns/ingen-internals#Note",
+		  "http://drobilla.net/ns/ingen-internals#Time",
+		  "http://drobilla.net/ns/ingen-internals#Trigger",
+		};
+
+		for (const char* uri : internal_uris) {
+			LilvNode* internal = lilv_new_uri(lilv_world.get(), uri);
 			lilv_world_load_resource(lilv_world.get(), internal);
+			lilv_node_free(internal);
 		}
-		lilv_nodes_free(internals);
-		lilv_node_free(rdf_type);
-		lilv_node_free(ingen_Plugin);
 	}
 
 	~Impl()

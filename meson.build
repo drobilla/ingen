@@ -247,7 +247,7 @@ lv2_dep = dependency(
 lilv_dep = dependency(
   'lilv-0',
   include_type: 'system',
-  version: '>= 0.24.21',
+  version: '>= 0.25.1',
 )
 
 raul_dep = dependency(
