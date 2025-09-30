@@ -67,8 +67,10 @@ TurtleWriter::TurtleWriter(URIMap& map, URIs& uris, URI uri)
 	serd_env_set_prefix_from_strings(_env, USTR("midi"),  USTR("http://lv2plug.in/ns/ext/midi#"));
 	serd_env_set_prefix_from_strings(_env, USTR("owl"),   USTR("http://www.w3.org/2002/07/owl#"));
 	serd_env_set_prefix_from_strings(_env, USTR("patch"), USTR("http://lv2plug.in/ns/ext/patch#"));
+	serd_env_set_prefix_from_strings(_env, USTR("pg"),   USTR("http://lv2plug.in/ns/ext/port-groups#"));
 	serd_env_set_prefix_from_strings(_env, USTR("rdf"),   USTR("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
 	serd_env_set_prefix_from_strings(_env, USTR("rdfs"),  USTR("http://www.w3.org/2000/01/rdf-schema#"));
+	serd_env_set_prefix_from_strings(_env, USTR("rsz"),   USTR("http://lv2plug.in/ns/ext/resize-port#"));
 	serd_env_set_prefix_from_strings(_env, USTR("xsd"),   USTR("http://www.w3.org/2001/XMLSchema#"));
 
 	// Make a Turtle writer that writes to text_sink
