@@ -42,26 +42,26 @@ internals:Transport
 	a ingen:Plugin ;
 	rdfs:seeAlso <internals.ttl> .
 
-<MonoEffect.ttl>
+<MonoEffect.ingen/main.ttl>
 	a ingen:Graph ,
 		lv2:Plugin ;
 	lv2:prototype ingen:GraphPrototype ;
-	rdfs:seeAlso <MonoEffect.ttl> .
+	rdfs:seeAlso <MonoEffect.ingen/main.ttl> .
 
-<MonoInstrument.ttl>
+<MonoInstrument.ingen/main.ttl>
 	a ingen:Graph ,
 		lv2:Plugin ;
 	lv2:prototype ingen:GraphPrototype ;
-	rdfs:seeAlso <MonoInstrument.ttl> .
+	rdfs:seeAlso <MonoInstrument.ingen/main.ttl> .
 
-<StereoEffect.ttl>
+<StereoEffect.ingen/main.ttl>
 	a ingen:Graph ,
 		lv2:Plugin ;
 	lv2:prototype ingen:GraphPrototype ;
-	rdfs:seeAlso <StereoEffect.ttl> .
+	rdfs:seeAlso <StereoEffect.ingen/main.ttl> .
 
-<StereoInstrument.ttl>
+<StereoInstrument.ingen/main.ttl>
 	a ingen:Graph ,
 		lv2:Plugin ;
 	lv2:prototype ingen:GraphPrototype ;
-	rdfs:seeAlso <StereoInstrument.ttl> .
+	rdfs:seeAlso <StereoInstrument.ingen/main.ttl> .

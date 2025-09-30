@@ -1,33 +1,13 @@
 @prefix atom: <http://lv2plug.in/ns/ext/atom#> .
-@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix midi: <http://lv2plug.in/ns/ext/midi#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-<>
-	ingen:arc [
-		ingen:head <notify> ;
-		ingen:tail <control>
-	] , [
-		ingen:head <Note/input> ;
-		ingen:tail <control>
-	] ;
-	ingen:block <Note> ;
-	ingen:polyphony 1 ;
-	<http://lv2plug.in/ns/extensions/ui#ui> ingen:GraphUIGtk2 ;
-	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
-	lv2:port <audio_out> ,
-		<control> ,
-		<notify> ;
-	doap:name "Ingen Mono Instrument Template" ;
-	a ingen:Graph ,
-		lv2:InstrumentPlugin ,
-		lv2:Plugin .
 
 <Note>
 	ingen:canvasX 206.5 ;
@@ -48,6 +28,7 @@
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
 	lv2:default 0.0 ;
+	lv2:index 5 ;
 	lv2:maximum 1.0 ;
 	lv2:minimum -1.0 ;
 	lv2:name "Bender" ;
@@ -57,6 +38,7 @@
 <Note/frequency>
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
+	lv2:index 1 ;
 	lv2:maximum 25088.0 ;
 	lv2:minimum 16.0 ;
 	lv2:name "Frequency" ;
@@ -66,6 +48,7 @@
 <Note/gate>
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
+	lv2:index 3 ;
 	lv2:name "Gate" ;
 	lv2:portProperty lv2:toggled ;
 	a atom:AtomPort ,
@@ -74,6 +57,7 @@
 <Note/input>
 	atom:bufferType atom:Sequence ;
 	atom:supports midi:MidiEvent ;
+	lv2:index 0 ;
 	lv2:name "Input" ;
 	a atom:AtomPort ,
 		lv2:InputPort .
@@ -81,6 +65,7 @@
 <Note/number>
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
+	lv2:index 1 ;
 	lv2:maximum 127.0 ;
 	lv2:minimum 0.0 ;
 	lv2:name "Number" ;
@@ -92,6 +77,7 @@
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
 	lv2:default 0.0 ;
+	lv2:index 6 ;
 	lv2:maximum 1.0 ;
 	lv2:minimum 0.0 ;
 	lv2:name "Pressure" ;
@@ -101,6 +87,7 @@
 <Note/trigger>
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
+	lv2:index 4 ;
 	lv2:name "Trigger" ;
 	lv2:portProperty lv2:toggled ;
 	a atom:AtomPort ,
@@ -109,6 +96,7 @@
 <Note/velocity>
 	atom:bufferType atom:Sequence ;
 	atom:supports atom:Float ;
+	lv2:index 2 ;
 	lv2:maximum 1.0 ;
 	lv2:minimum 0.0 ;
 	lv2:name "Velocity" ;
@@ -132,12 +120,33 @@
 	atom:bufferType atom:Sequence ;
 	atom:supports midi:MidiEvent ;
 	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
+	lv2:designation lv2:control ;
 	lv2:index 0 ;
 	lv2:name "Control" ;
 	lv2:portProperty lv2:connectionOptional ;
 	lv2:symbol "control" ;
 	a atom:AtomPort ,
 		lv2:InputPort .
+
+<>
+	ingen:arc [
+		ingen:head <Note/input> ;
+		ingen:tail <control>
+	] , [
+		ingen:head <notify> ;
+		ingen:tail <control>
+	] ;
+	ingen:block <Note> ;
+	ingen:polyphony 1 ;
+	<http://lv2plug.in/ns/extensions/ui#ui> ingen:GraphUIGtk2 ;
+	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
+	lv2:port <audio_out> ,
+		<control> ,
+		<notify> ;
+	doap:name "Ingen Mono Instrument Template" ;
+	a ingen:Graph ,
+		lv2:InstrumentPlugin ,
+		lv2:Plugin .
 
 <notify>
 	ingen:canvasX 214.5 ;
@@ -146,8 +155,10 @@
 	atom:bufferType atom:Sequence ;
 	atom:supports midi:MidiEvent ;
 	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
+	lv2:designation lv2:control ;
 	lv2:index 1 ;
 	lv2:name "Control" ;
+	lv2:portProperty lv2:connectionOptional ;
 	lv2:symbol "notify" ;
 	a atom:AtomPort ,
 		lv2:OutputPort .

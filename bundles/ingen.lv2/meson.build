@@ -2,18 +2,25 @@
 # SPDX-License-Identifier: 0BSD OR GPL-3.0-or-later
 
 data_files = files(
-  'MonoEffect.ttl',
-  'MonoInstrument.ttl',
-  'StereoEffect.ttl',
-  'StereoInstrument.ttl',
   'errors.ttl',
   'ingen.ttl',
   'internals.ttl',
   'manifest.ttl',
 )
 
-# Install bundle
-install_data(data_files, install_dir: lv2dir / 'ingen.lv2')
+templates = [
+  'MonoEffect.ingen',
+  'MonoInstrument.ingen',
+  'StereoEffect.ingen',
+  'StereoInstrument.ingen',
+]
+
+# Install all data files
+ingen_lv2_dir = lv2dir / 'ingen.lv2'
+install_data(data_files, install_dir: ingen_lv2_dir)
+foreach name : templates
+  install_data(files(name / 'main.ttl'), install_dir: ingen_lv2_dir / name)
+endforeach
 
 # Ontology documentation
 lv2specgen_py = find_program('lv2specgen.py', required: get_option('docs'))
