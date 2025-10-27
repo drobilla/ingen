@@ -255,9 +255,10 @@ ControlBindings::start_learn(PortImpl* port)
 	Binding* b = _learn_binding.load();
 	if (!b) {
 		_learn_binding = new Binding();
-	} else {
-		b->port = port;
+        b = _learn_binding.load();
 	}
+
+	b->port = port;
 }
 
 namespace {
