@@ -930,18 +930,6 @@ GraphCanvas::load_plugin(const std::weak_ptr<PluginModel>& weak_plugin)
 	_app.interface()->put(path_to_uri(path), props);
 }
 
-/** Try to guess a suitable location for a new module.
- */
-void
-GraphCanvas::get_new_module_location(double& x, double& y)
-{
-	int scroll_x = 0;
-	int scroll_y = 0;
-	get_scroll_offsets(scroll_x, scroll_y);
-	x = scroll_x + 20;
-	y = scroll_y + 20;
-}
-
 Properties
 GraphCanvas::get_initial_data(Resource::Graph ctx)
 {

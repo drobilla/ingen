@@ -91,8 +91,6 @@ public:
 	void connection(const std::shared_ptr<const client::ArcModel>& arc);
 	void disconnection(const std::shared_ptr<const client::ArcModel>& arc);
 
-	void get_new_module_location(double& x, double& y);
-
 	void clear_selection() override;
 	void destroy_selection();
 	void copy_selection();
