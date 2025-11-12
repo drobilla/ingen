@@ -109,6 +109,7 @@ public:
 		lv2_features->add_feature(std::make_shared<InstanceAccess>());
 		lv2_features->add_feature(std::make_shared<DataAccess>());
 		lv2_features->add_feature(std::make_shared<Log::Feature>());
+		lilv_world_set_option(lilv_world.get(), LILV_OPTION_OBJECT_INDEX, nullptr);
 		lilv_world_load_all(lilv_world.get());
 
 		// Set up RDF namespaces
