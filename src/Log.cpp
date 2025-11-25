@@ -102,7 +102,7 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 		ret = vfprintf(stderr, fmt, args);
 	} else if (type == _uris.log_Note) {
 		const ColorContext ctx{stderr, ColorContext::Color::GREEN};
-		ret = vfprintf(stdout, fmt, args);
+		ret = vfprintf(stderr, fmt, args);
 	} else if (_trace && type == _uris.log_Trace) {
 		const ColorContext ctx{stderr, ColorContext::Color::GREEN};
 		ret = vfprintf(stderr, fmt, args);
@@ -110,8 +110,8 @@ Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 		fprintf(stderr, "Unknown log type %u\n", type);
 		return 0;
 	}
-	if (_flush) {
-		fflush(stdout);
+	if (!_log && _flush) {
+		fflush(stderr);
 	}
 	return ret;
 }
