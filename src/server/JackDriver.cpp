@@ -428,7 +428,7 @@ JackDriver::append_time_events(RunContext& ctx, Buffer& buffer)
 	_old_bpm     = pos->beats_per_minute;
 
 	// Build an LV2 position object to append to the buffer
-	LV2_Atom             pos_buf[16];
+	LV2_Atom             pos_buf[24];
 	LV2_Atom_Forge_Frame frame;
 	lv2_atom_forge_set_buffer(&_forge,
 	                          reinterpret_cast<uint8_t*>(pos_buf),
