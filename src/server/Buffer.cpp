@@ -440,7 +440,8 @@ Buffer::update_value_buffer(SampleCount offset)
 	}
 }
 
-void* Buffer::aligned_alloc(size_t size)
+void*
+Buffer::aligned_alloc(size_t size)
 {
 #if USE_POSIX_MEMALIGN
 	void* buf = nullptr;
@@ -448,10 +449,10 @@ void* Buffer::aligned_alloc(size_t size)
 		memset(buf, 0, size);
 		return buf;
 	}
-#else
-	return (LV2_buf*)calloc(1, size);
-#endif
 	return nullptr;
+#else
+	return calloc(1, size);
+#endif
 }
 
 void
