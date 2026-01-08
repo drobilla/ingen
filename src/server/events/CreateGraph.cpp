@@ -18,7 +18,6 @@
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
-#include "BufferFactory.hpp"
 #include "CompiledGraph.hpp"
 #include "CreatePort.hpp"
 #include "Engine.hpp"

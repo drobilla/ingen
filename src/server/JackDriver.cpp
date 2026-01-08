@@ -32,7 +32,6 @@
 #include <ingen/Configuration.hpp>
 #include <ingen/Log.hpp>
 #include <ingen/Properties.hpp>
-#include <ingen/URI.hpp>
 #include <ingen/URIMap.hpp>
 #include <ingen/URIs.hpp>
 #include <ingen/World.hpp>
@@ -58,6 +57,10 @@
 #include <utility>
 
 using jack_sample_t = jack_default_audio_sample_t;
+
+namespace ingen {
+class URI;
+} // namespace ingen
 
 namespace ingen::server {
 

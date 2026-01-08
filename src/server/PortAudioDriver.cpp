@@ -16,7 +16,6 @@
 
 #include "PortAudioDriver.hpp"
 
-#include "BufferFactory.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "FrameTimer.hpp"

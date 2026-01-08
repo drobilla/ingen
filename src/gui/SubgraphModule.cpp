@@ -23,14 +23,15 @@
 #include <ingen/Atom.hpp>
 #include <ingen/Forge.hpp>
 #include <ingen/Interface.hpp>
+#include <ingen/Properties.hpp>
 #include <ingen/Resource.hpp>
+#include <ingen/URI.hpp>
 #include <ingen/URIs.hpp>
 #include <ingen/client/BlockModel.hpp>
 #include <ingen/client/GraphModel.hpp>
 
 #include <cassert>
 #include <memory>
-#include <utility>
 
 namespace ingen {
 

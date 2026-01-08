@@ -24,6 +24,7 @@
 #include <lv2/urid/urid.h>
 
 #include <gdkmm/color.h>
+#include <glib.h>
 #include <glibmm/propertyproxy.h>
 #include <glibmm/ustring.h>
 #include <gtkmm/builder.h>
@@ -34,8 +35,8 @@
 #include <gtkmm/textview.h>
 #include <sigc++/functors/mem_fun.h>
 
-#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <utility>
 

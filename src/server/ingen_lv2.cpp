@@ -15,7 +15,6 @@
 */
 
 #include "Buffer.hpp"
-#include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
