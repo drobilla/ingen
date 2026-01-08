@@ -21,7 +21,9 @@
 #if USE_ISATTY
 #    include <unistd.h>
 #else
+namespace {
 inline int isatty(int fd) { return 0; }
+} // namespace
 #endif
 
 namespace ingen {

@@ -44,6 +44,7 @@ if cpp.get_id() == 'clang'
       '-Wno-format-nonliteral',
       '-Wno-global-constructors',
       '-Wno-implicit-float-conversion',
+      '-Wno-nrvo',
       '-Wno-padded',
       '-Wno-reserved-id-macro',
       '-Wno-shorten-64-to-32',

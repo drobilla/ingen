@@ -53,7 +53,7 @@ private:
 	}
 
 private:
-#	if defined(CLOCK_MONOTONIC_RAW)
+#	ifdef CLOCK_MONOTONIC_RAW
 	const clockid_t _clock = CLOCK_MONOTONIC_RAW;
 #	else
 	const clockid_t _clock = CLOCK_MONOTONIC;

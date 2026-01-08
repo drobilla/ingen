@@ -11,6 +11,7 @@ Checks: >
   -cert-err34-c,
   -clang-analyzer-optin.core.EnumCastOutOfRange,
   -clang-analyzer-optin.cplusplus.VirtualCall,
+  -clang-analyzer-security.ArrayBound,
   -concurrency-mt-unsafe,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-no-malloc,
@@ -23,8 +24,10 @@ Checks: >
   -fuchsia-statically-constructed-objects,
   -hicpp-no-array-decay,
   -hicpp-no-malloc,
+  -misc-const-correctness,
   -misc-no-recursion,
   -misc-unused-parameters,
+  -modernize-use-scoped-lock,
   -readability-static-accessed-through-instance,
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold

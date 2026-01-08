@@ -29,7 +29,7 @@
 // Define version unconditionally so a warning will catch a mismatch
 #define INGEN_VERSION "0.5.1"
 
-#if !defined(INGEN_NO_DEFAULT_CONFIG)
+#ifdef INGEN_NO_DEFAULT_CONFIG
 
 // We need unistd.h to check _POSIX_VERSION
 #	ifndef INGEN_NO_POSIX
@@ -156,56 +156,56 @@
   if the build system defines them all.
 */
 
-#if defined(HAVE_FILENO)
+#ifdef HAVE_FILENO
 #	define USE_FILENO HAVE_FILENO
 #else
 #	define USE_FILENO 0
 #endif
 
-#if defined(HAVE_ISATTY)
+#ifdef HAVE_ISATTY
 #	define USE_ISATTY HAVE_ISATTY
 #else
 #	define USE_ISATTY 0
 #endif
 
-#if defined(HAVE_POSIX_MEMALIGN)
+#ifdef HAVE_POSIX_MEMALIGN
 #	define USE_POSIX_MEMALIGN HAVE_POSIX_MEMALIGN
 #else
 #	define USE_POSIX_MEMALIGN 0
 #endif
 
-#if defined(HAVE_SOCKET)
+#ifdef HAVE_SOCKET
 #	define USE_SOCKET HAVE_SOCKET
 #else
 #	define USE_SOCKET 0
 #endif
 
-#if defined(HAVE_VASPRINTF)
+#ifdef HAVE_VASPRINTF
 #	define USE_VASPRINTF HAVE_VASPRINTF
 #else
 #	define USE_VASPRINTF 0
 #endif
 
-#if defined(HAVE_WEBKIT)
+#ifdef HAVE_WEBKIT
 #	define USE_WEBKIT HAVE_WEBKIT
 #else
 #	define USE_WEBKIT 0
 #endif
 
-#if defined(HAVE_JACK_METADATA)
+#ifdef HAVE_JACK_METADATA
 #	define USE_JACK_METADATA HAVE_JACK_METADATA
 #else
 #	define USE_JACK_METADATA 0
 #endif
 
-#if defined(HAVE_JACK_PORT_TYPE_GET_BUFFER_SIZE)
+#ifdef HAVE_JACK_PORT_TYPE_GET_BUFFER_SIZE
 #	define USE_JACK_PORT_TYPE_GET_BUFFER_SIZE \
 		HAVE_JACK_PORT_TYPE_GET_BUFFER_SIZE
 #else
 #	define USE_JACK_PORT_TYPE_GET_BUFFER_SIZE 0
 #endif
 
-#if defined(HAVE_JACK_PORT_RENAME)
+#ifdef HAVE_JACK_PORT_RENAME
 #	define USE_JACK_PORT_RENAME HAVE_JACK_PORT_RENAME
 #else
 #	define USE_JACK_PORT_RENAME 0

@@ -31,7 +31,7 @@ namespace {
 
 FilePath bundle_path;
 
-#if defined(__APPLE__)
+#ifdef __APPLE__
 const char        search_path_separator = ':';
 const char* const library_prefix        = "lib";
 const char* const library_suffix        = ".dylib";
