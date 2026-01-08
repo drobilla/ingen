@@ -56,7 +56,7 @@ public:
 
 		// Update loop
 		t0 = t1;
-		t1 += b * e + e2;
+		t1 += (b * e) + e2;
 		e2 += c * e;
 
 		// Update frame counts
