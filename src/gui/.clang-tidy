@@ -3,6 +3,7 @@ Checks: >
   -android-cloexec-*,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
+  -bugprone-throwing-static-initialization,
   -cert-dcl21-cpp,
   -cert-dcl37-c,
   -cert-dcl51-cpp,

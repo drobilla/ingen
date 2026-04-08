@@ -4,6 +4,8 @@ Checks: >
   -*-non-private-member-variables-in-classes,
   -*-use-default-member-init,
   -*-vararg,
+  -bugprone-exception-escape,
+  -bugprone-invalid-enum-default-initialization,
   -bugprone-parent-virtual-call,
   -bugprone-reserved-identifier,
   -cert-dcl37-c,

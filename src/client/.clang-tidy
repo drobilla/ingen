@@ -1,4 +1,5 @@
 Checks: >
+  -bugprone-exception-escape,
   -google-readability-todo,
 CheckOptions:
   - key:   readability-function-cognitive-complexity.Threshold
